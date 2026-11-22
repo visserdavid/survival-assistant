@@ -1,5 +1,7 @@
 # gradle
 
+/survivalassistant-*.jar
+
 .gradle/
 build/
 out/

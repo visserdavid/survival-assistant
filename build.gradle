@@ -94,14 +94,20 @@ publishing {
 }
 
 // The real build output lives outside OneDrive (see the top of this file). After every build, copy the jars
-// back to the usual place in the project folder (build/libs) so they are also synced by OneDrive.
-def oneDriveLibs = file("${projectDir}/build/libs")
-tasks.register("copyJarsToProject", Copy) {
+// to the project folder itself so they are also synced by OneDrive (ignored by git).
+def projectFolder = projectDir
+tasks.register("copyJarsToProject") {
 	group = "survivalassistant"
-	description = "Copies the built jars to build/libs in the (OneDrive) project folder."
-	from(tasks.named("jar"))
-	from(tasks.named("sourcesJar"))
-	into(oneDriveLibs)
+	description = "Copies the built jars to the (OneDrive) project folder."
+	def jarFiles = files(tasks.named("jar"), tasks.named("sourcesJar"))
+	inputs.files(jarFiles)
+	// No declared outputs: the project root also holds Gradle's own files, which Gradle can't track as output.
+	doLast {
+		jarFiles.files.each { f ->
+			java.nio.file.Files.copy(f.toPath(), new File(projectFolder, f.name).toPath(),
+					java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+		}
+	}
 }
 tasks.named("assemble") { finalizedBy("copyJarsToProject") }
 

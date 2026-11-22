@@ -170,6 +170,7 @@ for the guide and advice, and on the client for the cards.
 ```
 Build output goes to `%LOCALAPPDATA%/gradle-builds/survivalassistant` when that variable exists (Windows),
 because sync tools like OneDrive lock files in `build/`. On other systems it uses the normal `build/` folder.
+After every build the mod jar and sources jar are also copied to the project folder itself (git-ignored).
 
 Developer tools:
 - `tools/make_lang.py` generates `en_us.json` and `nl_nl.json` from one table, so both languages always have the same keys.
