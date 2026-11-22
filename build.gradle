@@ -93,6 +93,18 @@ publishing {
 	}
 }
 
+// The real build output lives outside OneDrive (see the top of this file). After every build, copy the jars
+// back to the usual place in the project folder (build/libs) so they are also synced by OneDrive.
+def oneDriveLibs = file("${projectDir}/build/libs")
+tasks.register("copyJarsToProject", Copy) {
+	group = "survivalassistant"
+	description = "Copies the built jars to build/libs in the (OneDrive) project folder."
+	from(tasks.named("jar"))
+	from(tasks.named("sourcesJar"))
+	into(oneDriveLibs)
+}
+tasks.named("assemble") { finalizedBy("copyJarsToProject") }
+
 // Copies the built mod into a Modrinth App instance for testing: ./gradlew installToModrinth
 // Instance name can be overridden with -PmodrinthInstance="Other Instance".
 tasks.register("installToModrinth", Copy) {
