@@ -33,6 +33,15 @@ sending you there. The research and checked game facts are in
 - Don't want a character walking around? `/guide character off` removes it. The task card stays, and you
   only get urgent warnings in chat.
 
+### Your own guide skin
+- Put any Minecraft skin (PNG, 64x64) in `config/survivalassistant/skins/`, then use `/guideskin reload`
+  and `/guideskin set <name>` (the file name without `.png`, with tab completion). `/guideskin set default`
+  brings back the built-in guide.
+- File names ending in `_slim` (for example `elf_slim.png`) use the slim (Alex) arms. The skin's second
+  layer (hat, jacket, sleeves, pants) is shown too.
+- `/guideskin list` shows the skins (click one to use it) and `/guideskin folder` gives a clickable link to
+  the folder. This is client-side: only you see your choice, on any server.
+
 ### Task card (top-left by default)
 ```
 ┌─ Guide · Day 1/3 ── [clock] ▮▮▮▮▯▯ ┐
@@ -103,6 +112,7 @@ sending you there. The research and checked game facts are in
 | `/guide continue` | Start chapter 2 (after all 15 chapter-1 goals) |
 | `/guide mute <minutes>` | No unsolicited tips for a while (0–120) |
 | `/guide character on\|off` | Show or hide the guide character (saved per player) |
+| `/guideskin list\|set <name>\|reload\|folder` | Choose your own guide skin (client-side) |
 
 ## Configuration
 
@@ -135,6 +145,7 @@ sending you there. The research and checked game facts are in
 | `envLines` | `FULL` | `COMPACT` shows only the biome header and ore line |
 | `recipeCard` | `true` | Recipe card next to the inventory / crafting table |
 | `crosshairInfo` | `true` | Tip under the crosshair for mobs and ores |
+| `guideSkin` | `default` | Guide skin from `config/survivalassistant/skins` (set with `/guideskin set`) |
 | `scale` | `1.0` | Extra scale on top of the GUI scale (0.5–2.0) |
 | `margin` | `4` | Distance from the screen edge |
 

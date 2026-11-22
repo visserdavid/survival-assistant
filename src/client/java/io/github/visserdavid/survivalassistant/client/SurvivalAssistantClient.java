@@ -2,6 +2,9 @@ package io.github.visserdavid.survivalassistant.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.minecraft.ChatFormatting;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
@@ -16,6 +19,8 @@ import io.github.visserdavid.survivalassistant.client.hud.HudConfig;
 import io.github.visserdavid.survivalassistant.client.hud.LightCheck;
 import io.github.visserdavid.survivalassistant.client.hud.RecipeOverlay;
 import io.github.visserdavid.survivalassistant.client.hud.TaskHud;
+import io.github.visserdavid.survivalassistant.client.skin.GuideSkins;
+import io.github.visserdavid.survivalassistant.client.skin.SkinCommand;
 
 import java.util.Locale;
 
@@ -30,6 +35,14 @@ public class SurvivalAssistantClient implements ClientModInitializer {
 		EntityRenderers.register(SurvivalAssistant.GUIDE, GuideEntityRenderer::new);
 
 		HudConfig.load();
+		GuideSkins.init();
+		ClientCommandRegistrationCallback.EVENT.register((dispatcher, context) -> SkinCommand.register(dispatcher));
+		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> client.execute(() -> {
+			if (client.player != null && GuideSkins.chosenMissing()) {
+				client.player.sendSystemMessage(Component.translatable("survivalassistant.skin.fallback", HudConfig.get().guideSkin)
+						.withStyle(ChatFormatting.YELLOW));
+			}
+		}));
 		HudElementRegistry.attachElementAfter(VanillaHudElements.BOSS_BAR, SurvivalAssistant.id("task_card"), new TaskHud());
 		HudElementRegistry.attachElementAfter(SurvivalAssistant.id("task_card"), SurvivalAssistant.id("environment_card"), new EnvironmentCard());
 		HudElementRegistry.attachElementAfter(VanillaHudElements.CROSSHAIR, SurvivalAssistant.id("crosshair_info"), new CrosshairInfo());

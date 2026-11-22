@@ -234,6 +234,20 @@ L = {
     P + "hud.title_ch2": ("Guide · Ch. 2 · Day %s/%s", "Gids · H2 · Dag %s/%s"),
     P + "hud.all_done": ("All goals reached!", "Alle doelen gehaald!"),
 
+    # ---------------- guide skins (/guideskin) ----------------
+    P + "skin.list_header": ("Guide skins (%s in the skins folder). Click one to use it:", "Gidsskins (%s in de skinsmap). Klik er een aan om hem te gebruiken:"),
+    P + "skin.empty": ("No skins yet: put 64x64 skin PNGs in the folder and use /guideskin reload.",
+                       "Nog geen skins: zet 64x64 skin-PNG's in de map en gebruik /guideskin reload."),
+    P + "skin.click_to_use": ("Click to use this skin", "Klik om deze skin te gebruiken"),
+    P + "skin.not_found": ("Skin '%s' not found. Use /guideskin list (or /guideskin reload after adding files).",
+                           "Skin '%s' niet gevonden. Gebruik /guideskin list (of /guideskin reload na het toevoegen van bestanden)."),
+    P + "skin.set": ("The guide now uses the skin '%s'. Only you see this.", "De gids gebruikt nu de skin '%s'. Alleen jij ziet dit."),
+    P + "skin.reloaded": ("Skins folder read again: %s skin(s) found.", "Skinsmap opnieuw gelezen: %s skin(s) gevonden."),
+    P + "skin.bad_file": ("Skipped %s: a skin must be a 64x64 PNG.", "Overgeslagen: %s. Een skin moet een PNG van 64x64 zijn."),
+    P + "skin.fallback": ("Guide skin '%s' is missing, so the guide uses its own skin.", "Gidsskin '%s' ontbreekt, dus de gids gebruikt zijn eigen skin."),
+    P + "skin.folder": ("Skins folder: %s", "Skinsmap: %s"),
+    P + "skin.open_folder": ("Click to open the folder", "Klik om de map te openen"),
+
     # ---------------- light check (L) ----------------
     P + "light.on": ("Light check on: red dots = monsters can spawn there. Place torches until they're gone.",
                      "Verlichtingscheck aan: rode stippen = hier kunnen monsters spawnen. Zet fakkels tot ze weg zijn."),

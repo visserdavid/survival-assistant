@@ -42,6 +42,8 @@ public final class HudConfig {
 	public boolean recipeCard = true;
 	/** Tip under the crosshair when looking at a mob or an ore. */
 	public boolean crosshairInfo = true;
+	/** Guide skin from config/survivalassistant/skins (file name without .png), or "default". */
+	public String guideSkin = "default";
 
 	public enum EnvLines { FULL, COMPACT }
 
@@ -69,6 +71,7 @@ public final class HudConfig {
 		if (instance.corner == null) instance.corner = Corner.TOP_LEFT;
 		if (instance.mode == null) instance.mode = Mode.COMPACT;
 		if (instance.envLines == null) instance.envLines = EnvLines.FULL;
+		if (instance.guideSkin == null || instance.guideSkin.isBlank()) instance.guideSkin = "default";
 		instance.scale = Math.max(0.5f, Math.min(2.0f, instance.scale));
 		save();
 	}
