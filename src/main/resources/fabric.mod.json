@@ -1,0 +1,26 @@
+{
+	"schemaVersion": 1,
+	"id": "survivalassistant",
+	"version": "${version}",
+	"name": "Survival Assistant",
+	"description": "Helps new players survive their first days: a friendly guide, a compact task card with live progress, and biome and ore-height advice. All advice is verified against the game data.",
+	"authors": ["David Visser"],
+	"contact": {
+		"homepage": "https://github.com/visserdavid/survival-assistant",
+		"sources": "https://github.com/visserdavid/survival-assistant",
+		"issues": "https://github.com/visserdavid/survival-assistant/issues"
+	},
+	"license": "MIT",
+	"icon": "assets/survivalassistant/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": ["io.github.visserdavid.survivalassistant.SurvivalAssistant"],
+		"client": ["io.github.visserdavid.survivalassistant.client.SurvivalAssistantClient"]
+	},
+	"depends": {
+		"fabricloader": ">=0.20.1",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}

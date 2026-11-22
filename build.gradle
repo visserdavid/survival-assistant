@@ -1,0 +1,111 @@
+plugins {
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+	id 'maven-publish'
+}
+
+// OneDrive locks files in build/ while syncing, which breaks Gradle. Build outside the synced folder instead.
+def localAppData = System.getenv("LOCALAPPDATA")
+if (localAppData != null) {
+	layout.buildDirectory = file("${localAppData}/gradle-builds/${rootProject.name}")
+}
+
+repositories {
+	// Add repositories to retrieve artifacts from in here.
+	// You should only use this when depending on other mods because
+	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
+	// for more information about repositories.
+}
+
+loom {
+	splitEnvironmentSourceSets()
+
+	mods {
+		"survivalassistant" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
+}
+
+dependencies {
+	// To change the versions see the gradle.properties file
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+	// Fabric API. This is technically optional, but you probably want it anyway.
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+	testImplementation "org.junit.jupiter:junit-jupiter:5.11.4"
+	testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+test {
+	useJUnitPlatform()
+}
+
+processResources {
+	def version = project.version
+	inputs.property "version", version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 25
+}
+
+java {
+	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+	// if it is present.
+	// If you remove this line, sources will not be generated.
+	withSourcesJar()
+
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+}
+
+jar {
+	def projectName = project.name
+	inputs.property "projectName", projectName
+
+	from("LICENSE") {
+		rename { "${it}_$projectName"}
+	}
+}
+
+// configure the maven publication
+publishing {
+	publications {
+		create("mavenJava", MavenPublication) {
+			from components.java
+		}
+	}
+
+	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+	repositories {
+		// Add repositories to publish to here.
+		// Notice: This block does NOT have the same function as the block in the top level.
+		// The repositories here will be used for publishing your artifact, not for
+		// retrieving dependencies.
+	}
+}
+
+// Copies the built mod into a Modrinth App instance for testing: ./gradlew installToModrinth
+// Instance name can be overridden with -PmodrinthInstance="Other Instance".
+tasks.register("installToModrinth", Copy) {
+	group = "survivalassistant"
+	description = "Copies the mod jar into the Modrinth App instance's mods folder."
+	def instance = project.findProperty("modrinthInstance") ?: "Mod Testing"
+	def modsDir = file("${System.getenv("APPDATA")}/ModrinthApp/profiles/${instance}/mods")
+	dependsOn tasks.named("jar")
+	from(tasks.named("jar"))
+	into(modsDir)
+	def prefix = "${rootProject.name}-"
+	doFirst {
+		// Remove older versions of this mod so only one copy is loaded.
+		modsDir.listFiles()?.findAll { it.name.startsWith(prefix) && it.name.endsWith(".jar") }?.each { it.delete() }
+	}
+}

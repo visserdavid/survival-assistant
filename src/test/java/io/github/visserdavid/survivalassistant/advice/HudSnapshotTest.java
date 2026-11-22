@@ -1,0 +1,94 @@
+package io.github.visserdavid.survivalassistant.advice;
+
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class HudSnapshotTest {
+	private static HudSnapshot snap(SurvivalContext c, GuideProgress p) {
+		// The server always evaluates (which records completed milestones) before building the snapshot.
+		AdviceEngine.evaluate(c, p, 0, AdviceEngine.Settings.DEFAULT, false);
+		return HudSnapshot.of(c, p, 3);
+	}
+
+	private static List<String> ids(HudSnapshot s) {
+		return s.next().stream().map(HudSnapshot.Entry::id).toList();
+	}
+
+	@Test
+	void freshStartShowsFirstThreeTasks() {
+		HudSnapshot s = snap(SurvivalContext.builder().build(), new GuideProgress());
+		assertTrue(s.active());
+		assertEquals(List.of("wood", "crafting_table", "wooden_pickaxe"), ids(s));
+		assertEquals(new HudSnapshot.Entry("wood", 0, 10), s.next().get(0));
+		assertEquals(0, s.next().get(1).target(), "crafting table has no counter");
+		assertEquals("", s.urgentId());
+		assertEquals(3, s.maxDays());
+	}
+
+	@Test
+	void counterShowsLiveProgress() {
+		HudSnapshot s = snap(SurvivalContext.builder().logs(6).build(), new GuideProgress());
+		assertEquals(new HudSnapshot.Entry("wood", 6, 10), s.next().get(0));
+	}
+
+	@Test
+	void counterIsClampedToTarget() {
+		GuideProgress p = new GuideProgress();
+		p.completed.addAll(List.of("wood", "crafting_table", "wooden_pickaxe", "stone_tools", "furnace"));
+		HudSnapshot s = snap(SurvivalContext.builder().pickaxe(2).sword(2).furnace(true).foodItems(3).build(), p);
+		assertEquals(new HudSnapshot.Entry("food", 3, 5), s.next().get(0));
+	}
+
+	@Test
+	void stoneToolsLeadsToFurnace() {
+		HudSnapshot s = snap(SurvivalContext.builder().pickaxe(2).sword(2).build(), new GuideProgress());
+		assertEquals("furnace", ids(s).get(0));
+		assertTrue(s.completed().containsAll(List.of("wood", "crafting_table", "wooden_pickaxe", "stone_tools")));
+	}
+
+	@Test
+	void bedCountsWool() {
+		GuideProgress p = new GuideProgress();
+		p.completed.addAll(List.of("wood", "crafting_table", "wooden_pickaxe", "stone_tools", "furnace", "food"));
+		HudSnapshot s = snap(SurvivalContext.builder().wool(2).build(), p);
+		assertEquals(new HudSnapshot.Entry("bed", 2, 3), s.next().get(0));
+	}
+
+	@Test
+	void lastTasksShowFewerLines() {
+		GuideProgress p = new GuideProgress();
+		TipRegistry.MILESTONES.stream().limit(TipRegistry.MILESTONES.size() - 1).forEach(m -> p.completed.add(m.id()));
+		HudSnapshot s = HudSnapshot.of(SurvivalContext.builder().build(), p, 3);
+		assertEquals(List.of("water_bucket"), ids(s));
+	}
+
+	@Test
+	void allDoneMeansNoTasks() {
+		GuideProgress p = new GuideProgress();
+		TipRegistry.MILESTONES.forEach(m -> p.completed.add(m.id()));
+		assertTrue(HudSnapshot.of(SurvivalContext.builder().build(), p, 3).next().isEmpty());
+	}
+
+	@Test
+	void urgentIdReflectsSituationRegardlessOfCooldown() {
+		GuideProgress p = new GuideProgress();
+		SurvivalContext creeper = SurvivalContext.builder().creeper(true).build();
+		assertEquals("creeper", snap(creeper, p).urgentId());
+		assertEquals("creeper", snap(creeper, p).urgentId(), "still shown while the chat tip is on cooldown");
+	}
+
+	@Test
+	void duskInsideShelterIsCalm() {
+		assertEquals("", snap(SurvivalContext.builder().time(11500).sheltered(true).build(), new GuideProgress()).urgentId());
+		assertEquals("dusk", snap(SurvivalContext.builder().time(11500).build(), new GuideProgress()).urgentId());
+	}
+
+	@Test
+	void snapshotsWithSameContentAreEqual() {
+		SurvivalContext c = SurvivalContext.builder().logs(3).build();
+		assertEquals(snap(c, new GuideProgress()), snap(c, new GuideProgress()), "equality drives 'only sync when changed'");
+	}
+}
