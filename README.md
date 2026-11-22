@@ -61,6 +61,13 @@ All advice follows a researched beginner path. Recipes, mob spawns, ore heights 
   (creeper, skeleton, enderman, the new parched skeleton, sheep, ...). Look at an ore and it tells you which
   pickaxe you need: green when your tool works, red when it would break the block without dropping anything.
 
+### Light check (key L)
+- Press **L** and small red dots appear on every nearby spot where a monster could spawn (dark floor with
+  room for a 2-block-tall mob, block light 0). Place torches until the dots are gone; when everything around
+  you is lit, the action bar tells you so. Press L again to turn it off.
+- Scans 16 blocks around you every half second, client-side only. Outdoors the dots show where monsters
+  can spawn at night. In the Nether light doesn't stop spawns, and the check says so.
+
 ### Environment card (below the task card)
 ```
 ┌ [sand] Desert ───────────── Y 64 ┐

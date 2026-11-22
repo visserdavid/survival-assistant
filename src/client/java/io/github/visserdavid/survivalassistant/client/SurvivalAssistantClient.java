@@ -13,6 +13,7 @@ import io.github.visserdavid.survivalassistant.SurvivalAssistant;
 import io.github.visserdavid.survivalassistant.client.hud.CrosshairInfo;
 import io.github.visserdavid.survivalassistant.client.hud.EnvironmentCard;
 import io.github.visserdavid.survivalassistant.client.hud.HudConfig;
+import io.github.visserdavid.survivalassistant.client.hud.LightCheck;
 import io.github.visserdavid.survivalassistant.client.hud.RecipeOverlay;
 import io.github.visserdavid.survivalassistant.client.hud.TaskHud;
 
@@ -22,6 +23,7 @@ public class SurvivalAssistantClient implements ClientModInitializer {
 	private static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(SurvivalAssistant.id("guide"));
 	private static KeyMapping toggleHud;
 	private static KeyMapping toggleEnv;
+	private static KeyMapping toggleLight;
 
 	@Override
 	public void onInitializeClient() {
@@ -37,9 +39,13 @@ public class SurvivalAssistantClient implements ClientModInitializer {
 				"key.survivalassistant.toggle_hud", InputConstants.KEY_J, CATEGORY));
 		toggleEnv = KeyMappingHelper.registerKeyMapping(new KeyMapping(
 				"key.survivalassistant.toggle_env", InputConstants.KEY_K, CATEGORY));
+		toggleLight = KeyMappingHelper.registerKeyMapping(new KeyMapping(
+				"key.survivalassistant.light_check", InputConstants.KEY_L, CATEGORY));
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			CrosshairInfo.tick(client);
+			while (toggleLight.consumeClick()) LightCheck.toggle(client);
+			LightCheck.tick(client);
 			HudConfig cfg = HudConfig.get();
 			while (toggleHud.consumeClick()) {
 				cfg.mode = cfg.mode.next();

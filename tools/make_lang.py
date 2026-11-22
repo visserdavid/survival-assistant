@@ -177,6 +177,15 @@ L = {
     P + "hud.title": ("Guide · Day %s/%s", "Gids · Dag %s/%s"),
     P + "hud.all_done": ("All goals reached!", "Alle doelen gehaald!"),
 
+    # ---------------- light check (L) ----------------
+    P + "light.on": ("Light check on: red dots = monsters can spawn there. Place torches until they're gone.",
+                     "Verlichtingscheck aan: rode stippen = hier kunnen monsters spawnen. Zet fakkels tot ze weg zijn."),
+    P + "light.off": ("Light check off", "Verlichtingscheck uit"),
+    P + "light.no_effect": ("Light check: in this dimension light doesn't stop monsters from spawning.",
+                            "Verlichtingscheck: in deze dimensie houdt licht monsters niet tegen."),
+    P + "light.all_lit": ("Light check: everything nearby is lit. No monsters can spawn here.",
+                          "Verlichtingscheck: alles in de buurt is verlicht. Hier spawnen geen monsters."),
+
     # ---------------- recipe card ----------------
     P + "recipe.title": ("Recipe: %s", "Recept: %s"),
     P + "recipe.needs_table": ("Needs a crafting table (3x3)", "Werkbank nodig (3x3)"),
@@ -307,6 +316,7 @@ L = {
     P + "hud.env_on": ("Environment card: on", "Omgevingskaart: aan"),
     P + "hud.env_off": ("Environment card: off", "Omgevingskaart: uit"),
     "key.survivalassistant.toggle_env": ("Environment card", "Omgevingskaart"),
+    "key.survivalassistant.light_check": ("Light check (dark spots)", "Verlichtingscheck (donkere plekken)"),
     P + "env.here": ("here:", "hier:"),
     P + "env.no_ores": ("no ores at this height", "geen ertsen op deze hoogte"),
     P + "env.pointer.up": ("%s: go up, most around Y %s", "%s: ga omhoog, het meest rond Y %s"),
