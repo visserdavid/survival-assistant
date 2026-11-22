@@ -20,13 +20,23 @@ import java.util.Set;
 /**
  * The "quest card": current task with icon, counter and bar, plus the next two tasks (compact),
  * or all milestones (full). Shows a day/sun clock and turns red when something urgent is going on.
+ *
+ * <p>The card is as wide as its content needs (see {@link HudText}); text that still doesn't fit scrolls
+ * inside its own slot so it never overlaps the counter or the clock.
  */
 public final class TaskHud implements HudElement {
-	private static final int WIDTH = 150;
 	private static final int PAD = 4;
 	private static final int HEADER_H = 12;
 	private static final int CURRENT_H = 20;
 	private static final int ROW_H = 10;
+	private static final int ICON_X = PAD + 20;   // text start next to a full-size icon
+	private static final int SMALL_X = PAD + 17;  // text start next to a small icon (compact rows)
+	private static final int FULL_X = PAD + 19;   // text start in the full list
+	private static final int GAP = 6;             // minimum space between text and right-aligned info
+
+	// clock: symbol + 6 segments
+	private static final int SEG_W = 4, SEG_GAP = 1, SEG_H = 5, SEGMENTS = 6;
+	private static final int BAR_W = SEGMENTS * (SEG_W + SEG_GAP) - SEG_GAP;
 
 	private static final int BG = 0xB0101010;
 	private static final int BORDER = 0xFF6B5320;
@@ -43,11 +53,16 @@ public final class TaskHud implements HudElement {
 
 	/** Screen rectangle {x, y, w, h} of the card drawn this frame, or null when hidden (used by EnvironmentCard). */
 	public static int[] visibleBounds = null;
+	/** Unscaled card width used this frame (EnvironmentCard uses the same width so both cards line up). */
+	public static int cardWidth = HudText.MIN_WIDTH;
 
 	// --- completion animation state ---
 	private Set<String> knownCompleted = null;
 	private String flashId = null;
 	private long flashStart = 0;
+
+	/** Width of the card being drawn this frame. */
+	private int width = HudText.MIN_WIDTH;
 
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor g, DeltaTracker delta) {
@@ -66,9 +81,11 @@ public final class TaskHud implements HudElement {
 		trackCompletion(snap, now);
 
 		boolean full = cfg.mode == HudConfig.Mode.FULL;
+		width = HudText.clampWidth(Math.max(wantedWidth(mc.font, snap, full, now), HudText.environmentWanted));
+		cardWidth = width;
 		int height = full ? fullHeight() : compactHeight(snap, now);
 		float scale = cfg.scale;
-		int sw = Math.round(WIDTH * scale), sh = Math.round(height * scale);
+		int sw = Math.round(width * scale), sh = Math.round(height * scale);
 		int x = switch (cfg.corner) {
 			case TOP_LEFT, BOTTOM_LEFT -> cfg.margin;
 			case TOP_RIGHT, BOTTOM_RIGHT -> g.guiWidth() - sw - cfg.margin;
@@ -88,6 +105,30 @@ public final class TaskHud implements HudElement {
 	}
 
 	// ------------------------------------------------------------------ layout
+
+	/** The width at which nothing on the card would need to scroll. */
+	private int wantedWidth(Font font, HudSnapshot snap, boolean full, long now) {
+		int wanted = PAD + font.width(title(snap)) + GAP + clockWidth(font) + PAD;
+		if (full) {
+			for (Tip m : TipRegistry.MILESTONES) {
+				wanted = Math.max(wanted, FULL_X + font.width(taskName(m.id())) + GAP + font.width("99/99") + PAD);
+			}
+			return wanted;
+		}
+		List<HudSnapshot.Entry> lines = linesForCompact(snap, now);
+		for (int i = 0; i < lines.size(); i++) {
+			HudSnapshot.Entry e = lines.get(i);
+			if (e.id().isEmpty()) continue;
+			int text = font.width(taskName(e.id()));
+			wanted = Math.max(wanted, i == 0
+					? ICON_X + text + GAP + font.width(counter(e, false)) + PAD
+					: SMALL_X + text + PAD);
+		}
+		if (!snap.urgentId().isEmpty()) {
+			wanted = Math.max(wanted, ICON_X + font.width(alertName(snap.urgentId())) + PAD);
+		}
+		return wanted;
+	}
 
 	private int compactHeight(HudSnapshot snap, long now) {
 		int rows = Math.max(0, linesForCompact(snap, now).size() - 1);
@@ -127,6 +168,27 @@ public final class TaskHud implements HudElement {
 		knownCompleted = completed;
 	}
 
+	private static Component title(HudSnapshot snap) {
+		int day = Math.min(snap.dayIndex() + 1, Math.max(1, snap.maxDays()));
+		return Component.translatable("survivalassistant.hud.title", day, snap.maxDays());
+	}
+
+	private static Component taskName(String id) {
+		return Component.translatable("survivalassistant.task." + id);
+	}
+
+	private static Component alertName(String id) {
+		return Component.translatable("survivalassistant.alert." + id);
+	}
+
+	private static String counter(HudSnapshot.Entry e, boolean done) {
+		return done ? "✔" : e.target() > 0 ? e.value() + "/" + e.target() : "";
+	}
+
+	private static int clockWidth(Font font) {
+		return font.width("☾") + 2 + BAR_W;
+	}
+
 	// ------------------------------------------------------------------ drawing
 
 	private void drawCard(GuiGraphicsExtractor g, Minecraft mc, HudSnapshot snap, int height, boolean full, long now) {
@@ -139,14 +201,14 @@ public final class TaskHud implements HudElement {
 			float pulse = 0.5f + 0.5f * (float) Math.sin(now / 150.0);
 			border = lerpColor(0xFF7A1010, RED, pulse);
 		}
-		g.fill(0, 0, WIDTH, height, BG);
-		outline(g, 0, 0, WIDTH, height, border);
+		g.fill(0, 0, width, height, BG);
+		outline(g, 0, 0, width, height, border);
 
-		drawHeader(g, mc, font, snap);
+		drawHeader(g, mc, font, snap, now);
 
 		int y = PAD + HEADER_H;
 		if (full) {
-			drawFullList(g, font, snap, y);
+			drawFullList(g, font, snap, y, now);
 			return;
 		}
 
@@ -165,24 +227,21 @@ public final class TaskHud implements HudElement {
 			drawAlert(g, font, snap.urgentId(), y, now);
 		} else if (firstIsFlash) {
 			float fade = 1 - (now - flashStart) / (float) FLASH_MS;
-			drawCurrent(g, font, first, y, true, fade);
+			drawCurrent(g, font, first, y, true, fade, now);
 		} else if (first.id().isEmpty()) {
-			g.text(font, Component.translatable("survivalassistant.hud.all_done"), PAD + 20, y + 6, GREEN, true);
+			HudText.fit(g, font, Component.translatable("survivalassistant.hud.all_done"), ICON_X, y + 6, width - ICON_X - PAD, GREEN, true, now);
 		} else {
-			drawCurrent(g, font, first, y + slide, false, 1f);
+			drawCurrent(g, font, first, y + slide, false, 1f, now);
 		}
 
 		int rowY = y + CURRENT_H + slide;
 		for (int i = 1; i < lines.size(); i++) {
-			drawSmallRow(g, font, lines.get(i), rowY, GRAY, "·");
+			drawSmallRow(g, font, lines.get(i), rowY, GRAY, now);
 			rowY += ROW_H;
 		}
 	}
 
-	private void drawHeader(GuiGraphicsExtractor g, Minecraft mc, Font font, HudSnapshot snap) {
-		int day = Math.min(snap.dayIndex() + 1, Math.max(1, snap.maxDays()));
-		g.text(font, Component.translatable("survivalassistant.hud.title", day, snap.maxDays()), PAD, PAD + 1, GOLD, true);
-
+	private void drawHeader(GuiGraphicsExtractor g, Minecraft mc, Font font, HudSnapshot snap, long now) {
 		// sun/moon clock: 6 segments counting down to sunset (day) or sunrise (night)
 		long time = Math.floorMod(mc.level.getOverworldClockTime(), 24000L);
 		boolean night = time >= 13000 && time < 23000;
@@ -190,35 +249,37 @@ public final class TaskHud implements HudElement {
 		int color = night ? RED : dusk ? 0xFFFF8C1A : 0xFFFFD54F;
 		long remaining = night ? 23000 - time : time >= 23000 ? 12000 + (24000 - time) : Math.max(0, 12000 - time);
 		long span = night ? 10000 : 12000;
-		int filled = (int) Math.ceil(Math.min(1.0, remaining / (double) span) * 6);
+		int filled = (int) Math.ceil(Math.min(1.0, remaining / (double) span) * SEGMENTS);
 
-		int segW = 4, gap = 1, segH = 5;
-		int barX = WIDTH - PAD - 6 * (segW + gap) + gap;
+		int barX = width - PAD - BAR_W;
 		int barY = PAD + 2;
-		for (int i = 0; i < 6; i++) {
-			int sx = barX + i * (segW + gap);
-			g.fill(sx, barY, sx + segW, barY + segH, i < filled ? color : BAR_BG);
+		for (int i = 0; i < SEGMENTS; i++) {
+			int sx = barX + i * (SEG_W + SEG_GAP);
+			g.fill(sx, barY, sx + SEG_W, barY + SEG_H, i < filled ? color : BAR_BG);
 		}
 		String symbol = night ? "☾" : "☀";
-		g.text(font, symbol, barX - font.width(symbol) - 2, PAD + 1, color, true);
+		int symbolX = barX - font.width(symbol) - 2;
+		g.text(font, symbol, symbolX, PAD + 1, color, true);
+
+		HudText.fit(g, font, title(snap), PAD, PAD + 1, symbolX - GAP - PAD, GOLD, true, now);
 	}
 
-	private void drawCurrent(GuiGraphicsExtractor g, Font font, HudSnapshot.Entry e, int y, boolean done, float alpha) {
+	private void drawCurrent(GuiGraphicsExtractor g, Font font, HudSnapshot.Entry e, int y, boolean done, float alpha, long now) {
 		int a = Math.max(0x20, Math.round(alpha * 255)) << 24;
 		ItemStack icon = TaskIcons.get(e.id());
 		if (!icon.isEmpty()) g.item(icon, PAD, y + 1);
 
-		Component title = Component.translatable("survivalassistant.task." + e.id());
 		int textColor = done ? (GREEN & 0xFFFFFF) | a : WHITE;
-		g.text(font, title, PAD + 20, y + 2, textColor, true);
-
-		String right = done ? "✔" : e.target() > 0 ? e.value() + "/" + e.target() : "";
+		String right = counter(e, done);
+		int rightX = width - PAD - font.width(right);
 		if (!right.isEmpty()) {
-			g.text(font, right, WIDTH - PAD - font.width(right), y + 2, done ? textColor : GOLD, true);
+			g.text(font, right, rightX, y + 2, done ? textColor : GOLD, true);
 		}
+		int textMax = (right.isEmpty() ? width - PAD : rightX - GAP) - ICON_X;
+		HudText.fit(g, font, taskName(e.id()), ICON_X, y + 2, textMax, textColor, true, now);
 
 		// progress bar
-		int bx0 = PAD + 20, bx1 = WIDTH - PAD, by = y + 13;
+		int bx0 = ICON_X, bx1 = width - PAD, by = y + 13;
 		g.fill(bx0, by, bx1, by + 2, BAR_BG);
 		float frac = done ? 1f : e.target() > 0 ? e.value() / (float) e.target() : 0f;
 		if (frac > 0) g.fill(bx0, by, bx0 + Math.round((bx1 - bx0) * frac), by + 2, done ? (GREEN & 0xFFFFFF) | a : GOLD);
@@ -228,16 +289,16 @@ public final class TaskHud implements HudElement {
 		ItemStack icon = TaskIcons.get(alertId);
 		if (!icon.isEmpty()) g.item(icon, PAD, y + 1);
 		boolean blink = (now / 400) % 2 == 0;
-		g.text(font, Component.translatable("survivalassistant.alert." + alertId), PAD + 20, y + 5, blink ? RED : 0xFFFFB0B0, true);
+		HudText.fit(g, font, alertName(alertId), ICON_X, y + 5, width - ICON_X - PAD, blink ? RED : 0xFFFFB0B0, true, now);
 	}
 
-	private void drawSmallRow(GuiGraphicsExtractor g, Font font, HudSnapshot.Entry e, int y, int color, String bullet) {
+	private void drawSmallRow(GuiGraphicsExtractor g, Font font, HudSnapshot.Entry e, int y, int color, long now) {
 		smallIcon(g, TaskIcons.get(e.id()), PAD + 6, y);
-		g.text(font, bullet, PAD, y + 1, DARK_GRAY, false);
-		g.text(font, Component.translatable("survivalassistant.task." + e.id()), PAD + 17, y + 1, color, true);
+		g.text(font, "·", PAD, y + 1, DARK_GRAY, false);
+		HudText.fit(g, font, taskName(e.id()), SMALL_X, y + 1, width - SMALL_X - PAD, color, true, now);
 	}
 
-	private void drawFullList(GuiGraphicsExtractor g, Font font, HudSnapshot snap, int y) {
+	private void drawFullList(GuiGraphicsExtractor g, Font font, HudSnapshot snap, int y, long now) {
 		Set<String> completed = new HashSet<>(snap.completed());
 		String current = snap.next().isEmpty() ? "" : snap.next().get(0).id();
 		for (Tip m : TipRegistry.MILESTONES) {
@@ -246,12 +307,15 @@ public final class TaskHud implements HudElement {
 			int color = done ? GREEN : isCurrent ? GOLD : GRAY;
 			smallIcon(g, TaskIcons.get(m.id()), PAD + 8, y);
 			g.text(font, done ? "✔" : isCurrent ? "▶" : "·", PAD, y + 1, color, false);
-			g.text(font, Component.translatable("survivalassistant.task." + m.id()), PAD + 19, y + 1, color, true);
+
+			int textMax = width - FULL_X - PAD;
 			if (isCurrent && !snap.next().isEmpty() && snap.next().get(0).target() > 0) {
-				HudSnapshot.Entry e = snap.next().get(0);
-				String count = e.value() + "/" + e.target();
-				g.text(font, count, WIDTH - PAD - font.width(count), y + 1, GOLD, true);
+				String count = counter(snap.next().get(0), false);
+				int countX = width - PAD - font.width(count);
+				g.text(font, count, countX, y + 1, GOLD, true);
+				textMax = countX - GAP - FULL_X;
 			}
+			HudText.fit(g, font, taskName(m.id()), FULL_X, y + 1, textMax, color, true, now);
 			y += ROW_H;
 		}
 	}
