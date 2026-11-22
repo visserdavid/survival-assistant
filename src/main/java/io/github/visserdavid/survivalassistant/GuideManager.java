@@ -4,7 +4,12 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,6 +25,7 @@ import io.github.visserdavid.survivalassistant.advice.BiomeGroup;
 import io.github.visserdavid.survivalassistant.advice.OreTable;
 import io.github.visserdavid.survivalassistant.advice.ContextCollector;
 import io.github.visserdavid.survivalassistant.advice.DigTracker;
+import io.github.visserdavid.survivalassistant.advice.GuideLifecycle;
 import io.github.visserdavid.survivalassistant.advice.Navigation;
 import io.github.visserdavid.survivalassistant.advice.GuideProgress;
 import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
@@ -88,8 +94,13 @@ public final class GuideManager {
 			firstMeeting = true;
 		}
 
-		if (dayIndex(player, progress) >= cfg.maxDays) {
-			retire(player, progress, "farewell");
+		GuideLifecycle.Step step = lifecycle(player, progress);
+		if (step == GuideLifecycle.Step.CONGRATULATE) {
+			congratulate(player, progress);
+			return;
+		}
+		if (step == GuideLifecycle.Step.FAREWELL) {
+			retire(player, progress, progress.askedAtTick >= 0 ? "extend.no_answer" : "farewell");
 			return;
 		}
 
@@ -107,6 +118,14 @@ public final class GuideManager {
 			say(player, guide, Component.translatable(npc ? "survivalassistant.welcome.2" : "survivalassistant.welcome_no_npc"), false);
 			LAST_EVAL.put(player.getUUID(), 0L); // give the first tip on the next pass
 			return;
+		}
+
+		if (step == GuideLifecycle.Step.ASK) {
+			progress.askedAtTick = player.level().getOverworldClockTime();
+			askToExtend(player, guide, "survivalassistant.extend.ask");
+		} else if (step == GuideLifecycle.Step.REMIND) {
+			progress.reminded = true;
+			askToExtend(player, guide, "survivalassistant.extend.reminder");
 		}
 
 		if (progress.comfortPending) {
@@ -132,7 +151,7 @@ public final class GuideManager {
 		SurvivalContext ctx = ContextCollector.collect(player, progress, dig == null ? 0 : dig.current(now),
 				progress.homeFallback == null ? pos -> progress.homeFallback = mark(player, pos) : null);
 		respond(player, guide, ctx, progress, forced);
-		HudState.update(player, HudSnapshot.of(ctx, progress, ModConfig.get().maxDays, waypoint(player, progress, ctx, now)));
+		HudState.update(player, HudSnapshot.of(ctx, progress, dayLimit(progress), waypoint(player, progress, ctx, now)));
 	}
 
 	// ---------------------------------------------------------------- navigation (death spot, home)
@@ -208,6 +227,18 @@ public final class GuideManager {
 		return new AdviceEngine.Settings(cfg.urgentCooldownSeconds * 20L, cfg.milestoneCooldownSeconds * 20L);
 	}
 
+	/** The guide period including extensions. */
+	public static int dayLimit(GuideProgress progress) {
+		return ModConfig.get().maxDays + progress.extraDays;
+	}
+
+	private static GuideLifecycle.Step lifecycle(ServerPlayer player, GuideProgress progress) {
+		ModConfig cfg = ModConfig.get();
+		return GuideLifecycle.decide(dayIndex(player, progress), cfg.maxDays, progress.extraDays, cfg.extendDays,
+				progress.completed.size() >= TipRegistry.MILESTONES.size(), progress.askedAtTick, progress.reminded,
+				player.level().getOverworldClockTime());
+	}
+
 	public static int dayIndex(ServerPlayer player, GuideProgress progress) {
 		long clock = player.level().getOverworldClockTime();
 		return (int) Math.max(0, clock / 24000L - progress.startTick / 24000L);
@@ -256,6 +287,48 @@ public final class GuideManager {
 		progress.retired = true;
 		removeGuide(player.getUUID(), true);
 		HudState.update(player, HudSnapshot.INACTIVE);
+	}
+
+	/** All goals reached: a proper celebration, then the guide leaves. */
+	private static void congratulate(ServerPlayer player, GuideProgress progress) {
+		GuideEntity guide = GUIDES.get(player.getUUID());
+		int total = TipRegistry.MILESTONES.size();
+		say(player, guide, Component.translatable("survivalassistant.congrats.1").withStyle(ChatFormatting.GREEN), false);
+		say(player, guide, Component.translatable("survivalassistant.congrats.2"), false);
+		if (ModConfig.get().allowRecall) {
+			say(player, guide, Component.translatable("survivalassistant.farewell.recall"), false);
+		}
+		player.connection.send(new ClientboundSetTitleTextPacket(
+				Component.translatable("survivalassistant.congrats.title").withStyle(ChatFormatting.GOLD)));
+		player.connection.send(new ClientboundSetSubtitleTextPacket(
+				Component.translatable("survivalassistant.congrats.subtitle", total)));
+		player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+				SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.PLAYERS, 1.0f, 1.0f);
+		player.level().sendParticles(ParticleTypes.TOTEM_OF_UNDYING, player.getX(), player.getY() + 1, player.getZ(),
+				60, 0.6, 0.8, 0.6, 0.3);
+		if (guide != null && !guide.isRemoved()) {
+			player.level().sendParticles(ParticleTypes.TOTEM_OF_UNDYING, guide.getX(), guide.getY() + 1, guide.getZ(),
+					40, 0.4, 0.8, 0.4, 0.3);
+		}
+		progress.retired = true;
+		progress.askedAtTick = -1;
+		removeGuide(player.getUUID(), true);
+		HudState.update(player, HudSnapshot.INACTIVE);
+	}
+
+	/** "Do you still need me?" with clickable yes/no buttons. */
+	private static void askToExtend(ServerPlayer player, @Nullable GuideEntity guide, String questionKey) {
+		int days = ModConfig.get().extendDays;
+		MutableComponent yes = Component.literal("[").append(Component.translatable("survivalassistant.extend.yes", days)).append("]")
+				.withStyle(Style.EMPTY.withColor(ChatFormatting.GREEN).withBold(true)
+						.withClickEvent(new ClickEvent.RunCommand("/guide extend"))
+						.withHoverEvent(new HoverEvent.ShowText(Component.translatable("survivalassistant.extend.yes_hover", days))));
+		MutableComponent no = Component.literal("[").append(Component.translatable("survivalassistant.extend.no")).append("]")
+				.withStyle(Style.EMPTY.withColor(ChatFormatting.RED).withBold(true)
+						.withClickEvent(new ClickEvent.RunCommand("/guide dismiss"))
+						.withHoverEvent(new HoverEvent.ShowText(Component.translatable("survivalassistant.extend.no_hover"))));
+		say(player, guide, Component.translatable(questionKey).withStyle(ChatFormatting.AQUA), true);
+		player.sendSystemMessage(Component.literal("   ").append(yes).append("  ").append(no));
 	}
 
 	// ---------------------------------------------------------------- talking
@@ -326,7 +399,7 @@ public final class GuideManager {
 		evaluateAndSay(player, guide, progress, true);
 		say(player, null, Component.translatable("survivalassistant.progress",
 				progress.completed.size(), TipRegistry.MILESTONES.size(),
-				Math.max(0, ModConfig.get().maxDays - dayIndex(player, progress))).withStyle(ChatFormatting.GRAY), false);
+				Math.max(0, dayLimit(progress) - dayIndex(player, progress))).withStyle(ChatFormatting.GRAY), false);
 	}
 
 	public static void onRespawn(ServerPlayer newPlayer) {
@@ -382,16 +455,15 @@ public final class GuideManager {
 		GuideProgress progress = GuideState.of(player);
 		if (progress.retired) {
 			if (!ModConfig.get().allowRecall) return false;
-			progress.retired = false;
-			progress.startTick = player.level().getOverworldClockTime();
+			progress.restart(player.level().getOverworldClockTime());
 		} else if (progress.startTick < 0) {
-			progress.startTick = player.level().getOverworldClockTime();
+			progress.restart(player.level().getOverworldClockTime());
 		}
 		GuideEntity guide = ensureGuide(player);
 		if (guide == null) return false;
 		FollowOwnerGoal.teleportNear(guide, player.blockPosition());
 		say(player, guide, Component.translatable("survivalassistant.recall"), false);
-		HudState.update(player, HudSnapshot.of(ContextCollector.collect(player, progress), progress, ModConfig.get().maxDays));
+		HudState.update(player, HudSnapshot.of(ContextCollector.collect(player, progress), progress, dayLimit(progress)));
 		return true;
 	}
 
@@ -401,6 +473,21 @@ public final class GuideManager {
 		if (progress.retired) return false;
 		if (progress.startTick < 0) progress.startTick = player.level().getOverworldClockTime();
 		retire(player, progress, "dismissed");
+		return true;
+	}
+
+	/** /guide extend: the guide stays a few more days. */
+	public static boolean extend(ServerPlayer player) {
+		GuideProgress progress = GuideState.of(player);
+		int days = ModConfig.get().extendDays;
+		if (progress.retired || progress.startTick < 0 || days <= 0) return false;
+		progress.extraDays += days;
+		progress.askedAtTick = -1;
+		progress.reminded = false;
+		GuideEntity guide = GUIDES.get(player.getUUID());
+		int left = Math.max(0, dayLimit(progress) - dayIndex(player, progress));
+		say(player, guide, Component.translatable("survivalassistant.extend.confirmed", left).withStyle(ChatFormatting.GREEN), false);
+		LAST_EVAL.remove(player.getUUID()); // refresh the card on the next pass
 		return true;
 	}
 

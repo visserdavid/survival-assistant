@@ -19,7 +19,10 @@ All advice follows a researched beginner path. Recipes, mob spawns, ore heights 
 - It gives tips in chat at the right moment, praises you when you reach a goal, and looks at the nearest tree
   or stone when it tells you to gather them.
 - Right-click the guide for a tip and your progress.
-- After 3 in-game days it says goodbye. You can call it back with `/guide call`.
+- After 3 in-game days it asks whether you still need it. Click **[Yes, 3 more days]** to keep it around
+  (you can extend as often as you like), or **[No, thanks]** to say goodbye. No answer within a day means goodbye.
+- Reach all 15 goals and the guide congratulates you (title, sound and a burst of particles) and leaves:
+  you're ready. You can always call it back with `/guide call`.
 - Don't want a character walking around? `/guide character off` removes it. The task card stays, and you
   only get urgent warnings in chat.
 
@@ -73,6 +76,7 @@ All advice follows a researched beginner path. Recipes, mob spawns, ore heights 
 | `/guide tip` | Get the most important tip right now |
 | `/guide call` | Bring the guide to you (or back after it said goodbye) |
 | `/guide dismiss` | Send the guide away |
+| `/guide extend` | Let the guide stay 3 more days |
 | `/guide mute <minutes>` | No unsolicited tips for a while (0–120) |
 | `/guide character on\|off` | Show or hide the guide character (saved per player) |
 
@@ -83,6 +87,7 @@ All advice follows a researched beginner path. Recipes, mob spawns, ore heights 
 | Option | Default | Meaning |
 |---|---|---|
 | `maxDays` | `3` | In-game days the guide stays |
+| `extendDays` | `3` | Days added when the player says they still need the guide (`0` = never ask, just leave) |
 | `tipIntervalSeconds` | `2` | How often the situation is checked |
 | `milestoneCooldownSeconds` | `180` | Minimum time between repeats of the same task tip |
 | `urgentCooldownSeconds` | `60` | Minimum time between repeats of the same warning |

@@ -30,10 +30,14 @@ public final class GuideState {
 			Codec.STRING.listOf().optionalFieldOf("completed", List.of()).forGetter(p -> List.copyOf(p.completed)),
 			Codec.BOOL.optionalFieldOf("npc_enabled").forGetter(p -> Optional.ofNullable(p.npcEnabled)),
 			Codec.STRING.listOf().optionalFieldOf("depth_notices", List.of()).forGetter(p -> List.copyOf(p.depthNotices)),
-			MARK_CODEC.optionalFieldOf("home_fallback").forGetter(p -> Optional.ofNullable(p.homeFallback))
-	).apply(i, (start, retired, completed, npc, notices, home) -> {
+			MARK_CODEC.optionalFieldOf("home_fallback").forGetter(p -> Optional.ofNullable(p.homeFallback)),
+			Codec.INT.optionalFieldOf("extra_days", 0).forGetter(p -> p.extraDays),
+			Codec.LONG.optionalFieldOf("asked_at", -1L).forGetter(p -> p.askedAtTick)
+	).apply(i, (start, retired, completed, npc, notices, home, extra, asked) -> {
 		GuideProgress p = new GuideProgress(start, retired, new LinkedHashSet<>(completed), npc.orElse(null), new LinkedHashSet<>(notices));
 		p.homeFallback = home.orElse(null);
+		p.extraDays = extra;
+		p.askedAtTick = asked;
 		return p;
 	}));
 

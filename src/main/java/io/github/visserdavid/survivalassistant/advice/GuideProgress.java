@@ -20,12 +20,27 @@ public final class GuideProgress {
 	public final Set<String> depthNotices = new LinkedHashSet<>();
 	/** Fallback home when the player has no bed/respawn point: the first workstation they placed. */
 	public Navigation.Mark homeFallback = null;
+	/** Days added because the player said they still needed the guide. */
+	public int extraDays = 0;
+	/** Overworld clock tick when the guide asked "do you still need me?"; -1 = no open question. */
+	public long askedAtTick = -1;
 
 	// --- transient (not saved) ---
 	/** Game tick until which unsolicited tips are muted. */
 	public long muteUntil = 0;
 	public final Map<String, Long> lastShown = new HashMap<>();
 	public boolean comfortPending = false;
+	/** The reminder for the open question was already given. */
+	public boolean reminded = false;
+
+	/** Resets the guide period (used when the guide is called back). */
+	public void restart(long startTick) {
+		this.startTick = startTick;
+		this.retired = false;
+		this.extraDays = 0;
+		this.askedAtTick = -1;
+		this.reminded = false;
+	}
 
 	public GuideProgress() {}
 
