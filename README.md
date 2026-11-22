@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/images/icon-512.png" alt="Survival Assistant icon" width="200"></p>
+
 # Survival Assistant
 
 A Fabric mod for **Minecraft 26.3** that helps new players get through their first days in survival.
@@ -117,6 +119,8 @@ because sync tools like OneDrive lock files in `build/`. On other systems it use
 Developer tools:
 - `tools/make_lang.py` generates `en_us.json` and `nl_nl.json` from one table, so both languages always have the same keys.
 - `tools/biome_facts.py` regenerates [docs/biomes-and-heights.md](docs/biomes-and-heights.md) from the Minecraft jar.
+- `tools/make_icon.py` builds the transparent PNG icons from `docs/images/SurvivalAssistant.jpg`
+  (`uv run --with pillow python tools/make_icon.py`).
 
 ## How the advice was verified
 See [docs/research-first-days.md](docs/research-first-days.md) for the sources, the consensus and a table of
