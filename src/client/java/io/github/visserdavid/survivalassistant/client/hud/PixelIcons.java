@@ -27,7 +27,31 @@ public final class PixelIcons {
 			"#...",
 	};
 
+	private static final String[] ARROW = {
+			"...#...",
+			"..###..",
+			".#####.",
+			"#######",
+			"..###..",
+			"..###..",
+			"..###..",
+	};
+
 	public static final int CHECK_W = 7;
+	public static final int ARROW_SIZE = 7;
+
+	/**
+	 * An arrow centred on (cx, cy), pointing up when {@code angle} is 0 and turning clockwise for positive angles
+	 * (radians). Used to point towards a place in the world relative to where the player is looking.
+	 */
+	public static void arrow(GuiGraphicsExtractor g, float cx, float cy, float angle, int color) {
+		g.pose().pushMatrix();
+		g.pose().translate(cx, cy);
+		g.pose().rotate(angle);
+		g.pose().translate(-ARROW_SIZE / 2f, -ARROW_SIZE / 2f);
+		draw(g, ARROW, 0, 0, color);
+		g.pose().popMatrix();
+	}
 	public static final int PLAY_W = 4;
 
 	/** A check mark, 7x5, top-left at (x, y). */

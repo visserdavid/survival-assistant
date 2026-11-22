@@ -27,6 +27,10 @@ public final class ModConfig {
 	public boolean npcEnabledByDefault = true;
 	/** Show one-time chat notes when reaching new depths (deepslate, lava level, deep dark, high mountains). */
 	public boolean depthNotices = true;
+	/** Show the way back to your items after dying, and the way home when far away or at night. */
+	public boolean navigation = true;
+	/** Show the way home from this distance (blocks); at dusk/night already from 24 blocks. */
+	public int homeDistance = 64;
 	/** Spawn a guide automatically for new players. */
 	public boolean spawnOnJoin = true;
 	/** Let the guide look at nearby trees/stone when giving those tips. */

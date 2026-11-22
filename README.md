@@ -40,6 +40,15 @@ All advice follows a researched beginner path. Recipes, mob spawns, ore heights 
   low health, hunger, dusk or night outside, thunderstorm, underground without torches).
 - Press **J** to switch between compact, the full list of all 15 goals, and hidden.
 
+### Safety and finding your way
+- **Back to your items**: after you die, the bottom of the task card shows a rotating arrow, the distance to
+  where you died and how long your items stay (max 5:00). It disappears once you've been there.
+- **Way home**: when you're more than 64 blocks from your bed (or first workstation), or it gets dark and
+  you're more than 24 blocks away, an arrow points you home.
+- **Mining safety**: a warning when you dig the block under your own feet twice in a row (digging straight
+  down), when lava is within a few blocks underground, or when sand/gravel hangs right above your head.
+- **Phantoms**: a reminder after two nights without sleep (phantoms come after three).
+
 ### Environment card (below the task card)
 ```
 ┌ [sand] Desert ───────────── Y 64 ┐
@@ -82,6 +91,8 @@ All advice follows a researched beginner path. Recipes, mob spawns, ore heights 
 | `depthNotices` | `true` | One-time chat notes about depth and mountains |
 | `spawnOnJoin` | `true` | Give new players a guide automatically |
 | `pointAtResources` | `true` | Guide looks at nearby trees/stone when giving those tips |
+| `navigation` | `true` | Show the way back to your items after dying, and the way home |
+| `homeDistance` | `64` | Show the way home from this distance (24 at dusk/night) |
 
 **Client**: `config/survivalassistant-client.json`
 

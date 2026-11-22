@@ -9,6 +9,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
 import io.github.visserdavid.survivalassistant.SurvivalAssistant;
 import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
+import io.github.visserdavid.survivalassistant.advice.Navigation;
 
 import java.util.Objects;
 
@@ -22,6 +23,19 @@ public final class HudState {
 			ByteBufCodecs.VAR_INT, HudSnapshot.Entry::target,
 			HudSnapshot.Entry::new);
 
+	private static final StreamCodec<ByteBuf, Navigation.Mark> MARK_CODEC = StreamCodec.composite(
+			ByteBufCodecs.STRING_UTF8, Navigation.Mark::dimension,
+			ByteBufCodecs.VAR_INT, Navigation.Mark::x,
+			ByteBufCodecs.VAR_INT, Navigation.Mark::y,
+			ByteBufCodecs.VAR_INT, Navigation.Mark::z,
+			Navigation.Mark::new);
+
+	private static final StreamCodec<ByteBuf, Navigation.Waypoint> WAYPOINT_CODEC = StreamCodec.composite(
+			ByteBufCodecs.VAR_INT.map(i -> Navigation.Kind.values()[i], Navigation.Kind::ordinal), Navigation.Waypoint::kind,
+			MARK_CODEC, Navigation.Waypoint::target,
+			ByteBufCodecs.VAR_INT, Navigation.Waypoint::ticksLeft,
+			Navigation.Waypoint::new);
+
 	public static final StreamCodec<ByteBuf, HudSnapshot> STREAM_CODEC = StreamCodec.composite(
 			ByteBufCodecs.BOOL, HudSnapshot::active,
 			ByteBufCodecs.VAR_INT, HudSnapshot::dayIndex,
@@ -29,6 +43,7 @@ public final class HudState {
 			ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list(64)), HudSnapshot::completed,
 			ENTRY_CODEC.apply(ByteBufCodecs.list(HudSnapshot.SHOWN_TASKS)), HudSnapshot::next,
 			ByteBufCodecs.STRING_UTF8, HudSnapshot::urgentId,
+			ByteBufCodecs.optional(WAYPOINT_CODEC), HudSnapshot::waypoint,
 			HudSnapshot::new);
 
 	public static final AttachmentType<HudSnapshot> HUD = AttachmentRegistry.create(SurvivalAssistant.id("hud"),

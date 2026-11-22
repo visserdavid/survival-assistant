@@ -4,7 +4,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.Stats;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,18 +16,33 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
+import org.jspecify.annotations.Nullable;
+
+import java.util.function.Consumer;
 
 /** Builds a {@link SurvivalContext} from the live game state. */
 public final class ContextCollector {
 	/** Placed crafting tables, furnaces, chests and beds within this radius count as "has". */
 	private static final int BLOCK_SCAN_RADIUS = 8;
+	/** Lava within this many blocks (underground) triggers the lava warning. */
+	private static final int LAVA_SCAN_RADIUS = 3;
 
 	private ContextCollector() {}
 
 	public static SurvivalContext collect(ServerPlayer player, GuideProgress progress) {
+		return collect(player, progress, 0, null);
+	}
+
+	/**
+	 * @param digDownStreak recent breaks under the player's feet (see {@link DigTracker})
+	 * @param stationFound  called with the position of a placed crafting table, chest or bed nearby (may be null)
+	 */
+	public static SurvivalContext collect(ServerPlayer player, GuideProgress progress, int digDownStreak,
+			@Nullable Consumer<BlockPos> stationFound) {
 		ServerLevel level = player.level();
 		long clock = level.getOverworldClockTime();
 		int timeOfDay = (int) Math.floorMod(clock, 24000L);
@@ -74,16 +91,21 @@ public final class ContextCollector {
 		}
 
 		// Placed blocks nearby (players usually place a crafting table/furnace/bed right after crafting it).
-		if (!(table && furnace && chest && bed)) {
+		if (!(table && furnace && chest && bed) || stationFound != null) {
 			BlockPos origin = player.blockPosition();
 			int r = BLOCK_SCAN_RADIUS;
 			for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-r, -4, -r), origin.offset(r, 4, r))) {
 				BlockState st = level.getBlockState(pos);
 				if (st.isAir()) continue;
-				if (st.is(Blocks.CRAFTING_TABLE)) table = true;
+				boolean station = false;
+				if (st.is(Blocks.CRAFTING_TABLE)) { table = true; station = true; }
 				else if (st.is(Blocks.FURNACE)) furnace = true;
-				else if (st.is(Blocks.CHEST)) chest = true;
-				else if (st.is(BlockTags.BEDS)) bed = true;
+				else if (st.is(Blocks.CHEST)) { chest = true; station = true; }
+				else if (st.is(BlockTags.BEDS)) { bed = true; station = true; }
+				if (station && stationFound != null) {
+					stationFound.accept(pos.immutable());
+					stationFound = null; // only the first one
+				}
 			}
 		}
 
@@ -92,13 +114,29 @@ public final class ContextCollector {
 		int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, head.getX(), head.getZ());
 		boolean underground = sheltered && head.getY() < surfaceY - 8;
 
+		boolean lava = false;
+		boolean fallingAbove = false;
+		if (underground) {
+			BlockPos feet = player.blockPosition();
+			int r = LAVA_SCAN_RADIUS;
+			for (BlockPos pos : BlockPos.betweenClosed(feet.offset(-r, -r, -r), feet.offset(r, r, r))) {
+				if (level.getFluidState(pos).is(FluidTags.LAVA)) {
+					lava = true;
+					break;
+				}
+			}
+			fallingAbove = level.getBlockState(head.above()).getBlock() instanceof FallingBlock;
+		}
+		int sinceRest = player.getStats().getValue(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
+
 		AABB around = new AABB(player.blockPosition()).inflate(16);
 		int hostiles = level.getEntitiesOfClass(LivingEntity.class, around, e -> e instanceof Enemy && e.isAlive()).size();
 		boolean creeper = !level.getEntitiesOfClass(Creeper.class, new AABB(player.blockPosition()).inflate(7), Creeper::isAlive).isEmpty();
 
 		return new SurvivalContext(dayIndex, timeOfDay, player.getHealth(), player.getFoodData().getFoodLevel(),
 				logs, planks, table, pickaxe, weapon, cobble, furnace, foodItems, bed, wool, torches, chest, iron, shield, ironArmor,
-				waterBucket, sheltered, underground, level.isThundering(), hostiles, creeper);
+				waterBucket, sheltered, underground, level.isThundering(), hostiles, creeper, sinceRest, lava, fallingAbove,
+				digDownStreak);
 	}
 
 	private static int toolTier(Item item) {

@@ -16,6 +16,10 @@ package io.github.visserdavid.survivalassistant.advice;
  * @param underground    no sky above and well below the surface
  * @param hostilesNearby number of hostile mobs within ~16 blocks
  * @param creeperNearby  a creeper within ~7 blocks
+ * @param ticksSinceRest statistic time_since_rest (ticks since the player last slept)
+ * @param lavaNearby     underground with lava within ~3 blocks
+ * @param fallingBlockAbove underground with sand/gravel (a falling block) right above the head
+ * @param digDownStreak  recent breaks of the block directly under the player's feet
  */
 public record SurvivalContext(
 		int dayIndex,
@@ -42,8 +46,15 @@ public record SurvivalContext(
 		boolean underground,
 		boolean thundering,
 		int hostilesNearby,
-		boolean creeperNearby
+		boolean creeperNearby,
+		int ticksSinceRest,
+		boolean lavaNearby,
+		boolean fallingBlockAbove,
+		int digDownStreak
 ) {
+	/** Phantoms can spawn after 72000 ticks (3 days) without sleep; we warn from the second night on. */
+	public static final int PHANTOM_WARNING_TICKS = 48000;
+
 	public static final int SUNSET = 11000;
 	public static final int NIGHT_START = 13000;
 	public static final int NIGHT_END = 23000;
@@ -62,10 +73,10 @@ public record SurvivalContext(
 
 	/** Convenience builder, mainly for tests. Defaults: day 0, morning, full health and food, empty inventory, outside. */
 	public static final class Builder {
-		private int dayIndex, timeOfDay = 1000, food = 20, logs, planks, pickaxeTier, swordTier, cobblestone, foodItems, wool, torches, iron, hostilesNearby;
+		private int dayIndex, timeOfDay = 1000, food = 20, logs, planks, pickaxeTier, swordTier, cobblestone, foodItems, wool, torches, iron, hostilesNearby, ticksSinceRest, digDownStreak;
 		private float health = 20f;
 		private boolean hasCraftingTable, hasFurnace, hasBed, hasChest, hasShield, hasIronArmor, hasWaterBucket,
-				sheltered, underground, thundering, creeperNearby;
+				sheltered, underground, thundering, creeperNearby, lavaNearby, fallingBlockAbove;
 
 		public Builder day(int v) { dayIndex = v; return this; }
 		public Builder time(int v) { timeOfDay = v; return this; }
@@ -92,11 +103,16 @@ public record SurvivalContext(
 		public Builder thundering(boolean v) { thundering = v; return this; }
 		public Builder hostiles(int v) { hostilesNearby = v; return this; }
 		public Builder creeper(boolean v) { creeperNearby = v; return this; }
+		public Builder sinceRest(int v) { ticksSinceRest = v; return this; }
+		public Builder lava(boolean v) { lavaNearby = v; return this; }
+		public Builder fallingAbove(boolean v) { fallingBlockAbove = v; return this; }
+		public Builder digDown(int v) { digDownStreak = v; return this; }
 
 		public SurvivalContext build() {
 			return new SurvivalContext(dayIndex, timeOfDay, health, food, logs, planks, hasCraftingTable, pickaxeTier, swordTier,
 					cobblestone, hasFurnace, foodItems, hasBed, wool, torches, hasChest, iron, hasShield, hasIronArmor, hasWaterBucket,
-					sheltered, underground, thundering, hostilesNearby, creeperNearby);
+					sheltered, underground, thundering, hostilesNearby, creeperNearby, ticksSinceRest, lavaNearby, fallingBlockAbove,
+					digDownStreak);
 		}
 	}
 }

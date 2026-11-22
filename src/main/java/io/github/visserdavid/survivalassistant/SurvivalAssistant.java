@@ -2,7 +2,9 @@ package io.github.visserdavid.survivalassistant;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -49,6 +51,12 @@ public class SurvivalAssistant implements ModInitializer {
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> GuideManager.onDisconnect(handler.getPlayer()));
 		ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
 			if (!alive) GuideManager.onRespawn(newPlayer);
+		});
+		ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
+			if (entity instanceof net.minecraft.server.level.ServerPlayer player) GuideManager.onDeath(player);
+		});
+		PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {
+			if (player instanceof net.minecraft.server.level.ServerPlayer sp) GuideManager.onBlockBroken(sp, pos);
 		});
 		ServerLifecycleEvents.SERVER_STOPPING.register(server -> GuideManager.onServerStopping());
 		CommandRegistrationCallback.EVENT.register((dispatcher, context, selection) -> GuideCommand.register(dispatcher));

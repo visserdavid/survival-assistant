@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
+import io.github.visserdavid.survivalassistant.advice.Navigation;
 import io.github.visserdavid.survivalassistant.advice.Tip;
 import io.github.visserdavid.survivalassistant.advice.TipRegistry;
 import io.github.visserdavid.survivalassistant.state.HudState;
@@ -34,6 +35,8 @@ public final class TaskHud implements HudElement {
 	private static final int SMALL_X = PAD + 17;  // text start next to a small icon (compact rows)
 	private static final int FULL_X = PAD + 19;   // text start in the full list
 	private static final int GAP = 6;             // minimum space between text and right-aligned info
+	private static final int NAV_H = 13;          // navigation strip (death spot / home) at the bottom
+	private static final int NAV_TEXT_X = PAD + 21;
 
 	// clock: clock item (shows the sun/moon itself) + 6 segments
 	private static final int SEG_W = 4, SEG_GAP = 1, SEG_H = 5, SEGMENTS = 6;
@@ -48,6 +51,8 @@ public final class TaskHud implements HudElement {
 	private static final int GREEN = 0xFF6BD96B;
 	private static final int RED = 0xFFFF5050;
 	private static final int BAR_BG = 0xFF303030;
+	private static final int AQUA = 0xFF6FD3E8;
+	private static final int DEATH_COLOR = 0xFFFF9A6B;
 
 	private static final long FLASH_MS = 1500;
 	private static final long SLIDE_MS = 250;
@@ -84,9 +89,10 @@ public final class TaskHud implements HudElement {
 		trackCompletion(snap, now);
 
 		boolean full = cfg.mode == HudConfig.Mode.FULL;
-		width = HudText.clampWidth(Math.max(wantedWidth(mc.font, snap, full, now), HudText.environmentWanted));
+		width = HudText.clampWidth(Math.max(Math.max(wantedWidth(mc.font, snap, full, now), navWanted(mc.font, snap)),
+				HudText.environmentWanted));
 		cardWidth = width;
-		int height = full ? fullHeight() : compactHeight(snap, now);
+		int height = (full ? fullHeight() : compactHeight(snap, now)) + (snap.waypoint().isPresent() ? NAV_H : 0);
 		float scale = cfg.scale;
 		int sw = Math.round(width * scale), sh = Math.round(height * scale);
 		int x = switch (cfg.corner) {
@@ -131,6 +137,10 @@ public final class TaskHud implements HudElement {
 			wanted = Math.max(wanted, ICON_X + font.width(alertName(snap.urgentId())) + PAD);
 		}
 		return wanted;
+	}
+
+	private static int navWanted(Font font, HudSnapshot snap) {
+		return snap.waypoint().map(w -> NAV_TEXT_X + font.width(navText(w, Minecraft.getInstance())) + PAD).orElse(0);
 	}
 
 	private int compactHeight(HudSnapshot snap, long now) {
@@ -213,6 +223,7 @@ public final class TaskHud implements HudElement {
 		outline(g, 0, 0, width, height, border);
 
 		drawHeader(g, mc, font, snap, now);
+		snap.waypoint().ifPresent(w -> drawNav(g, mc, font, w, height - PAD - NAV_H + 2, now));
 
 		int y = PAD + HEADER_H;
 		if (full) {
@@ -331,6 +342,60 @@ public final class TaskHud implements HudElement {
 			HudText.fit(g, font, taskName(m.id()), FULL_X, y + 1, textMax, color, true, now);
 			y += ROW_H;
 		}
+	}
+
+	// ------------------------------------------------------------------ navigation strip
+
+	/** One line at the bottom of the card: rotating arrow, icon, and where to go (death spot or home). */
+	private void drawNav(GuiGraphicsExtractor g, Minecraft mc, Font font, Navigation.Waypoint w, int y, long now) {
+		boolean death = w.kind() == Navigation.Kind.DEATH;
+		int color = death ? DEATH_COLOR : AQUA;
+		g.fill(PAD, y - 2, width - PAD, y - 1, 0x40FFFFFF);
+
+		if (sameDimension(mc, w)) {
+			PixelIcons.arrow(g, PAD + 4, y + 4.5f, arrowAngle(mc, w), color);
+		} else {
+			PixelIcons.dot(g, PAD + 3, y + 4, color);
+		}
+		smallIcon(g, TaskIcons.get(death ? "nav_death" : "nav_home"), PAD + 11, y);
+		HudText.fit(g, font, navText(w, mc), NAV_TEXT_X, y + 1, width - NAV_TEXT_X - PAD, color, true, now);
+	}
+
+	private static Component navText(Navigation.Waypoint w, Minecraft mc) {
+		boolean same = sameDimension(mc, w);
+		if (w.kind() == Navigation.Kind.DEATH) {
+			int seconds = Math.max(0, w.ticksLeft() / 20);
+			String time = (seconds / 60) + ":" + String.format("%02d", seconds % 60);
+			return same
+					? Component.translatable("survivalassistant.nav.death", distance(mc, w), time)
+					: Component.translatable("survivalassistant.nav.death_other", dimensionName(w), time);
+		}
+		return Component.translatable("survivalassistant.nav.home", distance(mc, w));
+	}
+
+	private static boolean sameDimension(Minecraft mc, Navigation.Waypoint w) {
+		return mc.level != null && mc.level.dimension().identifier().toString().equals(w.target().dimension());
+	}
+
+	private static int distance(Minecraft mc, Navigation.Waypoint w) {
+		double dx = w.target().x() + 0.5 - mc.player.getX(), dz = w.target().z() + 0.5 - mc.player.getZ();
+		return (int) Math.round(Math.sqrt(dx * dx + dz * dz));
+	}
+
+	private static Component dimensionName(Navigation.Waypoint w) {
+		String dim = w.target().dimension();
+		String path = dim.substring(dim.indexOf(':') + 1);
+		return Component.translatable("survivalassistant.nav.dim." + path);
+	}
+
+	/** Angle (radians, clockwise from "straight ahead") from the player's view direction to the target. */
+	private static float arrowAngle(Minecraft mc, Navigation.Waypoint w) {
+		double dx = w.target().x() + 0.5 - mc.player.getX(), dz = w.target().z() + 0.5 - mc.player.getZ();
+		double yaw = Math.toRadians(mc.player.getYRot());
+		double lookX = -Math.sin(yaw), lookZ = Math.cos(yaw);
+		double forward = dx * lookX + dz * lookZ;
+		double right = dx * -lookZ + dz * lookX;
+		return (float) Math.atan2(right, forward);
 	}
 
 	// ------------------------------------------------------------------ helpers

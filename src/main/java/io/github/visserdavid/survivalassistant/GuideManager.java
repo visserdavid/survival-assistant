@@ -19,6 +19,8 @@ import io.github.visserdavid.survivalassistant.advice.AdviceEngine;
 import io.github.visserdavid.survivalassistant.advice.BiomeGroup;
 import io.github.visserdavid.survivalassistant.advice.OreTable;
 import io.github.visserdavid.survivalassistant.advice.ContextCollector;
+import io.github.visserdavid.survivalassistant.advice.DigTracker;
+import io.github.visserdavid.survivalassistant.advice.Navigation;
 import io.github.visserdavid.survivalassistant.advice.GuideProgress;
 import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
 import io.github.visserdavid.survivalassistant.advice.SurvivalContext;
@@ -34,6 +36,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -44,6 +47,11 @@ import java.util.function.Predicate;
 public final class GuideManager {
 	private static final Map<UUID, GuideEntity> GUIDES = new HashMap<>();
 	private static final Map<UUID, Long> LAST_EVAL = new HashMap<>();
+	/** Where and when each player last died (kept here, not on the player, so it survives the respawn copy). */
+	private static final Map<UUID, DeathRecord> DEATHS = new HashMap<>();
+	private static final Map<UUID, DigTracker> DIGS = new HashMap<>();
+
+	private record DeathRecord(Navigation.Mark mark, long tick) {}
 	private static final double RESPAWN_DIST_SQR = 48 * 48;
 
 	private GuideManager() {}
@@ -119,9 +127,55 @@ public final class GuideManager {
 
 	/** Evaluates the situation, says whatever is due and refreshes the task card. */
 	private static void evaluateAndSay(ServerPlayer player, @Nullable GuideEntity guide, GuideProgress progress, boolean forced) {
-		SurvivalContext ctx = ContextCollector.collect(player, progress);
+		long now = player.level().getGameTime();
+		DigTracker dig = DIGS.get(player.getUUID());
+		SurvivalContext ctx = ContextCollector.collect(player, progress, dig == null ? 0 : dig.current(now),
+				progress.homeFallback == null ? pos -> progress.homeFallback = mark(player, pos) : null);
 		respond(player, guide, ctx, progress, forced);
-		HudState.update(player, HudSnapshot.of(ctx, progress, ModConfig.get().maxDays));
+		HudState.update(player, HudSnapshot.of(ctx, progress, ModConfig.get().maxDays, waypoint(player, progress, ctx, now)));
+	}
+
+	// ---------------------------------------------------------------- navigation (death spot, home)
+
+	private static Optional<Navigation.Waypoint> waypoint(ServerPlayer player, GuideProgress progress, SurvivalContext ctx, long now) {
+		ModConfig cfg = ModConfig.get();
+		if (!cfg.navigation) return Optional.empty();
+		Navigation.Mark here = mark(player, player.blockPosition());
+
+		DeathRecord death = DEATHS.get(player.getUUID());
+		if (death != null && (Navigation.reached(death.mark(), here) || now - death.tick() >= Navigation.ITEM_LIFETIME_TICKS)) {
+			DEATHS.remove(player.getUUID());
+			death = null;
+		}
+		boolean duskOrNight = ctx.isDusk() || ctx.isNight();
+		return Navigation.pick(death == null ? null : death.mark(), death == null ? 0 : death.tick(),
+				home(player, progress), here, now, duskOrNight, cfg.homeDistance);
+	}
+
+	/** The bed/respawn point if the player has one, otherwise the first workstation they placed. */
+	private static Navigation.@Nullable Mark home(ServerPlayer player, GuideProgress progress) {
+		ServerPlayer.RespawnConfig respawn = player.getRespawnConfig();
+		if (respawn != null) {
+			BlockPos pos = respawn.respawnData().pos();
+			return new Navigation.Mark(respawn.respawnData().dimension().identifier().toString(), pos.getX(), pos.getY(), pos.getZ());
+		}
+		return progress.homeFallback;
+	}
+
+	private static Navigation.Mark mark(ServerPlayer player, BlockPos pos) {
+		return new Navigation.Mark(player.level().dimension().identifier().toString(), pos.getX(), pos.getY(), pos.getZ());
+	}
+
+	/** Called when a player dies: remember the spot so the task card can lead them back to their items. */
+	public static void onDeath(ServerPlayer player) {
+		DEATHS.put(player.getUUID(), new DeathRecord(mark(player, player.blockPosition()), player.level().getGameTime()));
+	}
+
+	/** Called after a player breaks a block: detects digging straight down (the block right under the feet). */
+	public static void onBlockBroken(ServerPlayer player, BlockPos pos) {
+		if (pos.getX() != player.getBlockX() || pos.getZ() != player.getBlockZ() || pos.getY() != player.getBlockY() - 1) return;
+		int streak = DIGS.computeIfAbsent(player.getUUID(), id -> new DigTracker()).record(player.level().getGameTime());
+		if (streak >= 2) LAST_EVAL.remove(player.getUUID()); // react on the next pass instead of waiting for the interval
 	}
 
 	private static void respond(ServerPlayer player, @Nullable GuideEntity guide, SurvivalContext ctx, GuideProgress progress, boolean forced) {
@@ -283,12 +337,15 @@ public final class GuideManager {
 	public static void onDisconnect(ServerPlayer player) {
 		removeGuide(player.getUUID(), false);
 		LAST_EVAL.remove(player.getUUID());
+		DIGS.remove(player.getUUID());
 	}
 
 	public static void onServerStopping() {
 		GUIDES.values().forEach(g -> { if (!g.isRemoved()) g.discard(); });
 		GUIDES.clear();
 		LAST_EVAL.clear();
+		DEATHS.clear();
+		DIGS.clear();
 	}
 
 	/** /guide tip */

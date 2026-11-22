@@ -37,6 +37,13 @@ public final class TaskIcons {
 		put("night_outside", Items.CLOCK);
 		put("thunder", Items.TRIDENT);
 		put("underground", Items.TORCH);
+		put("dig_down", Items.LADDER);
+		put("lava_near", Items.LAVA_BUCKET);
+		put("phantoms", Items.PHANTOM_MEMBRANE);
+		put("falling_block", Items.GRAVEL);
+		// navigation strip
+		put("nav_death", Items.SKELETON_SKULL);
+		put("nav_home", Items.COMPASS);
 	}
 
 	private TaskIcons() {}

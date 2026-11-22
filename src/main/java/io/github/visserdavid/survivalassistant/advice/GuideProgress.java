@@ -18,6 +18,8 @@ public final class GuideProgress {
 	public Boolean npcEnabled = null;
 	/** One-time depth/biome notices already shown (e.g. "deepslate", "lava"). */
 	public final Set<String> depthNotices = new LinkedHashSet<>();
+	/** Fallback home when the player has no bed/respawn point: the first workstation they placed. */
+	public Navigation.Mark homeFallback = null;
 
 	// --- transient (not saved) ---
 	/** Game tick until which unsolicited tips are muted. */

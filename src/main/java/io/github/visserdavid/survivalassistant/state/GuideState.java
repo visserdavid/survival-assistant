@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.world.entity.player.Player;
 import io.github.visserdavid.survivalassistant.SurvivalAssistant;
 import io.github.visserdavid.survivalassistant.advice.GuideProgress;
+import io.github.visserdavid.survivalassistant.advice.Navigation;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -16,14 +17,25 @@ import java.util.Optional;
 public final class GuideState {
 	private GuideState() {}
 
+	private static final Codec<Navigation.Mark> MARK_CODEC = RecordCodecBuilder.create(i -> i.group(
+			Codec.STRING.fieldOf("dimension").forGetter(Navigation.Mark::dimension),
+			Codec.INT.fieldOf("x").forGetter(Navigation.Mark::x),
+			Codec.INT.fieldOf("y").forGetter(Navigation.Mark::y),
+			Codec.INT.fieldOf("z").forGetter(Navigation.Mark::z)
+	).apply(i, Navigation.Mark::new));
+
 	public static final Codec<GuideProgress> CODEC = RecordCodecBuilder.create(i -> i.group(
 			Codec.LONG.optionalFieldOf("start_tick", -1L).forGetter(p -> p.startTick),
 			Codec.BOOL.optionalFieldOf("retired", false).forGetter(p -> p.retired),
 			Codec.STRING.listOf().optionalFieldOf("completed", List.of()).forGetter(p -> List.copyOf(p.completed)),
 			Codec.BOOL.optionalFieldOf("npc_enabled").forGetter(p -> Optional.ofNullable(p.npcEnabled)),
-			Codec.STRING.listOf().optionalFieldOf("depth_notices", List.of()).forGetter(p -> List.copyOf(p.depthNotices))
-	).apply(i, (start, retired, completed, npc, notices) ->
-			new GuideProgress(start, retired, new LinkedHashSet<>(completed), npc.orElse(null), new LinkedHashSet<>(notices))));
+			Codec.STRING.listOf().optionalFieldOf("depth_notices", List.of()).forGetter(p -> List.copyOf(p.depthNotices)),
+			MARK_CODEC.optionalFieldOf("home_fallback").forGetter(p -> Optional.ofNullable(p.homeFallback))
+	).apply(i, (start, retired, completed, npc, notices, home) -> {
+		GuideProgress p = new GuideProgress(start, retired, new LinkedHashSet<>(completed), npc.orElse(null), new LinkedHashSet<>(notices));
+		p.homeFallback = home.orElse(null);
+		return p;
+	}));
 
 	public static final AttachmentType<GuideProgress> PROGRESS = AttachmentRegistry.create(SurvivalAssistant.id("progress"),
 			builder -> builder.persistent(CODEC).copyOnDeath().initializer(GuideProgress::new));

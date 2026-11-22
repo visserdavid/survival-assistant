@@ -13,6 +13,12 @@ public final class TipRegistry {
 	/** A creeper explodes ~1.5 s after it starts hissing: run. */
 	public static final Tip CREEPER = Tip.urgent("creeper", 2,
 			SurvivalContext::creeperNearby);
+	/** Breaking the block under your own feet twice in a row: you're digging straight down. */
+	public static final Tip DIG_DOWN = Tip.urgent("dig_down", 2,
+			c -> c.digDownStreak() >= 2);
+	/** Lava within a few blocks while underground. */
+	public static final Tip LAVA_NEAR = Tip.urgent("lava_near", 2,
+			SurvivalContext::lavaNearby);
 	public static final Tip DANGER = Tip.urgent("danger", 2,
 			c -> c.health() <= 6f && c.hostilesNearby() > 0);
 	/** At food <= 6 you can't sprint; at 0 you starve. */
@@ -24,6 +30,12 @@ public final class TipRegistry {
 			c -> c.isDusk() && !c.sheltered());
 	public static final Tip NIGHT_OUTSIDE = Tip.urgent("night_outside", 2,
 			c -> c.isNight() && !c.sheltered());
+	/** Phantoms after 3 nights without sleep (verified: PhantomSpawner, 72000 ticks); warn from the 2nd night. */
+	public static final Tip PHANTOMS = Tip.warning("phantoms", 2,
+			c -> c.isNight() && c.ticksSinceRest() >= SurvivalContext.PHANTOM_WARNING_TICKS);
+	/** Sand or gravel right above your head underground can fall on you. */
+	public static final Tip FALLING_BLOCK = Tip.warning("falling_block", 1,
+			c -> c.underground() && c.fallingBlockAbove());
 	/** Monsters can spawn in daylight during thunderstorms. */
 	public static final Tip THUNDER = Tip.warning("thunder", 1,
 			c -> c.thundering() && !c.sheltered());
@@ -31,7 +43,8 @@ public final class TipRegistry {
 	public static final Tip UNDERGROUND = Tip.warning("underground", 2,
 			c -> c.underground() && c.torches() == 0);
 
-	public static final List<Tip> URGENT = List.of(CREEPER, DANGER, HUNGRY_EAT, HUNGRY_HUNT, DUSK, NIGHT_OUTSIDE, THUNDER, UNDERGROUND);
+	public static final List<Tip> URGENT = List.of(CREEPER, DIG_DOWN, LAVA_NEAR, DANGER, HUNGRY_EAT, HUNGRY_HUNT, DUSK, NIGHT_OUTSIDE,
+			PHANTOMS, THUNDER, FALLING_BLOCK, UNDERGROUND);
 
 	// --- Day 1: progression milestones. "done" checks include later progress, so skipping ahead counts. ---
 	public static final Tip WOOD = Tip.milestone("wood", 3,
