@@ -106,6 +106,10 @@ tasks.register("installToModrinth", Copy) {
 	def prefix = "${rootProject.name}-"
 	doFirst {
 		// Remove older versions of this mod so only one copy is loaded.
-		modsDir.listFiles()?.findAll { it.name.startsWith(prefix) && it.name.endsWith(".jar") }?.each { it.delete() }
+		modsDir.listFiles()?.findAll { it.name.startsWith(prefix) && it.name.endsWith(".jar") }?.each {
+			if (!it.delete()) {
+				throw new GradleException("Could not remove ${it.name}: it is in use. Close Minecraft and run installToModrinth again.")
+			}
+		}
 	}
 }
