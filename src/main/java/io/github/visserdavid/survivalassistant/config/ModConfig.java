@@ -19,6 +19,10 @@ public final class ModConfig {
 	public int maxDays = 3;
 	/** When the period ends the guide asks whether it is still needed; "yes" adds this many days. 0 = never ask. */
 	public int extendDays = 3;
+	/** After all chapter-1 goals, offer chapter 2 (farm, full armor, diamonds, Nether preparation). */
+	public boolean chapter2 = true;
+	/** In-game days the guide stays for chapter 2 (can be extended like chapter 1). */
+	public int chapter2Days = 4;
 	/** How often the guide checks the situation (cooldowns below prevent spam). */
 	public int tipIntervalSeconds = 2;
 	public int milestoneCooldownSeconds = 180;

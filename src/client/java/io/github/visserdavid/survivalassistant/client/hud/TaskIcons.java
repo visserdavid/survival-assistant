@@ -23,6 +23,17 @@ public final class TaskIcons {
 		put("torches", Items.TORCH);
 		put("shelter", Items.OAK_DOOR);
 		put("chest", Items.CHEST);
+		// chapter 2
+		put("farm", Items.WHEAT);
+		put("bread", Items.BREAD);
+		put("breed", Items.WHEAT_SEEDS);
+		put("full_iron_armor", Items.IRON_HELMET);
+		put("bow", Items.BOW);
+		put("diamonds", Items.DIAMOND);
+		put("diamond_pickaxe", Items.DIAMOND_PICKAXE);
+		put("obsidian", Items.OBSIDIAN);
+		put("flint_and_steel", Items.FLINT_AND_STEEL);
+		put("enchanting_table", Items.ENCHANTING_TABLE);
 		put("iron", Items.RAW_IRON);
 		put("shield", Items.SHIELD);
 		put("iron_pickaxe", Items.IRON_PICKAXE);

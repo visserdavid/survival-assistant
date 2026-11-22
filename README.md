@@ -21,8 +21,15 @@ All advice follows a researched beginner path. Recipes, mob spawns, ore heights 
 - Right-click the guide for a tip and your progress.
 - After 3 in-game days it asks whether you still need it. Click **[Yes, 3 more days]** to keep it around
   (you can extend as often as you like), or **[No, thanks]** to say goodbye. No answer within a day means goodbye.
-- Reach all 15 goals and the guide congratulates you (title, sound and a burst of particles) and leaves:
-  you're ready. You can always call it back with `/guide call`.
+- Reach all 15 goals and the guide congratulates you (title, sound and a burst of particles) and offers
+  **chapter 2**. Say no and it leaves: you're ready. You can always call it back with `/guide call`.
+
+### Chapter 2: settling in
+Ten more goals for after the first days, in 4 in-game days (extendable):
+start a farm, bake bread, breed animals, full iron armor, bow and 16 arrows, find diamonds, a diamond
+pickaxe, 10 obsidian, flint and steel, and an enchanting table. It prepares you for the Nether without
+sending you there. The research and checked game facts are in
+[docs/research-chapter-2.md](docs/research-chapter-2.md). Finish it for one more celebration.
 - Don't want a character walking around? `/guide character off` removes it. The task card stays, and you
   only get urgent warnings in chat.
 
@@ -93,6 +100,7 @@ All advice follows a researched beginner path. Recipes, mob spawns, ore heights 
 | `/guide call` | Bring the guide to you (or back after it said goodbye) |
 | `/guide dismiss` | Send the guide away |
 | `/guide extend` | Let the guide stay 3 more days |
+| `/guide continue` | Start chapter 2 (after all 15 chapter-1 goals) |
 | `/guide mute <minutes>` | No unsolicited tips for a while (0–120) |
 | `/guide character on\|off` | Show or hide the guide character (saved per player) |
 
@@ -103,6 +111,8 @@ All advice follows a researched beginner path. Recipes, mob spawns, ore heights 
 | Option | Default | Meaning |
 |---|---|---|
 | `maxDays` | `3` | In-game days the guide stays |
+| `chapter2` | `true` | Offer chapter 2 after the first 15 goals |
+| `chapter2Days` | `4` | In-game days the guide stays for chapter 2 |
 | `extendDays` | `3` | Days added when the player says they still need the guide (`0` = never ask, just leave) |
 | `tipIntervalSeconds` | `2` | How often the situation is checked |
 | `milestoneCooldownSeconds` | `180` | Minimum time between repeats of the same task tip |

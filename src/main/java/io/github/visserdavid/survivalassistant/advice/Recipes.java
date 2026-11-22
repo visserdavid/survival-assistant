@@ -48,7 +48,7 @@ public final class Recipes {
 	private static final String COBBLE = "minecraft:cobblestone";
 	private static final String IRON = "minecraft:iron_ingot";
 
-	/** Task id to recipe. Tasks without a crafting step (food, shelter, iron) have none. */
+	/** Task id to recipe. Tasks without a crafting step (food, shelter, iron, breeding, mining) have none. */
 	public static final Map<String, Recipe> BY_TASK = Map.ofEntries(
 			Map.entry("wood", new Recipe("minecraft:oak_planks", 4, List.of("L"), Map.of('L', "minecraft:oak_log"))),
 			Map.entry("crafting_table", new Recipe("minecraft:crafting_table", 1, List.of("##", "##"), Map.of('#', PLANKS))),
@@ -65,7 +65,17 @@ public final class Recipes {
 			Map.entry("iron_pickaxe", new Recipe("minecraft:iron_pickaxe", 1, List.of("XXX", " # ", " # "),
 					Map.of('X', IRON, '#', STICK))),
 			Map.entry("iron_armor", new Recipe("minecraft:iron_chestplate", 1, List.of("X X", "XXX", "XXX"), Map.of('X', IRON))),
-			Map.entry("water_bucket", new Recipe("minecraft:bucket", 1, List.of("# #", " # "), Map.of('#', IRON)))
+			Map.entry("water_bucket", new Recipe("minecraft:bucket", 1, List.of("# #", " # "), Map.of('#', IRON))),
+			// chapter 2
+			Map.entry("farm", new Recipe("minecraft:wooden_hoe", 1, List.of("XX", " #", " #"), Map.of('X', PLANKS, '#', STICK))),
+			Map.entry("bread", new Recipe("minecraft:bread", 1, List.of("###"), Map.of('#', "minecraft:wheat"))),
+			Map.entry("bow", new Recipe("minecraft:bow", 1, List.of(" #X", "# X", " #X"), Map.of('#', STICK, 'X', "minecraft:string"))),
+			Map.entry("diamond_pickaxe", new Recipe("minecraft:diamond_pickaxe", 1, List.of("XXX", " # ", " # "),
+					Map.of('X', "minecraft:diamond", '#', STICK))),
+			Map.entry("flint_and_steel", new Recipe("minecraft:flint_and_steel", 1, List.of("IF"),
+					Map.of('I', IRON, 'F', "minecraft:flint"))),
+			Map.entry("enchanting_table", new Recipe("minecraft:enchanting_table", 1, List.of(" B ", "D#D", "###"),
+					Map.of('B', "minecraft:book", 'D', "minecraft:diamond", '#', "minecraft:obsidian")))
 	);
 
 	public static Optional<Recipe> forTask(String taskId) {

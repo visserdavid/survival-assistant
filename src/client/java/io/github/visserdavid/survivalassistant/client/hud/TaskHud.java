@@ -96,7 +96,7 @@ public final class TaskHud implements HudElement {
 		width = HudText.clampWidth(Math.max(Math.max(wantedWidth(mc.font, snap, full, now), navWanted(mc.font, snap)),
 				HudText.environmentWanted));
 		cardWidth = width;
-		int height = (full ? fullHeight() + (currentRecipe(snap).isPresent() ? RECIPE_H : 0) : compactHeight(snap, now)) + (snap.waypoint().isPresent() ? NAV_H : 0);
+		int height = (full ? fullHeight(snap) + (currentRecipe(snap).isPresent() ? RECIPE_H : 0) : compactHeight(snap, now)) + (snap.waypoint().isPresent() ? NAV_H : 0);
 		float scale = cfg.scale;
 		int sw = Math.round(width * scale), sh = Math.round(height * scale);
 		int x = switch (cfg.corner) {
@@ -123,7 +123,7 @@ public final class TaskHud implements HudElement {
 	private int wantedWidth(Font font, HudSnapshot snap, boolean full, long now) {
 		int wanted = PAD + font.width(title(snap)) + GAP + clockWidth(font) + PAD;
 		if (full) {
-			for (Tip m : TipRegistry.MILESTONES) {
+			for (Tip m : TipRegistry.milestones(snap.chapter())) {
 				wanted = Math.max(wanted, FULL_X + font.width(taskName(m.id())) + GAP + font.width("99/99") + PAD);
 			}
 			Optional<Recipes.Recipe> recipe = currentRecipe(snap);
@@ -156,8 +156,8 @@ public final class TaskHud implements HudElement {
 		return PAD + HEADER_H + CURRENT_H + rows * ROW_H + PAD;
 	}
 
-	private static int fullHeight() {
-		return PAD + HEADER_H + TipRegistry.MILESTONES.size() * ROW_H + PAD;
+	private static int fullHeight(HudSnapshot snap) {
+		return PAD + HEADER_H + TipRegistry.milestones(snap.chapter()).size() * ROW_H + PAD;
 	}
 
 	/** Compact lines: optionally the task that was just completed (flashing), then the open tasks. */
@@ -179,7 +179,7 @@ public final class TaskHud implements HudElement {
 	private void trackCompletion(HudSnapshot snap, long now) {
 		Set<String> completed = new HashSet<>(snap.completed());
 		if (knownCompleted != null) {
-			for (Tip m : TipRegistry.MILESTONES) {
+			for (Tip m : TipRegistry.milestones(snap.chapter())) {
 				if (completed.contains(m.id()) && !knownCompleted.contains(m.id())) {
 					flashId = m.id();
 					flashStart = now;
@@ -191,7 +191,8 @@ public final class TaskHud implements HudElement {
 
 	private static Component title(HudSnapshot snap) {
 		int day = Math.min(snap.dayIndex() + 1, Math.max(1, snap.maxDays()));
-		return Component.translatable("survivalassistant.hud.title", day, snap.maxDays());
+		return Component.translatable(snap.chapter() >= 2 ? "survivalassistant.hud.title_ch2" : "survivalassistant.hud.title",
+				day, snap.maxDays());
 	}
 
 	private static Optional<Recipes.Recipe> currentRecipe(HudSnapshot snap) {
@@ -335,7 +336,7 @@ public final class TaskHud implements HudElement {
 	private void drawFullList(GuiGraphicsExtractor g, Font font, HudSnapshot snap, int y, long now) {
 		Set<String> completed = new HashSet<>(snap.completed());
 		String current = snap.next().isEmpty() ? "" : snap.next().get(0).id();
-		for (Tip m : TipRegistry.MILESTONES) {
+		for (Tip m : TipRegistry.milestones(snap.chapter())) {
 			boolean done = completed.contains(m.id());
 			boolean isCurrent = m.id().equals(current);
 			int color = done ? GREEN : isCurrent ? GOLD : GRAY;

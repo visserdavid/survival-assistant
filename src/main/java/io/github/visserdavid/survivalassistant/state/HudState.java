@@ -40,6 +40,7 @@ public final class HudState {
 			ByteBufCodecs.BOOL, HudSnapshot::active,
 			ByteBufCodecs.VAR_INT, HudSnapshot::dayIndex,
 			ByteBufCodecs.VAR_INT, HudSnapshot::maxDays,
+			ByteBufCodecs.VAR_INT, HudSnapshot::chapter,
 			ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list(64)), HudSnapshot::completed,
 			ENTRY_CODEC.apply(ByteBufCodecs.list(HudSnapshot.SHOWN_TASKS)), HudSnapshot::next,
 			ByteBufCodecs.STRING_UTF8, HudSnapshot::urgentId,

@@ -78,7 +78,8 @@ public final class OreTable {
 		if (taskId == null) return null;
 		return switch (taskId) {
 			case "torches" -> "coal";
-			case "iron", "shield", "iron_pickaxe", "iron_armor", "water_bucket" -> "iron";
+			case "iron", "shield", "iron_pickaxe", "iron_armor", "water_bucket", "full_iron_armor", "flint_and_steel" -> "iron";
+			case "diamonds", "diamond_pickaxe", "enchanting_table" -> "diamond";
 			case "" -> "diamond"; // all milestones done: diamonds are the natural next goal
 			default -> null;
 		};

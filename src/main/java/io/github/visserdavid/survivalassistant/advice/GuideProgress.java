@@ -24,6 +24,12 @@ public final class GuideProgress {
 	public int extraDays = 0;
 	/** Overworld clock tick when the guide asked "do you still need me?"; -1 = no open question. */
 	public long askedAtTick = -1;
+	/** Current chapter of goals (1 = first days, 2 = settling in). */
+	public int chapter = 1;
+	/** The next chapter was offered and the question is open. */
+	public boolean chapterOffered = false;
+	/** The final congratulation happened; when called back the guide only helps, without new goals. */
+	public boolean finished = false;
 
 	// --- transient (not saved) ---
 	/** Game tick until which unsolicited tips are muted. */
@@ -40,6 +46,7 @@ public final class GuideProgress {
 		this.extraDays = 0;
 		this.askedAtTick = -1;
 		this.reminded = false;
+		this.chapterOffered = false;
 	}
 
 	public GuideProgress() {}

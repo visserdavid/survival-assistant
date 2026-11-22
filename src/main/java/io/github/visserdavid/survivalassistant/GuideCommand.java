@@ -9,7 +9,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
-/** /guide call | dismiss | extend | tip | mute &lt;minutes&gt; | character on|off */
+/** /guide call | dismiss | extend | continue | tip | mute &lt;minutes&gt; | character on|off */
 public final class GuideCommand {
 	private GuideCommand() {}
 
@@ -18,6 +18,7 @@ public final class GuideCommand {
 				.then(Commands.literal("call").executes(c -> run(c, "call")))
 				.then(Commands.literal("dismiss").executes(c -> run(c, "dismiss")))
 				.then(Commands.literal("extend").executes(c -> run(c, "extend")))
+				.then(Commands.literal("continue").executes(c -> run(c, "continue")))
 				.then(Commands.literal("tip").executes(c -> run(c, "tip")))
 				.then(Commands.literal("mute")
 						.then(Commands.argument("minutes", IntegerArgumentType.integer(0, 120))
@@ -51,6 +52,7 @@ public final class GuideCommand {
 			case "call" -> GuideManager.recall(p);
 			case "dismiss" -> GuideManager.dismiss(p);
 			case "extend" -> GuideManager.extend(p);
+			case "continue" -> GuideManager.continueChapter(p);
 			default -> GuideManager.tipNow(p);
 		};
 		if (!ok) {

@@ -25,7 +25,7 @@ public final class AdviceEngine {
 		List<Message> out = new ArrayList<>();
 
 		// 1. Record newly completed milestones and praise them (praise is never muted: it's rare and motivating).
-		for (Tip m : TipRegistry.MILESTONES) {
+		for (Tip m : TipRegistry.milestones(progress.chapter)) {
 			if (!progress.completed.contains(m.id()) && m.done().test(ctx)) {
 				progress.completed.add(m.id());
 				if (!forced) out.add(new Message(m, false, true));
@@ -77,7 +77,7 @@ public final class AdviceEngine {
 	}
 
 	public static Tip nextMilestone(GuideProgress progress) {
-		for (Tip m : TipRegistry.MILESTONES) {
+		for (Tip m : TipRegistry.milestones(progress.chapter)) {
 			if (!progress.completed.contains(m.id())) return m;
 		}
 		return null;

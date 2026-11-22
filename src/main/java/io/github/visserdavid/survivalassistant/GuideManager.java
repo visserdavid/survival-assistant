@@ -100,7 +100,8 @@ public final class GuideManager {
 			return;
 		}
 		if (step == GuideLifecycle.Step.FAREWELL) {
-			retire(player, progress, progress.askedAtTick >= 0 ? "extend.no_answer" : "farewell");
+			retire(player, progress, progress.chapterOffered ? "chapter2.no_answer"
+					: progress.askedAtTick >= 0 ? "extend.no_answer" : "farewell");
 			return;
 		}
 
@@ -123,9 +124,12 @@ public final class GuideManager {
 		if (step == GuideLifecycle.Step.ASK) {
 			progress.askedAtTick = player.level().getOverworldClockTime();
 			askToExtend(player, guide, "survivalassistant.extend.ask");
+		} else if (step == GuideLifecycle.Step.OFFER_CHAPTER) {
+			offerNextChapter(player, guide, progress);
 		} else if (step == GuideLifecycle.Step.REMIND) {
 			progress.reminded = true;
-			askToExtend(player, guide, "survivalassistant.extend.reminder");
+			if (progress.chapterOffered) askChapter2(player, guide, "survivalassistant.chapter2.reminder");
+			else askToExtend(player, guide, "survivalassistant.extend.reminder");
 		}
 
 		if (progress.comfortPending) {
@@ -227,16 +231,34 @@ public final class GuideManager {
 		return new AdviceEngine.Settings(cfg.urgentCooldownSeconds * 20L, cfg.milestoneCooldownSeconds * 20L);
 	}
 
+	/** Configured period of the current chapter (without extensions). */
+	private static int baseDays(GuideProgress progress) {
+		ModConfig cfg = ModConfig.get();
+		return progress.chapter >= 2 ? cfg.chapter2Days : cfg.maxDays;
+	}
+
 	/** The guide period including extensions. */
 	public static int dayLimit(GuideProgress progress) {
-		return ModConfig.get().maxDays + progress.extraDays;
+		return baseDays(progress) + progress.extraDays;
+	}
+
+	/** Another chapter can follow the current one. */
+	private static boolean nextChapterAvailable(GuideProgress progress) {
+		return ModConfig.get().chapter2 && progress.chapter < TipRegistry.LAST_CHAPTER;
+	}
+
+	private static int doneInChapter(GuideProgress progress) {
+		int n = 0;
+		for (Tip m : TipRegistry.milestones(progress.chapter)) if (progress.completed.contains(m.id())) n++;
+		return n;
 	}
 
 	private static GuideLifecycle.Step lifecycle(ServerPlayer player, GuideProgress progress) {
 		ModConfig cfg = ModConfig.get();
-		return GuideLifecycle.decide(dayIndex(player, progress), cfg.maxDays, progress.extraDays, cfg.extendDays,
-				progress.completed.size() >= TipRegistry.MILESTONES.size(), progress.askedAtTick, progress.reminded,
-				player.level().getOverworldClockTime());
+		return GuideLifecycle.decide(new GuideLifecycle.State(dayIndex(player, progress), baseDays(progress), progress.extraDays,
+				cfg.extendDays, TipRegistry.chapterDone(progress.chapter, progress.completed), nextChapterAvailable(progress),
+				progress.chapterOffered, progress.finished, progress.askedAtTick, progress.reminded,
+				player.level().getOverworldClockTime()));
 	}
 
 	public static int dayIndex(ServerPlayer player, GuideProgress progress) {
@@ -277,8 +299,8 @@ public final class GuideManager {
 
 	private static void retire(ServerPlayer player, GuideProgress progress, String messageKey) {
 		GuideEntity guide = GUIDES.get(player.getUUID());
-		int done = progress.completed.size();
-		int total = TipRegistry.MILESTONES.size();
+		int done = doneInChapter(progress);
+		int total = TipRegistry.milestones(progress.chapter).size();
 		say(player, guide, Component.translatable("survivalassistant." + messageKey + ".1"), false);
 		say(player, guide, Component.translatable("survivalassistant.farewell.summary", done, total), false);
 		if (ModConfig.get().allowRecall) {
@@ -289,15 +311,52 @@ public final class GuideManager {
 		HudState.update(player, HudSnapshot.INACTIVE);
 	}
 
-	/** All goals reached: a proper celebration, then the guide leaves. */
+	/** All goals of the last chapter reached: a proper celebration, then the guide leaves. */
 	private static void congratulate(ServerPlayer player, GuideProgress progress) {
 		GuideEntity guide = GUIDES.get(player.getUUID());
-		int total = TipRegistry.MILESTONES.size();
-		say(player, guide, Component.translatable("survivalassistant.congrats.1").withStyle(ChatFormatting.GREEN), false);
-		say(player, guide, Component.translatable("survivalassistant.congrats.2"), false);
+		String key = progress.chapter >= 2 ? "survivalassistant.congrats.chapter2." : "survivalassistant.congrats.";
+		say(player, guide, Component.translatable(key + "1").withStyle(ChatFormatting.GREEN), false);
+		say(player, guide, Component.translatable(key + "2"), false);
 		if (ModConfig.get().allowRecall) {
 			say(player, guide, Component.translatable("survivalassistant.farewell.recall"), false);
 		}
+		celebrate(player, guide, progress);
+		progress.finished = true;
+		progress.retired = true;
+		progress.askedAtTick = -1;
+		removeGuide(player.getUUID(), true);
+		HudState.update(player, HudSnapshot.INACTIVE);
+	}
+
+	/** All goals of chapter 1 reached: celebrate, then offer chapter 2. The guide stays until the player answers. */
+	private static void offerNextChapter(ServerPlayer player, @Nullable GuideEntity guide, GuideProgress progress) {
+		say(player, guide, Component.translatable("survivalassistant.congrats.1").withStyle(ChatFormatting.GREEN), false);
+		celebrate(player, guide, progress);
+		progress.chapterOffered = true;
+		progress.askedAtTick = player.level().getOverworldClockTime();
+		progress.reminded = false;
+		askChapter2(player, guide, "survivalassistant.chapter2.offer");
+	}
+
+	/** "Want to continue with chapter 2?" with clickable yes/no buttons. */
+	private static void askChapter2(ServerPlayer player, @Nullable GuideEntity guide, String questionKey) {
+		say(player, guide, Component.translatable(questionKey).withStyle(ChatFormatting.AQUA), true);
+		player.sendSystemMessage(Component.literal("   ")
+				.append(button("survivalassistant.chapter2.yes", "survivalassistant.chapter2.yes_hover", "/guide continue", ChatFormatting.GREEN))
+				.append("  ")
+				.append(button("survivalassistant.extend.no", "survivalassistant.extend.no_hover", "/guide dismiss", ChatFormatting.RED)));
+	}
+
+	private static MutableComponent button(String labelKey, String hoverKey, String command, ChatFormatting color, Object... args) {
+		return Component.literal("[").append(Component.translatable(labelKey, args)).append("]")
+				.withStyle(Style.EMPTY.withColor(color).withBold(true)
+						.withClickEvent(new ClickEvent.RunCommand(command))
+						.withHoverEvent(new HoverEvent.ShowText(Component.translatable(hoverKey, args))));
+	}
+
+	/** Title, sound and particles. */
+	private static void celebrate(ServerPlayer player, @Nullable GuideEntity guide, GuideProgress progress) {
+		int total = TipRegistry.milestones(progress.chapter).size();
 		player.connection.send(new ClientboundSetTitleTextPacket(
 				Component.translatable("survivalassistant.congrats.title").withStyle(ChatFormatting.GOLD)));
 		player.connection.send(new ClientboundSetSubtitleTextPacket(
@@ -310,25 +369,16 @@ public final class GuideManager {
 			player.level().sendParticles(ParticleTypes.TOTEM_OF_UNDYING, guide.getX(), guide.getY() + 1, guide.getZ(),
 					40, 0.4, 0.8, 0.4, 0.3);
 		}
-		progress.retired = true;
-		progress.askedAtTick = -1;
-		removeGuide(player.getUUID(), true);
-		HudState.update(player, HudSnapshot.INACTIVE);
 	}
 
 	/** "Do you still need me?" with clickable yes/no buttons. */
 	private static void askToExtend(ServerPlayer player, @Nullable GuideEntity guide, String questionKey) {
 		int days = ModConfig.get().extendDays;
-		MutableComponent yes = Component.literal("[").append(Component.translatable("survivalassistant.extend.yes", days)).append("]")
-				.withStyle(Style.EMPTY.withColor(ChatFormatting.GREEN).withBold(true)
-						.withClickEvent(new ClickEvent.RunCommand("/guide extend"))
-						.withHoverEvent(new HoverEvent.ShowText(Component.translatable("survivalassistant.extend.yes_hover", days))));
-		MutableComponent no = Component.literal("[").append(Component.translatable("survivalassistant.extend.no")).append("]")
-				.withStyle(Style.EMPTY.withColor(ChatFormatting.RED).withBold(true)
-						.withClickEvent(new ClickEvent.RunCommand("/guide dismiss"))
-						.withHoverEvent(new HoverEvent.ShowText(Component.translatable("survivalassistant.extend.no_hover"))));
 		say(player, guide, Component.translatable(questionKey).withStyle(ChatFormatting.AQUA), true);
-		player.sendSystemMessage(Component.literal("   ").append(yes).append("  ").append(no));
+		player.sendSystemMessage(Component.literal("   ")
+				.append(button("survivalassistant.extend.yes", "survivalassistant.extend.yes_hover", "/guide extend", ChatFormatting.GREEN, days))
+				.append("  ")
+				.append(button("survivalassistant.extend.no", "survivalassistant.extend.no_hover", "/guide dismiss", ChatFormatting.RED)));
 	}
 
 	// ---------------------------------------------------------------- talking
@@ -398,7 +448,7 @@ public final class GuideManager {
 		GuideProgress progress = GuideState.of(player);
 		evaluateAndSay(player, guide, progress, true);
 		say(player, null, Component.translatable("survivalassistant.progress",
-				progress.completed.size(), TipRegistry.MILESTONES.size(),
+				doneInChapter(progress), TipRegistry.milestones(progress.chapter).size(),
 				Math.max(0, dayLimit(progress) - dayIndex(player, progress))).withStyle(ChatFormatting.GRAY), false);
 	}
 
@@ -480,7 +530,7 @@ public final class GuideManager {
 	public static boolean extend(ServerPlayer player) {
 		GuideProgress progress = GuideState.of(player);
 		int days = ModConfig.get().extendDays;
-		if (progress.retired || progress.startTick < 0 || days <= 0) return false;
+		if (progress.retired || progress.startTick < 0 || days <= 0 || progress.chapterOffered) return false;
 		progress.extraDays += days;
 		progress.askedAtTick = -1;
 		progress.reminded = false;
@@ -488,6 +538,19 @@ public final class GuideManager {
 		int left = Math.max(0, dayLimit(progress) - dayIndex(player, progress));
 		say(player, guide, Component.translatable("survivalassistant.extend.confirmed", left).withStyle(ChatFormatting.GREEN), false);
 		LAST_EVAL.remove(player.getUUID()); // refresh the card on the next pass
+		return true;
+	}
+
+	/** /guide continue: start chapter 2 (after all chapter-1 goals). */
+	public static boolean continueChapter(ServerPlayer player) {
+		GuideProgress progress = GuideState.of(player);
+		if (progress.retired || progress.startTick < 0 || !nextChapterAvailable(progress)
+				|| !TipRegistry.chapterDone(progress.chapter, progress.completed)) return false;
+		progress.chapter++;
+		progress.restart(player.level().getOverworldClockTime());
+		GuideEntity guide = GUIDES.get(player.getUUID());
+		say(player, guide, Component.translatable("survivalassistant.chapter2.start", dayLimit(progress)).withStyle(ChatFormatting.GREEN), true);
+		LAST_EVAL.put(player.getUUID(), 0L); // first chapter-2 tip on the next pass
 		return true;
 	}
 

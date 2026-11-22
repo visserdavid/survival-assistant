@@ -92,4 +92,49 @@ public final class TipRegistry {
 			WOOD, CRAFTING_TABLE, WOODEN_PICKAXE, STONE_TOOLS, FURNACE, FOOD, BED, TORCHES, SHELTER,
 			CHEST, IRON, SHIELD, IRON_PICKAXE,
 			IRON_ARMOR, WATER_BUCKET);
+
+	// --- Chapter 2: settling in (docs/research-chapter-2.md, verified against the 26.3 game data) ---
+	public static final Tip FARM = Tip.milestone("farm", 2,
+			c -> c.cropsNearby() >= 6,
+			SurvivalContext::cropsNearby, 6);
+	public static final Tip BREAD = Tip.milestone("bread", 1,
+			c -> c.bread() >= 3,
+			SurvivalContext::bread, 3);
+	public static final Tip BREED = Tip.milestone("breed", 2,
+			c -> c.animalsBred() >= 2,
+			SurvivalContext::animalsBred, 2);
+	public static final Tip FULL_IRON_ARMOR = Tip.milestone("full_iron_armor", 1,
+			c -> c.armorPieces() >= 4,
+			SurvivalContext::armorPieces, 4);
+	public static final Tip BOW = Tip.milestone("bow", 2,
+			c -> c.hasBow() && c.arrows() >= 16,
+			SurvivalContext::arrows, 16);
+	public static final Tip DIAMONDS = Tip.milestone("diamonds", 2,
+			c -> c.diamonds() >= 3 || c.pickaxeTier() >= 4,
+			SurvivalContext::diamonds, 3);
+	public static final Tip DIAMOND_PICKAXE = Tip.milestone("diamond_pickaxe", 1,
+			c -> c.pickaxeTier() >= 4);
+	public static final Tip OBSIDIAN = Tip.milestone("obsidian", 2,
+			c -> c.obsidian() >= 10,
+			SurvivalContext::obsidian, 10);
+	public static final Tip FLINT_AND_STEEL = Tip.milestone("flint_and_steel", 1,
+			SurvivalContext::hasFlintAndSteel);
+	public static final Tip ENCHANTING_TABLE = Tip.milestone("enchanting_table", 1,
+			SurvivalContext::hasEnchantingTable);
+
+	public static final List<Tip> CHAPTER_2 = List.of(
+			FARM, BREAD, BREED, FULL_IRON_ARMOR, BOW, DIAMONDS, DIAMOND_PICKAXE, OBSIDIAN, FLINT_AND_STEEL, ENCHANTING_TABLE);
+
+	public static final int LAST_CHAPTER = 2;
+
+	/** The goals of a chapter (1 or 2). */
+	public static List<Tip> milestones(int chapter) {
+		return chapter >= 2 ? CHAPTER_2 : MILESTONES;
+	}
+
+	/** True when every goal of the chapter is in {@code completed}. */
+	public static boolean chapterDone(int chapter, java.util.Set<String> completed) {
+		for (Tip m : milestones(chapter)) if (!completed.contains(m.id())) return false;
+		return true;
+	}
 }
