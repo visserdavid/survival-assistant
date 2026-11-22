@@ -203,12 +203,12 @@ L = {
     "key.survivalassistant.toggle_env": ("Environment card", "Omgevingskaart"),
     P + "env.here": ("here:", "hier:"),
     P + "env.no_ores": ("no ores at this height", "geen ertsen op deze hoogte"),
-    P + "env.pointer.up": ("↑ %s: best around Y %s", "↑ %s: het meest rond Y %s"),
-    P + "env.pointer.down": ("↓ %s: best around Y %s", "↓ %s: het meest rond Y %s"),
-    P + "env.pointer.here": ("✔ %s: you're at a good height", "✔ %s: je zit op een goede hoogte"),
-    P + "env.pointer.mountain": ("✔ %s: lots of it at this height (mountains)", "✔ %s: hier veel van op deze hoogte (bergen)"),
+    P + "env.pointer.up": ("%s: go up, most around Y %s", "%s: ga omhoog, het meest rond Y %s"),
+    P + "env.pointer.down": ("%s: go down, most around Y %s", "%s: ga omlaag, het meest rond Y %s"),
+    P + "env.pointer.here": ("%s: you're at a good height", "%s: je zit op een goede hoogte"),
+    P + "env.pointer.mountain": ("%s: lots of it at this height (mountains)", "%s: hier veel van op deze hoogte (bergen)"),
     P + "env.hazard.deep_dark": ("Deep dark: sneak, the warden!", "Deep dark: sluip, de warden!"),
-    P + "env.hazard.lava": ("Below Y −54: lava lakes", "Onder Y −54: lavameren"),
+    P + "env.hazard.lava": ("Below Y -54: lava lakes", "Onder Y -54: lavameren"),
     P + "env.hazard.deepslate": ("Deepslate: slower to mine", "Deepslate: hakken gaat trager"),
 
     P + "ore.diamond": ("Diamond", "Diamant"),
@@ -221,10 +221,10 @@ L = {
     P + "ore.coal": ("Coal", "Kolen"),
 
     # one-time depth notices (chat)
-    P + "depth.deepslate": ("You've reached deepslate (below Y 0). Diamonds start below Y 16 and are most common around Y −59. Mining is slower here.",
-                            "Je bent in deepslate (onder Y 0). Diamanten beginnen onder Y 16 en zitten het meest rond Y −59. Hakken gaat hier trager."),
-    P + "depth.lava": ("Careful: below Y −54 caves fill with lava lakes. Keep a water bucket and blocks at hand.",
-                       "Pas op: onder Y −54 lopen grotten vol met lavameren. Hou een emmer water en blokken bij de hand."),
+    P + "depth.deepslate": ("You've reached deepslate (below Y 0). Diamonds start below Y 16 and are most common around Y -59. Mining is slower here.",
+                            "Je bent in deepslate (onder Y 0). Diamanten beginnen onder Y 16 en zitten het meest rond Y -59. Hakken gaat hier trager."),
+    P + "depth.lava": ("Careful: below Y -54 caves fill with lava lakes. Keep a water bucket and blocks at hand.",
+                       "Pas op: onder Y -54 lopen grotten vol met lavameren. Hou een emmer water en blokken bij de hand."),
     P + "depth.deep_dark": ("This is the deep dark. Sneak, don't trigger the sculk shriekers, or the warden will come!",
                             "Dit is de deep dark. Sluip, en laat de sculk shriekers niet afgaan, anders komt de warden!"),
     P + "depth.high_iron": ("High up in the mountains there's extra iron (and emerald ore) in the stone. Great for your iron gear!",
@@ -254,7 +254,7 @@ L = {
                    ("High up and open: mind the edges at night", "Hoog en open: let 's nachts op de randen")),
         "desert": (("Sand for glass, cactus, temples and villages", "Zand voor glas, cactussen, tempels en dorpen"),
                    ("Only rabbits and camels; husks make you hungry", "Alleen konijnen en kamelen; husks geven je honger")),
-        "badlands": (("Extra gold ore up high (Y 32–256)", "Extra goud hoog in de grond (Y 32–256)"),
+        "badlands": (("Extra gold ore up high (Y 32-256)", "Extra goud hoog in de grond (Y 32-256)"),
                      ("Very little wood (except wooded badlands)", "Heel weinig hout (behalve in wooded badlands)")),
         "savanna": (("Acacia wood, farm animals, horses and villages", "Acaciahout, boerderijdieren, paarden en dorpen"),
                     ("Open land with little cover at night", "Open land met weinig dekking in de nacht")),
@@ -284,6 +284,13 @@ L = {
                   ("Unknown area: no specific advice", "Onbekend gebied: geen specifiek advies")),
     }.items() for k, v in (("pro", pc[0]), ("con", pc[1]))},
 }
+
+# Only ASCII and Latin-1: other Unicode symbols may be missing from Minecraft's font and render as boxes.
+for key, texts in L.items():
+    for text in texts:
+        bad = sorted({ch for ch in text if ord(ch) > 0xFF})
+        if bad:
+            sys.exit(f"Unsafe character(s) {bad} in {key!r}: use plain text or an icon in the HUD code instead.")
 
 out_dir = sys.argv[1]
 for idx, name in ((0, "en_us"), (1, "nl_nl")):

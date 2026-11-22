@@ -10,7 +10,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import io.github.visserdavid.survivalassistant.advice.BiomeGroup;
 import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
 import io.github.visserdavid.survivalassistant.advice.OreTable;
@@ -18,6 +20,7 @@ import io.github.visserdavid.survivalassistant.state.HudState;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +38,8 @@ public final class EnvironmentCard implements HudElement {
 	private static final int NAME_X = PAD + 12;
 	private static final int GAP = 6;
 	private static final int MAX_WRAP_LINES = 3;
+	/** Text indent after a small item icon at the start of a line. */
+	private static final int ICON_INDENT = 10;
 
 	private static final int BG = 0xB0101010;
 	private static final int BORDER = 0xFF3E5A6B;
@@ -49,15 +54,24 @@ public final class EnvironmentCard implements HudElement {
 
 	private static final long GLOW_MS = 2000;
 	private static final Map<BiomeGroup, ItemStack> ICONS = new EnumMap<>(BiomeGroup.class);
+	private static final Map<Item, ItemStack> STACKS = new HashMap<>();
 
 	private String lastBiome = null;
 	private long biomeChangedAt = 0;
 	private int width = HudText.MIN_WIDTH;
 
-	/** A piece of content before wrapping, and a wrapped line ready to draw. */
-	private record Entry(Component text, int color) {}
+	/** A piece of content before wrapping (optionally led by an item icon), and a wrapped line ready to draw. */
+	private record Entry(Component text, int color, ItemStack icon) {
+		Entry(Component text, int color) {
+			this(text, color, ItemStack.EMPTY);
+		}
 
-	private record Line(FormattedCharSequence text, int color) {}
+		int indent() {
+			return icon.isEmpty() ? 0 : ICON_INDENT;
+		}
+	}
+
+	private record Line(FormattedCharSequence text, int color, ItemStack icon, int indent) {}
 
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor g, DeltaTracker delta) {
@@ -87,7 +101,7 @@ public final class EnvironmentCard implements HudElement {
 
 		// The width at which nothing wraps or scrolls; the task card takes this into account next frame.
 		int wanted = NAME_X + font.width(name) + GAP + font.width("Y -64") + PAD;
-		for (Entry e : entries) wanted = Math.max(wanted, PAD + font.width(e.text()) + PAD);
+		for (Entry e : entries) wanted = Math.max(wanted, PAD + e.indent() + font.width(e.text()) + PAD);
 		HudText.environmentWanted = wanted;
 		int[] task = TaskHud.visibleBounds;
 		width = task != null ? TaskHud.cardWidth : HudText.clampWidth(wanted);
@@ -123,13 +137,12 @@ public final class EnvironmentCard implements HudElement {
 		List<Entry> entries = new ArrayList<>();
 		if (full) {
 			entries.add(new Entry(Component.literal("+ ").append(Component.translatable("survivalassistant.biome." + group.key() + ".pro")), GREEN));
-			entries.add(new Entry(Component.literal("− ").append(Component.translatable("survivalassistant.biome." + group.key() + ".con")), RED));
+			entries.add(new Entry(Component.literal("- ").append(Component.translatable("survivalassistant.biome." + group.key() + ".con")), RED));
 		}
 
 		if (group.isOverworld()) {
 			List<OreTable.Found> ores = OreTable.oresAt(y, group, 4);
-			MutableComponent oreLine = Component.literal("⛏ ").withColor(GRAY)
-					.append(Component.translatable("survivalassistant.env.here").withColor(GRAY)).append(" ");
+			MutableComponent oreLine = Component.translatable("survivalassistant.env.here").withColor(GRAY).append(" ");
 			if (ores.isEmpty()) {
 				oreLine.append(Component.translatable("survivalassistant.env.no_ores").withColor(GRAY));
 			}
@@ -137,9 +150,10 @@ public final class EnvironmentCard implements HudElement {
 				OreTable.Found f = ores.get(i);
 				if (i > 0) oreLine.append(Component.literal(" · ").withColor(GRAY));
 				MutableComponent oreName = Component.translatable("survivalassistant.ore." + f.id());
-				oreLine.append(f.best() ? Component.literal("★").withColor(GOLD).append(oreName.withColor(GOLD)) : oreName.withColor(WHITE));
+				// best height: gold and bold (no special glyphs, they may be missing from the font)
+				oreLine.append(f.best() ? oreName.withColor(GOLD).withStyle(s -> s.withBold(true)) : oreName.withColor(WHITE));
 			}
-			entries.add(new Entry(oreLine, WHITE));
+			entries.add(new Entry(oreLine, WHITE, stack(Items.IRON_PICKAXE)));
 
 			if (full) {
 				String task = !snap.active() ? null : snap.next().isEmpty() ? "" : snap.next().get(0).id();
@@ -152,11 +166,11 @@ public final class EnvironmentCard implements HudElement {
 						case HERE -> Component.translatable("survivalassistant.env.pointer.here", ore);
 						case MOUNTAIN -> Component.translatable("survivalassistant.env.pointer.mountain", ore);
 					};
-					entries.add(new Entry(text, AQUA));
+					entries.add(new Entry(text, AQUA, stack(oreItem(p.oreId()))));
 				}
 				String hazard = OreTable.hazardAt(y, group);
 				if (hazard != null) {
-					entries.add(new Entry(Component.literal("⚠ ").append(Component.translatable("survivalassistant.env.hazard." + hazard)), ORANGE));
+					entries.add(new Entry(Component.translatable("survivalassistant.env.hazard." + hazard), ORANGE, stack(hazardItem(hazard))));
 				}
 			}
 		}
@@ -166,8 +180,10 @@ public final class EnvironmentCard implements HudElement {
 	private List<Line> wrap(Font font, List<Entry> entries) {
 		List<Line> lines = new ArrayList<>();
 		for (Entry e : entries) {
-			List<FormattedCharSequence> parts = font.split(e.text(), width - 2 * PAD);
-			for (int i = 0; i < Math.min(MAX_WRAP_LINES, parts.size()); i++) lines.add(new Line(parts.get(i), e.color()));
+			List<FormattedCharSequence> parts = font.split(e.text(), width - 2 * PAD - e.indent());
+			for (int i = 0; i < Math.min(MAX_WRAP_LINES, parts.size()); i++) {
+				lines.add(new Line(parts.get(i), e.color(), i == 0 ? e.icon() : ItemStack.EMPTY, e.indent()));
+			}
 		}
 		return lines;
 	}
@@ -195,9 +211,30 @@ public final class EnvironmentCard implements HudElement {
 
 		int ly = PAD + HEADER_H;
 		for (Line line : lines) {
-			g.text(font, line.text(), PAD, ly, line.color(), true);
+			smallIcon(g, line.icon(), PAD, ly);
+			g.text(font, line.text(), PAD + line.indent(), ly, line.color(), true);
 			ly += LINE_H;
 		}
+	}
+
+	private static Item oreItem(String oreId) {
+		return switch (oreId) {
+			case "coal" -> Items.COAL;
+			case "diamond" -> Items.DIAMOND;
+			default -> Items.RAW_IRON;
+		};
+	}
+
+	private static Item hazardItem(String hazard) {
+		return switch (hazard) {
+			case "deep_dark" -> Items.SCULK_SHRIEKER;
+			case "lava" -> Items.LAVA_BUCKET;
+			default -> Items.DEEPSLATE;
+		};
+	}
+
+	private static ItemStack stack(Item item) {
+		return STACKS.computeIfAbsent(item, ItemStack::new);
 	}
 
 	private static ItemStack icon(BiomeGroup group) {

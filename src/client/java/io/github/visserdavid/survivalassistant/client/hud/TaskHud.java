@@ -7,6 +7,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
 import io.github.visserdavid.survivalassistant.advice.Tip;
 import io.github.visserdavid.survivalassistant.advice.TipRegistry;
@@ -34,7 +35,7 @@ public final class TaskHud implements HudElement {
 	private static final int FULL_X = PAD + 19;   // text start in the full list
 	private static final int GAP = 6;             // minimum space between text and right-aligned info
 
-	// clock: symbol + 6 segments
+	// clock: clock item (shows the sun/moon itself) + 6 segments
 	private static final int SEG_W = 4, SEG_GAP = 1, SEG_H = 5, SEGMENTS = 6;
 	private static final int BAR_W = SEGMENTS * (SEG_W + SEG_GAP) - SEG_GAP;
 
@@ -60,6 +61,8 @@ public final class TaskHud implements HudElement {
 	private Set<String> knownCompleted = null;
 	private String flashId = null;
 	private long flashStart = 0;
+
+	private static ItemStack clockIcon;
 
 	/** Width of the card being drawn this frame. */
 	private int width = HudText.MIN_WIDTH;
@@ -121,7 +124,7 @@ public final class TaskHud implements HudElement {
 			if (e.id().isEmpty()) continue;
 			int text = font.width(taskName(e.id()));
 			wanted = Math.max(wanted, i == 0
-					? ICON_X + text + GAP + font.width(counter(e, false)) + PAD
+					? ICON_X + text + GAP + Math.max(PixelIcons.CHECK_W, font.width(counter(e))) + PAD
 					: SMALL_X + text + PAD);
 		}
 		if (!snap.urgentId().isEmpty()) {
@@ -181,12 +184,17 @@ public final class TaskHud implements HudElement {
 		return Component.translatable("survivalassistant.alert." + id);
 	}
 
-	private static String counter(HudSnapshot.Entry e, boolean done) {
-		return done ? "✔" : e.target() > 0 ? e.value() + "/" + e.target() : "";
+	private static String counter(HudSnapshot.Entry e) {
+		return e.target() > 0 ? e.value() + "/" + e.target() : "";
 	}
 
 	private static int clockWidth(Font font) {
-		return font.width("☾") + 2 + BAR_W;
+		return 8 + 2 + BAR_W;
+	}
+
+	private static ItemStack clockIcon() {
+		if (clockIcon == null) clockIcon = new ItemStack(Items.CLOCK);
+		return clockIcon;
 	}
 
 	// ------------------------------------------------------------------ drawing
@@ -257,11 +265,10 @@ public final class TaskHud implements HudElement {
 			int sx = barX + i * (SEG_W + SEG_GAP);
 			g.fill(sx, barY, sx + SEG_W, barY + SEG_H, i < filled ? color : BAR_BG);
 		}
-		String symbol = night ? "☾" : "☀";
-		int symbolX = barX - font.width(symbol) - 2;
-		g.text(font, symbol, symbolX, PAD + 1, color, true);
+		int clockX = barX - 8 - 2;
+		smallIcon(g, clockIcon(), clockX, PAD);
 
-		HudText.fit(g, font, title(snap), PAD, PAD + 1, symbolX - GAP - PAD, GOLD, true, now);
+		HudText.fit(g, font, title(snap), PAD, PAD + 1, clockX - GAP - PAD, GOLD, true, now);
 	}
 
 	private void drawCurrent(GuiGraphicsExtractor g, Font font, HudSnapshot.Entry e, int y, boolean done, float alpha, long now) {
@@ -270,12 +277,16 @@ public final class TaskHud implements HudElement {
 		if (!icon.isEmpty()) g.item(icon, PAD, y + 1);
 
 		int textColor = done ? (GREEN & 0xFFFFFF) | a : WHITE;
-		String right = counter(e, done);
-		int rightX = width - PAD - font.width(right);
-		if (!right.isEmpty()) {
-			g.text(font, right, rightX, y + 2, done ? textColor : GOLD, true);
+		int rightX;
+		if (done) {
+			rightX = width - PAD - PixelIcons.CHECK_W;
+			PixelIcons.check(g, rightX, y + 3, textColor);
+		} else {
+			String right = counter(e);
+			rightX = right.isEmpty() ? width - PAD + GAP : width - PAD - font.width(right);
+			if (!right.isEmpty()) g.text(font, right, rightX, y + 2, GOLD, true);
 		}
-		int textMax = (right.isEmpty() ? width - PAD : rightX - GAP) - ICON_X;
+		int textMax = rightX - GAP - ICON_X;
 		HudText.fit(g, font, taskName(e.id()), ICON_X, y + 2, textMax, textColor, true, now);
 
 		// progress bar
@@ -294,7 +305,7 @@ public final class TaskHud implements HudElement {
 
 	private void drawSmallRow(GuiGraphicsExtractor g, Font font, HudSnapshot.Entry e, int y, int color, long now) {
 		smallIcon(g, TaskIcons.get(e.id()), PAD + 6, y);
-		g.text(font, "·", PAD, y + 1, DARK_GRAY, false);
+		PixelIcons.dot(g, PAD, y + 4, DARK_GRAY);
 		HudText.fit(g, font, taskName(e.id()), SMALL_X, y + 1, width - SMALL_X - PAD, color, true, now);
 	}
 
@@ -305,12 +316,14 @@ public final class TaskHud implements HudElement {
 			boolean done = completed.contains(m.id());
 			boolean isCurrent = m.id().equals(current);
 			int color = done ? GREEN : isCurrent ? GOLD : GRAY;
-			smallIcon(g, TaskIcons.get(m.id()), PAD + 8, y);
-			g.text(font, done ? "✔" : isCurrent ? "▶" : "·", PAD, y + 1, color, false);
+			smallIcon(g, TaskIcons.get(m.id()), PAD + 9, y);
+			if (done) PixelIcons.check(g, PAD, y + 2, color);
+			else if (isCurrent) PixelIcons.play(g, PAD + 1, y + 1, color);
+			else PixelIcons.dot(g, PAD + 2, y + 4, color);
 
 			int textMax = width - FULL_X - PAD;
 			if (isCurrent && !snap.next().isEmpty() && snap.next().get(0).target() > 0) {
-				String count = counter(snap.next().get(0), false);
+				String count = counter(snap.next().get(0));
 				int countX = width - PAD - font.width(count);
 				g.text(font, count, countX, y + 1, GOLD, true);
 				textMax = countX - GAP - FULL_X;

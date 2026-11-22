@@ -25,7 +25,7 @@ All advice follows a researched beginner path. Recipes, mob spawns, ore heights 
 
 ### Task card (top-left by default)
 ```
-┌─ Guide · Day 1/3 ────── ☀ ▮▮▮▮▯▯ ┐
+┌─ Guide · Day 1/3 ── [clock] ▮▮▮▮▯▯ ┐
 │ [log] Chop wood            6/10  │   current task: icon, live counter, progress bar
 │       ██████░░░░                 │
 │  · Make a crafting table         │   next two tasks
@@ -35,7 +35,7 @@ All advice follows a researched beginner path. Recipes, mob spawns, ore heights 
 - 15 goals in order: wood → crafting table → wooden pickaxe → stone tools → furnace → food → bed →
   torches → shelter → chest → iron → shield → iron pickaxe → iron armor → bucket of water.
 - Live counters (for example logs 6/10 or wool 2/3), with a check-mark animation when a goal is done.
-- A sun/moon clock that counts down to sunset, turning orange at dusk and red at night.
+- A clock (the in-game clock item) with a bar that counts down to sunset, turning orange at dusk and red at night.
 - **Urgent mode**: the border pulses red, and the current-task line becomes a warning (creeper nearby,
   low health, hunger, dusk or night outside, thunderstorm, underground without torches).
 - Press **J** to switch between compact, the full list of all 15 goals, and hidden.
@@ -44,14 +44,14 @@ All advice follows a researched beginner path. Recipes, mob spawns, ore heights 
 ```
 ┌ [sand] Desert ───────────── Y 64 ┐
 │ + Sand for glass, cactus, temples │   biome pro
-│ − Only rabbits and camels; husks  │   biome con
-│ ⛏ here: Iron · Copper · Coal     │   ores at this height (★ = best height)
-│ ↓ Iron: best around Y 16          │   pointer for your current task
-│ ⚠ Below Y −54: lava lakes         │   depth hazard, when relevant
+│ - Only rabbits and camels; husks  │   biome con
+│ [pickaxe] here: Iron Copper Coal  │   ores at this height (gold = best height)
+│ [raw iron] Iron: go down, ~Y 16   │   pointer for your current task
+│ [lava] Below Y -54: lava lakes    │   depth hazard, when relevant
 └───────────────────────────────────┘
 ```
 - A pro and a con for all 67 biomes (grouped into 25 families).
-- Ores at your current Y-level, most valuable first. Emerald only shows in mountain biomes, and the extra
+- Ores at your current Y-level, most valuable first (gold = you are at its best height). Emerald only shows in mountain biomes, and the extra
   surface gold only in badlands.
 - A pointer to the best height for the ore your current task needs.
 - One-time chat notes the first time you reach deepslate, the lava level, the deep dark or high mountains.
