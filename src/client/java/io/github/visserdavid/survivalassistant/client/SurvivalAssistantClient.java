@@ -10,8 +10,10 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.network.chat.Component;
 import io.github.visserdavid.survivalassistant.SurvivalAssistant;
+import io.github.visserdavid.survivalassistant.client.hud.CrosshairInfo;
 import io.github.visserdavid.survivalassistant.client.hud.EnvironmentCard;
 import io.github.visserdavid.survivalassistant.client.hud.HudConfig;
+import io.github.visserdavid.survivalassistant.client.hud.RecipeOverlay;
 import io.github.visserdavid.survivalassistant.client.hud.TaskHud;
 
 import java.util.Locale;
@@ -28,6 +30,8 @@ public class SurvivalAssistantClient implements ClientModInitializer {
 		HudConfig.load();
 		HudElementRegistry.attachElementAfter(VanillaHudElements.BOSS_BAR, SurvivalAssistant.id("task_card"), new TaskHud());
 		HudElementRegistry.attachElementAfter(SurvivalAssistant.id("task_card"), SurvivalAssistant.id("environment_card"), new EnvironmentCard());
+		HudElementRegistry.attachElementAfter(VanillaHudElements.CROSSHAIR, SurvivalAssistant.id("crosshair_info"), new CrosshairInfo());
+		RecipeOverlay.register();
 
 		toggleHud = KeyMappingHelper.registerKeyMapping(new KeyMapping(
 				"key.survivalassistant.toggle_hud", InputConstants.KEY_J, CATEGORY));
@@ -35,6 +39,7 @@ public class SurvivalAssistantClient implements ClientModInitializer {
 				"key.survivalassistant.toggle_env", InputConstants.KEY_K, CATEGORY));
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			CrosshairInfo.tick(client);
 			HudConfig cfg = HudConfig.get();
 			while (toggleHud.consumeClick()) {
 				cfg.mode = cfg.mode.next();

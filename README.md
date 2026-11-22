@@ -52,6 +52,15 @@ All advice follows a researched beginner path. Recipes, mob spawns, ore heights 
   down), when lava is within a few blocks underground, or when sand/gravel hangs right above your head.
 - **Phantoms**: a reminder after two nights without sleep (phantoms come after three).
 
+### Learning as you play
+- **Recipe card**: open your inventory or a crafting table and a small card next to the window shows how to
+  craft the item for your current task (grid, arrow, result). For 3x3 recipes in the inventory it reminds
+  you that you need a crafting table. The full list (J) shows the same recipe under the goals.
+  All 12 recipes are checked against the game data (`tools/recipe_check.py`).
+- **Crosshair info**: look at a mob for a moment and a line under the crosshair tells you what it does
+  (creeper, skeleton, enderman, the new parched skeleton, sheep, ...). Look at an ore and it tells you which
+  pickaxe you need: green when your tool works, red when it would break the block without dropping anything.
+
 ### Environment card (below the task card)
 ```
 ┌ [sand] Desert ───────────── Y 64 ┐
@@ -107,6 +116,8 @@ All advice follows a researched beginner path. Recipes, mob spawns, ore heights 
 | `mode` | `COMPACT` | Task card mode: `COMPACT`, `FULL` or `HIDDEN` (J) |
 | `showEnvironment` | `true` | Show the environment card (K) |
 | `envLines` | `FULL` | `COMPACT` shows only the biome header and ore line |
+| `recipeCard` | `true` | Recipe card next to the inventory / crafting table |
+| `crosshairInfo` | `true` | Tip under the crosshair for mobs and ores |
 | `scale` | `1.0` | Extra scale on top of the GUI scale (0.5–2.0) |
 | `margin` | `4` | Distance from the screen edge |
 

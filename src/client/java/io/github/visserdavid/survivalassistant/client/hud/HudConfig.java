@@ -38,6 +38,10 @@ public final class HudConfig {
 	public boolean showEnvironment = true;
 	/** FULL = biome pros/cons, ores, pointer and hazard; COMPACT = header and ores only. */
 	public EnvLines envLines = EnvLines.FULL;
+	/** Recipe card for the current task next to the inventory / crafting table. */
+	public boolean recipeCard = true;
+	/** Tip under the crosshair when looking at a mob or an ore. */
+	public boolean crosshairInfo = true;
 
 	public enum EnvLines { FULL, COMPACT }
 

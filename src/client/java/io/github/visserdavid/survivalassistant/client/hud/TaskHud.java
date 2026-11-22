@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
 import io.github.visserdavid.survivalassistant.advice.Navigation;
+import io.github.visserdavid.survivalassistant.advice.Recipes;
 import io.github.visserdavid.survivalassistant.advice.Tip;
 import io.github.visserdavid.survivalassistant.advice.TipRegistry;
 import io.github.visserdavid.survivalassistant.state.HudState;
@@ -17,6 +18,7 @@ import io.github.visserdavid.survivalassistant.state.HudState;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -37,6 +39,8 @@ public final class TaskHud implements HudElement {
 	private static final int GAP = 6;             // minimum space between text and right-aligned info
 	private static final int NAV_H = 13;          // navigation strip (death spot / home) at the bottom
 	private static final int NAV_TEXT_X = PAD + 21;
+	private static final int RECIPE_SLOT = 9;     // half-size grid in the full view
+	private static final int RECIPE_H = 3 + 3 * RECIPE_SLOT + 2;
 
 	// clock: clock item (shows the sun/moon itself) + 6 segments
 	private static final int SEG_W = 4, SEG_GAP = 1, SEG_H = 5, SEGMENTS = 6;
@@ -92,7 +96,7 @@ public final class TaskHud implements HudElement {
 		width = HudText.clampWidth(Math.max(Math.max(wantedWidth(mc.font, snap, full, now), navWanted(mc.font, snap)),
 				HudText.environmentWanted));
 		cardWidth = width;
-		int height = (full ? fullHeight() : compactHeight(snap, now)) + (snap.waypoint().isPresent() ? NAV_H : 0);
+		int height = (full ? fullHeight() + (currentRecipe(snap).isPresent() ? RECIPE_H : 0) : compactHeight(snap, now)) + (snap.waypoint().isPresent() ? NAV_H : 0);
 		float scale = cfg.scale;
 		int sw = Math.round(width * scale), sh = Math.round(height * scale);
 		int x = switch (cfg.corner) {
@@ -121,6 +125,10 @@ public final class TaskHud implements HudElement {
 		if (full) {
 			for (Tip m : TipRegistry.MILESTONES) {
 				wanted = Math.max(wanted, FULL_X + font.width(taskName(m.id())) + GAP + font.width("99/99") + PAD);
+			}
+			Optional<Recipes.Recipe> recipe = currentRecipe(snap);
+			if (recipe.isPresent()) {
+				wanted = Math.max(wanted, FULL_X + RecipeView.width(RECIPE_SLOT) + RecipeView.countLabelWidth(font, recipe.get(), RECIPE_SLOT) + PAD);
 			}
 			return wanted;
 		}
@@ -184,6 +192,10 @@ public final class TaskHud implements HudElement {
 	private static Component title(HudSnapshot snap) {
 		int day = Math.min(snap.dayIndex() + 1, Math.max(1, snap.maxDays()));
 		return Component.translatable("survivalassistant.hud.title", day, snap.maxDays());
+	}
+
+	private static Optional<Recipes.Recipe> currentRecipe(HudSnapshot snap) {
+		return snap.next().isEmpty() ? Optional.empty() : Recipes.forTask(snap.next().get(0).id());
 	}
 
 	private static Component taskName(String id) {
@@ -341,6 +353,12 @@ public final class TaskHud implements HudElement {
 			}
 			HudText.fit(g, font, taskName(m.id()), FULL_X, y + 1, textMax, color, true, now);
 			y += ROW_H;
+		}
+		Optional<Recipes.Recipe> recipe = currentRecipe(snap);
+		if (recipe.isPresent()) {
+			g.fill(PAD, y + 1, width - PAD, y + 2, 0x40FFFFFF);
+			PixelIcons.play(g, PAD + 1, y + 3 + RECIPE_SLOT, GOLD);
+			RecipeView.draw(g, font, recipe.get(), FULL_X, y + 3, RECIPE_SLOT);
 		}
 	}
 
