@@ -1,6 +1,6 @@
-<p align="center"><img src="docs/images/icon-512.png" alt="Survival Assistant icon" width="200"></p>
+<p align="center"><img src="docs/images/SurvivalAssistantGitHub.jpg" alt="Artwork: the guide and a player in a blocky forest, with the task card and environment card floating above" width="100%"></p>
 
-# Survival Assistant
+# <img src="docs/images/icon-512.png" alt="" width="40" align="top"> Survival Assistant
 
 A Fabric mod for **Minecraft 26.3** that helps new players get through their first days in survival.
 A friendly guide walks with you and tells you what to do next. A compact task card shows your progress,
@@ -10,7 +10,7 @@ All advice follows a researched beginner path. Recipes, mob spawns, ore heights 
 **checked against the game's own data files** ([research](docs/research-first-days.md),
 [biome and ore facts](docs/biomes-and-heights.md)). There are no speedrun tricks: it's aimed at an average player.
 
-<!-- Screenshots: put images in docs/images/ and link them here. -->
+<!-- In-game screenshots: put images in docs/images/ and link them here (the banner above is artwork). -->
 
 ## Features
 
