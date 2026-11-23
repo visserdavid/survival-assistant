@@ -21,8 +21,8 @@ L = {
 
     P + "welcome.1": ("Hello %s! I'm your guide. I'll stay with you for your first days and help you survive.",
                       "Hoi %s! Ik ben je gids. Ik blijf de eerste dagen bij je en help je overleven."),
-    P + "welcome.2": ("Right-click me for a tip, or use /guide tip. Want some peace and quiet? /guide mute <minutes>.",
-                      "Rechtsklik op mij voor een tip, of gebruik /guide tip. Even rust? /guide mute <minuten>."),
+    P + "welcome.2": ("Sneak and right-click me for a tip, or use /guide tip. Want some peace and quiet? /guide mute <minutes>.",
+                      "Sluip en rechtsklik op mij voor een tip, of gebruik /guide tip. Even rust? /guide mute <minuten>."),
     P + "comfort.1": ("Ouch! Don't worry: your items stay at the spot where you died for 5 minutes. Go get them, carefully!",
                       "Au! Geen paniek: je spullen blijven 5 minuten liggen waar je doodging. Haal ze op, maar voorzichtig!"),
     P + "comfort.2": ("That happens to everyone. Your items are still lying where you fell, for 5 minutes. Hurry, but stay safe.",
@@ -75,8 +75,8 @@ L = {
                                 "Gefeliciteerd! Je hebt hoofdstuk 2 af. Je bent klaar voor de Nether en verder!"),
     P + "congrats.chapter2.2": ("Build your portal when you're ready, and bring food, armor and a bow.",
                                 "Bouw je portaal als je er klaar voor bent, en neem eten, een harnas en een boog mee."),
-    P + "cmd.muted": ("The guide will stay quiet for %s minute(s). Right-click or /guide tip still works.",
-                      "De gids is %s minuut/minuten stil. Rechtsklik of /guide tip werkt nog wel."),
+    P + "cmd.muted": ("The guide will stay quiet for %s minute(s). Sneak + right-click or /guide tip still works.",
+                      "De gids is %s minuut/minuten stil. Sluipen + rechtsklik of /guide tip werkt nog wel."),
     P + "cmd.unavailable": ("Your guide isn't available right now.", "Je gids is nu niet beschikbaar."),
 
     # ---------------- urgent ----------------

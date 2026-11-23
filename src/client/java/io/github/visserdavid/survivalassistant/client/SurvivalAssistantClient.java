@@ -13,6 +13,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.network.chat.Component;
 import io.github.visserdavid.survivalassistant.SurvivalAssistant;
+import io.github.visserdavid.survivalassistant.entity.GuideEntity;
 import io.github.visserdavid.survivalassistant.client.hud.CrosshairInfo;
 import io.github.visserdavid.survivalassistant.client.hud.EnvironmentCard;
 import io.github.visserdavid.survivalassistant.client.hud.HudConfig;
@@ -35,6 +36,11 @@ public class SurvivalAssistantClient implements ClientModInitializer {
 		EntityRenderers.register(SurvivalAssistant.GUIDE, GuideEntityRenderer::new);
 
 		HudConfig.load();
+		// the guide can only be clicked while sneaking, so normal clicks and hits pass through it
+		GuideEntity.clientPickable = guide -> {
+			var player = net.minecraft.client.Minecraft.getInstance().player;
+			return player != null && player.isShiftKeyDown();
+		};
 		GuideSkins.init();
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, context) -> SkinCommand.register(dispatcher));
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> client.execute(() -> {

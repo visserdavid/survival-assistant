@@ -4,12 +4,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.level.pathfinder.PathType;
-import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import io.github.visserdavid.survivalassistant.entity.GuideEntity;
+import org.jspecify.annotations.Nullable;
 
 import java.util.EnumSet;
 
-/** Walks after the owner; teleports next to them when they get too far away. */
+/**
+ * Walks after the owner, to a spot beside or behind them (never right up to them); teleports to such a spot when
+ * they get too far away.
+ */
 public class FollowOwnerGoal extends Goal {
 	private static final double TELEPORT_DIST_SQR = 20 * 20;
 
@@ -69,27 +72,28 @@ public class FollowOwnerGoal extends Goal {
 			if (far) {
 				teleportNear(guide, owner.blockPosition());
 			} else {
-				guide.getNavigation().moveTo(owner, speed);
+				// walk to a spot beside/behind the player, not into them
+				BlockPos spot = GuideSpots.find(guide, owner);
+				if (spot != null) {
+					guide.getNavigation().moveTo(spot.getX() + 0.5, spot.getY(), spot.getZ() + 0.5, speed);
+				} else {
+					guide.getNavigation().moveTo(owner, speed);
+				}
 			}
 		}
 	}
 
-	/** Tries a few random spots 2-3 blocks around {@code target}. */
+	/** Teleports the guide to a safe spot beside or behind its owner (or around {@code target} without an owner). */
 	public static boolean teleportNear(GuideEntity guide, BlockPos target) {
-		var random = guide.getRandom();
-		for (int attempt = 0; attempt < 15; attempt++) {
-			int dx = random.nextIntBetweenInclusive(-3, 3);
-			int dz = random.nextIntBetweenInclusive(-3, 3);
-			if (Math.abs(dx) < 2 && Math.abs(dz) < 2) continue;
-			int dy = random.nextIntBetweenInclusive(-1, 1);
-			BlockPos pos = target.offset(dx, dy, dz);
-			if (WalkNodeEvaluator.getPathTypeStatic(guide, pos) != PathType.WALKABLE) continue;
-			BlockPos delta = pos.subtract(guide.blockPosition());
-			if (!guide.level().noCollision(guide, guide.getBoundingBox().move(delta))) continue;
-			guide.snapTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, guide.getYRot(), guide.getXRot());
-			guide.getNavigation().stop();
-			return true;
-		}
-		return false;
+		ServerPlayer owner = guide.getOwner();
+		BlockPos spot = GuideSpots.find(guide, target, owner != null ? owner.getYRot() : guide.getYRot());
+		return spot != null && teleportTo(guide, spot);
+	}
+
+	static boolean teleportTo(GuideEntity guide, @Nullable BlockPos spot) {
+		if (spot == null) return false;
+		guide.snapTo(spot.getX() + 0.5, spot.getY(), spot.getZ() + 0.5, guide.getYRot(), guide.getXRot());
+		guide.getNavigation().stop();
+		return true;
 	}
 }

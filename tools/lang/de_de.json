@@ -1,7 +1,7 @@
 {
 "entity.~guide": "Begleiter",
 "~welcome.1": "Hallo %s! Ich bin dein Begleiter. Ich bleibe in deinen ersten Tagen bei dir und helfe dir beim Überleben.",
-"~welcome.2": "Rechtsklicke mich für einen Tipp oder nutze /guide tip. Brauchst du Ruhe? /guide mute <Minuten>.",
+"~welcome.2": "Schleiche und rechtsklicke mich für einen Tipp oder nutze /guide tip. Brauchst du Ruhe? /guide mute <Minuten>.",
 "~comfort.1": "Autsch! Keine Sorge: Deine Gegenstände bleiben 5 Minuten dort liegen, wo du gestorben bist. Hol sie, aber vorsichtig!",
 "~comfort.2": "Das passiert jedem. Deine Sachen liegen noch 5 Minuten dort, wo du gefallen bist. Beeil dich, aber bleib sicher.",
 "~chat.unavailable": "Ich habe wohl meine Stimme verloren. Sprich mich in einer Minute wieder an!",
@@ -32,7 +32,7 @@
 "~chapter2.no_answer.1": "Ich habe nichts mehr von dir gehört, also machst du allein weiter. Du bist bereit!",
 "~congrats.chapter2.1": "Glückwunsch! Du hast Kapitel 2 geschafft. Du bist bereit für den Nether und mehr!",
 "~congrats.chapter2.2": "Bau dein Portal, wenn du bereit bist, und nimm Essen, Rüstung und einen Bogen mit.",
-"~cmd.muted": "Der Begleiter schweigt %s Minute(n). Rechtsklick oder /guide tip funktioniert weiterhin.",
+"~cmd.muted": "Der Begleiter schweigt %s Minute(n). Schleichen + Rechtsklick oder /guide tip funktioniert weiterhin.",
 "~cmd.unavailable": "Dein Begleiter ist gerade nicht verfügbar.",
 "~tip.creeper.1": "Ein Creeper ist in der Nähe! Lauf sofort weg. Er explodiert etwa 1,5 Sekunden nach dem Zischen.",
 "~tip.creeper.2": "Creeper! Halte Abstand: mindestens 16 Blöcke oder ein Block zwischen dir und ihm.",

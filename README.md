@@ -16,7 +16,10 @@ All advice follows a researched beginner path. Recipes, mob spawns, ore heights 
 - A guide character spawns next to you in a new world. It follows you, can't be hurt, and monsters ignore it.
 - It gives tips in chat at the right moment, praises you when you reach a goal, and looks at the nearest tree
   or stone when it tells you to gather them.
-- Right-click the guide for a tip and your progress.
+- Sneak and right-click the guide for a tip and your progress.
+- It never gets in your way: it doesn't push you, keeps out of your view and your path, and normal clicks,
+  hits, arrows and blocks you place go straight through it. It doesn't set off pressure plates, tripwires or
+  sculk sensors, doesn't trample farmland and doesn't follow you into boats, minecarts or portals.
 - After 3 in-game days it asks whether you still need it. Click **[Yes, 3 more days]** to keep it around
   (you can extend as often as you like), or **[No, thanks]** to say goodbye. No answer within a day means goodbye.
 - Reach all 15 goals and the guide congratulates you (title, sound and a burst of particles) and offers

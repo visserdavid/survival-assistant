@@ -1,7 +1,7 @@
 {
 	"entity.survivalassistant.guide": "Gids",
 	"survivalassistant.welcome.1": "Hoi %s! Ik ben je gids. Ik blijf de eerste dagen bij je en help je overleven.",
-	"survivalassistant.welcome.2": "Rechtsklik op mij voor een tip, of gebruik /guide tip. Even rust? /guide mute <minuten>.",
+	"survivalassistant.welcome.2": "Sluip en rechtsklik op mij voor een tip, of gebruik /guide tip. Even rust? /guide mute <minuten>.",
 	"survivalassistant.comfort.1": "Au! Geen paniek: je spullen blijven 5 minuten liggen waar je doodging. Haal ze op, maar voorzichtig!",
 	"survivalassistant.comfort.2": "Dat overkomt iedereen. Je spullen liggen nog 5 minuten op de plek waar je viel. Snel, maar veilig.",
 	"survivalassistant.chat.unavailable": "Ik ben even mijn stem kwijt. Praat over een minuutje nog eens met me!",
@@ -32,7 +32,7 @@
 	"survivalassistant.chapter2.no_answer.1": "Ik hoorde niets meer, dus ik laat je verder alleen. Je bent er klaar voor!",
 	"survivalassistant.congrats.chapter2.1": "Gefeliciteerd! Je hebt hoofdstuk 2 af. Je bent klaar voor de Nether en verder!",
 	"survivalassistant.congrats.chapter2.2": "Bouw je portaal als je er klaar voor bent, en neem eten, een harnas en een boog mee.",
-	"survivalassistant.cmd.muted": "De gids is %s minuut/minuten stil. Rechtsklik of /guide tip werkt nog wel.",
+	"survivalassistant.cmd.muted": "De gids is %s minuut/minuten stil. Sluipen + rechtsklik of /guide tip werkt nog wel.",
 	"survivalassistant.cmd.unavailable": "Je gids is nu niet beschikbaar.",
 	"survivalassistant.tip.creeper.1": "Er is een creeper vlakbij! Ren meteen weg. Hij ontploft zo'n 1,5 seconde na het sissen.",
 	"survivalassistant.tip.creeper.2": "Creeper! Hou afstand: minstens 16 blokken, of zet een blok tussen jou en hem.",

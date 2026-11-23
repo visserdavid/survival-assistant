@@ -1,7 +1,7 @@
 {
 "entity.~guide": "Guida",
 "~welcome.1": "Ciao %s! Sono la tua guida. Resterò con te nei primi giorni e ti aiuterò a sopravvivere.",
-"~welcome.2": "Fai clic destro su di me per un consiglio, o usa /guide tip. Vuoi un po' di pace? /guide mute <minuti>.",
+"~welcome.2": "Accovacciati e fai clic destro su di me per un consiglio, o usa /guide tip. Vuoi un po' di pace? /guide mute <minuti>.",
 "~comfort.1": "Ahi! Non preoccuparti: i tuoi oggetti restano per 5 minuti nel punto in cui sei morto. Vai a riprenderli, con cautela!",
 "~comfort.2": "Succede a tutti. Le tue cose sono ancora dove sei caduto, per 5 minuti. Sbrigati, ma stai attento.",
 "~chat.unavailable": "Sembra che io abbia perso la voce. Riparlami tra un minuto!",
@@ -32,7 +32,7 @@
 "~chapter2.no_answer.1": "Non ti ho più sentito, quindi ti lascio continuare da solo. Sei pronto!",
 "~congrats.chapter2.1": "Congratulazioni! Hai finito il capitolo 2. Sei pronto per il Nether e oltre!",
 "~congrats.chapter2.2": "Costruisci il tuo portale quando sei pronto, e porta cibo, armatura e un arco.",
-"~cmd.muted": "La guida resterà in silenzio per %s minuto/i. Il clic destro o /guide tip funzionano ancora.",
+"~cmd.muted": "La guida resterà in silenzio per %s minuto/i. Accovacciarsi + clic destro o /guide tip funzionano ancora.",
 "~cmd.unavailable": "La tua guida non è disponibile in questo momento.",
 "~tip.creeper.1": "Un creeper è vicino! Scappa subito. Esplode circa 1,5 secondi dopo aver sibilato.",
 "~tip.creeper.2": "Creeper! Mantieni le distanze: almeno 16 blocchi, o un blocco tra te e lui.",

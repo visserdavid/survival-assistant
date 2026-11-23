@@ -1,7 +1,7 @@
 {
 	"entity.survivalassistant.guide": "Pemandu",
 	"survivalassistant.welcome.1": "Halo, %s! Aku pemandumu. Aku akan menemanimu di hari-hari pertama dan membantumu bertahan hidup.",
-	"survivalassistant.welcome.2": "Klik kanan aku untuk tips, atau gunakan /guide tip. Mau tenang sebentar? /guide mute <menit>.",
+	"survivalassistant.welcome.2": "Menyelinaplah dan klik kanan aku untuk tips, atau gunakan /guide tip. Mau tenang sebentar? /guide mute <menit>.",
 	"survivalassistant.comfort.1": "Aduh! Jangan khawatir: barangmu tetap ada di tempat kamu mati selama 5 menit. Ambil lagi, tapi hati-hati!",
 	"survivalassistant.comfort.2": "Itu terjadi pada semua orang. Barangmu masih ada di tempat kamu jatuh selama 5 menit. Cepat, tapi tetap aman.",
 	"survivalassistant.chat.unavailable": "Sepertinya suaraku hilang. Ajak aku bicara lagi sebentar lagi!",
@@ -32,7 +32,7 @@
 	"survivalassistant.chapter2.no_answer.1": "Aku tidak mendengar kabar darimu, jadi silakan lanjut sendiri. Kamu sudah siap!",
 	"survivalassistant.congrats.chapter2.1": "Selamat! Kamu menyelesaikan bab 2. Kamu siap untuk Nether dan seterusnya!",
 	"survivalassistant.congrats.chapter2.2": "Bangun portalmu kalau sudah siap, dan bawa makanan, baju zirah, dan busur.",
-	"survivalassistant.cmd.muted": "Pemandu akan diam selama %s menit. Klik kanan atau /guide tip tetap berfungsi.",
+	"survivalassistant.cmd.muted": "Pemandu akan diam selama %s menit. Menyelinap + klik kanan atau /guide tip tetap berfungsi.",
 	"survivalassistant.cmd.unavailable": "Pemandumu sedang tidak tersedia.",
 	"survivalassistant.tip.creeper.1": "Ada creeper di dekatmu! Lari sekarang juga. Ia meledak sekitar 1,5 detik setelah mendesis.",
 	"survivalassistant.tip.creeper.2": "Creeper! Jaga jarak: setidaknya 16 blok, atau ada blok di antara kamu dan dia.",

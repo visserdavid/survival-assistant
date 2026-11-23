@@ -1,7 +1,7 @@
 {
 	"entity.survivalassistant.guide": "Guide",
 	"survivalassistant.welcome.1": "Hello %s! I'm your guide. I'll stay with you for your first days and help you survive.",
-	"survivalassistant.welcome.2": "Right-click me for a tip, or use /guide tip. Want some peace and quiet? /guide mute <minutes>.",
+	"survivalassistant.welcome.2": "Sneak and right-click me for a tip, or use /guide tip. Want some peace and quiet? /guide mute <minutes>.",
 	"survivalassistant.comfort.1": "Ouch! Don't worry: your items stay at the spot where you died for 5 minutes. Go get them, carefully!",
 	"survivalassistant.comfort.2": "That happens to everyone. Your items are still lying where you fell, for 5 minutes. Hurry, but stay safe.",
 	"survivalassistant.chat.unavailable": "I seem to have lost my voice. Talk to me again in a minute!",
@@ -32,7 +32,7 @@
 	"survivalassistant.chapter2.no_answer.1": "I didn't hear from you, so I'll let you continue on your own. You're ready!",
 	"survivalassistant.congrats.chapter2.1": "Congratulations! You finished chapter 2. You're ready for the Nether and beyond!",
 	"survivalassistant.congrats.chapter2.2": "Build your portal when you're ready, and bring food, armor and a bow.",
-	"survivalassistant.cmd.muted": "The guide will stay quiet for %s minute(s). Right-click or /guide tip still works.",
+	"survivalassistant.cmd.muted": "The guide will stay quiet for %s minute(s). Sneak + right-click or /guide tip still works.",
 	"survivalassistant.cmd.unavailable": "Your guide isn't available right now.",
 	"survivalassistant.tip.creeper.1": "A creeper is close! Run away right now. It explodes about 1.5 seconds after hissing.",
 	"survivalassistant.tip.creeper.2": "Creeper! Keep your distance: put at least 16 blocks between you, or a block between you and it.",

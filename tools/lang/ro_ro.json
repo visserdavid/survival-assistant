@@ -1,7 +1,7 @@
 {
 "entity.~guide": "Ghid",
 "~welcome.1": "Salut, %s! Sunt ghidul tău. Rămân cu tine în primele zile și te ajut să supraviețuiești.",
-"~welcome.2": "Dă clic dreapta pe mine pentru un sfat sau folosește /guide tip. Vrei liniște? /guide mute <minute>.",
+"~welcome.2": "Furișează-te și dă clic dreapta pe mine pentru un sfat sau folosește /guide tip. Vrei liniște? /guide mute <minute>.",
 "~comfort.1": "Au! Nu-ți face griji: obiectele tale rămân 5 minute acolo unde ai murit. Du-te după ele, cu grijă!",
 "~comfort.2": "Asta pățește oricine. Lucrurile tale sunt încă acolo unde ai căzut, timp de 5 minute. Grăbește-te, dar ai grijă.",
 "~chat.unavailable": "Se pare că mi-am pierdut vocea. Mai vorbește-mi peste un minut!",
@@ -32,7 +32,7 @@
 "~chapter2.no_answer.1": "Nu ți-am mai auzit vocea, așa că te las să continui singur. Ești pregătit!",
 "~congrats.chapter2.1": "Felicitări! Ai terminat capitolul 2. Ești pregătit pentru Nether și mai departe!",
 "~congrats.chapter2.2": "Construiește-ți portalul când ești gata și ia cu tine mâncare, armură și un arc.",
-"~cmd.muted": "Ghidul va tăcea %s minut(e). Clicul dreapta sau /guide tip funcționează în continuare.",
+"~cmd.muted": "Ghidul va tăcea %s minut(e). Furișat + clic dreapta sau /guide tip funcționează în continuare.",
 "~cmd.unavailable": "Ghidul tău nu este disponibil acum.",
 "~tip.creeper.1": "Un creeper e aproape! Fugi imediat. Explodează la circa 1,5 secunde după ce sâsâie.",
 "~tip.creeper.2": "Creeper! Păstrează distanța: cel puțin 16 blocuri sau un bloc între tine și el.",

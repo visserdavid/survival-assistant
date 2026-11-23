@@ -13,20 +13,35 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import io.github.visserdavid.survivalassistant.GuideManager;
 import io.github.visserdavid.survivalassistant.entity.ai.FollowOwnerGoal;
+import io.github.visserdavid.survivalassistant.entity.ai.KeepClearGoal;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.pathfinder.PathType;
 import org.jspecify.annotations.Nullable;
 
 import java.util.UUID;
+import java.util.function.Predicate;
 
 /**
  * The guide NPC. Purely an advisor: invulnerable, ignored by monsters, never saved to the world.
  * {@link GuideManager} (re)spawns one next to each player who still has an active guide.
+ *
+ * <p>It must never put a beginner in danger, so it is a "ghost" for everything the player does: it doesn't push
+ * or block anyone, blocks can be placed where it stands, clicks, hits and arrows pass through it (sneak +
+ * right-click to talk to it), and it doesn't trigger pressure plates, tripwires, sculk sensors, farmland,
+ * portals or vehicles. It also keeps out of the player's way and view (see {@link KeepClearGoal}).
  */
 public class GuideEntity extends PathfinderMob {
+	/**
+	 * Client-side check whether the local player may click the guide (set by the client entrypoint: while sneaking).
+	 * The server checks the owner itself.
+	 */
+	public static Predicate<GuideEntity> clientPickable = guide -> true;
+
 	private @Nullable UUID ownerId;
 	private @Nullable BlockPos pointAt;
 	private int pointTicks;
@@ -35,6 +50,12 @@ public class GuideEntity extends PathfinderMob {
 		super(type, level);
 		this.setPermanentlyInvulnerable(true);
 		this.setCustomNameVisible(true);
+		this.blocksBuilding = false; // a block can be placed where the guide stands (sealing a shelter at night)
+		// stay away from places that would hurt a player who follows
+		for (PathType danger : new PathType[]{PathType.LAVA, PathType.FIRE, PathType.FIRE_IN_NEIGHBOR, PathType.DAMAGING,
+				PathType.DAMAGING_IN_NEIGHBOR, PathType.POWDER_SNOW, PathType.ON_TOP_OF_POWDER_SNOW}) {
+			this.setPathfindingMalus(danger, -1f);
+		}
 	}
 
 	public static AttributeSupplier.Builder createAttributes() {
@@ -47,10 +68,11 @@ public class GuideEntity extends PathfinderMob {
 	@Override
 	protected void registerGoals() {
 		this.goalSelector.addGoal(0, new FloatGoal(this));
-		this.goalSelector.addGoal(1, new FollowOwnerGoal(this, 1.1, 6f, 3f));
-		this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 8f));
-		this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.6));
+		this.goalSelector.addGoal(1, new KeepClearGoal(this, 1.2));
+		this.goalSelector.addGoal(2, new FollowOwnerGoal(this, 1.1, 7f, 3.5f));
+		this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8f));
 		this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+		// no random strolling: wandering off is how a guide ends up in front of you
 	}
 
 	// --- owner ---
@@ -94,6 +116,12 @@ public class GuideEntity extends PathfinderMob {
 		// Without an owner in this level the guide has no purpose; the manager will spawn a fresh one where needed.
 		if (!level().isClientSide() && tickCount > 40 && getOwner() == null) {
 			discard();
+			return;
+		}
+		// a block was placed where the guide stands: step out of it
+		if (!level().isClientSide() && tickCount % 10 == 0 && isInWall()) {
+			ServerPlayer owner = getOwner();
+			FollowOwnerGoal.teleportNear(this, owner != null ? owner.blockPosition() : blockPosition());
 		}
 	}
 
@@ -117,6 +145,63 @@ public class GuideEntity extends PathfinderMob {
 
 	@Override
 	public boolean isPushable() {
+		return false;
+	}
+
+	/** Never shove the player (the guide itself can't be pushed either). */
+	@Override
+	protected void pushEntities() {
+	}
+
+	@Override
+	protected void doPush(Entity entity) {
+	}
+
+	@Override
+	public boolean canBeCollidedWith(@Nullable Entity entity) {
+		return false;
+	}
+
+	/** Only clickable while the owner sneaks; otherwise hits and clicks pass through to whatever is behind it. */
+	@Override
+	public boolean isPickable() {
+		if (level().isClientSide()) return clientPickable.test(this);
+		ServerPlayer owner = getOwner();
+		return owner != null && owner.isShiftKeyDown();
+	}
+
+	@Override
+	public boolean canBeHitByProjectile() {
+		return false;
+	}
+
+	// --- don't set anything off ---
+
+	/** Pressure plates, tripwires (temple traps!) and similar blocks ignore the guide. */
+	@Override
+	public boolean isIgnoringBlockTriggers() {
+		return true;
+	}
+
+	/** Its footsteps don't reach sculk sensors and shriekers (no warden because of the guide). */
+	@Override
+	public boolean dampensVibrations() {
+		return true;
+	}
+
+	/** Landing doesn't trample farmland (the guide takes no fall damage anyway). */
+	@Override
+	protected void checkFallDamage(double y, boolean onGround, BlockState state, BlockPos pos) {
+		if (onGround) resetFallDistance();
+	}
+
+	@Override
+	public boolean canUsePortal(boolean allowPassengers) {
+		return false;
+	}
+
+	@Override
+	protected boolean canRide(Entity vehicle) {
 		return false;
 	}
 

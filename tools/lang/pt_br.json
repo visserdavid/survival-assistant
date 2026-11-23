@@ -1,7 +1,7 @@
 {
 "entity.~guide": "Guia",
 "~welcome.1": "Olá, %s! Eu sou seu guia. Vou ficar com você nos primeiros dias e ajudar você a sobreviver.",
-"~welcome.2": "Clique com o botão direito em mim para uma dica, ou use /guide tip. Quer um pouco de sossego? /guide mute <minutos>.",
+"~welcome.2": "Agache e clique com o botão direito em mim para uma dica, ou use /guide tip. Quer um pouco de sossego? /guide mute <minutos>.",
 "~comfort.1": "Ai! Não se preocupe: seus itens ficam 5 minutos no lugar onde você morreu. Vá buscá-los, com cuidado!",
 "~comfort.2": "Isso acontece com todo mundo. Suas coisas ainda estão onde você caiu, por 5 minutos. Corra, mas com segurança.",
 "~chat.unavailable": "Parece que perdi a voz. Fale comigo de novo daqui a um minuto!",
@@ -32,7 +32,7 @@
 "~chapter2.no_answer.1": "Não tive notícias suas, então vou deixar você continuar sozinho. Você está pronto!",
 "~congrats.chapter2.1": "Parabéns! Você terminou o capítulo 2. Você está pronto para o Nether e além!",
 "~congrats.chapter2.2": "Construa seu portal quando estiver pronto, e leve comida, armadura e um arco.",
-"~cmd.muted": "O guia vai ficar quieto por %s minuto(s). O clique direito ou /guide tip ainda funcionam.",
+"~cmd.muted": "O guia vai ficar quieto por %s minuto(s). Agachar + clique direito ou /guide tip ainda funcionam.",
 "~cmd.unavailable": "Seu guia não está disponível agora.",
 "~tip.creeper.1": "Tem um creeper perto! Fuja agora mesmo. Ele explode cerca de 1,5 segundo depois de chiar.",
 "~tip.creeper.2": "Creeper! Mantenha distância: pelo menos 16 blocos, ou um bloco entre você e ele.",

@@ -1,7 +1,7 @@
 {
 	"entity.survivalassistant.guide": "Проводник",
 	"survivalassistant.welcome.1": "Привет, %s! Я твой проводник. Я побуду с тобой первые дни и помогу выжить.",
-	"survivalassistant.welcome.2": "Нажми на меня правой кнопкой, чтобы получить совет, или используй /guide tip. Хочешь тишины? /guide mute <минуты>.",
+	"survivalassistant.welcome.2": "Присядь и нажми на меня правой кнопкой, чтобы получить совет, или используй /guide tip. Хочешь тишины? /guide mute <минуты>.",
 	"survivalassistant.comfort.1": "Ой! Не волнуйся: твои вещи лежат 5 минут там, где ты погиб. Сходи за ними, но осторожно!",
 	"survivalassistant.comfort.2": "Такое бывает со всеми. Твои вещи ещё 5 минут лежат там, где ты упал. Поспеши, но береги себя.",
 	"survivalassistant.chat.unavailable": "Кажется, я потерял голос. Заговори со мной через минутку!",
@@ -32,7 +32,7 @@
 	"survivalassistant.chapter2.no_answer.1": "Ты не ответил, так что дальше пойдёшь сам. Ты готов!",
 	"survivalassistant.congrats.chapter2.1": "Поздравляю! Ты прошёл главу 2. Ты готов к Незеру и не только!",
 	"survivalassistant.congrats.chapter2.2": "Построй портал, когда будешь готов, и возьми с собой еду, броню и лук.",
-	"survivalassistant.cmd.muted": "Проводник помолчит (минут: %s). Правая кнопка или /guide tip по-прежнему работают.",
+	"survivalassistant.cmd.muted": "Проводник помолчит (минут: %s). Присесть + правая кнопка или /guide tip по-прежнему работают.",
 	"survivalassistant.cmd.unavailable": "Твой проводник сейчас недоступен.",
 	"survivalassistant.tip.creeper.1": "Рядом крипер! Беги прямо сейчас. Он взрывается примерно через 1,5 секунды после шипения.",
 	"survivalassistant.tip.creeper.2": "Крипер! Держи дистанцию: хотя бы 16 блоков или блок между вами.",

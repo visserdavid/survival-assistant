@@ -1,7 +1,7 @@
 {
 	"entity.survivalassistant.guide": "المرشد",
 	"survivalassistant.welcome.1": "مرحبًا %s! أنا مرشدك. سأبقى معك في أيامك الأولى وأساعدك على النجاة.",
-	"survivalassistant.welcome.2": "انقر عليّ بالزر الأيمن للحصول على نصيحة، أو استخدم /guide tip. تريد بعض الهدوء؟ /guide mute <دقائق>.",
+	"survivalassistant.welcome.2": "تسلل وانقر عليّ بالزر الأيمن للحصول على نصيحة، أو استخدم /guide tip. تريد بعض الهدوء؟ /guide mute <دقائق>.",
 	"survivalassistant.comfort.1": "آخ! لا تقلق: تبقى أغراضك 5 دقائق في المكان الذي متّ فيه. اذهب لاستعادتها، بحذر!",
 	"survivalassistant.comfort.2": "هذا يحدث للجميع. أغراضك ما زالت حيث سقطت لمدة 5 دقائق. أسرع، لكن ابقَ آمنًا.",
 	"survivalassistant.chat.unavailable": "يبدو أنني فقدت صوتي. كلّمني مرة أخرى بعد دقيقة!",
@@ -32,7 +32,7 @@
 	"survivalassistant.chapter2.no_answer.1": "لم أسمع منك، لذا سأتركك تكمل وحدك. أنت مستعد!",
 	"survivalassistant.congrats.chapter2.1": "تهانينا! أنهيت الفصل 2. أنت مستعد للنذر وما بعده!",
 	"survivalassistant.congrats.chapter2.2": "ابنِ بوابتك عندما تكون مستعدًا، وخذ معك طعامًا ودرعًا وقوسًا.",
-	"survivalassistant.cmd.muted": "سيبقى المرشد صامتًا %s دقيقة. النقر بالزر الأيمن أو /guide tip ما زالا يعملان.",
+	"survivalassistant.cmd.muted": "سيبقى المرشد صامتًا %s دقيقة. التسلل + النقر بالزر الأيمن أو /guide tip ما زالا يعملان.",
 	"survivalassistant.cmd.unavailable": "مرشدك غير متاح الآن.",
 	"survivalassistant.tip.creeper.1": "هناك كريبر قريب! اهرب فورًا. ينفجر بعد نحو 1.5 ثانية من بدء الفحيح.",
 	"survivalassistant.tip.creeper.2": "كريبر! حافظ على المسافة: 16 مكعبًا على الأقل، أو ضع مكعبًا بينك وبينه.",

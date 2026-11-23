@@ -1,7 +1,7 @@
 {
 	"entity.survivalassistant.guide": "Przewodnik",
 	"survivalassistant.welcome.1": "Cześć, %s! Jestem twoim przewodnikiem. Zostanę z tobą przez pierwsze dni i pomogę ci przetrwać.",
-	"survivalassistant.welcome.2": "Kliknij mnie prawym przyciskiem po radę albo użyj /guide tip. Potrzebujesz ciszy? /guide mute <minuty>.",
+	"survivalassistant.welcome.2": "Skradaj się i kliknij mnie prawym przyciskiem po radę albo użyj /guide tip. Potrzebujesz ciszy? /guide mute <minuty>.",
 	"survivalassistant.comfort.1": "Auć! Spokojnie: twoje przedmioty leżą 5 minut tam, gdzie zginąłeś. Idź po nie, ale ostrożnie!",
 	"survivalassistant.comfort.2": "Każdemu się zdarza. Twoje rzeczy wciąż leżą tam, gdzie upadłeś, przez 5 minut. Pospiesz się, ale uważaj.",
 	"survivalassistant.chat.unavailable": "Chyba straciłem głos. Odezwij się do mnie za minutę!",
@@ -32,7 +32,7 @@
 	"survivalassistant.chapter2.no_answer.1": "Nie odezwałeś się, więc dalej pójdziesz sam. Jesteś gotowy!",
 	"survivalassistant.congrats.chapter2.1": "Gratulacje! Ukończyłeś rozdział 2. Jesteś gotowy na Nether i dalej!",
 	"survivalassistant.congrats.chapter2.2": "Zbuduj portal, kiedy będziesz gotowy, i weź jedzenie, zbroję i łuk.",
-	"survivalassistant.cmd.muted": "Przewodnik będzie milczał przez %s min. Prawy przycisk lub /guide tip nadal działają.",
+	"survivalassistant.cmd.muted": "Przewodnik będzie milczał przez %s min. Skradanie + prawy przycisk lub /guide tip nadal działają.",
 	"survivalassistant.cmd.unavailable": "Twój przewodnik jest teraz niedostępny.",
 	"survivalassistant.tip.creeper.1": "Creeper jest blisko! Uciekaj natychmiast. Wybucha około 1,5 sekundy po syknięciu.",
 	"survivalassistant.tip.creeper.2": "Creeper! Trzymaj dystans: co najmniej 16 bloków albo blok między tobą a nim.",

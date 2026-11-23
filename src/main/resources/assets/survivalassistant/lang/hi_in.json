@@ -1,7 +1,7 @@
 {
 	"entity.survivalassistant.guide": "गाइड",
 	"survivalassistant.welcome.1": "नमस्ते %s! मैं तुम्हारा गाइड हूँ। शुरुआती दिनों में मैं तुम्हारे साथ रहूँगा और ज़िंदा रहने में मदद करूँगा।",
-	"survivalassistant.welcome.2": "टिप के लिए मुझ पर राइट-क्लिक करो, या /guide tip इस्तेमाल करो। थोड़ी शांति चाहिए? /guide mute <मिनट>।",
+	"survivalassistant.welcome.2": "टिप के लिए झुककर मुझ पर राइट-क्लिक करो, या /guide tip इस्तेमाल करो। थोड़ी शांति चाहिए? /guide mute <मिनट>।",
 	"survivalassistant.comfort.1": "अरे! चिंता मत करो: तुम्हारी चीज़ें 5 मिनट तक उसी जगह रहती हैं जहाँ तुम मरे थे। सावधानी से जाकर उन्हें ले आओ!",
 	"survivalassistant.comfort.2": "ऐसा सबके साथ होता है। तुम्हारा सामान 5 मिनट तक वहीं पड़ा है जहाँ तुम गिरे थे। जल्दी करो, पर सुरक्षित रहो।",
 	"survivalassistant.chat.unavailable": "लगता है मेरी आवाज़ चली गई है। एक मिनट बाद फिर से बात करना!",
@@ -32,7 +32,7 @@
 	"survivalassistant.chapter2.no_answer.1": "तुम्हारा कोई जवाब नहीं आया, तो आगे तुम अकेले बढ़ो। तुम तैयार हो!",
 	"survivalassistant.congrats.chapter2.1": "बधाई हो! तुमने अध्याय 2 पूरा कर लिया। तुम नेदर और उससे आगे के लिए तैयार हो!",
 	"survivalassistant.congrats.chapter2.2": "जब तैयार हो, अपना पोर्टल बनाओ, और साथ में खाना, कवच और धनुष ले जाओ।",
-	"survivalassistant.cmd.muted": "गाइड %s मिनट तक चुप रहेगा। राइट-क्लिक या /guide tip अब भी काम करते हैं।",
+	"survivalassistant.cmd.muted": "गाइड %s मिनट तक चुप रहेगा। झुककर राइट-क्लिक या /guide tip अब भी काम करते हैं।",
 	"survivalassistant.cmd.unavailable": "तुम्हारा गाइड अभी उपलब्ध नहीं है।",
 	"survivalassistant.tip.creeper.1": "पास में क्रीपर है! अभी भागो। फुफकारने के लगभग 1.5 सेकंड बाद वह फट जाता है।",
 	"survivalassistant.tip.creeper.2": "क्रीपर! दूरी बनाए रखो: कम से कम 16 ब्लॉक, या अपने और उसके बीच एक ब्लॉक।",
