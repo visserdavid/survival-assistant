@@ -13,10 +13,21 @@ import java.util.Set;
  * @param limited  true when the chapter has a day limit (only the first days; later chapters last as long as needed)
  */
 public record Chapter(int number, String id, List<Tip> goals, List<Integer> requires, boolean limited) {
+	public Chapter {
+		goals = List.copyOf(goals);
+		requires = List.copyOf(requires);
+	}
+
 	/** Every goal is in {@code completed}. */
 	public boolean done(Set<String> completed) {
-		for (Tip m : goals) if (!completed.contains(m.id())) return false;
-		return true;
+		return doneCount(completed) == goals.size();
+	}
+
+	/** How many of the goals are in {@code completed}. */
+	public int doneCount(Set<String> completed) {
+		int n = 0;
+		for (Tip m : goals) if (completed.contains(m.id())) n++;
+		return n;
 	}
 
 	/** Every chapter this one needs is finished. */
