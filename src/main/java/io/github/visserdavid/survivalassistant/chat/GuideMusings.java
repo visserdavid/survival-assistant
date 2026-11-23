@@ -15,6 +15,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * The guide's musings: a building idea when you enter a new biome, a remark about the animals around you, a scene
@@ -36,14 +37,16 @@ public final class GuideMusings {
 	}
 
 	/** Called with every fresh situation evaluation (every few seconds). */
-	public static void observe(ServerPlayer player, @Nullable GuideEntity guide, SurvivalContext ctx, GuideProgress progress) {
+	public static void observe(ServerPlayer player, @Nullable GuideEntity guide, SurvivalContext ctx, GuideProgress progress,
+			Supplier<Surroundings> surroundings) {
 		if (!enabled(progress)) return;
 		ModConfig cfg = ModConfig.get();
 		long now = player.level().getGameTime();
 		MuseScheduler scheduler = SCHEDULERS.computeIfAbsent(player.getUUID(),
 				id -> new MuseScheduler(Ticks.seconds(cfg.museIntervalSeconds)));
+		scheduler.setInterval(Ticks.seconds(cfg.museIntervalSeconds));
 
-		Surroundings s = SurroundingsCollector.collect(player, ctx, cfg.chatSightRadius);
+		Surroundings s = surroundings.get();
 		// Without the character only urgent warnings go to chat, so no musings either.
 		boolean blocked = guide == null || now < progress.muteUntil || AdviceEngine.activeUrgent(ctx) != null
 				|| GuideChat.busy(player);

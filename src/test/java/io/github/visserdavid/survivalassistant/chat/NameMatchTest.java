@@ -32,4 +32,13 @@ class NameMatchTest {
 	void emptyNameNeverMatches() {
 		assertFalse(NameMatch.mentions("anything", "  "));
 	}
+
+	@Test
+	void chineseAndJapaneseNeedNoSpaces() {
+		assertTrue(NameMatch.mentions("向导你好", "向导"));
+		assertTrue(NameMatch.mentions("Pim你好", "Pim"));
+		assertTrue(NameMatch.mentions("你好Pim", "Pim"));
+		assertTrue(NameMatch.mentions("ガイドさん、こんにちは", "ガイド"));
+		assertFalse(NameMatch.mentions("Pimple你好", "Pim"), "inside a Latin word it is still no match");
+	}
 }

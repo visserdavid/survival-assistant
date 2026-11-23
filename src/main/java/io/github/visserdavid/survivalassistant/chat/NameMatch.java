@@ -13,11 +13,25 @@ public final class NameMatch {
 		String t = text.toLowerCase(Locale.ROOT);
 		for (int i = t.indexOf(n); i >= 0; i = t.indexOf(n, i + 1)) {
 			int end = i + n.length();
-			boolean startOk = i == 0 || !isWordChar(t.codePointBefore(i));
-			boolean endOk = end == t.length() || !isWordChar(t.codePointAt(end));
+			boolean startOk = i == 0 || boundary(t.codePointBefore(i), n.codePointAt(0));
+			boolean endOk = end == t.length() || boundary(t.codePointAt(end), n.codePointBefore(n.length()));
 			if (startOk && endOk) return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Is there a word boundary between the name's edge and the character next to it? Chinese, Japanese and Korean
+	 * write words without spaces, so next to (or inside) such a script every edge counts ("向导你好", "Pim你好").
+	 */
+	private static boolean boundary(int neighbour, int nameEdge) {
+		return !isWordChar(neighbour) || isCjk(neighbour) || isCjk(nameEdge);
+	}
+
+	private static boolean isCjk(int cp) {
+		Character.UnicodeScript s = Character.UnicodeScript.of(cp);
+		return s == Character.UnicodeScript.HAN || s == Character.UnicodeScript.HIRAGANA
+				|| s == Character.UnicodeScript.KATAKANA || s == Character.UnicodeScript.HANGUL;
 	}
 
 	private static boolean isWordChar(int cp) {

@@ -43,7 +43,9 @@ public final class ChangeDetector {
 	/** Biomes remembered as "already talked about". */
 	private static final int RECENT_BIOMES = 4;
 
-	private final long cooldownTicks;
+	private long cooldownTicks;
+	/** The musings greet a new biome with a building idea, so small talk leaves it alone (without losing its turn). */
+	private boolean ignoreNewBiome;
 
 	private Surroundings previous;
 	private long lastRemark;
@@ -55,6 +57,16 @@ public final class ChangeDetector {
 
 	public ChangeDetector(long cooldownTicks) {
 		this.cooldownTicks = Math.max(0, cooldownTicks);
+	}
+
+	/** A changed setting applies at once. */
+	public void setCooldown(long cooldownTicks) {
+		this.cooldownTicks = Math.max(0, cooldownTicks);
+	}
+
+	/** While true, a new biome is not remarked on (and doesn't use up the cooldown). */
+	public void ignoreNewBiome(boolean ignore) {
+		this.ignoreNewBiome = ignore;
 	}
 
 	/**
@@ -121,7 +133,7 @@ public final class ChangeDetector {
 		boolean biomeReady = tick - settlingSince >= BIOME_SETTLE && !remarkedBiomes.contains(now.biomeId());
 		for (Kind kind : Kind.values()) {
 			if (kind == Kind.NEW_BIOME) {
-				if (biomeReady) return Optional.of(new Change(kind, now.biomeId()));
+				if (biomeReady && !ignoreNewBiome) return Optional.of(new Change(kind, now.biomeId()));
 			} else if (kind == Kind.NEW_MOB) {
 				if (mob.isPresent()) return mob;
 			} else if (moments.containsKey(kind)) {

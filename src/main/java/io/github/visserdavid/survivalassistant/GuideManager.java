@@ -15,6 +15,8 @@ import io.github.visserdavid.survivalassistant.advice.SurvivalContext;
 import io.github.visserdavid.survivalassistant.chat.GuideChat;
 import io.github.visserdavid.survivalassistant.chat.GuideMusings;
 import io.github.visserdavid.survivalassistant.chat.Persona;
+import io.github.visserdavid.survivalassistant.chat.Surroundings;
+import io.github.visserdavid.survivalassistant.chat.SurroundingsCollector;
 import io.github.visserdavid.survivalassistant.config.ModConfig;
 import io.github.visserdavid.survivalassistant.entity.GuideEntity;
 import io.github.visserdavid.survivalassistant.state.GuideState;
@@ -31,6 +33,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jspecify.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 import java.util.List;
 
@@ -139,8 +143,12 @@ public final class GuideManager {
 		respond(player, guide, ctx, progress, forced);
 		checkLight(player, guide, ctx, progress, session, now);
 		checkPlaceNotices(player, guide, ctx, progress);
-		GuideChat.observe(player, guide, ctx, progress);
-		GuideMusings.observe(player, guide, ctx, progress);
+		// the look around (mobs in sight) is shared by small talk and musings, and only made when one of them needs it
+		Surroundings[] seen = new Surroundings[1];
+		Supplier<Surroundings> surroundings = () -> seen[0] != null ? seen[0]
+				: (seen[0] = SurroundingsCollector.collect(player, ctx, ModConfig.get().chatSightRadius));
+		GuideChat.observe(player, guide, ctx, progress, surroundings);
+		GuideMusings.observe(player, guide, ctx, progress, surroundings);
 		HudState.update(player, HudSnapshot.of(ctx, progress, GuideNavigation.waypoint(player, progress, ctx, now)));
 	}
 

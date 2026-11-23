@@ -119,4 +119,26 @@ class ChangeDetectorTest {
 		assertTrue(d.update(at("forest", false, Surroundings.Phase.DAY, Map.of("cow", 1)), t + 20, false).isEmpty(),
 				"no spontaneous remark right after a conversation");
 	}
+
+	@Test
+	void anIgnoredNewBiomeDoesNotUseTheCooldown() {
+		ChangeDetector d = settledInForest();
+		d.ignoreNewBiome(true);
+		long t = FIRST + COOLDOWN;
+		d.update(calm("desert"), t, false);
+		assertTrue(d.update(calm("desert"), t + ChangeDetector.BIOME_SETTLE, false).isEmpty(), "the musings greet the biome");
+		// a moment right after is still remarked: the skipped biome used no cooldown
+		Optional<ChangeDetector.Change> c = d.update(at("desert", true, Surroundings.Phase.DAY, Map.of()),
+				t + ChangeDetector.BIOME_SETTLE + 1, false);
+		assertEquals(ChangeDetector.Kind.RAIN_START, c.orElseThrow().kind());
+	}
+
+	@Test
+	void aChangedCooldownAppliesAtOnce() {
+		ChangeDetector d = settledInForest();
+		d.setCooldown(0);
+		long t = FIRST + 1;
+		Optional<ChangeDetector.Change> c = d.update(at("forest", true, Surroundings.Phase.DAY, Map.of()), t, false);
+		assertEquals(ChangeDetector.Kind.RAIN_START, c.orElseThrow().kind());
+	}
 }

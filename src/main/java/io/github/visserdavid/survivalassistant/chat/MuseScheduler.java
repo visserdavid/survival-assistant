@@ -45,7 +45,7 @@ public final class MuseScheduler {
 		}
 	}
 
-	private final long intervalTicks;
+	private long intervalTicks;
 	private boolean started;
 	private long lastMuse;
 	private long lastRemark = Long.MIN_VALUE / 4;
@@ -55,6 +55,11 @@ public final class MuseScheduler {
 	private boolean toldAboutSelf;
 
 	public MuseScheduler(long intervalTicks) {
+		this.intervalTicks = Math.max(QUIET_TICKS, intervalTicks);
+	}
+
+	/** A changed setting applies at once. */
+	public void setInterval(long intervalTicks) {
 		this.intervalTicks = Math.max(QUIET_TICKS, intervalTicks);
 	}
 

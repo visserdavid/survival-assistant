@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -21,19 +22,24 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class LangFile {
 	private static final String FALLBACK = "en_us";
+	/** The language files the mod ships (see tools/make_lang.py); any other code the client sends means English. */
+	static final Set<String> SHIPPED = Set.of("ar_sa", "de_at", "de_ch", "de_de", "en_us", "es_ar", "es_cl", "es_ec",
+			"es_es", "es_mx", "es_uy", "es_ve", "fr_ca", "fr_ch", "fr_fr", "hi_in", "id_id", "it_it", "nl_be", "nl_nl",
+			"pl_pl", "pt_br", "pt_pt", "ro_ro", "ru_ru", "uk_ua", "zh_cn");
 	private static final Map<String, Map<String, String>> CACHE = new ConcurrentHashMap<>();
 
 	private LangFile() {}
 
 	/** The translation in the given language, falling back to English; null when the key doesn't exist. */
 	public static @Nullable String get(String languageCode, String key) {
-		String value = load(languageCode.toLowerCase(Locale.ROOT)).get(key);
+		String code = languageCode.toLowerCase(Locale.ROOT);
+		String value = has(code) ? load(code).get(key) : null;
 		return value != null ? value : load(FALLBACK).get(key);
 	}
 
 	/** Whether the mod ships this language; otherwise the guide falls back to English. */
 	public static boolean has(String languageCode) {
-		return !load(languageCode.toLowerCase(Locale.ROOT)).isEmpty();
+		return SHIPPED.contains(languageCode.toLowerCase(Locale.ROOT));
 	}
 
 	private static Map<String, String> load(String code) {

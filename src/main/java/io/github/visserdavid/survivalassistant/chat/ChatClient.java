@@ -8,12 +8,14 @@ import com.google.gson.JsonParser;
 
 import java.io.IOException;
 import java.net.URI;
+import java.io.InputStream;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.CompletionException;
 
 /**
@@ -57,9 +59,10 @@ public final class ChatClient {
 		} catch (IllegalArgumentException e) {
 			return CompletableFuture.failedFuture(new BadResponseException("Invalid chat endpoint '" + endpoint + "': " + e.getMessage()));
 		}
-		return HTTP.sendAsync(request, HttpResponse.BodyHandlers.ofByteArray())
+		// the request timeout covers waiting for the headers; orTimeout also covers a body that trickles in forever
+		return HTTP.sendAsync(request, HttpResponse.BodyHandlers.ofInputStream())
 				.thenApply(response -> {
-					byte[] bytes = response.body();
+					byte[] bytes = readAtMost(response.body(), MAX_RESPONSE_BYTES + 1);
 					String body = new String(bytes, 0, Math.min(bytes.length, MAX_RESPONSE_BYTES), StandardCharsets.UTF_8);
 					int status = response.statusCode();
 					if (status < 200 || status >= 300) {
@@ -67,10 +70,23 @@ public final class ChatClient {
 								+ (body.length() > ERROR_BODY_CHARS ? body.substring(0, ERROR_BODY_CHARS) : body)));
 					}
 					if (bytes.length > MAX_RESPONSE_BYTES) {
-						throw new CompletionException(new BadResponseException("Reply too large: " + bytes.length + " bytes"));
+						throw new CompletionException(new BadResponseException("Reply too large (over " + MAX_RESPONSE_BYTES + " bytes)"));
 					}
 					return parse(body);
-				});
+				})
+				.orTimeout(timeoutSeconds + BODY_GRACE_SECONDS, TimeUnit.SECONDS);
+	}
+
+	/** Extra time for reading the body after the headers arrived. */
+	private static final int BODY_GRACE_SECONDS = 5;
+
+	/** Reads at most {@code limit} bytes and closes the stream (so an endless body can't fill the memory). */
+	static byte[] readAtMost(InputStream in, int limit) {
+		try (in) {
+			return in.readNBytes(limit);
+		} catch (IOException e) {
+			throw new CompletionException(e);
+		}
 	}
 
 	/**

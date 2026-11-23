@@ -17,12 +17,18 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import org.jspecify.annotations.Nullable;
 
-import java.io.IOException;
+import java.net.ConnectException;
+import java.net.http.HttpConnectTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.Semaphore;
+import java.util.function.Supplier;
 
 /**
  * Small talk with the guide through a local language model.
@@ -33,12 +39,21 @@ import java.util.UUID;
  * the HTTP request itself.
  */
 public final class GuideChat {
-	/** After a failed connection we leave the model alone for a minute (wall clock, shared by all players). */
-	private static final long OFFLINE_BACKOFF_MS = 60_000;
+	/** No model server: leave it alone for a minute, then longer and longer up to half an hour (wall clock). */
+	private static final long FIRST_BACKOFF_MS = 60_000;
+	private static final long MAX_BACKOFF_MS = 30 * 60_000;
 	private static final String ABOUT_PREFIX = "survivalassistant.about.";
+	/**
+	 * One request at a time for the whole server: a small local model answers one by one anyway (the README advises
+	 * {@code --parallel 1}), and queued requests would only time out.
+	 */
+	private static final Semaphore SLOT = new Semaphore(1);
 
 	private static final Map<UUID, State> STATES = new HashMap<>();
 	private static volatile long offlineUntil;
+	private static volatile long backoffMs = FIRST_BACKOFF_MS;
+	/** A problem was logged; nothing more until a request works again (no log spam without a model server). */
+	private static volatile boolean reported;
 
 	private GuideChat() {}
 
@@ -48,6 +63,8 @@ public final class GuideChat {
 		/** The situation at the last evaluation, so a chat message doesn't need a fresh scan of the world. */
 		@Nullable SurvivalContext lastContext;
 		boolean waiting;
+		/** The running request, cancelled when the player leaves or the server stops. */
+		@Nullable CompletableFuture<String> pending;
 
 		State(long cooldownTicks) {
 			detector = new ChangeDetector(cooldownTicks);
@@ -58,16 +75,17 @@ public final class GuideChat {
 	 * One question to the model.
 	 *
 	 * @param userLine  what goes into the history as the player's turn
-	 * @param direct    the player spoke to the guide (an unreachable model then gets a short apology)
+	 * @param apologize the player called the guide by name: an unreachable model then gets a short apology
 	 * @param fallback  said instead when the model gives no usable answer (a musing's handwritten line), or null
 	 */
-	private record Request(List<ChatPrompt.Turn> messages, String userLine, String guideName, boolean direct,
+	private record Request(List<ChatPrompt.Turn> messages, String userLine, String guideName, boolean apologize,
 			@Nullable Component fallback) {}
 
 	// ---------------------------------------------------------------- spontaneous remarks
 
 	/** Called with every fresh situation evaluation (every few seconds). */
-	public static void observe(ServerPlayer player, @Nullable GuideEntity guide, SurvivalContext ctx, GuideProgress progress) {
+	public static void observe(ServerPlayer player, @Nullable GuideEntity guide, SurvivalContext ctx, GuideProgress progress,
+			Supplier<Surroundings> seen) {
 		ModConfig cfg = ModConfig.get();
 		if (!progress.chatEnabled(cfg.chatEnabled)) return;
 		State state = state(player);
@@ -76,12 +94,14 @@ public final class GuideChat {
 		if (!cfg.chatSpontaneous || guide == null) return;
 
 		long now = player.level().getGameTime();
-		Surroundings surroundings = SurroundingsCollector.collect(player, ctx, cfg.chatSightRadius);
-		boolean blocked = state.waiting || offline() || now < progress.muteUntil || AdviceEngine.activeUrgent(ctx) != null;
+		Surroundings surroundings = seen.get();
+		boolean blocked = state.waiting || modelBusy() || offline() || now < progress.muteUntil
+				|| AdviceEngine.activeUrgent(ctx) != null;
+		state.detector.setCooldown(Ticks.seconds(cfg.chatCooldownSeconds));
+		// the musings already greet a new biome with a building idea
+		state.detector.ignoreNewBiome(GuideMusings.enabled(progress));
 
 		state.detector.update(surroundings, now, blocked).ifPresent(change -> {
-			// the musings already greet a new biome with a building idea
-			if (change.kind() == ChangeDetector.Kind.NEW_BIOME && GuideMusings.enabled(progress)) return;
 			ChatPrompt.Scene scene = scene(player, surroundings, progress);
 			String note = ChatPrompt.changeNote(scene, change);
 			ask(player, state, new Request(ChatPrompt.forLine(scene, state.history, note), note, scene.guideName(), false, null));
@@ -115,7 +135,7 @@ public final class GuideChat {
 
 		ChatPrompt.Scene scene = scene(player, state, progress);
 		String said = text.strip();
-		ask(player, state, new Request(ChatPrompt.forLine(scene, state.history, said), said, guideName, true, null));
+		ask(player, state, new Request(ChatPrompt.forLine(scene, state.history, said), said, guideName, named, null));
 	}
 
 	/**
@@ -140,20 +160,25 @@ public final class GuideChat {
 
 	// ---------------------------------------------------------------- musings
 
-	/** True while a request for this player is running. */
+	/** True while a request is running (for this player, or for anyone: the model answers one at a time). */
 	public static boolean busy(ServerPlayer player) {
 		State state = STATES.get(player.getUUID());
-		return state != null && state.waiting;
+		return (state != null && state.waiting) || modelBusy();
+	}
+
+	private static boolean modelBusy() {
+		return SLOT.availablePermits() == 0;
 	}
 
 	/**
 	 * Lets the language model put a musing in its own words (the English line of {@code key} is the idea).
 	 *
-	 * @return false when small talk is off or the model is offline: the caller then says the handwritten line
+	 * @return false when small talk or spontaneous remarks are off, or the model is offline or busy: the caller then
+	 *         says the handwritten line
 	 */
 	public static boolean muse(ServerPlayer player, GuideProgress progress, String key) {
 		ModConfig cfg = ModConfig.get();
-		if (!progress.chatEnabled(cfg.chatEnabled) || offline()) return false;
+		if (!progress.chatEnabled(cfg.chatEnabled) || !cfg.chatSpontaneous || offline()) return false;
 		String idea = LangFile.get("en_us", key);
 		if (idea == null) return false;
 		State state = state(player);
@@ -162,14 +187,15 @@ public final class GuideChat {
 
 		ChatPrompt.Scene scene = scene(player, state, progress);
 		String note = key.startsWith(ABOUT_PREFIX) ? ChatPrompt.selfNote(scene, idea) : ChatPrompt.museNote(scene, idea);
-		ask(player, state, new Request(ChatPrompt.forLine(scene, state.history, note), note, scene.guideName(), false,
+		return ask(player, state, new Request(ChatPrompt.forLine(scene, state.history, note), note, scene.guideName(), false,
 				Component.translatable(key)));
-		return true;
 	}
 
 	// ---------------------------------------------------------------- request and reply
 
-	private static void ask(ServerPlayer player, State state, Request request) {
+	/** Sends the request when the model is free; false when another request is still running. */
+	private static boolean ask(ServerPlayer player, State state, Request request) {
+		if (!SLOT.tryAcquire()) return false;
 		ModConfig cfg = ModConfig.get();
 		MinecraftServer server = player.level().getServer();
 		UUID id = player.getUUID();
@@ -177,9 +203,15 @@ public final class GuideChat {
 
 		state.waiting = true;
 		try {
-			ChatClient.complete(cfg.chatEndpoint, body, cfg.chatTimeoutSeconds)
-					.whenComplete((raw, error) -> server.execute(() -> deliver(server, id, state, request, raw, error)));
+			CompletableFuture<String> future = ChatClient.complete(cfg.chatEndpoint, body, cfg.chatTimeoutSeconds);
+			state.pending = future;
+			future.whenComplete((raw, error) -> {
+				SLOT.release();
+				server.execute(() -> deliver(server, id, state, request, raw, error));
+			});
+			return true;
 		} catch (RuntimeException e) {
+			SLOT.release();
 			state.waiting = false;
 			throw e;
 		}
@@ -187,19 +219,23 @@ public final class GuideChat {
 
 	private static void deliver(MinecraftServer server, UUID id, State state, Request request, @Nullable String raw,
 			@Nullable Throwable error) {
+		// A stopped server runs late tasks on the calling (HTTP) thread: never touch the game from there.
+		if (!server.isSameThread()) return;
 		state.waiting = false;
+		state.pending = null;
 		// The player left (or the server stopped) while the model was thinking: this answer belongs to nobody now.
-		if (STATES.get(id) != state) return;
+		if (STATES.get(id) != state || error instanceof CancellationException) return;
 		ServerPlayer player = server.getPlayerList().getPlayer(id);
 		if (player == null) return;
 		GuideEntity guide = GuideManager.guideOf(player);
 
 		if (error != null) {
 			failed(error);
-			if (request.direct()) GuideManager.speak(player, guide, unavailable());
+			if (request.apologize()) GuideManager.speak(player, guide, unavailable());
 			else if (request.fallback() != null) GuideManager.speak(player, guide, request.fallback());
 			return;
 		}
+		recovered();
 
 		String reply = ChatPrompt.cleanReply(raw, request.guideName());
 		if (reply.isEmpty()) {
@@ -212,26 +248,36 @@ public final class GuideChat {
 		GuideManager.speak(player, guide, Component.literal(reply));
 	}
 
+	/**
+	 * A request failed. Only "nobody listens there" (connection refused) makes the guide stop asking for a while, a
+	 * little longer each time; a slow or strange answer just counts as no answer. Logged once until a request works.
+	 */
 	private static void failed(Throwable error) {
-		// Connection refused, timeout, dropped connection: all I/O trouble means "no server", so back off for a while.
-		IOException io = null;
-		for (Throwable t = error; t != null && io == null; t = t.getCause() == t ? null : t.getCause()) {
-			if (t instanceof IOException e) io = e;
-		}
-		if (io == null) {
-			SurvivalAssistant.LOGGER.warn("Guide chat request failed", error);
-			return;
-		}
-		if (!offline()) { // report once per backoff period
-			if (io instanceof ChatClient.BadResponseException bad) {
-				SurvivalAssistant.LOGGER.warn("Guide chat: unusable answer from {} ({}). Trying again in a minute.",
-						ModConfig.get().chatEndpoint, bad.getMessage());
+		Throwable cause = error;
+		while (cause instanceof CompletionException && cause.getCause() != null) cause = cause.getCause();
+		boolean noServer = cause instanceof ConnectException || cause instanceof HttpConnectTimeoutException;
+		if (!reported) {
+			reported = true;
+			String endpoint = ModConfig.get().chatEndpoint;
+			if (noServer) {
+				SurvivalAssistant.LOGGER.warn("Guide chat: no model server at {}. Is llama-server running? Trying again later.", endpoint);
+			} else if (cause instanceof ChatClient.BadResponseException bad) {
+				SurvivalAssistant.LOGGER.warn("Guide chat: unusable answer from {} ({}).", endpoint, bad.getMessage());
 			} else {
-				SurvivalAssistant.LOGGER.warn("Guide chat: no answer from {} ({}). Is llama-server running? Trying again in a minute.",
-						ModConfig.get().chatEndpoint, io.getClass().getSimpleName());
+				SurvivalAssistant.LOGGER.warn("Guide chat: request to {} failed ({}).", endpoint, cause.getClass().getSimpleName());
 			}
 		}
-		offlineUntil = System.currentTimeMillis() + OFFLINE_BACKOFF_MS;
+		if (noServer) {
+			offlineUntil = System.currentTimeMillis() + backoffMs;
+			backoffMs = Math.min(backoffMs * 2, MAX_BACKOFF_MS);
+		}
+	}
+
+	/** A request worked: back to normal, and the next problem is logged again. */
+	private static void recovered() {
+		if (reported) SurvivalAssistant.LOGGER.info("Guide chat: the model server answers again.");
+		reported = false;
+		backoffMs = FIRST_BACKOFF_MS;
 	}
 
 	private static boolean offline() {
@@ -260,9 +306,10 @@ public final class GuideChat {
 				next == null ? null : LangFile.get(language, "survivalassistant.task." + next.id()));
 	}
 
+	/** The player's game language when the mod ships it, else English (the client chooses this text freely). */
 	private static String language(ServerPlayer player) {
 		String code = player.clientInformation().language();
-		return code == null || code.isBlank() ? "en_us" : code;
+		return code != null && LangFile.has(code) ? code.toLowerCase(java.util.Locale.ROOT) : "en_us";
 	}
 
 	private static State state(ServerPlayer player) {
@@ -271,11 +318,17 @@ public final class GuideChat {
 	}
 
 	public static void forget(UUID playerId) {
-		STATES.remove(playerId);
+		State state = STATES.remove(playerId);
+		if (state != null && state.pending != null) state.pending.cancel(true);
 	}
 
 	public static void clear() {
+		for (State state : STATES.values()) {
+			if (state.pending != null) state.pending.cancel(true);
+		}
 		STATES.clear();
 		offlineUntil = 0;
+		backoffMs = FIRST_BACKOFF_MS;
+		reported = false;
 	}
 }

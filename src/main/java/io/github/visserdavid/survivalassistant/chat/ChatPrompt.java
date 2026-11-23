@@ -106,7 +106,8 @@ public final class ChatPrompt {
 	public static String systemPrompt(Scene scene) {
 		Surroundings s = scene.surroundings();
 		StringBuilder b = new StringBuilder();
-		b.append("You are ").append(scene.guideName()).append(", an old explorer who walks along with ")
+		// the name is the player's choice: quoted, so it reads as a name and not as an instruction
+		b.append("You are \"").append(scene.guideName()).append("\", an old explorer who walks along with ")
 				.append(scene.playerName()).append(" in the game Minecraft. You make small talk: a casual remark, ")
 				.append("a light joke, a curious question. Nothing deep.\n\n")
 				.append(Persona.describe()).append('\n')
@@ -219,6 +220,7 @@ public final class ChatPrompt {
 		if (raw == null) return "";
 		String s = THINK.matcher(raw).replaceAll("");
 		s = ACTIONS.matcher(s).replaceAll("");
+		s = FORMATTING.matcher(s).replaceAll(""); // Minecraft formatting codes: the section sign plus one character
 		s = stripSymbols(s);
 		s = s.replaceAll("\\s+", " ").strip();
 		String prefix = guideName + ":";
@@ -231,6 +233,8 @@ public final class ChatPrompt {
 	 * Removes emoji and other pictographs: Minecraft's font has no glyphs for them, so they would show up as boxes.
 	 * Letters, digits, punctuation and spaces of every script stay.
 	 */
+	private static final Pattern FORMATTING = Pattern.compile("§.?");
+
 	static String stripSymbols(String s) {
 		StringBuilder b = new StringBuilder(s.length());
 		s.codePoints().forEach(cp -> {
@@ -238,6 +242,7 @@ public final class ChatPrompt {
 			boolean symbol = type == Character.OTHER_SYMBOL || type == Character.SURROGATE || type == Character.PRIVATE_USE
 					|| type == Character.UNASSIGNED
 					|| cp == 0x200D // zero-width joiner (glues emoji together)
+					|| cp == 0xA7 // section sign: Minecraft's formatting codes
 					|| (cp >= 0xFE00 && cp <= 0xFE0F) // variation selectors (emoji presentation)
 					|| (cp >= 0x1F3FB && cp <= 0x1F3FF); // skin tone modifiers
 			if (!symbol) b.appendCodePoint(cp);
