@@ -111,13 +111,32 @@ sending you there. The research and checked game facts are in
   tips and the task card. It is quiet while a warning is active or the guide is muted, and waits at least 2 minutes
   between spontaneous remarks.
 - Runs fully local with [llama.cpp](https://github.com/ggml-org/llama.cpp): start `llama-server` with a small
-  instruct model (about 4B parameters, Q4) before you play:
-  ```
-  llama-server -m model.gguf -ngl 99 -c 4096 --port 8080
-  ```
-  Without a server the guide simply stays quiet; nothing else changes.
+  instruct model before you play. Without a server the guide simply stays quiet; nothing else changes.
 - Off by default. Turn it on for yourself with `/guide chat on` (and off again with `/guide chat off`), or for
   everyone on the server with `chatEnabled` in the config.
+
+#### Which model?
+The model shares your computer with Minecraft, which needs 2 GB VRAM at minimum and 6 GB recommended (26.x).
+The replies are short (at most 80 tokens), so a small model is enough, and it may even run on the CPU.
+
+| Your graphics card | Model (GGUF, Q4_K_M) | Run it on | Model size |
+|---|---|---|---|
+| 12 GB VRAM or more | **Gemma 4 E4B** (most creative small model) | GPU: `-ngl 99` | about 5 GB |
+| 8 GB VRAM | **Qwen3.5 4B** (or Gemma 4 E2B) | GPU: `-ngl 99` | about 3 GB |
+| 6 GB VRAM or less, or integrated graphics | **Qwen3.5 4B** | CPU: `-ngl 0` (needs 16 GB+ RAM) | about 3 GB of RAM |
+| an older or slow CPU on top of that | Qwen3.5 2B | GPU or CPU | about 1.5 GB |
+
+```
+llama-server -m gemma-4-E4B-it-Q4_K_M.gguf -ngl 99 -c 4096 --port 8080
+llama-server -m Qwen3.5-4B-Q4_K_M.gguf -ngl 0 -c 2048 --port 8080   # CPU only, VRAM stays free
+```
+- Use the normal instruct model, not a "reasoning"/"thinking" variant, and skip the `mmproj` (vision) file.
+  The mod already switches thinking off with every request.
+- If the game stutters, lower `-ngl` or `-c`; if replies arrive too late on the CPU, raise `chatTimeoutSeconds`.
+  `chatTemperature` sets the mood (0.6 calm, 1.0 playful).
+- No published benchmark covers the Dutch of these small models yet, so try both Gemma 4 and Qwen3.5 and keep
+  the one you like. Sizes, alternatives (Phi-4-mini, Ministral 3, Llama 3.2) and sources are in
+  [docs/research-chat-models.md](docs/research-chat-models.md).
 
 ## Commands
 
