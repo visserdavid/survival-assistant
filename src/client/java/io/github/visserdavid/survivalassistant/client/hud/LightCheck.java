@@ -30,7 +30,8 @@ public final class LightCheck {
 	public static void toggle(Minecraft mc) {
 		enabled = !enabled;
 		ticks = 0;
-		lastCount = -1;
+		// the first scan follows at once: "all lit" right away would replace the "on" message before it can be read
+		lastCount = 0;
 		spots.clear();
 		if (mc.player == null || mc.level == null) return;
 		String key = !enabled ? "survivalassistant.light.off"

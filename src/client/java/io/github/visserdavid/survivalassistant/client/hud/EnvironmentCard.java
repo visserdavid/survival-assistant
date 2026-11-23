@@ -9,6 +9,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
@@ -44,7 +45,7 @@ public final class EnvironmentCard implements HudElement {
 	/** Text indent after a small item icon at the start of a line. */
 	private static final int ICON_INDENT = 10;
 	/** The widest height label, for the wanted width. */
-	private static final String WIDEST_Y = "Y -64";
+	private static final int WIDEST_Y = -64;
 	/** Strongest alpha of the header glow after entering a new biome. */
 	private static final int GLOW_ALPHA = 0x40;
 	private static final long GLOW_MS = 2000;
@@ -54,6 +55,11 @@ public final class EnvironmentCard implements HudElement {
 
 	private @Nullable String lastBiome;
 	private long biomeChangedAt;
+	/** The world of {@link #lastBiome} (identity number): joining another world is no "new biome". */
+	private int lastLevel;
+	/** The biome lookup is repeated only when the player stands on another block. */
+	private @Nullable BlockPos biomeAt;
+	private String biomeId = FALLBACK_BIOME;
 	private int width = HudText.MIN_WIDTH;
 
 	/** What the content depends on; when it is unchanged, the cached entries and lines are drawn again. */
@@ -96,8 +102,18 @@ public final class EnvironmentCard implements HudElement {
 			return;
 		}
 
-		String biomeId = mc.level.getBiome(mc.player.blockPosition()).unwrapKey()
-				.map(k -> k.identifier().toString()).orElse(FALLBACK_BIOME);
+		int levelId = System.identityHashCode(mc.level);
+		if (levelId != lastLevel) {
+			lastLevel = levelId;
+			lastBiome = null;
+			biomeChangedAt = 0;
+			biomeAt = null;
+		}
+		BlockPos pos = mc.player.blockPosition();
+		if (!pos.equals(biomeAt)) {
+			biomeAt = pos.immutable();
+			biomeId = mc.level.getBiome(pos).unwrapKey().map(k -> k.identifier().toString()).orElse(FALLBACK_BIOME);
+		}
 		BiomeGroup group = BiomeGroup.of(biomeId);
 		int y = mc.player.getBlockY();
 		long now = System.currentTimeMillis();
@@ -119,10 +135,9 @@ public final class EnvironmentCard implements HudElement {
 		int sw = Math.round(width * scale), sh = Math.round(height * scale);
 		int x = HudDraw.cornerX(cfg, g.guiWidth(), sw);
 		boolean top = HudDraw.topCorner(cfg);
-		int sy = !layout.taskVisible ? HudDraw.cornerY(cfg, g.guiHeight(), sh)
-				: top ? layout.taskY + layout.taskH + 2 : layout.taskY - sh - 2;
+		int sy = !layout.taskVisible ? HudDraw.cornerY(cfg, g.guiHeight(), sh) : HudDraw.stack(top, layout.taskY, layout.taskH, sh);
 
-		layout.envShown(x, sy, sw, sh, width);
+		layout.envShown(sy, sh, width);
 
 		g.pose().pushMatrix();
 		g.pose().translate(x, sy);
@@ -141,9 +156,9 @@ public final class EnvironmentCard implements HudElement {
 		if (now.equals(key)) return;
 		key = now;
 		name = biomeName(now.biomeId());
-		yText = "Y " + now.y();
+		yText = Component.translatable("survivalassistant.env.y", now.y()).getString();
 		entries = buildEntries(now, group);
-		wanted = NAME_X + font.width(name) + GAP + font.width(WIDEST_Y) + PAD;
+		wanted = NAME_X + font.width(name) + GAP + font.width(Component.translatable("survivalassistant.env.y", WIDEST_Y)) + PAD;
 		for (Entry e : entries) wanted = Math.max(wanted, PAD + e.indent() + font.width(e.text()) + PAD);
 		wrappedWidth = -1;
 	}

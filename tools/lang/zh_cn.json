@@ -978,5 +978,8 @@
 "~settings.world.unavailable": "无法读取服务器的设置。",
 "~settings.name.invalid": "1 到 16 个字母、数字、空格、- 或 _。留空则使用默认值。",
 "~settings.default_name.invalid": "1 到 16 个字母、数字、空格、- 或 _。留空则使用默认值。",
-"~settings.chat_endpoint.invalid": "必须以 http:// 或 https:// 开头。"
+"~settings.chat_endpoint.invalid": "必须以 http:// 或 https:// 开头。",
+"~env.y": "Y %s",
+"~cross.mob": "%s: %s",
+"~recipe.count": "x%s"
 }

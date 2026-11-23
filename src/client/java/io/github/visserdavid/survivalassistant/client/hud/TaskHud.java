@@ -58,11 +58,12 @@ public final class TaskHud implements HudElement {
 	private static final int SEG_W = 4, SEG_GAP = 1, SEG_H = 5, SEGMENTS = 6;
 	private static final int BAR_W = SEGMENTS * (SEG_W + SEG_GAP) - SEG_GAP;
 	private static final int CLOCK_W = SMALL_ICON + 2 + BAR_W;
-	private static final int DAY_SPAN = 12000, NIGHT_SPAN = SurvivalContext.NIGHT_END - SurvivalContext.NIGHT_START;
+	// the day bar is empty at sunset, when the guide says "find cover"
+	private static final int DAY_SPAN = SurvivalContext.SUNSET, NIGHT_SPAN = SurvivalContext.NIGHT_END - SurvivalContext.NIGHT_START;
 
 	private static final long FLASH_MS = 1500;
 	private static final long SLIDE_MS = 250;
-	/** The urgent border pulses with this period (radians per millisecond: sin(now / 150)). */
+	/** The urgent border pulses: sin(now / 150), so one radian per 150 milliseconds. */
 	private static final double PULSE_MS = 150.0;
 	private static final long BLINK_MS = 400;
 
@@ -71,9 +72,12 @@ public final class TaskHud implements HudElement {
 
 	// --- completion animation state ---
 	private @Nullable Set<String> knownCompleted;
-	/** Chapter and world of {@link #knownCompleted}: a switch starts a fresh comparison (no false flashes). */
+	/**
+	 * Chapter and world of {@link #knownCompleted}: a switch starts a fresh comparison (no false flashes). The world is
+	 * kept as an identity number, not the level itself, so a left world isn't held in memory.
+	 */
 	private int knownChapter = -1;
-	private @Nullable Object knownLevel;
+	private int knownLevel;
 	private @Nullable String flashId;
 	private long flashStart;
 
@@ -121,7 +125,7 @@ public final class TaskHud implements HudElement {
 		int x = HudDraw.cornerX(cfg, g.guiWidth(), sw);
 		int y = HudDraw.cornerY(cfg, g.guiHeight(), sh);
 
-		layout.taskShown(x, y, sw, sh, width);
+		layout.taskShown(y, sh, width);
 		g.pose().pushMatrix();
 		g.pose().translate(x, y);
 		g.pose().scale(scale, scale);
@@ -143,10 +147,11 @@ public final class TaskHud implements HudElement {
 	}
 
 	private void trackCompletion(HudSnapshot snap, Object level, long now) {
-		if (snap.chapter() != knownChapter || level != knownLevel) {
+		int levelId = System.identityHashCode(level);
+		if (snap.chapter() != knownChapter || levelId != knownLevel) {
 			knownCompleted = null;
 			knownChapter = snap.chapter();
-			knownLevel = level;
+			knownLevel = levelId;
 		}
 		if (knownCompleted != null && knownCompleted != completed) {
 			for (Tip m : Chapters.get(snap.chapter()).goals()) {
@@ -180,8 +185,26 @@ public final class TaskHud implements HudElement {
 
 	// ------------------------------------------------------------------ layout
 
-	/** The width at which nothing on the card would need to scroll. */
+	// what wantedWidth was worked out for (it only changes with these)
+	private @Nullable HudSnapshot wantedFor;
+	private @Nullable List<HudSnapshot.Entry> wantedLines;
+	private boolean wantedFull;
+	private String wantedLanguage = "";
+	private int wantedCached;
+
+	/** The width at which nothing on the card would need to scroll (measured again only when something changed). */
 	private int wantedWidth(Font font, HudSnapshot snap, boolean full) {
+		String language = Minecraft.getInstance().getLanguageManager().getSelected();
+		if (snap == wantedFor && lines == wantedLines && full == wantedFull && language.equals(wantedLanguage)) return wantedCached;
+		wantedFor = snap;
+		wantedLines = lines;
+		wantedFull = full;
+		wantedLanguage = language;
+		wantedCached = measureWidth(font, snap, full);
+		return wantedCached;
+	}
+
+	private int measureWidth(Font font, HudSnapshot snap, boolean full) {
 		int wanted = PAD + font.width(title) + GAP + CLOCK_W + PAD;
 		if (full) {
 			for (Tip m : Chapters.get(snap.chapter()).goals()) {
@@ -209,7 +232,7 @@ public final class TaskHud implements HudElement {
 		return wanted;
 	}
 
-	private static int navWanted(Minecraft mc, HudSnapshot snap) {
+	private int navWanted(Minecraft mc, HudSnapshot snap) {
 		return snap.waypoint().map(w -> NAV_TEXT_X + mc.font.width(navText(w, mc)) + PAD).orElse(0);
 	}
 
@@ -401,16 +424,29 @@ public final class TaskHud implements HudElement {
 		HudText.fit(g, font, navText(w, mc), NAV_TEXT_X, y + 1, width - NAV_TEXT_X - PAD, color, true, now);
 	}
 
-	private static Component navText(Navigation.Waypoint w, Minecraft mc) {
+	// the navigation line is made again only when the target, the distance or the time left changes
+	private Navigation.@Nullable Waypoint navFor;
+	private int navDistance = -1;
+	private boolean navSame;
+	private Component navLine = Component.empty();
+
+	private Component navText(Navigation.Waypoint w, Minecraft mc) {
 		boolean same = sameDimension(mc, w);
+		int dist = distance(mc, w);
+		if (w.equals(navFor) && dist == navDistance && same == navSame) return navLine;
+		navFor = w;
+		navDistance = dist;
+		navSame = same;
 		if (w.kind() == Navigation.Kind.DEATH) {
 			int seconds = Math.max(0, w.ticksLeft() / Ticks.PER_SECOND);
-			String time = (seconds / 60) + ":" + String.format("%02d", seconds % 60);
-			return same
-					? Component.translatable("survivalassistant.nav.death", distance(mc, w), time)
+			String time = (seconds / 60) + ":" + (seconds % 60 < 10 ? "0" : "") + (seconds % 60);
+			navLine = same
+					? Component.translatable("survivalassistant.nav.death", dist, time)
 					: Component.translatable("survivalassistant.nav.death_other", dimensionName(w), time);
+		} else {
+			navLine = Component.translatable("survivalassistant.nav.home", dist);
 		}
-		return Component.translatable("survivalassistant.nav.home", distance(mc, w));
+		return navLine;
 	}
 
 	private static boolean sameDimension(Minecraft mc, Navigation.Waypoint w) {
@@ -425,7 +461,8 @@ public final class TaskHud implements HudElement {
 	private static Component dimensionName(Navigation.Waypoint w) {
 		String dim = w.target().dimension();
 		String path = dim.substring(dim.indexOf(':') + 1);
-		return Component.translatable("survivalassistant.nav.dim." + path);
+		// a dimension from another mod has no name of ours: show its id instead of a raw key
+		return Component.translatableWithFallback("survivalassistant.nav.dim." + path, path.replace('_', ' '));
 	}
 
 	/** Angle (radians, clockwise from "straight ahead") from the player's view direction to the target. */

@@ -978,5 +978,8 @@
 "~settings.world.unavailable": "Не вдалося прочитати налаштування сервера.",
 "~settings.name.invalid": "Від 1 до 16 літер, цифр, пробілів, - або _. Залиш порожнім для типового значення.",
 "~settings.default_name.invalid": "Від 1 до 16 літер, цифр, пробілів, - або _. Залиш порожнім для типового значення.",
-"~settings.chat_endpoint.invalid": "Має починатися з http:// або https://."
+"~settings.chat_endpoint.invalid": "Має починатися з http:// або https://.",
+"~env.y": "Y %s",
+"~cross.mob": "%s: %s",
+"~recipe.count": "x%s"
 }

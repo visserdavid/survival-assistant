@@ -978,5 +978,8 @@
 "~settings.world.unavailable": "Die Einstellungen des Servers konnten nicht gelesen werden.",
 "~settings.name.invalid": "1 bis 16 Buchstaben, Ziffern, Leerzeichen, - oder _. Leer lassen für den Standard.",
 "~settings.default_name.invalid": "1 bis 16 Buchstaben, Ziffern, Leerzeichen, - oder _. Leer lassen für den Standard.",
-"~settings.chat_endpoint.invalid": "Muss mit http:// oder https:// beginnen."
+"~settings.chat_endpoint.invalid": "Muss mit http:// oder https:// beginnen.",
+"~env.y": "Y %s",
+"~cross.mob": "%s: %s",
+"~recipe.count": "x%s"
 }

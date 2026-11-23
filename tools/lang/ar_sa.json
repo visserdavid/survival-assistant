@@ -978,5 +978,8 @@
 "~settings.world.unavailable": "تعذّرت قراءة إعدادات الخادم.",
 "~settings.name.invalid": "من 1 إلى 16 حرفًا أو رقمًا أو مسافة أو - أو _. اتركه فارغًا للقيمة الافتراضية.",
 "~settings.default_name.invalid": "من 1 إلى 16 حرفًا أو رقمًا أو مسافة أو - أو _. اتركه فارغًا للقيمة الافتراضية.",
-"~settings.chat_endpoint.invalid": "يجب أن يبدأ بـ http:// أو https://."
+"~settings.chat_endpoint.invalid": "يجب أن يبدأ بـ http:// أو https://.",
+"~env.y": "Y %s",
+"~cross.mob": "%s: %s",
+"~recipe.count": "x%s"
 }

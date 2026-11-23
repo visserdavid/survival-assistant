@@ -1353,6 +1353,9 @@ L = {
     # ---------------- crosshair info: ores ----------------
     P + "cross.needs": ("%s: needs a %s", "%s: %s nodig"),
     P + "cross.ok": ("%s: your tool can mine this", "%s: je gereedschap kan dit hakken"),
+    P + "env.y": ("Y %s", "Y %s"),
+    P + "cross.mob": ("%s: %s", "%s: %s"),
+    P + "recipe.count": ("x%s", "x%s"),
     P + "tool.wooden_pickaxe": ("wooden pickaxe (or better)", "houten houweel (of beter)"),
     P + "tool.stone_pickaxe": ("stone pickaxe (or better)", "stenen houweel (of beter)"),
     P + "tool.iron_pickaxe": ("iron pickaxe (or better)", "ijzeren houweel (of beter)"),

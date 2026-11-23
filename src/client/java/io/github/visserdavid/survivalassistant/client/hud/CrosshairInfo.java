@@ -14,10 +14,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -74,7 +74,10 @@ public final class CrosshairInfo implements HudElement {
 	/** Called every client tick. */
 	public void tick(Minecraft mc) {
 		ClientConfig cfg = ClientConfig.get();
-		Object now = cfg.crosshairInfo ? currentTarget(mc, cfg.crosshairRange) : null;
+		// no work without the guide's cards (a server without the mod, or the guide gone)
+		HudSnapshot snap = mc.player == null ? null : mc.player.getAttached(HudState.HUD);
+		boolean active = snap != null && snap.active();
+		Object now = cfg.crosshairInfo && active ? currentTarget(mc, cfg.crosshairRange) : null;
 		if (now == null || !now.equals(target)) {
 			target = now;
 			dwell = 0;
@@ -93,10 +96,11 @@ public final class CrosshairInfo implements HudElement {
 
 	/** A mob with a tip within the range, else whatever is within normal reach (a block, or a mob up close). */
 	private static @Nullable Object currentTarget(Minecraft mc, int range) {
-		if (mc.player == null || mc.level == null) return null;
+		Entity camera = mc.getCameraEntity();
+		if (mc.player == null || mc.level == null || camera == null) return null;
 		HitResult hit = mc.hitResult;
-		if (hit instanceof EntityHitResult eh && hasTip(eh.getEntity())) return eh.getEntity();
-		Entity far = mobInSight(mc.player, range);
+		if (hit instanceof EntityHitResult eh && eligible(eh.getEntity(), camera)) return eh.getEntity();
+		Entity far = mobInSight(camera, range);
 		if (far != null) return far;
 		if (hit instanceof BlockHitResult bh && hit.getType() == HitResult.Type.BLOCK) {
 			return bh.getBlockPos().immutable();
@@ -104,29 +108,35 @@ public final class CrosshairInfo implements HudElement {
 		return null;
 	}
 
-	/** The nearest mob with a tip along the view line, up to {@code range} blocks; blocks stop the look. */
-	private static @Nullable Entity mobInSight(Player player, int range) {
-		Vec3 eye = player.getEyePosition(1f);
-		Vec3 end = eye.add(player.getViewVector(1f).scale(range));
-		BlockHitResult wall = player.level().clip(new ClipContext(eye, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
+	/**
+	 * The nearest mob with a tip along the view line, up to {@code range} blocks; blocks stop the look. Seen from the
+	 * camera (which is the player, unless they spectate through a mob's eyes).
+	 */
+	private static @Nullable Entity mobInSight(Entity camera, int range) {
+		Vec3 eye = camera.getEyePosition(1f);
+		Vec3 end = eye.add(camera.getViewVector(1f).scale(range));
+		BlockHitResult wall = camera.level().clip(new ClipContext(eye, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, camera));
 		if (wall.getType() != HitResult.Type.MISS) end = wall.getLocation();
-		AABB area = player.getBoundingBox().expandTowards(end.subtract(eye)).inflate(1);
-		EntityHitResult hit = ProjectileUtil.getEntityHitResult(player, eye, end, area,
-				e -> e != player && e.isAlive() && !e.isSpectator() && !e.isInvisible() && hasTip(e), eye.distanceToSqr(end));
+		AABB area = camera.getBoundingBox().expandTowards(end.subtract(eye)).inflate(1);
+		EntityHitResult hit = ProjectileUtil.getEntityHitResult(camera, eye, end, area, e -> eligible(e, camera), eye.distanceToSqr(end));
 		return hit == null ? null : hit.getEntity();
 	}
 
-	private static boolean hasTip(Entity entity) {
-		return CrosshairAdvice.hasMobTip(BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).getPath());
+	/** A living, visible vanilla mob with a tip (an invisible mob isn't given away, a modded look-alike gets no tip). */
+	private static boolean eligible(Entity e, Entity camera) {
+		if (e == camera || !e.isAlive() || e.isSpectator() || e.isInvisible()) return false;
+		var id = BuiltInRegistries.ENTITY_TYPE.getKey(e.getType());
+		return Identifier.DEFAULT_NAMESPACE.equals(id.getNamespace()) && CrosshairAdvice.hasMobTip(id.getPath());
 	}
 
 	private static @Nullable Info build(Minecraft mc, Object target) {
 		if (target instanceof Entity entity) {
 			String path = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).getPath();
 			if (!CrosshairAdvice.hasMobTip(path)) return null;
-			MutableComponent text = entity.getType().getDescription().copy().withStyle(ChatFormatting.GOLD)
-					.append(Component.literal(": ").withStyle(ChatFormatting.GOLD))
-					.append(Component.translatable("survivalassistant.mob." + path));
+			// "Creeper: ..." with the word order and punctuation of the player's language
+			MutableComponent text = Component.translatable("survivalassistant.cross.mob",
+					entity.getType().getDescription().copy().withStyle(ChatFormatting.GOLD),
+					Component.translatable("survivalassistant.mob." + path));
 			return new Info(text, HudColors.WHITE, ItemStack.EMPTY);
 		}
 		if (target instanceof BlockPos pos) {

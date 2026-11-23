@@ -1,46 +1,42 @@
 package io.github.visserdavid.survivalassistant.client.hud;
 
 /**
- * What the task card and the environment card tell each other every frame, so they share one width and the
- * environment card sits right under (or above) the task card. One instance is shared by both cards.
+ * What the three cards tell each other every frame (drawn in this order: task card, environment card, target card),
+ * so they share one width and stack in the chosen corner. One instance is shared by all cards.
  */
 public final class HudLayout {
 	/** Width the environment card wanted last frame (0 when hidden); the task card takes it into account. */
 	int environmentWanted;
 
-	/** The task card is drawn this frame; its screen rectangle and unscaled width follow. */
+	/** The task card is drawn this frame: its top and height on screen (scaled) and its unscaled width. */
 	boolean taskVisible;
-	int taskX, taskY, taskW, taskH;
+	int taskY, taskH;
 	int taskCardWidth = HudText.MIN_WIDTH;
 
-	/** The environment card is drawn this frame; its screen rectangle and unscaled width follow. */
+	/** The environment card is drawn this frame: its top and height on screen (scaled) and its unscaled width. */
 	boolean envVisible;
-	int envX, envY, envW, envH;
+	int envY, envH;
 	int envCardWidth = HudText.MIN_WIDTH;
-
-	void envHidden() {
-		envVisible = false;
-	}
-
-	void envShown(int x, int y, int w, int h, int cardWidth) {
-		envVisible = true;
-		envX = x;
-		envY = y;
-		envW = w;
-		envH = h;
-		envCardWidth = cardWidth;
-	}
 
 	void taskHidden() {
 		taskVisible = false;
 	}
 
-	void taskShown(int x, int y, int w, int h, int cardWidth) {
+	void taskShown(int y, int h, int cardWidth) {
 		taskVisible = true;
-		taskX = x;
 		taskY = y;
-		taskW = w;
 		taskH = h;
 		taskCardWidth = cardWidth;
+	}
+
+	void envHidden() {
+		envVisible = false;
+	}
+
+	void envShown(int y, int h, int cardWidth) {
+		envVisible = true;
+		envY = y;
+		envH = h;
+		envCardWidth = cardWidth;
 	}
 }

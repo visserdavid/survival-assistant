@@ -2,6 +2,7 @@ package io.github.visserdavid.survivalassistant.client.hud;
 
 import io.github.visserdavid.survivalassistant.advice.Recipes;
 import net.minecraft.client.gui.Font;
+import net.minecraft.network.chat.Component;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.ItemStack;
 
@@ -45,14 +46,14 @@ public final class RecipeView {
 			if (slot >= FULL_SLOT) {
 				g.itemDecorations(font, result, rx + 1, ry + 1, String.valueOf(recipe.count()));
 			} else {
-				g.text(font, "x" + recipe.count(), rx + slot + 1, ry + 1, HudColors.WHITE, true);
+				g.text(font, countLabel(recipe), rx + slot + 1, ry + 1, HudColors.WHITE, true);
 			}
 		}
 	}
 
 	/** Extra width taken by the "x4" label next to a half-size result. */
 	public static int countLabelWidth(Font font, Recipes.Recipe recipe, int slot) {
-		return slot < FULL_SLOT && recipe.count() > 1 ? 2 + font.width("x" + recipe.count()) : 0;
+		return slot < FULL_SLOT && recipe.count() > 1 ? 2 + font.width(countLabel(recipe)) : 0;
 	}
 
 	/** An empty slot: a frame in {@code edge} with the dark slot background inside. */
@@ -65,5 +66,10 @@ public final class RecipeView {
 		if (stack.isEmpty()) return;
 		if (slot >= FULL_SLOT) g.item(stack, x, y);
 		else HudDraw.scaledIcon(g, stack, x, y, (slot - 1) / 16f);
+	}
+
+	/** "x4": how many the recipe makes. */
+	private static Component countLabel(Recipes.Recipe recipe) {
+		return Component.translatable("survivalassistant.recipe.count", recipe.count());
 	}
 }

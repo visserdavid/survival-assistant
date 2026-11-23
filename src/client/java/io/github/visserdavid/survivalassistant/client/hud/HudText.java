@@ -27,6 +27,7 @@ public final class HudText {
 	 * Draws {@code text} at (x, y). If it is wider than {@code maxWidth}, it is clipped to that slot and scrolls.
 	 */
 	public static void fit(GuiGraphicsExtractor g, Font font, Component text, int x, int y, int maxWidth, int color, boolean shadow, long now) {
+		if (maxWidth <= 0) return; // no room at all: drawing it would overlap what it should leave room for
 		int w = font.width(text);
 		if (w <= maxWidth || maxWidth <= 0) {
 			g.text(font, text, x, y, color, shadow);

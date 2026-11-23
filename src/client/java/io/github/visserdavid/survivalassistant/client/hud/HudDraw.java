@@ -63,6 +63,14 @@ final class HudDraw {
 		};
 	}
 
+	/** Top edge of a card of height {@code sh} stacked under (top corner) or above (bottom corner) another card. */
+	static int stack(boolean top, int anchorY, int anchorH, int sh) {
+		return top ? anchorY + anchorH + STACK_GAP : anchorY - sh - STACK_GAP;
+	}
+
+	/** Space between two stacked cards. */
+	static final int STACK_GAP = 2;
+
 	static boolean topCorner(ClientConfig cfg) {
 		return cfg.corner == ClientConfig.Corner.TOP_LEFT || cfg.corner == ClientConfig.Corner.TOP_RIGHT;
 	}

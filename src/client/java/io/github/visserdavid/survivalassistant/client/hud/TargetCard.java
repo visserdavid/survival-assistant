@@ -46,7 +46,7 @@ public final class TargetCard implements HudElement {
 		ClientConfig cfg = ClientConfig.get();
 		CrosshairInfo.Info shown = info.shown();
 		if (shown == null || mc.player == null || !cfg.crosshairInfo || cfg.crosshairPlace != ClientConfig.Place.CARD) return;
-		if (HudDraw.hidden(mc) || mc.gui.screen() != null) return;
+		if (HudDraw.hidden(mc)) return; // like the other cards it stays while the chat is open
 		HudSnapshot snap = mc.player.getAttached(HudState.HUD);
 		if (snap == null || !snap.active()) return;
 
@@ -71,8 +71,7 @@ public final class TargetCard implements HudElement {
 		g.pose().pushMatrix();
 		g.pose().translate(x, y);
 		g.pose().scale(scale, scale);
-		g.fill(0, 0, width, height, BG);
-		HudDraw.outline(g, 0, 0, width, height, BORDER_ENV);
+		HudDraw.card(g, 0, 0, width, height, BG, BORDER_ENV);
 		if (icon) HudDraw.smallIcon(g, shown.icon(), PAD, PAD);
 		int ty = PAD;
 		for (FormattedCharSequence row : rows) {
@@ -85,8 +84,8 @@ public final class TargetCard implements HudElement {
 	/** Under the lowest card in a top corner, above the highest one in a bottom corner, else in the corner itself. */
 	private int y(ClientConfig cfg, int guiHeight, int sh) {
 		boolean top = HudDraw.topCorner(cfg);
-		if (layout.envVisible) return top ? layout.envY + layout.envH + 2 : layout.envY - sh - 2;
-		if (layout.taskVisible) return top ? layout.taskY + layout.taskH + 2 : layout.taskY - sh - 2;
+		if (layout.envVisible) return HudDraw.stack(top, layout.envY, layout.envH, sh);
+		if (layout.taskVisible) return HudDraw.stack(top, layout.taskY, layout.taskH, sh);
 		return HudDraw.cornerY(cfg, guiHeight, sh);
 	}
 }

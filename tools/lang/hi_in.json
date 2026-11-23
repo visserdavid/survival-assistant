@@ -978,5 +978,8 @@
 "~settings.world.unavailable": "सर्वर की सेटिंग्स पढ़ी नहीं जा सकीं।",
 "~settings.name.invalid": "1 से 16 अक्षर, अंक, स्पेस, - या _। डिफ़ॉल्ट के लिए खाली छोड़ो।",
 "~settings.default_name.invalid": "1 से 16 अक्षर, अंक, स्पेस, - या _। डिफ़ॉल्ट के लिए खाली छोड़ो।",
-"~settings.chat_endpoint.invalid": "http:// या https:// से शुरू होना चाहिए।"
+"~settings.chat_endpoint.invalid": "http:// या https:// से शुरू होना चाहिए।",
+"~env.y": "Y %s",
+"~cross.mob": "%s: %s",
+"~recipe.count": "x%s"
 }

@@ -978,5 +978,8 @@
 "~settings.world.unavailable": "Setările serverului nu au putut fi citite.",
 "~settings.name.invalid": "Între 1 și 16 litere, cifre, spații, - sau _. Lasă gol pentru valoarea implicită.",
 "~settings.default_name.invalid": "Între 1 și 16 litere, cifre, spații, - sau _. Lasă gol pentru valoarea implicită.",
-"~settings.chat_endpoint.invalid": "Trebuie să înceapă cu http:// sau https://."
+"~settings.chat_endpoint.invalid": "Trebuie să înceapă cu http:// sau https://.",
+"~env.y": "Y %s",
+"~cross.mob": "%s: %s",
+"~recipe.count": "x%s"
 }

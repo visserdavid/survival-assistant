@@ -14,7 +14,11 @@ public final class TaskIcons {
 	static final String NAV_DEATH = "nav_death";
 	static final String NAV_HOME = "nav_home";
 
-	private static final Map<String, ItemStack> ICONS = new HashMap<>();
+	/**
+	 * Items, not stacks: an ItemStack may not be made while the game starts ("Components not bound yet"), so the stacks
+	 * are made on first use (see {@link ItemIcons}).
+	 */
+	private static final Map<String, Item> ICONS = new HashMap<>();
 
 	static {
 		// milestones
@@ -173,10 +177,11 @@ public final class TaskIcons {
 	private TaskIcons() {}
 
 	private static void put(String id, Item item) {
-		ICONS.put(id, ItemIcons.of(item));
+		ICONS.put(id, item);
 	}
 
 	public static ItemStack get(String id) {
-		return ICONS.getOrDefault(id, ItemStack.EMPTY);
+		Item item = ICONS.get(id);
+		return item == null ? ItemStack.EMPTY : ItemIcons.of(item);
 	}
 }

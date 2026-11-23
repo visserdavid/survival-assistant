@@ -978,5 +978,8 @@
 "~settings.world.unavailable": "Pengaturan server tidak bisa dibaca.",
 "~settings.name.invalid": "1 sampai 16 huruf, angka, spasi, - atau _. Kosongkan untuk nilai bawaan.",
 "~settings.default_name.invalid": "1 sampai 16 huruf, angka, spasi, - atau _. Kosongkan untuk nilai bawaan.",
-"~settings.chat_endpoint.invalid": "Harus diawali http:// atau https://."
+"~settings.chat_endpoint.invalid": "Harus diawali http:// atau https://.",
+"~env.y": "Y %s",
+"~cross.mob": "%s: %s",
+"~recipe.count": "x%s"
 }

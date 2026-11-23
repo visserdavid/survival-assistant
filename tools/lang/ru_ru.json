@@ -978,5 +978,8 @@
 "~settings.world.unavailable": "Не удалось прочитать настройки сервера.",
 "~settings.name.invalid": "От 1 до 16 букв, цифр, пробелов, - или _. Оставь пустым для значения по умолчанию.",
 "~settings.default_name.invalid": "От 1 до 16 букв, цифр, пробелов, - или _. Оставь пустым для значения по умолчанию.",
-"~settings.chat_endpoint.invalid": "Должно начинаться с http:// или https://."
+"~settings.chat_endpoint.invalid": "Должно начинаться с http:// или https://.",
+"~env.y": "Y %s",
+"~cross.mob": "%s: %s",
+"~recipe.count": "x%s"
 }

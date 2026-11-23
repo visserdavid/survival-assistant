@@ -978,5 +978,8 @@
 "~settings.world.unavailable": "No se pudieron leer los ajustes del servidor.",
 "~settings.name.invalid": "De 1 a 16 letras, cifras, espacios, - o _. Déjalo vacío para el valor por defecto.",
 "~settings.default_name.invalid": "De 1 a 16 letras, cifras, espacios, - o _. Déjalo vacío para el valor por defecto.",
-"~settings.chat_endpoint.invalid": "Debe empezar por http:// o https://."
+"~settings.chat_endpoint.invalid": "Debe empezar por http:// o https://.",
+"~env.y": "Y %s",
+"~cross.mob": "%s: %s",
+"~recipe.count": "x%s"
 }
