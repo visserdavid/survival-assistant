@@ -38,6 +38,9 @@ package io.github.visserdavid.survivalassistant.advice;
  * @param enderPearls    ender pearls plus eyes of ender (an eye is made from a pearl)
  * @param hasNetheriteGear a netherite tool, weapon or armor piece (not the ingot, scrap or template)
  * @param wardenNearby   a warden within 24 blocks
+ * @param ghastlingNearby a baby happy ghast (ghastling) within 16 blocks
+ * @param autoSmelter    a furnace nearby with a hopper above it (feeding in) and a hopper below it (taking out)
+ * @param copperBulbLit  a lit copper bulb nearby (any oxidation stage)
  */
 public record SurvivalContext(
 		int dayIndex,
@@ -128,14 +131,29 @@ public record SurvivalContext(
 		boolean hasRecoveryCompass,
 		boolean hasOminousBottle,
 		boolean hasTotem,
-		boolean wardenNearby
+		boolean wardenNearby,
+		// chapters 15-18 (archaeology, trials, the happy ghast, automation)
+		boolean hasBrush,
+		boolean hasDecoratedPot,
+		int breezeRods,
+		boolean hasWindCharge,
+		boolean hasHeavyCore,
+		boolean hasMace,
+		boolean hasDriedGhast,
+		boolean ghastlingNearby,
+		boolean hasHarness,
+		boolean ridingHappyGhast,
+		boolean observerPlaced,
+		boolean crafterPlaced,
+		boolean autoSmelter,
+		boolean copperBulbLit
 ) {
 	/** Structures the guide knows about (ids in data/minecraft/worldgen/structure of the 26.3 data). */
 	public static final java.util.Set<String> STRUCTURES = java.util.Set.of(
 			"village_plains", "village_desert", "village_savanna", "village_snowy", "village_taiga",
 			"shipwreck", "shipwreck_beached", "ocean_ruin_cold", "ocean_ruin_warm",
 			"desert_pyramid", "jungle_pyramid", "trial_chambers", "stronghold", "end_city",
-			"bastion_remnant", "ancient_city", "pillager_outpost");
+			"bastion_remnant", "ancient_city", "pillager_outpost", "trail_ruins");
 
 	public boolean inEnd() {
 		return END.equals(dimension);
@@ -200,7 +218,9 @@ public record SurvivalContext(
 		private boolean ironDoorOpen, pistonExtended, repeaterPlaced, hopperPlaced, hasElytra;
 		private boolean hasNetheriteIngot, hasUpgradeTemplate, hasNetheriteGear, hasNetherStar, hasRecoveryCompass,
 				hasOminousBottle, hasTotem, wardenNearby;
-		private int witherSkulls, soulSand, echoShards;
+		private int witherSkulls, soulSand, echoShards, breezeRods;
+		private boolean hasBrush, hasDecoratedPot, hasWindCharge, hasHeavyCore, hasMace, hasDriedGhast, ghastlingNearby,
+				hasHarness, ridingHappyGhast, observerPlaced, crafterPlaced, autoSmelter, copperBulbLit;
 		private boolean inVillage, hasEnchantedBook, goldArmorWorn, bedInInventory, ghastNearby, piglinNearby, hasBrewingStand, hasAnvil;
 		private float health = 20f;
 		private boolean hasCraftingTable, hasFurnace, hasBed, hasChest, hasShield, hasIronArmor, hasWaterBucket,
@@ -291,6 +311,20 @@ public record SurvivalContext(
 		public Builder ominousBottle(boolean v) { hasOminousBottle = v; return this; }
 		public Builder totem(boolean v) { hasTotem = v; return this; }
 		public Builder warden(boolean v) { wardenNearby = v; return this; }
+		public Builder brush(boolean v) { hasBrush = v; return this; }
+		public Builder decoratedPot(boolean v) { hasDecoratedPot = v; return this; }
+		public Builder breezeRods(int v) { breezeRods = v; return this; }
+		public Builder windCharge(boolean v) { hasWindCharge = v; return this; }
+		public Builder heavyCore(boolean v) { hasHeavyCore = v; return this; }
+		public Builder mace(boolean v) { hasMace = v; return this; }
+		public Builder driedGhast(boolean v) { hasDriedGhast = v; return this; }
+		public Builder ghastling(boolean v) { ghastlingNearby = v; return this; }
+		public Builder harness(boolean v) { hasHarness = v; return this; }
+		public Builder ridingHappyGhast(boolean v) { ridingHappyGhast = v; return this; }
+		public Builder observer(boolean v) { observerPlaced = v; return this; }
+		public Builder crafter(boolean v) { crafterPlaced = v; return this; }
+		public Builder autoSmelter(boolean v) { autoSmelter = v; return this; }
+		public Builder copperBulbLit(boolean v) { copperBulbLit = v; return this; }
 
 		public SurvivalContext build() {
 			return new SurvivalContext(dayIndex, timeOfDay, health, food, logs, planks, hasCraftingTable, pickaxeTier, swordTier,
@@ -302,7 +336,9 @@ public record SurvivalContext(
 					structure, hasBoat, ridingTamedHorse, hasMilk, sugarCane, hasHeartOfTheSea, hasTurtleHelmet, hasTrident,
 					hasFilledMap, hasSpyglass, redstone, ironDoorOpen, pistonExtended, repeaterPlaced, hopperPlaced, enderPearls,
 					eyesOfEnder, hasElytra, hasNetheriteIngot, hasUpgradeTemplate, hasNetheriteGear, witherSkulls, soulSand,
-					hasNetherStar, echoShards, hasRecoveryCompass, hasOminousBottle, hasTotem, wardenNearby);
+					hasNetherStar, echoShards, hasRecoveryCompass, hasOminousBottle, hasTotem, wardenNearby, hasBrush,
+					hasDecoratedPot, breezeRods, hasWindCharge, hasHeavyCore, hasMace, hasDriedGhast, ghastlingNearby, hasHarness,
+					ridingHappyGhast, observerPlaced, crafterPlaced, autoSmelter, copperBulbLit);
 		}
 	}
 }

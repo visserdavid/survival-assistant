@@ -164,6 +164,12 @@ public final class TipRegistry {
 	public static final String ADV_RAID_CAPTAIN = "adventure/voluntary_exile";
 	public static final String ADV_RAID = "adventure/hero_of_the_village";
 	public static final String ADV_TOTEM = "adventure/totem_of_undying";
+	public static final String ADV_SHERD = "adventure/salvage_sherd";
+	public static final String ADV_TRIM = "adventure/trim_with_any_armor_pattern";
+	public static final String ADV_SNIFFER_EGG = "husbandry/obtain_sniffer_egg";
+	public static final String ADV_OMINOUS_VAULT = "adventure/revaulting";
+	public static final String ADV_DRIED_GHAST = "husbandry/place_dried_ghast_in_water";
+	public static final String ADV_CRAFTER = "adventure/crafters_crafting_crafters";
 
 	// --- Chapter 3: villages and trading (docs/research-chapters-3-5.md) ---
 	public static final Tip FIND_VILLAGE = Tip.milestone("find_village", 2,
@@ -360,6 +366,65 @@ public final class TipRegistry {
 			c -> c.hasTotem() || c.has(ADV_TOTEM));
 
 	public static final List<Tip> CHAPTER_RAIDS = List.of(FIND_OUTPOST, RAID_CAPTAIN, OMINOUS_BOTTLE, WIN_RAID, TOTEM);
+
+	// --- Chapter 15: archaeology and trims (docs/research-chapters-15-18.md) ---
+	public static final Tip BRUSH = Tip.milestone("brush", 2,
+			c -> c.hasBrush() || c.has(ADV_SHERD));
+	public static final Tip FIND_TRAIL_RUINS = Tip.milestone("find_trail_ruins", 2,
+			c -> c.structure().equals("trail_ruins"));
+	public static final Tip SHERD = Tip.milestone("sherd", 2,
+			c -> c.has(ADV_SHERD));
+	public static final Tip DECORATED_POT = Tip.milestone("decorated_pot", 2,
+			SurvivalContext::hasDecoratedPot);
+	public static final Tip ARMOR_TRIM = Tip.milestone("armor_trim", 2,
+			c -> c.has(ADV_TRIM));
+	public static final Tip SNIFFER_EGG = Tip.milestone("sniffer_egg", 2,
+			c -> c.has(ADV_SNIFFER_EGG));
+
+	public static final List<Tip> CHAPTER_ARCHAEOLOGY = List.of(BRUSH, FIND_TRAIL_RUINS, SHERD, DECORATED_POT, ARMOR_TRIM, SNIFFER_EGG);
+
+	// --- Chapter 16: trial challenges ---
+	public static final Tip BREEZE_RODS = Tip.milestone("breeze_rods", 2,
+			c -> c.breezeRods() >= 2 || c.hasMace(),
+			SurvivalContext::breezeRods, 2);
+	public static final Tip WIND_CHARGE = Tip.milestone("wind_charge", 2,
+			SurvivalContext::hasWindCharge);
+	public static final Tip OMINOUS_VAULT = Tip.milestone("ominous_vault", 2,
+			c -> c.has(ADV_OMINOUS_VAULT));
+	public static final Tip HEAVY_CORE = Tip.milestone("heavy_core", 2,
+			c -> c.hasHeavyCore() || c.hasMace());
+	public static final Tip MACE = Tip.milestone("mace", 2,
+			SurvivalContext::hasMace);
+
+	public static final List<Tip> CHAPTER_TRIALS = List.of(BREEZE_RODS, WIND_CHARGE, OMINOUS_VAULT, HEAVY_CORE, MACE);
+
+	// --- Chapter 17: the happy ghast ---
+	public static final Tip DRIED_GHAST = Tip.milestone("dried_ghast", 2,
+			c -> c.hasDriedGhast() || c.has(ADV_DRIED_GHAST));
+	public static final Tip HYDRATE_GHAST = Tip.milestone("hydrate_ghast", 2,
+			c -> c.has(ADV_DRIED_GHAST));
+	public static final Tip GHASTLING = Tip.milestone("ghastling", 2,
+			c -> c.ghastlingNearby() || c.ridingHappyGhast());
+	public static final Tip HARNESS = Tip.milestone("harness", 2,
+			c -> c.hasHarness() || c.ridingHappyGhast());
+	public static final Tip RIDE_HAPPY_GHAST = Tip.milestone("ride_happy_ghast", 2,
+			SurvivalContext::ridingHappyGhast);
+
+	public static final List<Tip> CHAPTER_HAPPY_GHAST = List.of(DRIED_GHAST, HYDRATE_GHAST, GHASTLING, HARNESS, RIDE_HAPPY_GHAST);
+
+	// --- Chapter 18: automation ---
+	public static final Tip OBSERVER = Tip.milestone("observer", 2,
+			SurvivalContext::observerPlaced);
+	public static final Tip AUTO_SMELTER = Tip.milestone("auto_smelter", 2,
+			SurvivalContext::autoSmelter);
+	public static final Tip COPPER_BULB = Tip.milestone("copper_bulb", 2,
+			SurvivalContext::copperBulbLit);
+	public static final Tip CRAFTER = Tip.milestone("crafter", 2,
+			c -> c.crafterPlaced() || c.has(ADV_CRAFTER));
+	public static final Tip CRAFTER_CRAFTS = Tip.milestone("crafter_crafts", 2,
+			c -> c.has(ADV_CRAFTER));
+
+	public static final List<Tip> CHAPTER_AUTOMATION = List.of(OBSERVER, AUTO_SMELTER, COPPER_BULB, CRAFTER, CRAFTER_CRAFTS);
 
 	/** The goals of a chapter (see {@link Chapters}). */
 	public static List<Tip> milestones(int chapter) {

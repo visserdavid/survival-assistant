@@ -2,6 +2,7 @@ package io.github.visserdavid.survivalassistant.advice;
 
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -16,6 +17,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
+import net.minecraft.world.entity.animal.happyghast.HappyGhast;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.monster.piglin.Piglin;
@@ -25,7 +27,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CopperBulbBlock;
 import net.minecraft.world.level.block.EnchantingTableBlock;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -75,7 +79,9 @@ public final class ContextCollector {
 		boolean doorOpen = false, pistonOut = false, repeater = false, hopper = false, elytra = false;
 		boolean netheriteIngot = false, template = false, netheriteGear = false, netherStar = false, recoveryCompass = false,
 				ominousBottle = false, totem = false;
-		int skulls = 0, soulSand = 0, echoShards = 0;
+		int skulls = 0, soulSand = 0, echoShards = 0, breezeRods = 0;
+		boolean brush = false, pot = false, windCharge = false, heavyCore = false, mace = false, driedGhast = false,
+				harness = false, observer = false, crafter = false, autoSmelter = false, bulbLit = false;
 		boolean[] armor = new boolean[4]; // head, chest, legs, feet: iron or better
 
 		var inv = player.getInventory();
@@ -130,6 +136,14 @@ public final class ContextCollector {
 			else if (item == Items.RECOVERY_COMPASS) recoveryCompass = true;
 			else if (item == Items.OMINOUS_BOTTLE) ominousBottle = true;
 			else if (item == Items.TOTEM_OF_UNDYING) totem = true;
+			else if (item == Items.BRUSH) brush = true;
+			else if (item == Items.DECORATED_POT) pot = true;
+			else if (item == Items.BREEZE_ROD) breezeRods += n;
+			else if (item == Items.WIND_CHARGE) windCharge = true;
+			else if (item == Items.HEAVY_CORE) heavyCore = true;
+			else if (item == Items.MACE) mace = true;
+			else if (item == Items.DRIED_GHAST) driedGhast = true;
+			else if (s.is(ItemTags.HARNESSES)) harness = true;
 			if (isNetheriteGear(item)) netheriteGear = true;
 			if (s.is(ItemTags.ARROWS)) arrows += n;
 			markArmor(s, armor);
@@ -148,6 +162,7 @@ public final class ContextCollector {
 			if (worn == Items.TRIDENT) trident = true;
 			if (worn == Items.ELYTRA) elytra = true;
 			if (worn == Items.TOTEM_OF_UNDYING) totem = true;
+			if (worn == Items.MACE) mace = true;
 			if (isNetheriteGear(worn)) netheriteGear = true;
 			if (slot == EquipmentSlot.OFFHAND) {
 				if (worn == Items.SHIELD) shield = true;
@@ -183,6 +198,15 @@ public final class ContextCollector {
 				else if (st.is(Blocks.PISTON) || st.is(Blocks.STICKY_PISTON)) pistonOut |= st.getValue(BlockStateProperties.EXTENDED);
 				else if (st.is(Blocks.REPEATER)) repeater = true;
 				else if (st.is(Blocks.HOPPER)) hopper = true;
+				else if (st.is(Blocks.DECORATED_POT)) pot = true;
+				else if (st.is(Blocks.OBSERVER)) observer = true;
+				else if (st.is(Blocks.CRAFTER)) crafter = true;
+				else if (st.getBlock() instanceof CopperBulbBlock) bulbLit |= st.getValue(BlockStateProperties.LIT);
+				if (st.getBlock() instanceof AbstractFurnaceBlock && !autoSmelter) {
+					BlockState above = level.getBlockState(pos.above()), below = level.getBlockState(pos.below());
+					autoSmelter = above.is(Blocks.HOPPER) && above.getValue(BlockStateProperties.FACING_HOPPER) == Direction.DOWN
+							&& below.is(Blocks.HOPPER);
+				}
 				if (station && stationFound != null) {
 					stationFound.accept(pos.immutable());
 					stationFound = null; // only the first one
@@ -220,6 +244,8 @@ public final class ContextCollector {
 		int hostiles = level.getEntitiesOfClass(LivingEntity.class, around, e -> e instanceof Enemy && e.isAlive()).size();
 		AABB far = new AABB(player.blockPosition()).inflate(32);
 		boolean warden = !level.getEntitiesOfClass(Warden.class, new AABB(player.blockPosition()).inflate(24), Warden::isAlive).isEmpty();
+		boolean ghastling = !level.getEntitiesOfClass(HappyGhast.class, around, HappyGhast::isBaby).isEmpty();
+		boolean ridingHappyGhast = player.getVehicle() instanceof HappyGhast;
 		boolean ghast = !overworld && !level.getEntitiesOfClass(Ghast.class, far, Ghast::isAlive).isEmpty();
 		boolean piglin = !overworld && !level.getEntitiesOfClass(Piglin.class, around, Piglin::isAlive).isEmpty();
 		String structure = overworld || SurvivalContext.END.equals(dimension) || SurvivalContext.NETHER.equals(dimension)
@@ -239,7 +265,8 @@ public final class ContextCollector {
 				structure, boat, ridingHorse, milk, sugarCane, heart, turtleHelmet, trident, filledMap, spyglass,
 				redstone, doorOpen, pistonOut, repeater, hopper, pearls, eyes, elytra,
 				netheriteIngot, template, netheriteGear, skulls, soulSand, netherStar, echoShards, recoveryCompass,
-				ominousBottle, totem, warden);
+				ominousBottle, totem, warden, brush, pot, breezeRods, windCharge, heavyCore, mace, driedGhast, ghastling, harness,
+				ridingHappyGhast, observer, crafter, autoSmelter, bulbLit);
 	}
 
 	/** A netherite tool, weapon or armor piece (made in a smithing table, so not the ingot, scrap or template). */

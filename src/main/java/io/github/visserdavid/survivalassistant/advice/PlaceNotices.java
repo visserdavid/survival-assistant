@@ -23,6 +23,7 @@ import java.util.Set;
  *   <li>{@code ancient_city}: sneak, avoid the shriekers, never fight the warden.</li>
  *   <li>{@code outpost}: the captain's ominous bottle gives Bad Omen, which starts a raid in a village.</li>
  *   <li>{@code wither}: the first wither skeleton skull; where (not) to summon the Wither.</li>
+ *   <li>{@code trail_ruins}: brush suspicious blocks, never mine them (their treasure is lost).</li>
  * </ul>
  */
 public final class PlaceNotices {
@@ -43,6 +44,7 @@ public final class PlaceNotices {
 		if (ctx.structure().equals("ancient_city") && !seen.contains("ancient_city")) return "ancient_city";
 		if (ctx.structure().equals("pillager_outpost") && !seen.contains("outpost")) return "outpost";
 		if (ctx.witherSkulls() > 0 && !seen.contains("wither")) return "wither";
+		if (ctx.structure().equals("trail_ruins") && !seen.contains("trail_ruins")) return "trail_ruins";
 		return null;
 	}
 }

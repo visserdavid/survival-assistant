@@ -17,7 +17,9 @@ class RecipesTest {
 				"redstone_dust", "ender_pearls", "find_stronghold", "enter_end", "dragon", "end_city", "elytra",
 				"ancient_debris", "find_bastion", "upgrade_template", "netherite_gear", "wither_skulls", "soul_sand",
 				"summon_wither", "nether_star", "full_beacon", "find_ancient_city", "sneak_past", "echo_shards",
-				"find_outpost", "raid_captain", "ominous_bottle", "win_raid", "totem");
+				"find_outpost", "raid_captain", "ominous_bottle", "win_raid", "totem",
+				"find_trail_ruins", "sherd", "decorated_pot", "armor_trim", "sniffer_egg", "breeze_rods", "ominous_vault",
+				"heavy_core", "hydrate_ghast", "ghastling", "ride_happy_ghast", "auto_smelter", "crafter_crafts");
 		for (Tip m : Chapters.ALL.stream().flatMap(c -> c.goals().stream()).toList()) {
 			assertEquals(!noCrafting.contains(m.id()), Recipes.forTask(m.id()).isPresent(), m.id());
 		}

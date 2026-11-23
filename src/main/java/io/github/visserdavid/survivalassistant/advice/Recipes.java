@@ -125,7 +125,26 @@ public final class Recipes {
 					Map.of('G', "minecraft:glass", 'S', "minecraft:nether_star", 'O', "minecraft:obsidian"))),
 			// chapter 13
 			Map.entry("recovery_compass", new Recipe("minecraft:recovery_compass", 1, List.of("SSS", "SCS", "SSS"),
-					Map.of('S', "minecraft:echo_shard", 'C', "minecraft:compass")))
+					Map.of('S', "minecraft:echo_shard", 'C', "minecraft:compass"))),
+			// chapter 15
+			Map.entry("brush", new Recipe("minecraft:brush", 1, List.of("X", "#", "I"),
+					Map.of('X', "minecraft:feather", '#', "minecraft:copper_ingot", 'I', STICK))),
+			// chapter 16: a breeze rod gives 4 wind charges (shapeless); the mace
+			Map.entry("wind_charge", new Recipe("minecraft:wind_charge", 4, List.of("B"), Map.of('B', "minecraft:breeze_rod"))),
+			Map.entry("mace", new Recipe("minecraft:mace", 1, List.of(" # ", " I "),
+					Map.of('#', "minecraft:heavy_core", 'I', "minecraft:breeze_rod"))),
+			// chapter 17
+			Map.entry("dried_ghast", new Recipe("minecraft:dried_ghast", 1, List.of("###", "#X#", "###"),
+					Map.of('#', "minecraft:ghast_tear", 'X', "minecraft:soul_sand"))),
+			Map.entry("harness", new Recipe("minecraft:white_harness", 1, List.of("LLL", "G#G"),
+					Map.of('L', "minecraft:leather", 'G', "minecraft:glass", '#', "minecraft:white_wool"))),
+			// chapter 18
+			Map.entry("observer", new Recipe("minecraft:observer", 1, List.of("###", "RRQ", "###"),
+					Map.of('#', COBBLE, 'R', "minecraft:redstone", 'Q', "minecraft:quartz"))),
+			Map.entry("copper_bulb", new Recipe("minecraft:copper_bulb", 4, List.of(" C ", "CBC", " R "),
+					Map.of('C', "minecraft:copper_block", 'B', "minecraft:blaze_rod", 'R', "minecraft:redstone"))),
+			Map.entry("crafter", new Recipe("minecraft:crafter", 1, List.of("###", "#C#", "RDR"),
+					Map.of('#', IRON, 'C', "minecraft:crafting_table", 'R', "minecraft:redstone", 'D', "minecraft:dropper")))
 	);
 
 	public static Optional<Recipe> forTask(String taskId) {

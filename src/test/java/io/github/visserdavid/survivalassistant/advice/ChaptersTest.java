@@ -74,7 +74,9 @@ class ChaptersTest {
 				"story/enter_the_end", "end/kill_dragon", "end/find_end_city", "end/elytra", "nether/obtain_ancient_debris",
 				"nether/find_bastion", "nether/charge_respawn_anchor", "nether/get_wither_skull", "nether/summon_wither",
 				"nether/create_beacon", "nether/create_full_beacon", "adventure/avoid_vibration", "adventure/voluntary_exile",
-				"adventure/hero_of_the_village", "adventure/totem_of_undying"), Chapters.trackedAdvancements());
+				"adventure/hero_of_the_village", "adventure/totem_of_undying", "adventure/salvage_sherd",
+				"adventure/trim_with_any_armor_pattern", "husbandry/obtain_sniffer_egg", "adventure/revaulting",
+				"husbandry/place_dried_ghast_in_water", "adventure/crafters_crafting_crafters"), Chapters.trackedAdvancements());
 	}
 
 	@Test

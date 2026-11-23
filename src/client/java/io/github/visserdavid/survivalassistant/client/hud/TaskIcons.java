@@ -118,6 +118,31 @@ public final class TaskIcons {
 		put("ominous_bottle", Items.OMINOUS_BOTTLE);
 		put("win_raid", Items.BELL);
 		put("totem", Items.TOTEM_OF_UNDYING);
+		// chapter 15: archaeology
+		put("brush", Items.BRUSH);
+		put("find_trail_ruins", Items.SUSPICIOUS_GRAVEL);
+		put("sherd", Items.ARCHER_POTTERY_SHERD);
+		put("decorated_pot", Items.DECORATED_POT);
+		put("armor_trim", Items.COAST_ARMOR_TRIM_SMITHING_TEMPLATE);
+		put("sniffer_egg", Items.SNIFFER_EGG);
+		// chapter 16: trials
+		put("breeze_rods", Items.BREEZE_ROD);
+		put("wind_charge", Items.WIND_CHARGE);
+		put("ominous_vault", Items.OMINOUS_TRIAL_KEY);
+		put("heavy_core", Items.HEAVY_CORE);
+		put("mace", Items.MACE);
+		// chapter 17: the happy ghast
+		put("dried_ghast", Items.DRIED_GHAST);
+		put("hydrate_ghast", Items.WATER_BUCKET);
+		put("ghastling", Items.SNOWBALL);
+		put("harness", Items.HARNESS.white());
+		put("ride_happy_ghast", Items.GHAST_TEAR);
+		// chapter 18: automation
+		put("observer", Items.OBSERVER);
+		put("auto_smelter", Items.BLAST_FURNACE);
+		put("copper_bulb", Items.COPPER_BULB.weathering().unaffected());
+		put("crafter", Items.CRAFTER);
+		put("crafter_crafts", Items.CRAFTING_TABLE);
 		// alerts
 		put("creeper", Items.CREEPER_HEAD);
 		put("danger", Items.IRON_SWORD);
