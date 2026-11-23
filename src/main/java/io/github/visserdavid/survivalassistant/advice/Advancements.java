@@ -26,7 +26,6 @@ public final class Advancements {
 	public static final String DEBRIS = "nether/obtain_ancient_debris";
 	public static final String BASTION = "nether/find_bastion";
 	public static final String ANCHOR = "nether/charge_respawn_anchor";
-	public static final String WITHER_SKULL = "nether/get_wither_skull";
 	public static final String SUMMON_WITHER = "nether/summon_wither";
 	public static final String BEACON = "nether/create_beacon";
 	public static final String FULL_BEACON = "nether/create_full_beacon";
@@ -44,7 +43,7 @@ public final class Advancements {
 	/** Every advancement above: the ones the collector checks for each player. */
 	public static final Set<String> ALL = Set.of(
 			TRADE, IRON_GOLEM, ENTER_NETHER, FORTRESS, BREW, ENCHANT, TAME, FISH, HONEY, TRIDENT, TRIAL_CHAMBERS,
-			VAULT, STRONGHOLD, ENTER_END, DRAGON, END_CITY, ELYTRA, DEBRIS, BASTION, ANCHOR, WITHER_SKULL,
+			VAULT, STRONGHOLD, ENTER_END, DRAGON, END_CITY, ELYTRA, DEBRIS, BASTION, ANCHOR,
 			SUMMON_WITHER, BEACON, FULL_BEACON, SNEAK, RAID_CAPTAIN, RAID, TOTEM, SHERD, TRIM, SNIFFER_EGG,
 			OMINOUS_VAULT, DRIED_GHAST, CRAFTER);
 }

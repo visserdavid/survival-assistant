@@ -95,7 +95,7 @@ public final class GuideChat {
 		ModConfig cfg = ModConfig.get();
 		if (text.isBlank()) return;
 		GuideProgress progress = GuideState.of(player);
-		if (!progress.chatEnabled(cfg.chatEnabled) || progress.retired || progress.startTick < 0) return;
+		if (!progress.chatEnabled(cfg.chatEnabled) || progress.retired || !progress.met()) return;
 
 		GuideEntity guide = GuideManager.guideOf(player);
 		String guideName = GuideManager.guideName(player);

@@ -21,7 +21,7 @@ public final class Ticks {
 		return clock / PER_DAY;
 	}
 
-	/** 0..23999 within the day: 0 is sunrise, 12000 sunset. */
+	/** 0..23999 within the day: 0 is sunrise, 11000 sunset. */
 	public static int timeOfDay(long clock) {
 		return (int) Math.floorMod(clock, (long) PER_DAY);
 	}

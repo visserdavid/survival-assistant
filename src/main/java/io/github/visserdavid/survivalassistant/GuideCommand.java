@@ -27,15 +27,15 @@ public final class GuideCommand {
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
 		dispatcher.register(Commands.literal("guide")
 				.then(Commands.literal("call").executes(GuideCommand::call))
-				.then(Commands.literal("dismiss").executes(c -> run(c, GuideManager::dismiss)))
-				.then(Commands.literal("continue").executes(c -> run(c, GuideManager::continueChapter)))
-				.then(Commands.literal("chapters").executes(c -> run(c, GuideManager::chapters)))
+				.then(Commands.literal("dismiss").executes(c -> run(c, GuideActions::dismiss)))
+				.then(Commands.literal("continue").executes(c -> run(c, GuideActions::continueChapter)))
+				.then(Commands.literal("chapters").executes(c -> run(c, GuideActions::chapters)))
 				.then(Commands.literal("chapter")
 						.then(Commands.argument("id", StringArgumentType.word())
 								.suggests((c, b) -> SharedSuggestionProvider.suggest(Chapters.ALL.stream().map(Chapter::id), b))
 								.executes(GuideCommand::chapter)))
-				.then(Commands.literal("tip").executes(c -> run(c, GuideManager::tipNow)))
-				.then(Commands.literal("about").executes(c -> run(c, GuideManager::tellAbout)))
+				.then(Commands.literal("tip").executes(c -> run(c, GuideActions::tipNow)))
+				.then(Commands.literal("about").executes(c -> run(c, GuideActions::tellAbout)))
 				.then(Commands.literal("name")
 						.then(Commands.literal("reset").executes(c -> name(c, null)))
 						.then(Commands.argument("name", StringArgumentType.greedyString())
@@ -45,7 +45,7 @@ public final class GuideCommand {
 								.executes(c -> {
 									ServerPlayer p = c.getSource().getPlayerOrException();
 									int m = IntegerArgumentType.getInteger(c, "minutes");
-									GuideManager.mute(p, m);
+									GuideActions.mute(p, m);
 									c.getSource().sendSuccess(() -> Component.translatable("survivalassistant.cmd.muted", m), false);
 									return 1;
 								})))
@@ -74,7 +74,7 @@ public final class GuideCommand {
 	private static int chapter(CommandContext<CommandSourceStack> c) throws CommandSyntaxException {
 		ServerPlayer p = c.getSource().getPlayerOrException();
 		Chapter chapter = Chapters.byId(StringArgumentType.getString(c, "id"));
-		if (chapter == null || !GuideManager.startChapter(p, chapter)) {
+		if (chapter == null || !GuideActions.startChapter(p, chapter)) {
 			c.getSource().sendFailure(Component.translatable("survivalassistant.chapters.unavailable"));
 			return 0;
 		}
@@ -88,7 +88,7 @@ public final class GuideCommand {
 			c.getSource().sendFailure(Component.translatable("survivalassistant.cmd.name_invalid", GuideNames.MAX_LENGTH));
 			return 0;
 		}
-		GuideManager.rename(p, name);
+		GuideActions.rename(p, name);
 		String now = GuideManager.guideName(p);
 		c.getSource().sendSuccess(() -> Component.translatable(
 				name == null ? "survivalassistant.cmd.name_reset" : "survivalassistant.cmd.name_set", now), false);
@@ -110,7 +110,7 @@ public final class GuideCommand {
 
 	private static int character(CommandContext<CommandSourceStack> c, boolean enabled) throws CommandSyntaxException {
 		ServerPlayer p = c.getSource().getPlayerOrException();
-		GuideManager.setNpcEnabled(p, enabled);
+		GuideActions.setNpcEnabled(p, enabled);
 		c.getSource().sendSuccess(() -> Component.translatable(
 				enabled ? "survivalassistant.cmd.character_on" : "survivalassistant.cmd.character_off"), false);
 		return 1;
@@ -118,11 +118,11 @@ public final class GuideCommand {
 
 	/** /guide call: only with the guide character on (without it there is nobody to call). */
 	private static int call(CommandContext<CommandSourceStack> c) throws CommandSyntaxException {
-		if (!GuideManager.npcEnabled(c.getSource().getPlayerOrException())) {
+		if (!GuideActions.npcEnabled(c.getSource().getPlayerOrException())) {
 			c.getSource().sendFailure(Component.translatable("survivalassistant.cmd.npc_off_recall"));
 			return 0;
 		}
-		return run(c, GuideManager::recall);
+		return run(c, GuideActions::recall);
 	}
 
 	/** Runs an action for the player; when it can't be done now, says so. */

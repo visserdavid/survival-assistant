@@ -42,7 +42,6 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Consumer;
 
 /** Builds a {@link SurvivalContext} from the live game state. */
 public final class ContextCollector {
@@ -71,20 +70,16 @@ public final class ContextCollector {
 	private ContextCollector() {}
 
 	public static SurvivalContext collect(ServerPlayer player, GuideProgress progress) {
-		return collect(player, progress, 0, null);
+		return collect(player, progress, 0);
 	}
 
-	/**
-	 * @param digDownStreak recent breaks under the player's feet (see {@link DigTracker})
-	 * @param stationFound  called with the position of the first placed crafting table, chest or bed nearby
-	 */
-	public static SurvivalContext collect(ServerPlayer player, GuideProgress progress, int digDownStreak,
-			@Nullable Consumer<BlockPos> stationFound) {
+	/** @param digDownStreak recent breaks under the player's feet (see {@link DigTracker}) */
+	public static SurvivalContext collect(ServerPlayer player, GuideProgress progress, int digDownStreak) {
 		SurvivalContext.Builder b = SurvivalContext.builder();
 		Environment env = environment(player, progress, b);
 		scanPlayer(player, digDownStreak, b);
 		scanInventory(player, b);
-		scanBlocks(player.level(), player.blockPosition(), stationFound, b);
+		scanBlocks(player.level(), player.blockPosition(), b);
 		scanDanger(player, env, b);
 		scanCreatures(player, env.overworld(), b);
 		return b.build();
@@ -99,7 +94,7 @@ public final class ContextCollector {
 		ServerLevel level = player.level();
 		long clock = level.getOverworldClockTime();
 		int timeOfDay = Ticks.timeOfDay(clock);
-		int dayIndex = progress.startTick < 0 ? 0 : (int) Math.max(0, Ticks.day(clock) - Ticks.day(progress.startTick));
+		int dayIndex = progress.daysInChapter();
 
 		BlockPos head = BlockPos.containing(player.getEyePosition());
 		boolean sheltered = !level.canSeeSky(head);
@@ -114,7 +109,7 @@ public final class ContextCollector {
 		b.dayIndex(dayIndex).timeOfDay(timeOfDay).dimension(dimension)
 				.structure(knownDimension ? structureAt(level, player.blockPosition()) : "")
 				.thundering(thundering).sheltered(sheltered).underground(underground);
-		boolean duskOrNight = timeOfDay >= SurvivalContext.SUNSET && timeOfDay < SurvivalContext.NIGHT_END;
+		boolean duskOrNight = SurvivalContext.duskOrNight(timeOfDay);
 		return new Environment(head, overworld, underground, sheltered, duskOrNight, thundering);
 	}
 
@@ -235,20 +230,17 @@ public final class ContextCollector {
 	}
 
 	/** Placed blocks nearby (players usually place a crafting table, furnace or bed right after crafting it). */
-	private static void scanBlocks(ServerLevel level, BlockPos origin, @Nullable Consumer<BlockPos> stationFound,
-			SurvivalContext.Builder b) {
+	private static void scanBlocks(ServerLevel level, BlockPos origin, SurvivalContext.Builder b) {
 		int r = BLOCK_SCAN_RADIUS, h = BLOCK_SCAN_HEIGHT;
 		int crops = 0, bookshelves = 0;
 		boolean autoSmelter = false;
-		Consumer<BlockPos> report = stationFound;
 		for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-r, -h, -r), origin.offset(r, h, r))) {
 			BlockState st = level.getBlockState(pos);
 			if (st.isAir()) continue;
-			boolean station = false;
-			if (st.is(Blocks.CRAFTING_TABLE)) { b.hasCraftingTable(true); station = true; }
+			if (st.is(Blocks.CRAFTING_TABLE)) b.hasCraftingTable(true);
 			else if (st.is(Blocks.FURNACE)) b.hasFurnace(true);
-			else if (st.is(Blocks.CHEST)) { b.hasChest(true); station = true; }
-			else if (st.is(BlockTags.BEDS)) { b.hasBed(true); station = true; }
+			else if (st.is(Blocks.CHEST)) b.hasChest(true);
+			else if (st.is(BlockTags.BEDS)) b.hasBed(true);
 			else if (st.is(BlockTags.CROPS)) crops++;
 			else if (st.is(Blocks.ENCHANTING_TABLE)) {
 				b.hasEnchantingTable(true);
@@ -267,10 +259,6 @@ public final class ContextCollector {
 			else if (st.is(Blocks.CRAFTER)) b.crafter(true);
 			else if (st.getBlock() instanceof CopperBulbBlock) { if (st.getValue(BlockStateProperties.LIT)) b.copperBulbLit(true); }
 			if (!autoSmelter && st.getBlock() instanceof AbstractFurnaceBlock) autoSmelter = fedByHoppers(level, pos);
-			if (station && report != null) {
-				report.accept(pos.immutable());
-				report = null; // only the first one
-			}
 		}
 		b.crops(crops).bookshelves(bookshelves).autoSmelter(autoSmelter);
 	}
@@ -294,7 +282,8 @@ public final class ContextCollector {
 					break;
 				}
 			}
-			b.fallingBlockAbove(level.getBlockState(env.head().above()).getBlock() instanceof FallingBlock);
+			// only underground is the falling-block tip used (the Nether's roof is too high to matter)
+			if (env.underground()) b.fallingBlockAbove(level.getBlockState(env.head().above()).getBlock() instanceof FallingBlock);
 		}
 		boolean darkMatters = SurvivalContext.darkMatters(env.underground(), env.overworld(), env.sheltered(),
 				env.duskOrNight(), env.thundering());
@@ -335,7 +324,8 @@ public final class ContextCollector {
 	/** The notable structure ({@link Structures#ALL}) the position is in, or "". */
 	private static String structureAt(ServerLevel level, BlockPos pos) {
 		StructureStart start = level.structureManager().getStructureWithPieceAt(pos,
-				holder -> holder.is(key -> Structures.ALL.contains(key.identifier().getPath())));
+				holder -> holder.is(key -> Identifier.DEFAULT_NAMESPACE.equals(key.identifier().getNamespace())
+						&& Structures.ALL.contains(key.identifier().getPath())));
 		if (!start.isValid()) return "";
 		Identifier id = level.registryAccess().lookupOrThrow(Registries.STRUCTURE).getKey(start.getStructure());
 		return id == null ? "" : id.getPath();

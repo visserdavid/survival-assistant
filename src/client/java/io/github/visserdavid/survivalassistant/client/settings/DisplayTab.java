@@ -54,7 +54,7 @@ final class DisplayTab {
 		if (!skins.contains(c.guideSkin)) skins.add(c.guideSkin);
 		rows.header("look")
 				.cycle("skin", skins, c.guideSkin,
-						s -> s.equals(SkinNames.DEFAULT) ? Component.translatable(KEY + "skin.default") : Component.literal(s),
+						s -> s.equals(SkinNames.DEFAULT) ? Component.translatable(KEY + "skin.default") : Component.literal(shortName(s)),
 						v -> c.guideSkin = v)
 				.button(Button.builder(label("skin_folder"), b -> Blaze3D.openPath(GuideSkins.folder()))
 						.width(Rows.WIDGET_WIDTH).tooltip(tip("skin_folder")).build());
@@ -70,4 +70,11 @@ final class DisplayTab {
 	private static Component name(String id, Enum<?> value) {
 		return Component.translatable(KEY + id + "." + value.name().toLowerCase(Locale.ROOT));
 	}
+
+	/** Skin file names can be long ("cool_explorer_on_some_website_com"): keep the button readable. */
+	private static String shortName(String name) {
+		return name.length() <= MAX_SKIN_NAME ? name : name.substring(0, MAX_SKIN_NAME - 1) + "…";
+	}
+
+	private static final int MAX_SKIN_NAME = 16;
 }

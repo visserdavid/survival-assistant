@@ -53,7 +53,12 @@ public record Tip(String id, Kind kind, Predicate<SurvivalContext> applies, Pred
 		return counter != null && target > 0;
 	}
 
+	/** The lang key without the variant number: {@code survivalassistant.tip.<id>}. */
+	public String baseKey() {
+		return "survivalassistant.tip." + id;
+	}
+
 	public String translationKey(int variant) {
-		return "survivalassistant.tip." + id + "." + variant;
+		return baseKey() + "." + variant;
 	}
 }

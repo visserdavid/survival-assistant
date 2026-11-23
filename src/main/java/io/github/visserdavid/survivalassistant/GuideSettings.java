@@ -83,11 +83,11 @@ final class GuideSettings {
 		ModConfig cfg = ModConfig.get();
 		GuideProgress progress = GuideState.of(player);
 		GuideChoices now = GuideChoices.of(progress, cfg.npcEnabledByDefault, cfg.chatEnabled);
-		if (!Objects.equals(now.name(), wanted.name())) GuideManager.rename(player, wanted.storedName());
+		if (!Objects.equals(now.name(), wanted.name())) GuideActions.rename(player, wanted.storedName());
 		if (!Objects.equals(now.musings(), wanted.musings())) progress.musings = wanted.storedMusings();
 		// small talk can only be switched on when the server allows it
 		if (now.chat() != wanted.chat() && (cfg.chatEnabled || !wanted.chat())) progress.chatEnabled = wanted.chat();
-		if (now.character() != wanted.character()) GuideManager.setNpcEnabled(player, wanted.character());
+		if (now.character() != wanted.character()) GuideActions.setNpcEnabled(player, wanted.character());
 	}
 
 	private static void applyConfig(ServerPlayer player, String json) {

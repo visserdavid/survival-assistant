@@ -17,7 +17,6 @@ import io.github.visserdavid.survivalassistant.chat.GuideMusings;
 import io.github.visserdavid.survivalassistant.chat.Persona;
 import io.github.visserdavid.survivalassistant.config.ModConfig;
 import io.github.visserdavid.survivalassistant.entity.GuideEntity;
-import io.github.visserdavid.survivalassistant.entity.ai.FollowOwnerGoal;
 import io.github.visserdavid.survivalassistant.state.GuideState;
 import io.github.visserdavid.survivalassistant.state.HudState;
 import io.github.visserdavid.survivalassistant.util.Ticks;
@@ -28,6 +27,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -37,20 +39,22 @@ import static io.github.visserdavid.survivalassistant.GuideSpeech.say;
 
 /**
  * Server-side brain: keeps one guide next to every player who still has an active guide, runs the advice engine
- * periodically, handles the guide's lifecycle and is the entry point for events and commands.
+ * periodically, handles the guide's lifecycle and is the entry point for events.
  *
- * <p>The work is shared with {@link GuideSessions} (per-player memory), {@link GuideEntities} (the characters),
- * {@link GuideSpeech} (talking), {@link ChapterMenu} (questions with buttons) and {@link GuideNavigation} (the way
- * back and home).
+ * <p>The work is shared with {@link GuideActions} (what the player asks: commands and settings), {@link GuideSessions}
+ * (per-player memory), {@link GuideEntities} (the characters), {@link GuideSpeech} (talking), {@link ChapterMenu}
+ * (questions with buttons) and {@link GuideNavigation} (the way back and home).
  */
 public final class GuideManager {
 	private GuideManager() {}
 
 	// ---------------------------------------------------------------- ticking
 
+	/** Every player once a second, spread over the ticks so the world scans of many players don't all land together. */
 	public static void tick(MinecraftServer server) {
-		if (server.getTickCount() % Ticks.PER_SECOND != 0) return;
+		int tick = server.getTickCount();
 		for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+			if (Math.floorMod(tick + player.getId(), Ticks.PER_SECOND) != 0) continue;
 			try {
 				process(player);
 			} catch (RuntimeException e) {
@@ -64,19 +68,19 @@ public final class GuideManager {
 		ModConfig cfg = ModConfig.get();
 
 		if (progress.retired || player.isSpectator() || !player.isAlive()) {
-			if (progress.retired) {
-				GuideEntities.remove(player.getUUID(), false);
-				HudState.update(player, HudSnapshot.INACTIVE);
-			}
+			if (progress.retired) HudState.update(player, HudSnapshot.INACTIVE);
+			// no guide while retired or spectating; while dead it waits (it comes back after the respawn)
+			if (progress.retired || player.isSpectator()) GuideEntities.remove(player.getUUID(), false);
 			return;
 		}
 
 		boolean firstMeeting = false;
-		if (progress.startTick < 0) {
+		if (!progress.met()) {
 			if (!cfg.spawnOnJoin) return;
-			progress.startTick = player.level().getOverworldClockTime();
+			progress.meet(player.level().getOverworldClockTime());
 			firstMeeting = true;
 		}
+		progress.playedTicks += Ticks.PER_SECOND; // this runs once a second while the guide is active
 
 		GuideLifecycle.Step step = lifecycle(player, progress);
 		if (step == GuideLifecycle.Step.CONGRATULATE) {
@@ -127,11 +131,11 @@ public final class GuideManager {
 	}
 
 	/** Evaluates the situation, says whatever is due and refreshes the task card. */
-	private static void evaluateAndSay(ServerPlayer player, @Nullable GuideEntity guide, GuideProgress progress, boolean forced) {
+	static void evaluateAndSay(ServerPlayer player, @Nullable GuideEntity guide, GuideProgress progress, boolean forced) {
 		long now = player.level().getGameTime();
 		GuideSessions.Session session = GuideSessions.of(player.getUUID());
-		SurvivalContext ctx = ContextCollector.collect(player, progress, session.dig.current(now),
-				progress.homeFallback == null ? pos -> progress.homeFallback = GuideNavigation.mark(player, pos) : null);
+		GuideNavigation.updateHome(player, progress, session);
+		SurvivalContext ctx = ContextCollector.collect(player, progress, session.dig.current(now));
 		respond(player, guide, ctx, progress, forced);
 		checkLight(player, guide, ctx, progress, session, now);
 		checkPlaceNotices(player, guide, ctx, progress);
@@ -198,17 +202,17 @@ public final class GuideManager {
 	// ---------------------------------------------------------------- lifecycle
 
 	/** Another chapter can be started after the current one. */
-	private static boolean nextChapterAvailable(GuideProgress progress) {
+	static boolean nextChapterAvailable(GuideProgress progress) {
 		return ModConfig.get().moreChapters && !Chapters.available(progress.chapter, progress.completed).isEmpty();
 	}
 
 	private static GuideLifecycle.Step lifecycle(ServerPlayer player, GuideProgress progress) {
 		return GuideLifecycle.decide(new GuideLifecycle.State(Chapters.get(progress.chapter).done(progress.completed),
 				nextChapterAvailable(progress), progress.chapterOffered, progress.finished, progress.askedAtTick,
-				progress.reminded, player.level().getOverworldClockTime()));
+				progress.reminded, progress.playedTicks));
 	}
 
-	private static void retire(ServerPlayer player, GuideProgress progress, String messageKey) {
+	static void retire(ServerPlayer player, GuideProgress progress, String messageKey) {
 		GuideEntity guide = GuideEntities.get(player);
 		Chapter chapter = Chapters.get(progress.chapter);
 		say(player, guide, Component.translatable("survivalassistant." + messageKey + ".1"), false);
@@ -282,7 +286,12 @@ public final class GuideManager {
 		if (session.dig.record(player.level().getGameTime()) >= 2) session.evaluateSoon(); // react now, not after the interval
 	}
 
+	/** A click on the guide while sneaking: the most important tip and the chapter's progress (at most once a second). */
 	public static void onGuideClicked(ServerPlayer player, GuideEntity guide) {
+		GuideSessions.Session session = GuideSessions.of(player.getUUID());
+		long now = player.level().getGameTime();
+		if (now - session.lastClick < Ticks.PER_SECOND) return;
+		session.lastClick = now;
 		GuideProgress progress = GuideState.of(player);
 		evaluateAndSay(player, guide, progress, true);
 		Chapter chapter = Chapters.get(progress.chapter);
@@ -294,7 +303,17 @@ public final class GuideManager {
 
 	public static void onRespawn(ServerPlayer newPlayer) {
 		GuideProgress progress = GuideState.of(newPlayer);
-		if (!progress.retired && progress.startTick >= 0) progress.comfortPending = true;
+		if (!progress.retired && progress.met()) progress.comfortPending = true;
+	}
+
+	/** About to place a crafting table, chest or bed: remember the spot (the next pass checks it was really placed). */
+	public static void onUseBlock(ServerPlayer player, InteractionHand hand, BlockHitResult hit) {
+		if (player.getItemInHand(hand).getItem() instanceof BlockItem item
+				&& GuideNavigation.isHomeBlock(item.getBlock().defaultBlockState())) {
+			BlockPos clicked = hit.getBlockPos();
+			BlockPos pos = player.level().getBlockState(clicked).canBeReplaced() ? clicked : clicked.relative(hit.getDirection());
+			GuideSessions.of(player.getUUID()).placedHome = pos.immutable();
+		}
 	}
 
 	public static void onDisconnect(ServerPlayer player) {
@@ -311,113 +330,5 @@ public final class GuideManager {
 		GuideChat.clear();
 		GuideMusings.clear();
 		GuideSettings.clear();
-	}
-
-	// ---------------------------------------------------------------- commands
-
-	/** /guide tip */
-	public static boolean tipNow(ServerPlayer player) {
-		GuideProgress progress = GuideState.of(player);
-		if (progress.retired) return false;
-		GuideEntity guide = null;
-		if (npcEnabled(player)) {
-			guide = GuideEntities.ensure(player);
-			if (guide == null) return false;
-		}
-		evaluateAndSay(player, guide, progress, true);
-		return true;
-	}
-
-	/** /guide name: a new name (null = back to the default); the name tag changes at once. */
-	public static void rename(ServerPlayer player, @Nullable String name) {
-		GuideState.of(player).guideName = name == null ? null : name.strip();
-		GuideEntities.refreshName(player);
-	}
-
-	/** /guide about: the guide tells the next thing about itself. */
-	public static boolean tellAbout(ServerPlayer player) {
-		GuideProgress progress = GuideState.of(player);
-		if (progress.retired || progress.startTick < 0) return false;
-		GuideEntity guide = npcEnabled(player) ? GuideEntities.ensure(player) : null;
-		say(player, guide, Component.translatable(nextAbout(progress)), false);
-		return true;
-	}
-
-	public static boolean npcEnabled(ServerPlayer player) {
-		return GuideState.of(player).npcEnabled(ModConfig.get().npcEnabledByDefault);
-	}
-
-	/** /guide character on|off: stored on the player, takes effect immediately. */
-	public static void setNpcEnabled(ServerPlayer player, boolean enabled) {
-		GuideProgress progress = GuideState.of(player);
-		progress.npcEnabled = enabled;
-		if (!enabled) {
-			GuideEntities.remove(player.getUUID(), true);
-		} else if (!progress.retired && progress.startTick >= 0) {
-			GuideEntity guide = GuideEntities.ensure(player);
-			if (guide != null) say(player, guide, Component.translatable("survivalassistant.recall"), false);
-		}
-	}
-
-	/** /guide call */
-	public static boolean recall(ServerPlayer player) {
-		GuideProgress progress = GuideState.of(player);
-		if (progress.retired) {
-			if (!ModConfig.get().allowRecall) return false;
-			progress.restart(player.level().getOverworldClockTime());
-		} else if (progress.startTick < 0) {
-			progress.restart(player.level().getOverworldClockTime());
-		}
-		// Finished everything before new chapters existed (or switched them on)? Then the menu comes up again.
-		if (progress.finished && nextChapterAvailable(progress)) progress.finished = false;
-		GuideEntity guide = GuideEntities.ensure(player);
-		if (guide == null) return false;
-		FollowOwnerGoal.teleportNear(guide, player.blockPosition());
-		say(player, guide, Component.translatable("survivalassistant.recall"), false);
-		HudState.update(player, HudSnapshot.of(ContextCollector.collect(player, progress), progress));
-		return true;
-	}
-
-	/** /guide dismiss */
-	public static boolean dismiss(ServerPlayer player) {
-		GuideProgress progress = GuideState.of(player);
-		if (progress.retired) return false;
-		if (progress.startTick < 0) progress.startTick = player.level().getOverworldClockTime();
-		retire(player, progress, "dismissed");
-		return true;
-	}
-
-	/** /guide continue: start the first chapter that is open (after the current one is finished). */
-	public static boolean continueChapter(ServerPlayer player) {
-		GuideProgress progress = GuideState.of(player);
-		if (!Chapters.get(progress.chapter).done(progress.completed)) return false;
-		List<Chapter> open = Chapters.available(progress.chapter, progress.completed);
-		return !open.isEmpty() && startChapter(player, open.getFirst());
-	}
-
-	/** /guide chapter &lt;id&gt;: start or switch to a chapter that is open. Progress in other chapters is kept. */
-	public static boolean startChapter(ServerPlayer player, Chapter chapter) {
-		GuideProgress progress = GuideState.of(player);
-		if (progress.retired || progress.startTick < 0 || !ModConfig.get().moreChapters) return false;
-		if (Chapters.status(chapter, progress.chapter, progress.completed) != Chapters.Status.AVAILABLE) return false;
-		progress.chapter = chapter.number();
-		progress.restart(player.level().getOverworldClockTime());
-		say(player, GuideEntities.get(player), Component.translatable("survivalassistant.chapter." + chapter.id() + ".start")
-				.withStyle(ChatFormatting.GREEN), true);
-		GuideSessions.of(player.getUUID()).evaluateSoon(); // the first tip of the chapter on the next pass
-		return true;
-	}
-
-	/** /guide chapters: show the chapter menu. */
-	public static boolean chapters(ServerPlayer player) {
-		GuideProgress progress = GuideState.of(player);
-		if (progress.retired || progress.startTick < 0) return false;
-		ChapterMenu.show(player, GuideEntities.get(player), progress, "survivalassistant.chapters.header");
-		return true;
-	}
-
-	/** /guide mute &lt;minutes&gt; */
-	public static void mute(ServerPlayer player, int minutes) {
-		GuideState.of(player).muteUntil = player.level().getGameTime() + Ticks.minutes(minutes);
 	}
 }

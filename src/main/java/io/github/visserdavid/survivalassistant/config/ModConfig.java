@@ -13,7 +13,7 @@ import java.nio.file.Path;
 /** Simple JSON config at config/survivalassistant.json. Missing fields fall back to defaults. */
 public final class ModConfig {
 
-	/** After chapter 1, offer the next chapters (settling in, then villages, the Nether, brewing and enchanting). */
+	/** After chapter 1, offer the next 17 chapters (settling in, villages, the Nether, ... up to the End and beyond). */
 	@SerializedName(value = "moreChapters", alternate = {"chapter2"})
 	public boolean moreChapters = true;
 	/** How often the guide checks the situation (cooldowns below prevent spam). */
@@ -24,7 +24,10 @@ public final class ModConfig {
 	public boolean allowRecall = true;
 	/** Default for the guide character (players can override with /guide character on|off). */
 	public boolean npcEnabledByDefault = true;
-	/** Show one-time chat notes when reaching new depths (deepslate, lava level, deep dark, high mountains). */
+	/**
+	 * Show one-time chat notes when reaching new depths (deepslate, lava level, deep dark, high mountains) and special
+	 * places (the Nether, a village, a temple, ...).
+	 */
 	public boolean depthNotices = true;
 	/** Show the way back to your items after dying, and the way home when far away or at night. */
 	public boolean navigation = true;

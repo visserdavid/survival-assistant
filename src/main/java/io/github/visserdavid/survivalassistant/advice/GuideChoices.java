@@ -21,7 +21,7 @@ public record GuideChoices(boolean character, String name, String musings, boole
 
 	public GuideChoices {
 		name = name == null ? "" : name.strip();
-		if (!MUSINGS.contains(musings)) musings = MUSINGS_ON;
+		if (musings == null || !MUSINGS.contains(musings)) musings = MUSINGS_ON;
 	}
 
 	/** The choices that apply to this player now. */

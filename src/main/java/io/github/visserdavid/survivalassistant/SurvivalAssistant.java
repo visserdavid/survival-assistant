@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -20,6 +21,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import org.slf4j.Logger;
@@ -57,6 +59,10 @@ public class SurvivalAssistant implements ModInitializer {
 		});
 		ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
 			if (entity instanceof net.minecraft.server.level.ServerPlayer player) GuideManager.onDeath(player);
+		});
+		UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
+			if (player instanceof net.minecraft.server.level.ServerPlayer sp && !level.isClientSide()) GuideManager.onUseBlock(sp, hand, hit);
+			return InteractionResult.PASS;
 		});
 		PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {
 			if (player instanceof net.minecraft.server.level.ServerPlayer sp) GuideManager.onBlockBroken(sp, pos);

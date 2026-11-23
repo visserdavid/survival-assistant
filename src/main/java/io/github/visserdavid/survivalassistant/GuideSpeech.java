@@ -66,7 +66,7 @@ final class GuideSpeech {
 
 	/** A tip in one of its text variants; urgent tips are yellow and also show above the hotbar. */
 	static void sayTip(ServerPlayer player, @Nullable GuideEntity guide, Tip tip, boolean urgent) {
-		MutableComponent text = randomVariant("survivalassistant.tip." + tip.id(), tip.variants(), player.getRandom());
+		MutableComponent text = randomVariant(tip.baseKey(), tip.variants(), player.getRandom());
 		say(player, guide, urgent ? text.withStyle(ChatFormatting.YELLOW) : text, urgent);
 		if (urgent) player.sendOverlayMessage(text.copy().withStyle(ChatFormatting.GOLD));
 		if (guide != null && ModConfig.get().pointAtResources) {

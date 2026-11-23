@@ -3,6 +3,7 @@ package io.github.visserdavid.survivalassistant;
 import io.github.visserdavid.survivalassistant.advice.DigTracker;
 import io.github.visserdavid.survivalassistant.advice.Navigation;
 import io.github.visserdavid.survivalassistant.advice.SafeSignal;
+import net.minecraft.core.BlockPos;
 import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
@@ -25,8 +26,12 @@ final class GuideSessions {
 		final DigTracker dig = new DigTracker();
 		/** The last death (kept here, not on the player, so it survives the respawn copy and a reconnect). */
 		@Nullable Death death;
-		/** The spot was well lit at the last evaluation. */
-		boolean wasSafe;
+		/** The spot was well lit at the last evaluation (starts true: joining in a lit spot is no news). */
+		boolean wasSafe = true;
+		/** Game tick of the last click on the guide (a held right-click shouldn't run the full scan every few ticks). */
+		long lastClick = Long.MIN_VALUE;
+		/** Where the player just placed a crafting table, chest or bed (checked on the next pass, then forgotten). */
+		@Nullable BlockPos placedHome;
 		/** Game tick when the guide last said a spot is well lit. */
 		long lastSafeNotice = SafeSignal.NEVER;
 

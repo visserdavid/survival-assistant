@@ -35,7 +35,7 @@ public final class AdviceEngine {
 		for (Tip m : Chapters.get(progress.chapter).goals()) {
 			if (!progress.completed.contains(m.id()) && m.done().test(ctx)) {
 				progress.completed.add(m.id());
-				if (!forced) out.add(new Message(m, false, true));
+				out.add(new Message(m, false, true));
 			}
 		}
 

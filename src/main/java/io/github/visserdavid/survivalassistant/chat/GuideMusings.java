@@ -1,6 +1,7 @@
 package io.github.visserdavid.survivalassistant.chat;
 
 import io.github.visserdavid.survivalassistant.GuideManager;
+import io.github.visserdavid.survivalassistant.advice.GuideChoices;
 import io.github.visserdavid.survivalassistant.advice.AdviceEngine;
 import io.github.visserdavid.survivalassistant.advice.GuideProgress;
 import io.github.visserdavid.survivalassistant.advice.SurvivalContext;
@@ -24,8 +25,8 @@ public final class GuideMusings {
 	private GuideMusings() {}
 
 	/** Per-player setting values stored in {@link GuideProgress#musings}. */
-	public static final String OFF = "off";
-	public static final String ALL = "all";
+	public static final String OFF = GuideChoices.MUSINGS_OFF;
+	public static final String ALL = GuideChoices.MUSINGS_ALL;
 
 	private static final Map<UUID, MuseScheduler> SCHEDULERS = new HashMap<>();
 

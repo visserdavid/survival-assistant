@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ByIdMap;
 
 import java.util.Objects;
@@ -51,7 +52,7 @@ public final class HudState {
 			ByteBufCodecs.BOOL, HudSnapshot::safe,
 			HudSnapshot::new);
 
-	public static final AttachmentType<HudSnapshot> HUD = AttachmentRegistry.create(SurvivalAssistant.id("hud"),
+	public static final AttachmentType<HudSnapshot> HUD = AttachmentRegistry.create(Identifier.fromNamespaceAndPath(SurvivalAssistant.MOD_ID, "hud"),
 			builder -> builder.syncWith(STREAM_CODEC, AttachmentSyncPredicate.targetOnly()));
 
 	/** Sends the snapshot to the player, but only when it changed (saves network traffic). */

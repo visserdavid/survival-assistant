@@ -36,7 +36,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 
 	/**
 	 * @param dayIndex    days since the guide arrived (0 = first day)
-	 * @param timeOfDay   0..23999, 0 = sunrise, 12000 = sunset, 13000 = night
+	 * @param timeOfDay   0..23999, 0 = sunrise, 11000 = sunset ({@link #SUNSET}), 13000 = night
 	 * @param dimension   {@link #OVERWORLD}, {@link #NETHER}, {@link #END} (or the path of another dimension id)
 	 * @param structure   id path of the notable structure the player stands in (see {@link Structures}), or ""
 	 * @param sheltered   the player has a roof above them
@@ -67,6 +67,10 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 
 		public boolean isDusk() {
 			return timeOfDay >= SUNSET && timeOfDay < NIGHT_START;
+		}
+
+		public boolean isDuskOrNight() {
+			return duskOrNight(timeOfDay);
 		}
 
 		public boolean in(String structureId) {
@@ -169,11 +173,16 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 
 	/** Monsters could spawn around the player: underground, or outside without a roof at dusk, at night or in a thunderstorm. */
 	public boolean darkMatters() {
-		return darkMatters(world.underground(), world.inOverworld(), world.sheltered(), world.isDusk() || world.isNight(),
+		return darkMatters(world.underground(), world.inOverworld(), world.sheltered(), world.isDuskOrNight(),
 				world.thundering());
 	}
 
 	/** {@link #darkMatters()} from its parts, for the collector (which decides whether to check the light at all). */
+	/** From sunset until the night ends. */
+	public static boolean duskOrNight(int timeOfDay) {
+		return timeOfDay >= SUNSET && timeOfDay < NIGHT_END;
+	}
+
 	public static boolean darkMatters(boolean underground, boolean overworld, boolean sheltered, boolean duskOrNight, boolean thundering) {
 		return underground || (overworld && !sheltered && (duskOrNight || thundering));
 	}

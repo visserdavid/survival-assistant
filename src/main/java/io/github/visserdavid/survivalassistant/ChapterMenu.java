@@ -37,7 +37,7 @@ final class ChapterMenu {
 				.withStyle(ChatFormatting.GREEN), false);
 		celebrate(player, guide, progress);
 		progress.chapterOffered = true;
-		progress.askedAtTick = player.level().getOverworldClockTime();
+		progress.askedAtTick = progress.playedTicks;
 		progress.reminded = false;
 		show(player, guide, progress, "survivalassistant.chapters.offer");
 	}
@@ -69,10 +69,13 @@ final class ChapterMenu {
 							.withClickEvent(new ClickEvent.RunCommand("/guide chapter " + c.id()))
 							.withHoverEvent(new HoverEvent.ShowText(Component.translatable("survivalassistant.chapter." + c.id() + ".desc"))));
 			case LOCKED -> {
+				// only what is still missing (the finished requirements are no news)
 				MutableComponent needs = Component.empty();
-				for (int i = 0; i < c.requires().size(); i++) {
-					if (i > 0) needs.append(", ");
-					needs.append(Component.translatable(Chapters.get(c.requires().get(i)).titleKey()));
+				for (int id : c.requires()) {
+					Chapter required = Chapters.get(id);
+					if (required.done(progress.completed)) continue;
+					if (!needs.getSiblings().isEmpty()) needs.append(", ");
+					needs.append(Component.translatable(required.titleKey()));
 				}
 				yield Component.literal(c.number() + ". ").append(title).append(" ")
 						.append(Component.translatable("survivalassistant.chapters.locked", needs)).withStyle(ChatFormatting.GRAY);

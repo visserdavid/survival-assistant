@@ -40,7 +40,10 @@ class GuideProgressCodecTest {
 		assertEquals(Boolean.FALSE, p.npcEnabled);
 		assertEquals(Set.of("deepslate", "nether"), p.depthNotices);
 		assertEquals(new Navigation.Mark("minecraft:overworld", 10, 64, -5), p.homeFallback);
-		assertEquals(51000, p.askedAtTick);
+		// before played time was saved: the open question and the chapter's days start counting now
+		assertEquals(0, p.playedTicks);
+		assertEquals(0, p.askedAtTick);
+		assertEquals(0, p.chapterStartedAt);
 		assertEquals(2, p.chapter);
 		assertTrue(p.chapterOffered);
 		assertFalse(p.finished);
@@ -59,16 +62,48 @@ class GuideProgressCodecTest {
 		assertNull(p.npcEnabled);
 		assertNull(p.homeFallback);
 		assertEquals(-1, p.askedAtTick);
+		assertEquals(-1, p.chapterStartedAt);
+		assertEquals(0, p.playedTicks);
 	}
 
 	@Test
-	void writesTheSameFlatKeys() {
+	void writesTheSameFlatKeysPlusPlayedTime() {
 		JsonElement written = GuideProgressCodec.CODEC.encodeStart(JsonOps.INSTANCE, decode(OLD_FORMAT)).getOrThrow();
 		JsonObject expected = JsonParser.parseString(OLD_FORMAT).getAsJsonObject();
 		// values equal to their default are left out, as before
 		expected.remove("retired");
 		expected.remove("finished");
 		expected.remove("extra_days"); // no longer saved
+		expected.remove("asked_at"); // replaced by asked_played (played time)
+		expected.addProperty("chapter_started", 0);
+		expected.addProperty("asked_played", 0);
 		assertEquals(expected, written);
+	}
+
+	@Test
+	void playedTimeSurvivesTheTrip() {
+		GuideProgress p = new GuideProgress();
+		p.meet(1000);
+		p.playedTicks = 50_000;
+		p.restart();
+		p.askedAtTick = 60_000;
+		p.playedTicks = 61_000;
+		p.muteUntil = 123_456;
+		p.reminded = true;
+		JsonElement json = GuideProgressCodec.CODEC.encodeStart(JsonOps.INSTANCE, p).getOrThrow();
+		GuideProgress back = GuideProgressCodec.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow();
+		assertEquals(61_000, back.playedTicks);
+		assertEquals(50_000, back.chapterStartedAt);
+		assertEquals(60_000, back.askedAtTick);
+		assertEquals(123_456, back.muteUntil);
+		assertTrue(back.reminded);
+	}
+
+	@Test
+	void aBrokenValueDoesNotWipeTheProgress() {
+		GuideProgress p = decode("{\"chapter\": \"x\", \"start_tick\": 5, \"completed\": [\"wood\"]}");
+		assertEquals(1, p.chapter, "the broken value falls back to its default");
+		assertEquals(5, p.startTick);
+		assertEquals(List.of("wood"), List.copyOf(p.completed));
 	}
 }

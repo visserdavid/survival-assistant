@@ -20,6 +20,9 @@ public class KeepClearGoal extends Goal {
 	private ServerPlayer owner;
 	private BlockPos spot;
 	private int ticks;
+	/** After a search that found no free spot (a narrow tunnel), wait before searching again: it is costly. */
+	private int retryAt;
+	private static final int RETRY_TICKS = 20;
 
 	public KeepClearGoal(GuideEntity guide, double speed) {
 		this.guide = guide;
@@ -36,8 +39,12 @@ public class KeepClearGoal extends Goal {
 	public boolean canUse() {
 		ServerPlayer p = guide.getOwner();
 		if (p == null || p.isSpectator() || p.level() != guide.level() || !inTheWay(guide, p)) return false;
+		if (guide.tickCount < retryAt) return false;
 		BlockPos found = GuideSpots.find(guide, p);
-		if (found == null) return false;
+		if (found == null) {
+			retryAt = guide.tickCount + RETRY_TICKS;
+			return false;
+		}
 		owner = p;
 		spot = found;
 		return true;

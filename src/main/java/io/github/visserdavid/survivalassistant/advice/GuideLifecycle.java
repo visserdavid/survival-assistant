@@ -9,7 +9,7 @@ import io.github.visserdavid.survivalassistant.util.Ticks;
 public final class GuideLifecycle {
 	private GuideLifecycle() {}
 
-	/** Without an answer to the chapter menu, the guide leaves after one full day. */
+	/** Without an answer to the chapter menu, the guide leaves after one full in-game day of played time (20 min). */
 	public static final long ANSWER_TICKS = Ticks.PER_DAY;
 	/** One reminder halfway through that day. */
 	public static final long REMIND_TICKS = Ticks.PER_DAY / 2;
@@ -36,9 +36,9 @@ public final class GuideLifecycle {
 	 * @param nextChapter    another chapter is available after this one
 	 * @param chapterOffered the next chapter was already offered (question open)
 	 * @param finished       the final congratulation already happened (guide was called back afterwards)
-	 * @param askedAtTick    overworld clock tick when the chapter menu was offered, or -1 if none
+	 * @param askedAtTick    played ticks when the chapter menu was offered, or -1 if none
 	 * @param reminded       the reminder for the open question was already given
-	 * @param now            current overworld clock tick
+	 * @param now            played ticks now (see {@link GuideProgress#playedTicks})
 	 */
 	public record State(boolean allDone, boolean nextChapter, boolean chapterOffered, boolean finished, long askedAtTick,
 			boolean reminded, long now) {}
