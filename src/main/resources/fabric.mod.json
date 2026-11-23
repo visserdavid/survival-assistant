@@ -3,7 +3,7 @@
 	"id": "survivalassistant",
 	"version": "${version}",
 	"name": "Survival Assistant",
-	"description": "Helps new players survive their first days: a friendly guide, a compact task card with live progress, and biome and ore-height advice. All advice is verified against the game data.",
+	"description": "A Minecraft tutorial in 18 chapters: a friendly guide walks with you from your first night to the ender dragon and beyond, with a task card, biome and ore advice and safety warnings. All advice is verified against the game data.",
 	"authors": ["David Visser"],
 	"contact": {
 		"homepage": "https://github.com/visserdavid/survival-assistant",

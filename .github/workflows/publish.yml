@@ -1,0 +1,62 @@
+# Publishes the mod jar to Modrinth and CurseForge whenever a GitHub release is published.
+# Settings (Settings -> Secrets and variables -> Actions):
+#   variables: MODRINTH_ID, CURSEFORGE_ID   (project ids)
+#   secrets:   MODRINTH_TOKEN, CURSEFORGE_TOKEN
+# A platform without a token is skipped, so Modrinth works before CurseForge is set up.
+# Run it by hand (Actions -> Publish -> Run workflow) to (re)publish an existing release tag.
+name: Publish
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to publish, for example v0.19.0"
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build and test
+        run: ./gradlew build --no-daemon
+
+      - name: Version and changelog from the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "VERSION=${TAG#v}" >> "$GITHUB_ENV"
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json body -q .body > changelog.md
+
+      - uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: ${{ vars.MODRINTH_ID }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge-id: ${{ vars.CURSEFORGE_ID }}
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          files: build/libs/!(*-sources).jar
+          name: Survival Assistant ${{ env.VERSION }}
+          version: ${{ env.VERSION }}
+          version-type: release
+          changelog-file: changelog.md
+          loaders: fabric
+          game-versions: 26.3
+          java: 25
+          dependencies: fabric-api(required)

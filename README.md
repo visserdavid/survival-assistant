@@ -347,7 +347,8 @@ Keys: **J** task card mode, **K** environment card, **L** light check.
 - [Fabric API](https://modrinth.com/mod/fabric-api)
 - Java **25**
 
-Put the mod jar and Fabric API in your `mods` folder. The mod is needed on the server (or in singleplayer)
+Download the jar from the [GitHub releases](https://github.com/visserdavid/survival-assistant/releases)
+(Modrinth and CurseForge pages are coming). Put the mod jar and Fabric API in your `mods` folder. The mod is needed on the server (or in singleplayer)
 for the guide and advice, and on the client for the cards.
 
 ## Building from source

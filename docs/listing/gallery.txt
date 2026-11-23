@@ -1,0 +1,34 @@
+Gallery images for Modrinth and CurseForge, in this order (files in docs/images/).
+The first one is the featured image on Modrinth.
+
+1. task-card.png
+   Title: Task card
+   Description: Your current goal with a live counter, the next two goals, and a clock that counts down to sunset.
+
+2. chapters-menu.png
+   Title: Chapter menu
+   Description: Pick what to learn next: finished chapters in green, the current one in gold, open ones as buttons.
+
+3. task-card-chapter.png
+   Title: Themed chapters
+   Description: The task card follows the chapter you're in, here Farming and animals.
+
+4. chapters-tooltip.png
+   Title: What a chapter is about
+   Description: Hover over a chapter button to see its goals before you start it.
+
+5. task-card-full.png
+   Title: All goals at a glance
+   Description: Press J for the full list of the chapter's goals, with the recipe of the current task.
+
+6. recipe-card.png
+   Title: Recipe card
+   Description: Open your inventory and the recipe for your current task appears next to it.
+
+7. environment-card.png
+   Title: Environment card
+   Description: A pro and a con of your biome, and the ores worth digging for at your height.
+
+8. nav-items.png
+   Title: Back to your items
+   Description: After dying, an arrow shows the way back to your items and how long they stay.
