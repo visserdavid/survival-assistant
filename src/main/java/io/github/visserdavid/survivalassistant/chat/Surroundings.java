@@ -1,5 +1,6 @@
 package io.github.visserdavid.survivalassistant.chat;
 
+import java.util.Comparator;
 import java.util.Map;
 
 /**
@@ -25,6 +26,10 @@ public record Surroundings(
 		Map<String, Integer> hostile
 ) {
 	public enum Phase { DAY, DUSK, NIGHT }
+
+	/** Mob counts, most numerous first (alphabetical on a tie, for predictability). */
+	public static final Comparator<Map.Entry<String, Integer>> MOST_FIRST =
+			Map.Entry.<String, Integer>comparingByValue().reversed().thenComparing(Map.Entry.comparingByKey());
 
 	public Surroundings {
 		friendly = Map.copyOf(friendly);

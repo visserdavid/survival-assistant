@@ -52,7 +52,7 @@ public final class GuideMusings {
 
 		scheduler.update(in, now).ifPresent(key -> {
 			if (key.equals(in.selfKey())) GuideManager.nextAbout(progress); // the next story is a different one
-			if (!GuideChat.muse(player, guide, progress, key)) {
+			if (!GuideChat.muse(player, progress, key)) {
 				GuideManager.speak(player, guide, Component.translatable(key));
 			}
 		});

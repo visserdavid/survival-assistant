@@ -2,13 +2,13 @@ package io.github.visserdavid.survivalassistant.chat;
 
 import io.github.visserdavid.survivalassistant.util.Ticks;
 import java.util.ArrayDeque;
-import java.util.Comparator;
 import java.util.Deque;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Notices changes in the player's surroundings and decides when the guide may make a spontaneous remark.
@@ -111,7 +111,7 @@ public final class ChangeDetector {
 			case NIGHTFALL -> now.phase() == Surroundings.Phase.NIGHT;
 			case ENTER_CAVE -> now.underground();
 			case LEAVE_CAVE -> !now.underground();
-			default -> true;
+			case NEW_BIOME, NEW_MOB -> true;
 		};
 	}
 
@@ -132,11 +132,9 @@ public final class ChangeDetector {
 
 	/** The most numerous mob type the guide hasn't talked about yet (alphabetical on a tie, for predictability). */
 	private Optional<Change> newMob(Surroundings now) {
-		Comparator<Map.Entry<String, Integer>> order = Map.Entry.<String, Integer>comparingByValue().reversed()
-				.thenComparing(Map.Entry.comparingByKey());
-		return java.util.stream.Stream.concat(now.hostile().entrySet().stream(), now.friendly().entrySet().stream())
+		return Stream.concat(now.hostile().entrySet().stream(), now.friendly().entrySet().stream())
 				.filter(e -> !remarkedMobs.contains(e.getKey()))
-				.sorted(order)
+				.sorted(Surroundings.MOST_FIRST)
 				.findFirst()
 				.map(e -> new Change(Kind.NEW_MOB, e.getKey()));
 	}

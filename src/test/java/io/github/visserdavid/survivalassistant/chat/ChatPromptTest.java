@@ -55,7 +55,7 @@ class ChatPromptTest {
 				new ChatPrompt.Turn(ChatPrompt.Role.USER, "hoi"),
 				new ChatPrompt.Turn(ChatPrompt.Role.ASSISTANT, "hallo!"),
 				new ChatPrompt.Turn(ChatPrompt.Role.USER, "nog eentje"));
-		List<ChatPrompt.Turn> m = ChatPrompt.forPlayer(scene(), history, "  mooi weer hè  ");
+		List<ChatPrompt.Turn> m = ChatPrompt.forLine(scene(), history, "  mooi weer hè  ");
 		assertEquals(ChatPrompt.Role.SYSTEM, m.get(0).role());
 		assertEquals(ChatPrompt.Role.USER, m.get(1).role(), "an assistant turn can't come first");
 		for (int i = 2; i < m.size(); i++) assertNotEquals(m.get(i - 1).role(), m.get(i).role(), "roles alternate");

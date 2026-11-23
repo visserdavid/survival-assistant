@@ -1,6 +1,5 @@
 package io.github.visserdavid.survivalassistant.chat;
 
-import io.github.visserdavid.survivalassistant.util.Ticks;
 import io.github.visserdavid.survivalassistant.GuideManager;
 import io.github.visserdavid.survivalassistant.SurvivalAssistant;
 import io.github.visserdavid.survivalassistant.advice.AdviceEngine;
@@ -11,6 +10,7 @@ import io.github.visserdavid.survivalassistant.advice.Tip;
 import io.github.visserdavid.survivalassistant.config.ModConfig;
 import io.github.visserdavid.survivalassistant.entity.GuideEntity;
 import io.github.visserdavid.survivalassistant.state.GuideState;
+import io.github.visserdavid.survivalassistant.util.Ticks;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -33,9 +33,20 @@ import java.util.UUID;
  * the HTTP request itself.
  */
 public final class GuideChat {
+	/** After a failed connection we leave the model alone for a minute (wall clock, shared by all players). */
+	private static final long OFFLINE_BACKOFF_MS = 60_000;
+	private static final String ABOUT_PREFIX = "survivalassistant.about.";
+
+	private static final Map<UUID, State> STATES = new HashMap<>();
+	private static volatile long offlineUntil;
+
+	private GuideChat() {}
+
 	private static final class State {
 		final ChangeDetector detector;
 		final List<ChatPrompt.Turn> history = new ArrayList<>();
+		/** The situation at the last evaluation, so a chat message doesn't need a fresh scan of the world. */
+		@Nullable SurvivalContext lastContext;
 		boolean waiting;
 
 		State(long cooldownTicks) {
@@ -43,23 +54,27 @@ public final class GuideChat {
 		}
 	}
 
-	private static final Map<UUID, State> STATES = new HashMap<>();
-	/** After a failed connection we leave the model alone for a minute (wall clock, shared by all players). */
-	private static final long OFFLINE_BACKOFF_MS = 60_000;
-	private static volatile long offlineUntil;
-
-	private GuideChat() {}
+	/**
+	 * One question to the model.
+	 *
+	 * @param userLine  what goes into the history as the player's turn
+	 * @param direct    the player spoke to the guide (an unreachable model then gets a short apology)
+	 * @param fallback  said instead when the model gives no usable answer (a musing's handwritten line), or null
+	 */
+	private record Request(List<ChatPrompt.Turn> messages, String userLine, String guideName, boolean direct,
+			@Nullable Component fallback) {}
 
 	// ---------------------------------------------------------------- spontaneous remarks
 
 	/** Called with every fresh situation evaluation (every few seconds). */
 	public static void observe(ServerPlayer player, @Nullable GuideEntity guide, SurvivalContext ctx, GuideProgress progress) {
 		ModConfig cfg = ModConfig.get();
-		if (!progress.chatEnabled(cfg.chatEnabled) || !cfg.chatSpontaneous) return;
-		// Without the character the task card is the main UI and only urgent warnings go to chat: no small talk either.
-		if (guide == null) return;
-
+		if (!progress.chatEnabled(cfg.chatEnabled)) return;
 		State state = state(player);
+		state.lastContext = ctx;
+		// Without the character the task card is the main UI and only urgent warnings go to chat: no small talk either.
+		if (!cfg.chatSpontaneous || guide == null) return;
+
 		long now = player.level().getGameTime();
 		Surroundings surroundings = SurroundingsCollector.collect(player, ctx, cfg.chatSightRadius);
 		boolean blocked = state.waiting || offline() || now < progress.muteUntil || AdviceEngine.activeUrgent(ctx) != null;
@@ -69,7 +84,7 @@ public final class GuideChat {
 			if (change.kind() == ChangeDetector.Kind.NEW_BIOME && GuideMusings.enabled(progress)) return;
 			ChatPrompt.Scene scene = scene(player, surroundings, progress);
 			String note = ChatPrompt.changeNote(scene, change);
-			ask(player, state, ChatPrompt.forChange(scene, state.history, change), note, scene.guideName(), false, null);
+			ask(player, state, new Request(ChatPrompt.forLine(scene, state.history, note), note, scene.guideName(), false, null));
 		});
 	}
 
@@ -83,9 +98,8 @@ public final class GuideChat {
 		if (!progress.chatEnabled(cfg.chatEnabled) || progress.retired || progress.startTick < 0) return;
 
 		GuideEntity guide = GuideManager.guideOf(player);
-		String language = language(player);
 		String guideName = GuideManager.guideName(player);
-		boolean named = named(text, guideName, language);
+		boolean named = named(text, guideName, language(player));
 		if (!addressed(player, guide, named, cfg)) return;
 
 		State state = state(player);
@@ -95,15 +109,13 @@ public final class GuideChat {
 
 		if (offline()) {
 			// Only when called by name: someone without a model server shouldn't get this after every chat line.
-			if (named) GuideManager.speak(player, guide, Component.translatable("survivalassistant.chat.unavailable").withStyle(ChatFormatting.GRAY));
+			if (named) GuideManager.speak(player, guide, unavailable());
 			return;
 		}
 
-		SurvivalContext ctx = ContextCollector.collect(player, progress);
-		Surroundings surroundings = SurroundingsCollector.collect(player, ctx, cfg.chatSightRadius);
-		ChatPrompt.Scene scene = scene(player, surroundings, progress);
+		ChatPrompt.Scene scene = scene(player, state, progress);
 		String said = text.strip();
-		ask(player, state, ChatPrompt.forPlayer(scene, state.history, said), said, guideName, true, null);
+		ask(player, state, new Request(ChatPrompt.forLine(scene, state.history, said), said, guideName, true, null));
 	}
 
 	/**
@@ -119,13 +131,12 @@ public final class GuideChat {
 		return !othersNearby || named;
 	}
 
+	/** The message mentions the guide: its name, "guide", or the word for guide in the player's language. */
 	private static boolean named(String text, String guideName, String language) {
 		String localized = LangFile.get(language, "entity.survivalassistant.guide");
 		return NameMatch.mentions(text, guideName) || NameMatch.mentions(text, "guide")
 				|| (localized != null && NameMatch.mentions(text, localized));
 	}
-
-	// ---------------------------------------------------------------- request and reply
 
 	// ---------------------------------------------------------------- musings
 
@@ -140,7 +151,7 @@ public final class GuideChat {
 	 *
 	 * @return false when small talk is off or the model is offline: the caller then says the handwritten line
 	 */
-	public static boolean muse(ServerPlayer player, @Nullable GuideEntity guide, GuideProgress progress, String key) {
+	public static boolean muse(ServerPlayer player, GuideProgress progress, String key) {
 		ModConfig cfg = ModConfig.get();
 		if (!progress.chatEnabled(cfg.chatEnabled) || offline()) return false;
 		String idea = LangFile.get("en_us", key);
@@ -149,34 +160,33 @@ public final class GuideChat {
 		if (state.waiting) return false;
 		state.detector.conversationAt(player.level().getGameTime());
 
-		SurvivalContext ctx = ContextCollector.collect(player, progress);
-		Surroundings surroundings = SurroundingsCollector.collect(player, ctx, cfg.chatSightRadius);
-		ChatPrompt.Scene scene = scene(player, surroundings, progress);
-		String note = key.startsWith("survivalassistant.about.") ? ChatPrompt.selfNote(scene, idea) : ChatPrompt.museNote(scene, idea);
-		ask(player, state, ChatPrompt.forPlayer(scene, state.history, note), note, scene.guideName(), false,
-				Component.translatable(key));
+		ChatPrompt.Scene scene = scene(player, state, progress);
+		String note = key.startsWith(ABOUT_PREFIX) ? ChatPrompt.selfNote(scene, idea) : ChatPrompt.museNote(scene, idea);
+		ask(player, state, new Request(ChatPrompt.forLine(scene, state.history, note), note, scene.guideName(), false,
+				Component.translatable(key)));
 		return true;
 	}
 
-	private static void ask(ServerPlayer player, State state, List<ChatPrompt.Turn> messages, String userLine,
-			String guideName, boolean direct, @Nullable Component fallback) {
+	// ---------------------------------------------------------------- request and reply
+
+	private static void ask(ServerPlayer player, State state, Request request) {
 		ModConfig cfg = ModConfig.get();
 		MinecraftServer server = player.level().getServer();
 		UUID id = player.getUUID();
-		String body = ChatPrompt.toRequestJson(messages, cfg.chatModel, cfg.chatMaxTokens, cfg.chatTemperature);
+		String body = ChatPrompt.toRequestJson(request.messages(), cfg.chatModel, cfg.chatMaxTokens, cfg.chatTemperature);
 
 		state.waiting = true;
 		try {
 			ChatClient.complete(cfg.chatEndpoint, body, cfg.chatTimeoutSeconds)
-					.whenComplete((raw, error) -> server.execute(() -> deliver(server, id, state, userLine, raw, error, guideName, direct, fallback)));
+					.whenComplete((raw, error) -> server.execute(() -> deliver(server, id, state, request, raw, error)));
 		} catch (RuntimeException e) {
 			state.waiting = false;
 			throw e;
 		}
 	}
 
-	private static void deliver(MinecraftServer server, UUID id, State state, String userLine, @Nullable String raw,
-			@Nullable Throwable error, String guideName, boolean direct, @Nullable Component fallback) {
+	private static void deliver(MinecraftServer server, UUID id, State state, Request request, @Nullable String raw,
+			@Nullable Throwable error) {
 		state.waiting = false;
 		// The player left (or the server stopped) while the model was thinking: this answer belongs to nobody now.
 		if (STATES.get(id) != state) return;
@@ -186,20 +196,17 @@ public final class GuideChat {
 
 		if (error != null) {
 			failed(error);
-			if (direct) {
-				GuideManager.speak(player, guide, Component.translatable("survivalassistant.chat.unavailable").withStyle(ChatFormatting.GRAY));
-			} else if (fallback != null) {
-				GuideManager.speak(player, guide, fallback);
-			}
+			if (request.direct()) GuideManager.speak(player, guide, unavailable());
+			else if (request.fallback() != null) GuideManager.speak(player, guide, request.fallback());
 			return;
 		}
 
-		String reply = ChatPrompt.cleanReply(raw, guideName);
+		String reply = ChatPrompt.cleanReply(raw, request.guideName());
 		if (reply.isEmpty()) {
-			if (fallback != null) GuideManager.speak(player, guide, fallback);
+			if (request.fallback() != null) GuideManager.speak(player, guide, request.fallback());
 			return;
 		}
-		state.history.add(new ChatPrompt.Turn(ChatPrompt.Role.USER, userLine));
+		state.history.add(new ChatPrompt.Turn(ChatPrompt.Role.USER, request.userLine()));
 		state.history.add(new ChatPrompt.Turn(ChatPrompt.Role.ASSISTANT, reply));
 		ChatPrompt.trimHistory(state.history, ModConfig.get().chatHistoryTurns);
 		GuideManager.speak(player, guide, Component.literal(reply));
@@ -211,20 +218,20 @@ public final class GuideChat {
 		for (Throwable t = error; t != null && io == null; t = t.getCause() == t ? null : t.getCause()) {
 			if (t instanceof IOException e) io = e;
 		}
-		if (io != null) {
-			if (offline()) {
-				// already reported
-			} else if (io instanceof ChatClient.BadResponseException bad) {
+		if (io == null) {
+			SurvivalAssistant.LOGGER.warn("Guide chat request failed", error);
+			return;
+		}
+		if (!offline()) { // report once per backoff period
+			if (io instanceof ChatClient.BadResponseException bad) {
 				SurvivalAssistant.LOGGER.warn("Guide chat: unusable answer from {} ({}). Trying again in a minute.",
 						ModConfig.get().chatEndpoint, bad.getMessage());
 			} else {
 				SurvivalAssistant.LOGGER.warn("Guide chat: no answer from {} ({}). Is llama-server running? Trying again in a minute.",
 						ModConfig.get().chatEndpoint, io.getClass().getSimpleName());
 			}
-			offlineUntil = System.currentTimeMillis() + OFFLINE_BACKOFF_MS;
-		} else {
-			SurvivalAssistant.LOGGER.warn("Guide chat request failed", error);
 		}
+		offlineUntil = System.currentTimeMillis() + OFFLINE_BACKOFF_MS;
 	}
 
 	private static boolean offline() {
@@ -232,6 +239,16 @@ public final class GuideChat {
 	}
 
 	// ---------------------------------------------------------------- helpers
+
+	private static Component unavailable() {
+		return Component.translatable("survivalassistant.chat.unavailable").withStyle(ChatFormatting.GRAY);
+	}
+
+	/** The scene for a message or musing: from the last evaluation when there is one, otherwise from a fresh look. */
+	private static ChatPrompt.Scene scene(ServerPlayer player, State state, GuideProgress progress) {
+		SurvivalContext ctx = state.lastContext != null ? state.lastContext : ContextCollector.collect(player, progress);
+		return scene(player, SurroundingsCollector.collect(player, ctx, ModConfig.get().chatSightRadius), progress);
+	}
 
 	private static ChatPrompt.Scene scene(ServerPlayer player, Surroundings s, GuideProgress progress) {
 		String language = language(player);

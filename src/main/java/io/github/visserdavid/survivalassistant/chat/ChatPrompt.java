@@ -38,14 +38,12 @@ public final class ChatPrompt {
 
 	// ---------------------------------------------------------------- building
 
-	/** Messages for a spontaneous remark about a change. */
-	public static List<Turn> forChange(Scene scene, List<Turn> history, ChangeDetector.Change change) {
-		return messages(scene, history, changeNote(scene, change));
-	}
-
-	/** Messages for an answer to something the player said. */
-	public static List<Turn> forPlayer(Scene scene, List<Turn> history, String playerText) {
-		return messages(scene, history, playerText.strip());
+	/**
+	 * The messages for one request: the system prompt, the history and the new user line (something the player said,
+	 * or a note such as {@link #changeNote} or {@link #museNote}).
+	 */
+	public static List<Turn> forLine(Scene scene, List<Turn> history, String line) {
+		return messages(scene, history, line.strip());
 	}
 
 	/** The user line that describes a change; stored in the history so roles keep alternating. */
@@ -97,7 +95,7 @@ public final class ChatPrompt {
 
 	/** Adds a turn, merging it into the previous one when the role repeats. */
 	private static void append(List<Turn> out, Turn turn) {
-		Turn last = out.get(out.size() - 1);
+		Turn last = out.getLast();
 		if (last.role() == turn.role()) {
 			out.set(out.size() - 1, new Turn(turn.role(), last.text() + "\n" + turn.text()));
 		} else {
@@ -149,7 +147,7 @@ public final class ChatPrompt {
 		if (mobs.isEmpty()) return "none";
 		StringBuilder b = new StringBuilder();
 		mobs.entrySet().stream()
-				.sorted(Map.Entry.<String, Integer>comparingByValue().reversed().thenComparing(Map.Entry.comparingByKey()))
+				.sorted(Surroundings.MOST_FIRST)
 				.limit(6)
 				.forEach(e -> {
 					if (!b.isEmpty()) b.append(", ");

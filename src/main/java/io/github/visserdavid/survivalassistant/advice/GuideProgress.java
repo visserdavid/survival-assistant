@@ -57,20 +57,6 @@ public final class GuideProgress {
 		this.chapterOffered = false;
 	}
 
-	public GuideProgress() {}
-
-	public GuideProgress(long startTick, boolean retired, Set<String> completed) {
-		this.startTick = startTick;
-		this.retired = retired;
-		this.completed.addAll(completed);
-	}
-
-	public GuideProgress(long startTick, boolean retired, Set<String> completed, Boolean npcEnabled, Set<String> depthNotices) {
-		this(startTick, retired, completed);
-		this.npcEnabled = npcEnabled;
-		this.depthNotices.addAll(depthNotices);
-	}
-
 	public boolean npcEnabled(boolean serverDefault) {
 		return npcEnabled != null ? npcEnabled : serverDefault;
 	}
