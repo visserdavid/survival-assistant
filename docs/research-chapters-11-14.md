@@ -1,7 +1,7 @@
 # Chapters 11-14: netherite, the Wither, the Deep Dark and raids
 
 Game facts behind the "endgame" chapters 11 (Netherite and bastions), 12 (The Wither and the beacon),
-13 (The Deep Dark) and 14 (Raids and pillagers). Checked against the Minecraft 26.3 data and code
+13 (The Deep Dark) and 14 (Raids and illagers). Checked against the Minecraft 26.3 data and code
 (`minecraft-common-deobf-26.3.jar`); recipes also with `tools/recipe_check.py` (40 recipes, 0 problems).
 
 ## How goals are detected
@@ -56,7 +56,7 @@ holds back all other tips.
 - Echo shards are found in ancient city chests. Recovery compass: 8 echo shards around a compass; it points to
   the last death location.
 
-## Chapter 14: raids and pillagers
+## Chapter 14: raids and illagers
 - Pillager outposts are dark-oak towers with white-and-grey (ominous) banners, often near villages.
 - Raid captains carry an ominous banner; killing one gives advancement `adventure/voluntary_exile` and drops an
   ominous bottle. Drinking it gives Bad Omen; entering a village then starts a raid.
