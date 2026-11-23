@@ -30,8 +30,8 @@ public final class SurroundingsCollector {
 		BlockPos top = new BlockPos(x, level.getHeight(Heightmap.Types.MOTION_BLOCKING, x, z), z);
 		boolean raining = level.isRainingAt(top);
 
-		Surroundings.Phase phase = ctx.isNight() ? Surroundings.Phase.NIGHT
-				: ctx.isDusk() ? Surroundings.Phase.DUSK : Surroundings.Phase.DAY;
+		Surroundings.Phase phase = ctx.world().isNight() ? Surroundings.Phase.NIGHT
+				: ctx.world().isDusk() ? Surroundings.Phase.DUSK : Surroundings.Phase.DAY;
 
 		Map<String, Integer> friendly = new HashMap<>();
 		Map<String, Integer> hostile = new HashMap<>();
@@ -43,6 +43,6 @@ public final class SurroundingsCollector {
 		}
 
 		return new Surroundings(biomeId, BiomeGroup.of(biomeId).name().toLowerCase(Locale.ROOT), raining,
-				ctx.thundering(), phase, ctx.underground(), friendly, hostile);
+				ctx.world().thundering(), phase, ctx.world().underground(), friendly, hostile);
 	}
 }

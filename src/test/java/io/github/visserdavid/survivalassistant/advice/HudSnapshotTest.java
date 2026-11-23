@@ -1,5 +1,6 @@
 package io.github.visserdavid.survivalassistant.advice;
 
+import io.github.visserdavid.survivalassistant.config.ModConfig;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -9,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class HudSnapshotTest {
 	private static HudSnapshot snap(SurvivalContext c, GuideProgress p) {
 		// The server always evaluates (which records completed milestones) before building the snapshot.
-		AdviceEngine.evaluate(c, p, 0, AdviceEngine.Settings.DEFAULT, false);
+		AdviceEngine.evaluate(c, p, 0, AdviceEngine.Settings.from(new ModConfig()), false);
 		return HudSnapshot.of(c, p, 3);
 	}
 
@@ -38,13 +39,13 @@ class HudSnapshotTest {
 	void counterIsClampedToTarget() {
 		GuideProgress p = new GuideProgress();
 		p.completed.addAll(List.of("wood", "crafting_table", "wooden_pickaxe", "stone_tools", "furnace"));
-		HudSnapshot s = snap(SurvivalContext.builder().pickaxe(2).sword(2).furnace(true).foodItems(3).build(), p);
+		HudSnapshot s = snap(SurvivalContext.builder().pickaxeTier(2).swordTier(2).hasFurnace(true).foodItems(3).build(), p);
 		assertEquals(new HudSnapshot.Entry("food", 3, 5), s.next().get(0));
 	}
 
 	@Test
 	void stoneToolsLeadsToFurnace() {
-		HudSnapshot s = snap(SurvivalContext.builder().pickaxe(2).sword(2).build(), new GuideProgress());
+		HudSnapshot s = snap(SurvivalContext.builder().pickaxeTier(2).swordTier(2).build(), new GuideProgress());
 		assertEquals("furnace", ids(s).get(0));
 		assertTrue(s.completed().containsAll(List.of("wood", "crafting_table", "wooden_pickaxe", "stone_tools")));
 	}
@@ -60,7 +61,7 @@ class HudSnapshotTest {
 	@Test
 	void lastTasksShowFewerLines() {
 		GuideProgress p = new GuideProgress();
-		TipRegistry.MILESTONES.stream().limit(TipRegistry.MILESTONES.size() - 1).forEach(m -> p.completed.add(m.id()));
+		TipRegistry.CHAPTER_FIRST_DAYS.stream().limit(TipRegistry.CHAPTER_FIRST_DAYS.size() - 1).forEach(m -> p.completed.add(m.id()));
 		HudSnapshot s = HudSnapshot.of(SurvivalContext.builder().build(), p, 3);
 		assertEquals(List.of("water_bucket"), ids(s));
 	}
@@ -68,7 +69,7 @@ class HudSnapshotTest {
 	@Test
 	void allDoneMeansNoTasks() {
 		GuideProgress p = new GuideProgress();
-		TipRegistry.MILESTONES.forEach(m -> p.completed.add(m.id()));
+		TipRegistry.CHAPTER_FIRST_DAYS.forEach(m -> p.completed.add(m.id()));
 		assertTrue(HudSnapshot.of(SurvivalContext.builder().build(), p, 3).next().isEmpty());
 	}
 
@@ -82,8 +83,8 @@ class HudSnapshotTest {
 
 	@Test
 	void duskInsideShelterIsCalm() {
-		assertEquals("", snap(SurvivalContext.builder().time(11500).sheltered(true).build(), new GuideProgress()).urgentId());
-		assertEquals("dusk", snap(SurvivalContext.builder().time(11500).build(), new GuideProgress()).urgentId());
+		assertEquals("", snap(SurvivalContext.builder().timeOfDay(11500).sheltered(true).build(), new GuideProgress()).urgentId());
+		assertEquals("dusk", snap(SurvivalContext.builder().timeOfDay(11500).build(), new GuideProgress()).urgentId());
 	}
 
 	@Test

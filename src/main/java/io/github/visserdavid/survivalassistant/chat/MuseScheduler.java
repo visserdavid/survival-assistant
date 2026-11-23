@@ -1,5 +1,6 @@
 package io.github.visserdavid.survivalassistant.chat;
 
+import io.github.visserdavid.survivalassistant.util.Ticks;
 import org.jspecify.annotations.Nullable;
 
 import java.util.HashSet;
@@ -21,11 +22,11 @@ import java.util.TreeSet;
  */
 public final class MuseScheduler {
 	/** Minimum silence after any other remark of the guide (2 minutes). */
-	public static final long QUIET_TICKS = 2 * 60 * 20;
+	public static final long QUIET_TICKS = Ticks.minutes(2);
 	/** A biome must hold this long before its building idea (no remarks while walking along a border). */
-	public static final long SETTLE_TICKS = 5 * 20;
+	public static final long SETTLE_TICKS = Ticks.seconds(5);
 	/** The first musing comes no earlier than this after the guide starts (leaves room for the welcome and first tips). */
-	public static final long FIRST_DELAY = 60 * 20;
+	public static final long FIRST_DELAY = Ticks.minutes(1);
 
 	/**
 	 * @param group       lower-case biome group, for example {@code plains}

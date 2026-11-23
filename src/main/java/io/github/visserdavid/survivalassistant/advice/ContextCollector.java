@@ -1,11 +1,12 @@
 package io.github.visserdavid.survivalassistant.advice;
 
+import io.github.visserdavid.survivalassistant.util.Ticks;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,17 +16,17 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.entity.animal.happyghast.HappyGhast;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.monster.warden.Warden;
+import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.Blocks;
@@ -45,14 +46,27 @@ import java.util.function.Consumer;
 
 /** Builds a {@link SurvivalContext} from the live game state. */
 public final class ContextCollector {
-	/** Placed crafting tables, furnaces, chests and beds within this radius count as "has". */
+	/** Placed crafting tables, furnaces, chests, beds and the like within this radius count as "has". */
 	private static final int BLOCK_SCAN_RADIUS = 8;
+	/** Height of the block scan above and below the feet. */
+	private static final int BLOCK_SCAN_HEIGHT = 4;
 	/** Lava within this many blocks (underground) triggers the lava warning. */
 	private static final int LAVA_SCAN_RADIUS = 3;
+	/** "Underground" means at least this many blocks below the surface (with a roof above). */
+	private static final int UNDERGROUND_DEPTH = 8;
+
+	/** Hostile mobs, piglins and ghastlings within this radius count as "nearby". */
+	private static final int MOB_RADIUS = 16;
+	private static final int CREEPER_RADIUS = 7;
+	private static final int WARDEN_RADIUS = 24;
+	/** Ghasts are big and shoot from afar. Also the size of the one entity query. */
+	private static final int GHAST_RADIUS = 32;
 
 	/** The armor slots plus the off hand (shield, totem, a held trident or mace). */
 	private static final EquipmentSlot[] WORN_SLOTS =
 			{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET, EquipmentSlot.OFFHAND};
+	/** Head, chest, legs, feet (see {@link #armorSlot}). */
+	private static final int ARMOR_SLOTS = 4;
 
 	private ContextCollector() {}
 
@@ -62,31 +76,65 @@ public final class ContextCollector {
 
 	/**
 	 * @param digDownStreak recent breaks under the player's feet (see {@link DigTracker})
-	 * @param stationFound  called with the position of a placed crafting table, chest or bed nearby (may be null)
+	 * @param stationFound  called with the position of the first placed crafting table, chest or bed nearby
 	 */
 	public static SurvivalContext collect(ServerPlayer player, GuideProgress progress, int digDownStreak,
 			@Nullable Consumer<BlockPos> stationFound) {
+		SurvivalContext.Builder b = SurvivalContext.builder();
+		Environment env = environment(player, progress, b);
+		scanPlayer(player, digDownStreak, b);
+		scanInventory(player, b);
+		scanBlocks(player.level(), player.blockPosition(), stationFound, b);
+		scanDanger(player, env, b);
+		scanCreatures(player, env.overworld(), b);
+		return b.build();
+	}
+
+	/** What {@link #environment} found that the other scans need. */
+	private record Environment(BlockPos head, boolean overworld, boolean underground, boolean sheltered, boolean duskOrNight,
+			boolean thundering) {}
+
+	/** Day, time, dimension, structure, weather, shelter. */
+	private static Environment environment(ServerPlayer player, GuideProgress progress, SurvivalContext.Builder b) {
 		ServerLevel level = player.level();
 		long clock = level.getOverworldClockTime();
-		int timeOfDay = (int) Math.floorMod(clock, 24000L);
-		int dayIndex = progress.startTick < 0 ? 0 : (int) Math.max(0, clock / 24000L - progress.startTick / 24000L);
+		int timeOfDay = Ticks.timeOfDay(clock);
+		int dayIndex = progress.startTick < 0 ? 0 : (int) Math.max(0, Ticks.day(clock) - Ticks.day(progress.startTick));
 
-		int logs = 0, planks = 0, cobble = 0, foodItems = 0, wool = 0, torches = 0, iron = 0;
-		int pickaxe = 0, weapon = 0;
-		boolean table = false, bed = false, furnace = false, chest = false, shield = false, waterBucket = false;
-		int bread = 0, arrows = 0, diamonds = 0, obsidian = 0, crops = 0;
-		boolean bow = false, flintAndSteel = false, enchantingTable = false;
-		int emeralds = 0, blazeRods = 0, netherWart = 0, bookshelves = 0;
-		boolean enchantedBook = false, bedInInventory = false, brewingStand = false, anvil = false, goldWorn = false;
-		boolean boat = false, milk = false, heart = false, turtleHelmet = false, trident = false, filledMap = false, spyglass = false;
-		int sugarCane = 0, redstone = 0, pearls = 0, eyes = 0;
-		boolean doorOpen = false, pistonOut = false, repeater = false, hopper = false, elytra = false;
-		boolean netheriteIngot = false, template = false, netheriteGear = false, netherStar = false, recoveryCompass = false,
-				ominousBottle = false, totem = false;
-		int skulls = 0, soulSand = 0, echoShards = 0, breezeRods = 0;
-		boolean brush = false, pot = false, windCharge = false, heavyCore = false, mace = false, driedGhast = false,
-				harness = false, observer = false, crafter = false, autoSmelter = false, bulbLit = false;
-		boolean[] armor = new boolean[4]; // head, chest, legs, feet: iron or better
+		BlockPos head = BlockPos.containing(player.getEyePosition());
+		boolean sheltered = !level.canSeeSky(head);
+		int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, head.getX(), head.getZ());
+		String dimension = dimensionName(level);
+		boolean overworld = SurvivalContext.OVERWORLD.equals(dimension);
+		// The Nether's roof makes everything look "underground"; only the overworld has real caves for these tips.
+		boolean underground = overworld && sheltered && head.getY() < surfaceY - UNDERGROUND_DEPTH;
+		boolean knownDimension = overworld || SurvivalContext.END.equals(dimension) || SurvivalContext.NETHER.equals(dimension);
+		boolean thundering = level.isThundering();
+
+		b.dayIndex(dayIndex).timeOfDay(timeOfDay).dimension(dimension)
+				.structure(knownDimension ? structureAt(level, player.blockPosition()) : "")
+				.thundering(thundering).sheltered(sheltered).underground(underground);
+		boolean duskOrNight = timeOfDay >= SurvivalContext.SUNSET && timeOfDay < SurvivalContext.NIGHT_END;
+		return new Environment(head, overworld, underground, sheltered, duskOrNight, thundering);
+	}
+
+	/** Health, food, experience, statistics and advancements. */
+	private static void scanPlayer(ServerPlayer player, int digDownStreak, SurvivalContext.Builder b) {
+		var stats = player.getStats();
+		b.health(player.getHealth()).food(player.getFoodData().getFoodLevel()).xpLevel(player.experienceLevel)
+				.ticksSinceRest(stats.getValue(Stats.CUSTOM.get(Stats.TIME_SINCE_REST)))
+				.animalsBred(stats.getValue(Stats.CUSTOM.get(Stats.ANIMALS_BRED)))
+				.trades(stats.getValue(Stats.CUSTOM.get(Stats.TRADED_WITH_VILLAGER)))
+				.digDownStreak(digDownStreak)
+				.advancements(advancements(player));
+	}
+
+	/** Everything carried, then what is worn or held in the off hand. */
+	private static void scanInventory(ServerPlayer player, SurvivalContext.Builder b) {
+		int logs = 0, planks = 0, cobble = 0, foodItems = 0, wool = 0, torches = 0, iron = 0, bread = 0, arrows = 0;
+		int diamonds = 0, obsidian = 0, emeralds = 0, blazeRods = 0, netherWart = 0, sugarCane = 0, redstone = 0;
+		int pearls = 0, eyes = 0, skulls = 0, soulSand = 0, echoShards = 0, breezeRods = 0, pickaxe = 0, weapon = 0;
+		boolean[] armor = new boolean[ARMOR_SLOTS];
 
 		var inv = player.getInventory();
 		for (int i = 0; i < inv.getContainerSize(); i++) {
@@ -97,58 +145,53 @@ public final class ContextCollector {
 			if (s.is(ItemTags.LOGS)) logs += n;
 			else if (s.is(ItemTags.PLANKS)) planks += n;
 			else if (s.is(ItemTags.WOOL)) wool += n;
-			else if (s.is(ItemTags.BEDS)) { bed = true; bedInInventory = true; }
+			else if (s.is(ItemTags.BEDS)) b.hasBed(true).bedInInventory(true);
 			else if (item == Items.COBBLESTONE || item == Items.COBBLED_DEEPSLATE || item == Items.BLACKSTONE) cobble += n;
-			else if (item == Items.CRAFTING_TABLE) table = true;
-			else if (item == Items.FURNACE) furnace = true;
-			else if (item == Items.CHEST) chest = true;
+			else if (item == Items.CRAFTING_TABLE) b.hasCraftingTable(true);
+			else if (item == Items.FURNACE) b.hasFurnace(true);
+			else if (item == Items.CHEST) b.hasChest(true);
 			else if (item == Items.TORCH) torches += n;
 			else if (item == Items.RAW_IRON || item == Items.IRON_INGOT) iron += n;
-			else if (item == Items.SHIELD) shield = true;
-			else if (item == Items.WATER_BUCKET) waterBucket = true;
+			else if (item == Items.SHIELD) b.hasShield(true);
+			else if (item == Items.WATER_BUCKET) b.hasWaterBucket(true);
 
 			if (item == Items.BREAD) bread += n;
-			else if (item == Items.BOW || item == Items.CROSSBOW) bow = true;
+			else if (item == Items.BOW || item == Items.CROSSBOW) b.hasBow(true);
 			else if (item == Items.DIAMOND) diamonds += n;
 			else if (item == Items.OBSIDIAN) obsidian += n;
-			else if (item == Items.FLINT_AND_STEEL) flintAndSteel = true;
-			else if (item == Items.ENCHANTING_TABLE) enchantingTable = true;
+			else if (item == Items.FLINT_AND_STEEL) b.hasFlintAndSteel(true);
+			else if (item == Items.ENCHANTING_TABLE) b.hasEnchantingTable(true);
 			else if (item == Items.EMERALD) emeralds += n;
-			else if (item == Items.ENCHANTED_BOOK) enchantedBook = true;
+			else if (item == Items.ENCHANTED_BOOK) b.hasEnchantedBook(true);
 			else if (item == Items.BLAZE_ROD) blazeRods += n;
 			else if (item == Items.NETHER_WART) netherWart += n;
-			else if (item == Items.BREWING_STAND) brewingStand = true;
-			else if (s.is(ItemTags.ANVIL)) anvil = true;
-			else if (s.is(ItemTags.BOATS) || s.is(ItemTags.CHEST_BOATS)) boat = true;
-			else if (item == Items.MILK_BUCKET) milk = true;
+			else if (item == Items.BREWING_STAND) b.hasBrewingStand(true);
+			else if (s.is(ItemTags.ANVIL)) b.hasAnvil(true);
+			else if (s.is(ItemTags.BOATS) || s.is(ItemTags.CHEST_BOATS)) b.hasBoat(true);
+			else if (item == Items.MILK_BUCKET) b.hasMilk(true);
 			else if (item == Items.SUGAR_CANE) sugarCane += n;
-			else if (item == Items.HEART_OF_THE_SEA) heart = true;
-			else if (item == Items.TURTLE_HELMET) turtleHelmet = true;
-			else if (item == Items.TRIDENT) trident = true;
-			else if (item == Items.FILLED_MAP) filledMap = true;
-			else if (item == Items.SPYGLASS) spyglass = true;
+			else if (item == Items.HEART_OF_THE_SEA) b.hasHeartOfTheSea(true);
+			else if (item == Items.FILLED_MAP) b.hasFilledMap(true);
+			else if (item == Items.SPYGLASS) b.hasSpyglass(true);
 			else if (item == Items.REDSTONE) redstone += n;
 			else if (item == Items.ENDER_PEARL) pearls += n;
 			else if (item == Items.ENDER_EYE) { eyes += n; pearls += n; }
-			else if (item == Items.ELYTRA) elytra = true;
-			else if (item == Items.NETHERITE_INGOT) netheriteIngot = true;
-			else if (item == Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE) template = true;
+			else if (item == Items.NETHERITE_INGOT) b.hasNetheriteIngot(true);
+			else if (item == Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE) b.hasUpgradeTemplate(true);
 			else if (item == Items.WITHER_SKELETON_SKULL) skulls += n;
 			else if (item == Items.SOUL_SAND) soulSand += n;
-			else if (item == Items.NETHER_STAR) netherStar = true;
+			else if (item == Items.NETHER_STAR) b.hasNetherStar(true);
 			else if (item == Items.ECHO_SHARD) echoShards += n;
-			else if (item == Items.RECOVERY_COMPASS) recoveryCompass = true;
-			else if (item == Items.OMINOUS_BOTTLE) ominousBottle = true;
-			else if (item == Items.TOTEM_OF_UNDYING) totem = true;
-			else if (item == Items.BRUSH) brush = true;
-			else if (item == Items.DECORATED_POT) pot = true;
+			else if (item == Items.RECOVERY_COMPASS) b.hasRecoveryCompass(true);
+			else if (item == Items.OMINOUS_BOTTLE) b.hasOminousBottle(true);
+			else if (item == Items.BRUSH) b.hasBrush(true);
+			else if (item == Items.DECORATED_POT) b.hasDecoratedPot(true);
 			else if (item == Items.BREEZE_ROD) breezeRods += n;
-			else if (item == Items.WIND_CHARGE) windCharge = true;
-			else if (item == Items.HEAVY_CORE) heavyCore = true;
-			else if (item == Items.MACE) mace = true;
-			else if (item == Items.DRIED_GHAST) driedGhast = true;
-			else if (s.is(ItemTags.HARNESSES)) harness = true;
-			if (isNetheriteGear(item)) netheriteGear = true;
+			else if (item == Items.WIND_CHARGE) b.hasWindCharge(true);
+			else if (item == Items.HEAVY_CORE) b.hasHeavyCore(true);
+			else if (item == Items.DRIED_GHAST) b.hasDriedGhast(true);
+			else if (s.is(ItemTags.HARNESSES)) b.hasHarness(true);
+			markGear(item, b);
 			if (s.is(ItemTags.ARROWS)) arrows += n;
 			markArmor(s, armor);
 
@@ -157,121 +200,129 @@ public final class ContextCollector {
 			if (s.is(ItemTags.SWORDS) || s.is(ItemTags.AXES)) weapon = Math.max(weapon, toolTier(item));
 		}
 
-		boolean ironArmor = false;
 		for (EquipmentSlot slot : WORN_SLOTS) {
-			ItemStack wornStack = player.getItemBySlot(slot);
-			Item worn = wornStack.getItem();
-			markArmor(wornStack, armor);
-			if (worn == Items.TURTLE_HELMET) turtleHelmet = true;
-			if (worn == Items.TRIDENT) trident = true;
-			if (worn == Items.ELYTRA) elytra = true;
-			if (worn == Items.TOTEM_OF_UNDYING) totem = true;
-			if (worn == Items.MACE) mace = true;
-			if (isNetheriteGear(worn)) netheriteGear = true;
+			ItemStack worn = player.getItemBySlot(slot);
+			markArmor(worn, armor);
+			markGear(worn.getItem(), b);
 			if (slot == EquipmentSlot.OFFHAND) {
-				if (worn == Items.SHIELD) shield = true;
+				if (worn.is(Items.SHIELD)) b.hasShield(true);
 				continue;
 			}
 			// held in the off hand doesn't count as worn
-			if (wornStack.is(ItemTags.PIGLIN_SAFE_ARMOR)) goldWorn = true;
-			if (armorSlot(wornStack) >= 0) ironArmor = true;
+			if (worn.is(ItemTags.PIGLIN_SAFE_ARMOR)) b.goldArmorWorn(true);
+			if (armorSlot(worn) >= 0) b.hasIronArmor(true);
 		}
+		if (player.getVehicle() instanceof AbstractBoat) b.hasBoat(true);
 
-		// Placed blocks nearby (players usually place a crafting table/furnace/bed right after crafting it).
-		if (!(table && furnace && chest && bed) || stationFound != null || progress.chapter >= 2) {
-			BlockPos origin = player.blockPosition();
-			int r = BLOCK_SCAN_RADIUS;
-			for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-r, -4, -r), origin.offset(r, 4, r))) {
-				BlockState st = level.getBlockState(pos);
-				if (st.isAir()) continue;
-				boolean station = false;
-				if (st.is(Blocks.CRAFTING_TABLE)) { table = true; station = true; }
-				else if (st.is(Blocks.FURNACE)) furnace = true;
-				else if (st.is(Blocks.CHEST)) { chest = true; station = true; }
-				else if (st.is(BlockTags.BEDS)) { bed = true; station = true; }
-				else if (st.is(BlockTags.CROPS)) crops++;
-				else if (st.is(Blocks.ENCHANTING_TABLE)) {
-					enchantingTable = true;
-					bookshelves = Math.max(bookshelves, bookshelvesAround(level, pos));
-				}
-				else if (st.is(Blocks.BREWING_STAND)) brewingStand = true;
-				else if (st.is(BlockTags.ANVIL)) anvil = true;
-				else if (st.is(Blocks.IRON_DOOR)) doorOpen |= st.getValue(BlockStateProperties.OPEN);
-				else if (st.is(Blocks.PISTON) || st.is(Blocks.STICKY_PISTON)) pistonOut |= st.getValue(BlockStateProperties.EXTENDED);
-				else if (st.is(Blocks.REPEATER)) repeater = true;
-				else if (st.is(Blocks.HOPPER)) hopper = true;
-				else if (st.is(Blocks.DECORATED_POT)) pot = true;
-				else if (st.is(Blocks.OBSERVER)) observer = true;
-				else if (st.is(Blocks.CRAFTER)) crafter = true;
-				else if (st.getBlock() instanceof CopperBulbBlock) bulbLit |= st.getValue(BlockStateProperties.LIT);
-				if (st.getBlock() instanceof AbstractFurnaceBlock && !autoSmelter) {
-					BlockState above = level.getBlockState(pos.above()), below = level.getBlockState(pos.below());
-					autoSmelter = above.is(Blocks.HOPPER) && above.getValue(BlockStateProperties.FACING_HOPPER) == Direction.DOWN
-							&& below.is(Blocks.HOPPER);
-				}
-				if (station && stationFound != null) {
-					stationFound.accept(pos.immutable());
-					stationFound = null; // only the first one
-				}
+		int armorPieces = 0;
+		for (boolean covered : armor) if (covered) armorPieces++;
+
+		b.logs(logs).planks(planks).cobblestone(cobble).foodItems(foodItems).wool(wool).torches(torches).iron(iron)
+				.bread(bread).arrows(arrows).diamonds(diamonds).obsidian(obsidian).emeralds(emeralds).blazeRods(blazeRods)
+				.netherWart(netherWart).sugarCane(sugarCane).redstone(redstone).enderPearls(pearls).eyesOfEnder(eyes)
+				.witherSkulls(skulls).soulSand(soulSand).echoShards(echoShards).breezeRods(breezeRods)
+				.pickaxeTier(pickaxe).swordTier(weapon).armorPieces(armorPieces);
+	}
+
+	/** Items that count whether they are carried, worn or held in the off hand. */
+	private static void markGear(Item item, SurvivalContext.Builder b) {
+		if (item == Items.TURTLE_HELMET) b.hasTurtleHelmet(true);
+		else if (item == Items.TRIDENT) b.hasTrident(true);
+		else if (item == Items.ELYTRA) b.hasElytra(true);
+		else if (item == Items.TOTEM_OF_UNDYING) b.hasTotem(true);
+		else if (item == Items.MACE) b.hasMace(true);
+		if (isNetheriteGear(item)) b.hasNetheriteGear(true);
+	}
+
+	/** Placed blocks nearby (players usually place a crafting table, furnace or bed right after crafting it). */
+	private static void scanBlocks(ServerLevel level, BlockPos origin, @Nullable Consumer<BlockPos> stationFound,
+			SurvivalContext.Builder b) {
+		int r = BLOCK_SCAN_RADIUS, h = BLOCK_SCAN_HEIGHT;
+		int crops = 0, bookshelves = 0;
+		boolean autoSmelter = false;
+		Consumer<BlockPos> report = stationFound;
+		for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-r, -h, -r), origin.offset(r, h, r))) {
+			BlockState st = level.getBlockState(pos);
+			if (st.isAir()) continue;
+			boolean station = false;
+			if (st.is(Blocks.CRAFTING_TABLE)) { b.hasCraftingTable(true); station = true; }
+			else if (st.is(Blocks.FURNACE)) b.hasFurnace(true);
+			else if (st.is(Blocks.CHEST)) { b.hasChest(true); station = true; }
+			else if (st.is(BlockTags.BEDS)) { b.hasBed(true); station = true; }
+			else if (st.is(BlockTags.CROPS)) crops++;
+			else if (st.is(Blocks.ENCHANTING_TABLE)) {
+				b.hasEnchantingTable(true);
+				bookshelves = Math.max(bookshelves, bookshelvesAround(level, pos));
+			}
+			else if (st.is(Blocks.BREWING_STAND)) b.hasBrewingStand(true);
+			else if (st.is(BlockTags.ANVIL)) b.hasAnvil(true);
+			else if (st.is(Blocks.IRON_DOOR)) { if (st.getValue(BlockStateProperties.OPEN)) b.ironDoorOpen(true); }
+			else if (st.is(Blocks.PISTON) || st.is(Blocks.STICKY_PISTON)) {
+				if (st.getValue(BlockStateProperties.EXTENDED)) b.pistonExtended(true);
+			}
+			else if (st.is(Blocks.REPEATER)) b.repeater(true);
+			else if (st.is(Blocks.HOPPER)) b.hopper(true);
+			else if (st.is(Blocks.DECORATED_POT)) b.hasDecoratedPot(true);
+			else if (st.is(Blocks.OBSERVER)) b.observer(true);
+			else if (st.is(Blocks.CRAFTER)) b.crafter(true);
+			else if (st.getBlock() instanceof CopperBulbBlock) { if (st.getValue(BlockStateProperties.LIT)) b.copperBulbLit(true); }
+			if (!autoSmelter && st.getBlock() instanceof AbstractFurnaceBlock) autoSmelter = fedByHoppers(level, pos);
+			if (station && report != null) {
+				report.accept(pos.immutable());
+				report = null; // only the first one
 			}
 		}
+		b.crops(crops).bookshelves(bookshelves).autoSmelter(autoSmelter);
+	}
 
-		BlockPos head = BlockPos.containing(player.getEyePosition());
-		boolean sheltered = !level.canSeeSky(head);
-		int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, head.getX(), head.getZ());
-		String dimension = dimensionName(level);
-		boolean overworld = SurvivalContext.OVERWORLD.equals(dimension);
-		// The Nether's roof makes everything look "underground"; only the overworld has real caves for these tips.
-		boolean underground = overworld && sheltered && head.getY() < surfaceY - 8;
+	/** A hopper above that feeds into the furnace and a hopper below that takes the result out. */
+	private static boolean fedByHoppers(ServerLevel level, BlockPos furnace) {
+		BlockState above = level.getBlockState(furnace.above()), below = level.getBlockState(furnace.below());
+		return above.is(Blocks.HOPPER) && above.getValue(BlockStateProperties.FACING_HOPPER) == Direction.DOWN
+				&& below.is(Blocks.HOPPER);
+	}
 
-		boolean lava = false;
-		boolean fallingAbove = false;
-		if (underground || SurvivalContext.NETHER.equals(dimension)) {
-			BlockPos feet = player.blockPosition();
+	/** Lava and falling blocks (underground or in the Nether) and whether the spot is well lit. */
+	private static void scanDanger(ServerPlayer player, Environment env, SurvivalContext.Builder b) {
+		ServerLevel level = player.level();
+		BlockPos feet = player.blockPosition();
+		if (env.underground() || level.dimension() == Level.NETHER) {
 			int r = LAVA_SCAN_RADIUS;
 			for (BlockPos pos : BlockPos.betweenClosed(feet.offset(-r, -r, -r), feet.offset(r, r, r))) {
 				if (level.getFluidState(pos).is(FluidTags.LAVA)) {
-					lava = true;
+					b.lava(true);
 					break;
 				}
 			}
-			fallingAbove = level.getBlockState(head.above()).getBlock() instanceof FallingBlock;
+			b.fallingBlockAbove(level.getBlockState(env.head().above()).getBlock() instanceof FallingBlock);
 		}
-		int sinceRest = player.getStats().getValue(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
-		int bred = player.getStats().getValue(Stats.CUSTOM.get(Stats.ANIMALS_BRED));
-		int armorPieces = 0;
-		for (boolean b : armor) if (b) armorPieces++;
+		boolean darkMatters = SurvivalContext.darkMatters(env.underground(), env.overworld(), env.sheltered(),
+				env.duskOrNight(), env.thundering());
+		b.litArea(darkMatters && litAround(level, feet));
+	}
 
-		AABB around = new AABB(player.blockPosition()).inflate(16);
-		int hostiles = level.getEntitiesOfClass(LivingEntity.class, around, e -> e instanceof Enemy && e.isAlive()).size();
-		AABB far = new AABB(player.blockPosition()).inflate(32);
-		boolean warden = !level.getEntitiesOfClass(Warden.class, new AABB(player.blockPosition()).inflate(24), Warden::isAlive).isEmpty();
-		boolean ghastling = !level.getEntitiesOfClass(HappyGhast.class, around, HappyGhast::isBaby).isEmpty();
-		boolean ridingHappyGhast = player.getVehicle() instanceof HappyGhast;
-		boolean ghast = !overworld && !level.getEntitiesOfClass(Ghast.class, far, Ghast::isAlive).isEmpty();
-		boolean piglin = !overworld && !level.getEntitiesOfClass(Piglin.class, around, Piglin::isAlive).isEmpty();
-		String structure = overworld || SurvivalContext.END.equals(dimension) || SurvivalContext.NETHER.equals(dimension)
-				? structureAt(level, player.blockPosition()) : "";
-		boolean inVillage = structure.startsWith("village_");
-		boolean ridingHorse = player.getVehicle() instanceof AbstractHorse horse && horse.isTamed();
-		if (player.getVehicle() instanceof AbstractBoat) boat = true;
-		int trades = player.getStats().getValue(Stats.CUSTOM.get(Stats.TRADED_WITH_VILLAGER));
-		boolean creeper = !level.getEntitiesOfClass(Creeper.class, new AABB(player.blockPosition()).inflate(7), Creeper::isAlive).isEmpty();
-		boolean duskOrNight = timeOfDay >= SurvivalContext.SUNSET && timeOfDay < SurvivalContext.NIGHT_END;
-		boolean litArea = SurvivalContext.darkMatters(underground, overworld, sheltered, duskOrNight, level.isThundering())
-				&& litAround(level, player.blockPosition());
+	/** Mobs around the player (one entity query, sorted out in memory) and what the player rides. */
+	private static void scanCreatures(ServerPlayer player, boolean overworld, SurvivalContext.Builder b) {
+		AABB near = around(player, MOB_RADIUS), creeperZone = around(player, CREEPER_RADIUS), wardenZone = around(player, WARDEN_RADIUS);
+		int hostiles = 0;
+		for (LivingEntity e : player.level().getEntitiesOfClass(LivingEntity.class, around(player, GHAST_RADIUS), e -> true)) {
+			AABB box = e.getBoundingBox();
+			boolean alive = e.isAlive(), close = box.intersects(near);
+			if (alive && close && e instanceof Enemy) hostiles++;
+			if (alive && e instanceof Creeper && box.intersects(creeperZone)) b.creeper(true);
+			if (alive && e instanceof Warden && box.intersects(wardenZone)) b.warden(true);
+			if (close && e instanceof HappyGhast ghast && ghast.isBaby()) b.ghastling(true);
+			if (!overworld && alive && e instanceof Ghast) b.ghast(true);
+			if (!overworld && alive && close && e instanceof Piglin) b.piglin(true);
+		}
+		b.hostiles(hostiles)
+				.ridingTamedHorse(player.getVehicle() instanceof AbstractHorse horse && horse.isTamed())
+				.ridingHappyGhast(player.getVehicle() instanceof HappyGhast);
+	}
 
-		return new SurvivalContext(dayIndex, timeOfDay, player.getHealth(), player.getFoodData().getFoodLevel(),
-				logs, planks, table, pickaxe, weapon, cobble, furnace, foodItems, bed, wool, torches, chest, iron, shield, ironArmor,
-				waterBucket, sheltered, underground, level.isThundering(), hostiles, creeper, sinceRest, lava, fallingAbove,
-				digDownStreak, crops, bread, bred, armorPieces, bow, arrows, diamonds, obsidian, flintAndSteel, enchantingTable,
-				dimension, inVillage, emeralds, trades, enchantedBook, goldWorn, blazeRods, netherWart, bedInInventory, ghast, piglin,
-				brewingStand, bookshelves, anvil, player.experienceLevel, advancements(player),
-				structure, boat, ridingHorse, milk, sugarCane, heart, turtleHelmet, trident, filledMap, spyglass,
-				redstone, doorOpen, pistonOut, repeater, hopper, pearls, eyes, elytra,
-				netheriteIngot, template, netheriteGear, skulls, soulSand, netherStar, echoShards, recoveryCompass,
-				ominousBottle, totem, warden, brush, pot, breezeRods, windCharge, heavyCore, mace, driedGhast, ghastling, harness,
-				ridingHappyGhast, observer, crafter, autoSmelter, bulbLit, litArea);
+	/** The box {@code radius} blocks around the player's block, as entity queries use it. */
+	private static AABB around(ServerPlayer player, int radius) {
+		return new AABB(player.blockPosition()).inflate(radius);
 	}
 
 	/** No monster can spawn close by: light matters in this dimension and every spot nearby is lit. */
@@ -288,10 +339,10 @@ public final class ContextCollector {
 				&& !path.equals("netherite_block") && !path.endsWith("smithing_template");
 	}
 
-	/** The notable structure ({@link SurvivalContext#STRUCTURES}) the position is in, or "". */
+	/** The notable structure ({@link Structures#ALL}) the position is in, or "". */
 	private static String structureAt(ServerLevel level, BlockPos pos) {
 		StructureStart start = level.structureManager().getStructureWithPieceAt(pos,
-				holder -> holder.is(key -> SurvivalContext.STRUCTURES.contains(key.identifier().getPath())));
+				holder -> holder.is(key -> Structures.ALL.contains(key.identifier().getPath())));
 		if (!start.isValid()) return "";
 		Identifier id = level.registryAccess().lookupOrThrow(Registries.STRUCTURE).getKey(start.getStructure());
 		return id == null ? "" : id.getPath();
@@ -343,6 +394,7 @@ public final class ContextCollector {
 		return -1;
 	}
 
+	/** 1 wood or gold, 2 stone or copper, 3 iron, 4 diamond, netherite or anything else. */
 	private static int toolTier(Item item) {
 		if (item == Items.WOODEN_PICKAXE || item == Items.WOODEN_SWORD || item == Items.WOODEN_AXE
 				|| item == Items.GOLDEN_PICKAXE || item == Items.GOLDEN_SWORD || item == Items.GOLDEN_AXE) return 1;

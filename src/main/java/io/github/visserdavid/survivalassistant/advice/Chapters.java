@@ -3,7 +3,6 @@ package io.github.visserdavid.survivalassistant.advice;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -14,8 +13,8 @@ import java.util.Set;
 public final class Chapters {
 	private Chapters() {}
 
-	public static final Chapter FIRST_DAYS = new Chapter(1, "first_days", TipRegistry.MILESTONES, List.of(), true);
-	public static final Chapter SETTLING_IN = new Chapter(2, "settling_in", TipRegistry.CHAPTER_2, List.of(1), false);
+	public static final Chapter FIRST_DAYS = new Chapter(1, "first_days", TipRegistry.CHAPTER_FIRST_DAYS, List.of(), true);
+	public static final Chapter SETTLING_IN = new Chapter(2, "settling_in", TipRegistry.CHAPTER_SETTLING_IN, List.of(1), false);
 	public static final Chapter VILLAGE = new Chapter(3, "village", TipRegistry.CHAPTER_VILLAGE, List.of(2), false);
 	public static final Chapter NETHER = new Chapter(4, "nether", TipRegistry.CHAPTER_NETHER, List.of(2), false);
 	public static final Chapter MAGIC = new Chapter(5, "magic", TipRegistry.CHAPTER_MAGIC, List.of(4), false);
@@ -63,18 +62,8 @@ public final class Chapters {
 		return out;
 	}
 
-	/** Vanilla advancement ids (without namespace) the goals and warnings check. */
+	/** Vanilla advancement ids (without namespace) the goals check. */
 	public static Set<String> trackedAdvancements() {
-		return TRACKED;
+		return Advancements.ALL;
 	}
-
-	private static final Set<String> TRACKED = new LinkedHashSet<>(List.of(
-			TipRegistry.ADV_TRADE, TipRegistry.ADV_IRON_GOLEM, TipRegistry.ADV_ENTER_NETHER, TipRegistry.ADV_FORTRESS,
-			TipRegistry.ADV_BREW, TipRegistry.ADV_ENCHANT, TipRegistry.ADV_TAME, TipRegistry.ADV_FISH, TipRegistry.ADV_HONEY,
-			TipRegistry.ADV_TRIDENT, TipRegistry.ADV_TRIAL_CHAMBERS, TipRegistry.ADV_VAULT, TipRegistry.ADV_STRONGHOLD,
-			TipRegistry.ADV_ENTER_END, TipRegistry.ADV_DRAGON, TipRegistry.ADV_END_CITY, TipRegistry.ADV_ELYTRA,
-			TipRegistry.ADV_DEBRIS, TipRegistry.ADV_BASTION, TipRegistry.ADV_ANCHOR, TipRegistry.ADV_WITHER_SKULL,
-			TipRegistry.ADV_SUMMON_WITHER, TipRegistry.ADV_BEACON, TipRegistry.ADV_FULL_BEACON, TipRegistry.ADV_SNEAK,
-			TipRegistry.ADV_RAID_CAPTAIN, TipRegistry.ADV_RAID, TipRegistry.ADV_TOTEM, TipRegistry.ADV_SHERD, TipRegistry.ADV_TRIM,
-			TipRegistry.ADV_SNIFFER_EGG, TipRegistry.ADV_OMINOUS_VAULT, TipRegistry.ADV_DRIED_GHAST, TipRegistry.ADV_CRAFTER));
 }

@@ -20,15 +20,15 @@ class Chapters1114Test {
 
 	@Test
 	void netheriteGoals() {
-		completes(TipRegistry.ANCIENT_DEBRIS, b().advancement(TipRegistry.ADV_DEBRIS).build());
-		completes(TipRegistry.NETHERITE_INGOT, b().netheriteIngot(true).build());
-		completes(TipRegistry.FIND_BASTION, b().advancement(TipRegistry.ADV_BASTION).build());
-		completes(TipRegistry.UPGRADE_TEMPLATE, b().upgradeTemplate(true).build());
-		completes(TipRegistry.NETHERITE_GEAR, b().netheriteGear(true).build());
-		completes(TipRegistry.RESPAWN_ANCHOR, b().advancement(TipRegistry.ADV_ANCHOR).build());
+		completes(TipRegistry.ANCIENT_DEBRIS, b().advancement(Advancements.DEBRIS).build());
+		completes(TipRegistry.NETHERITE_INGOT, b().hasNetheriteIngot(true).build());
+		completes(TipRegistry.FIND_BASTION, b().advancement(Advancements.BASTION).build());
+		completes(TipRegistry.UPGRADE_TEMPLATE, b().hasUpgradeTemplate(true).build());
+		completes(TipRegistry.NETHERITE_GEAR, b().hasNetheriteGear(true).build());
+		completes(TipRegistry.RESPAWN_ANCHOR, b().advancement(Advancements.ANCHOR).build());
 		// using the ingot and template on gear keeps those goals done
-		assertTrue(TipRegistry.NETHERITE_INGOT.done().test(b().netheriteGear(true).build()));
-		assertTrue(TipRegistry.UPGRADE_TEMPLATE.done().test(b().netheriteGear(true).build()));
+		assertTrue(TipRegistry.NETHERITE_INGOT.done().test(b().hasNetheriteGear(true).build()));
+		assertTrue(TipRegistry.UPGRADE_TEMPLATE.done().test(b().hasNetheriteGear(true).build()));
 	}
 
 	@Test
@@ -36,32 +36,32 @@ class Chapters1114Test {
 		completes(TipRegistry.WITHER_SKULLS, b().witherSkulls(3).build());
 		assertFalse(TipRegistry.WITHER_SKULLS.done().test(b().witherSkulls(2).build()));
 		completes(TipRegistry.SOUL_SAND, b().soulSand(4).build());
-		completes(TipRegistry.SUMMON_WITHER, b().advancement(TipRegistry.ADV_SUMMON_WITHER).build());
-		completes(TipRegistry.NETHER_STAR, b().netherStar(true).build());
-		completes(TipRegistry.BEACON, b().advancement(TipRegistry.ADV_BEACON).build());
-		completes(TipRegistry.FULL_BEACON, b().advancement(TipRegistry.ADV_FULL_BEACON).build());
+		completes(TipRegistry.SUMMON_WITHER, b().advancement(Advancements.SUMMON_WITHER).build());
+		completes(TipRegistry.NETHER_STAR, b().hasNetherStar(true).build());
+		completes(TipRegistry.BEACON, b().advancement(Advancements.BEACON).build());
+		completes(TipRegistry.FULL_BEACON, b().advancement(Advancements.FULL_BEACON).build());
 		// skulls and sand are used up by summoning: still done afterwards
-		assertTrue(TipRegistry.WITHER_SKULLS.done().test(b().advancement(TipRegistry.ADV_SUMMON_WITHER).build()));
-		assertTrue(TipRegistry.SOUL_SAND.done().test(b().advancement(TipRegistry.ADV_SUMMON_WITHER).build()));
+		assertTrue(TipRegistry.WITHER_SKULLS.done().test(b().advancement(Advancements.SUMMON_WITHER).build()));
+		assertTrue(TipRegistry.SOUL_SAND.done().test(b().advancement(Advancements.SUMMON_WITHER).build()));
 	}
 
 	@Test
 	void deepDarkGoals() {
 		completes(TipRegistry.FIND_ANCIENT_CITY, b().structure("ancient_city").build());
-		completes(TipRegistry.SNEAK_PAST, b().advancement(TipRegistry.ADV_SNEAK).build());
+		completes(TipRegistry.SNEAK_PAST, b().advancement(Advancements.SNEAK).build());
 		completes(TipRegistry.ECHO_SHARDS, b().echoShards(8).build());
-		completes(TipRegistry.RECOVERY_COMPASS, b().recoveryCompass(true).build());
-		assertTrue(TipRegistry.ECHO_SHARDS.done().test(b().recoveryCompass(true).build()), "shards crafted into the compass");
+		completes(TipRegistry.RECOVERY_COMPASS, b().hasRecoveryCompass(true).build());
+		assertTrue(TipRegistry.ECHO_SHARDS.done().test(b().hasRecoveryCompass(true).build()), "shards crafted into the compass");
 	}
 
 	@Test
 	void raidGoals() {
 		completes(TipRegistry.FIND_OUTPOST, b().structure("pillager_outpost").build());
-		completes(TipRegistry.RAID_CAPTAIN, b().advancement(TipRegistry.ADV_RAID_CAPTAIN).build());
-		completes(TipRegistry.OMINOUS_BOTTLE, b().ominousBottle(true).build());
-		completes(TipRegistry.WIN_RAID, b().advancement(TipRegistry.ADV_RAID).build());
-		completes(TipRegistry.TOTEM, b().totem(true).build());
-		completes(TipRegistry.TOTEM, b().advancement(TipRegistry.ADV_TOTEM).build());
+		completes(TipRegistry.RAID_CAPTAIN, b().advancement(Advancements.RAID_CAPTAIN).build());
+		completes(TipRegistry.OMINOUS_BOTTLE, b().hasOminousBottle(true).build());
+		completes(TipRegistry.WIN_RAID, b().advancement(Advancements.RAID).build());
+		completes(TipRegistry.TOTEM, b().hasTotem(true).build());
+		completes(TipRegistry.TOTEM, b().advancement(Advancements.TOTEM).build());
 	}
 
 	@Test

@@ -1,5 +1,7 @@
 package io.github.visserdavid.survivalassistant.advice;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
@@ -16,7 +18,7 @@ import java.util.function.ToIntFunction;
  * @param target   value at which the counter is "full"; 0 = no counter
  */
 public record Tip(String id, Kind kind, Predicate<SurvivalContext> applies, Predicate<SurvivalContext> done, int variants,
-		ToIntFunction<SurvivalContext> counter, int target) {
+		@Nullable ToIntFunction<SurvivalContext> counter, int target) {
 	public enum Kind { URGENT, WARNING, MILESTONE }
 
 	public static Tip urgent(String id, int variants, Predicate<SurvivalContext> applies) {
@@ -34,6 +36,17 @@ public record Tip(String id, Kind kind, Predicate<SurvivalContext> applies, Pred
 	/** Milestone with a live counter shown in the HUD, e.g. "logs 6/10". */
 	public static Tip milestone(String id, int variants, Predicate<SurvivalContext> done, ToIntFunction<SurvivalContext> counter, int target) {
 		return new Tip(id, Kind.MILESTONE, c -> true, done, variants, counter, target);
+	}
+
+	/** Milestone that is done when the counter reaches the target, shown in the HUD as "value/target". */
+	public static Tip count(String id, int variants, ToIntFunction<SurvivalContext> counter, int target) {
+		return milestone(id, variants, c -> counter.applyAsInt(c) >= target, counter, target);
+	}
+
+	/** Like {@link #count(String, int, ToIntFunction, int)}, but also done when {@code alsoDone} holds (later progress). */
+	public static Tip count(String id, int variants, ToIntFunction<SurvivalContext> counter, int target,
+			Predicate<SurvivalContext> alsoDone) {
+		return milestone(id, variants, c -> counter.applyAsInt(c) >= target || alsoDone.test(c), counter, target);
 	}
 
 	public boolean hasCounter() {

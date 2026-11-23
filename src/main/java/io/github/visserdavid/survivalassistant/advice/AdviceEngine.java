@@ -1,5 +1,7 @@
 package io.github.visserdavid.survivalassistant.advice;
 
+import io.github.visserdavid.survivalassistant.config.ModConfig;
+import io.github.visserdavid.survivalassistant.util.Ticks;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +12,11 @@ public final class AdviceEngine {
 	/** One line the guide wants to say. {@code praise} marks a "well done" message for a just-completed milestone. */
 	public record Message(Tip tip, boolean urgent, boolean praise) {}
 
+	/** How long the guide waits before repeating a warning or a goal tip (game ticks). */
 	public record Settings(long urgentCooldownTicks, long milestoneCooldownTicks) {
-		public static final Settings DEFAULT = new Settings(60 * 20, 180 * 20);
+		public static Settings from(ModConfig cfg) {
+			return new Settings(Ticks.seconds(cfg.urgentCooldownSeconds), Ticks.seconds(cfg.milestoneCooldownSeconds));
+		}
 	}
 
 	private AdviceEngine() {}
@@ -25,7 +30,7 @@ public final class AdviceEngine {
 		List<Message> out = new ArrayList<>();
 
 		// 1. Record newly completed milestones and praise them (praise is never muted: it's rare and motivating).
-		for (Tip m : TipRegistry.milestones(progress.chapter)) {
+		for (Tip m : Chapters.get(progress.chapter).goals()) {
 			if (!progress.completed.contains(m.id()) && m.done().test(ctx)) {
 				progress.completed.add(m.id());
 				if (!forced) out.add(new Message(m, false, true));
@@ -77,7 +82,7 @@ public final class AdviceEngine {
 	}
 
 	public static Tip nextMilestone(GuideProgress progress) {
-		for (Tip m : TipRegistry.milestones(progress.chapter)) {
+		for (Tip m : Chapters.get(progress.chapter).goals()) {
 			if (!progress.completed.contains(m.id())) return m;
 		}
 		return null;

@@ -20,31 +20,31 @@ class Chapters1518Test {
 
 	@Test
 	void archaeologyGoals() {
-		completes(TipRegistry.BRUSH, b().brush(true).build());
+		completes(TipRegistry.BRUSH, b().hasBrush(true).build());
 		completes(TipRegistry.FIND_TRAIL_RUINS, b().structure("trail_ruins").build());
-		completes(TipRegistry.SHERD, b().advancement(TipRegistry.ADV_SHERD).build());
-		completes(TipRegistry.DECORATED_POT, b().decoratedPot(true).build());
-		completes(TipRegistry.ARMOR_TRIM, b().advancement(TipRegistry.ADV_TRIM).build());
-		completes(TipRegistry.SNIFFER_EGG, b().advancement(TipRegistry.ADV_SNIFFER_EGG).build());
+		completes(TipRegistry.SHERD, b().advancement(Advancements.SHERD).build());
+		completes(TipRegistry.DECORATED_POT, b().hasDecoratedPot(true).build());
+		completes(TipRegistry.ARMOR_TRIM, b().advancement(Advancements.TRIM).build());
+		completes(TipRegistry.SNIFFER_EGG, b().advancement(Advancements.SNIFFER_EGG).build());
 	}
 
 	@Test
 	void trialGoals() {
 		completes(TipRegistry.BREEZE_RODS, b().breezeRods(2).build());
 		assertFalse(TipRegistry.BREEZE_RODS.done().test(b().breezeRods(1).build()));
-		completes(TipRegistry.WIND_CHARGE, b().windCharge(true).build());
-		completes(TipRegistry.OMINOUS_VAULT, b().advancement(TipRegistry.ADV_OMINOUS_VAULT).build());
-		completes(TipRegistry.HEAVY_CORE, b().heavyCore(true).build());
-		completes(TipRegistry.MACE, b().mace(true).build());
-		assertTrue(TipRegistry.HEAVY_CORE.done().test(b().mace(true).build()), "the core went into the mace");
+		completes(TipRegistry.WIND_CHARGE, b().hasWindCharge(true).build());
+		completes(TipRegistry.OMINOUS_VAULT, b().advancement(Advancements.OMINOUS_VAULT).build());
+		completes(TipRegistry.HEAVY_CORE, b().hasHeavyCore(true).build());
+		completes(TipRegistry.MACE, b().hasMace(true).build());
+		assertTrue(TipRegistry.HEAVY_CORE.done().test(b().hasMace(true).build()), "the core went into the mace");
 	}
 
 	@Test
 	void happyGhastGoals() {
-		completes(TipRegistry.DRIED_GHAST, b().driedGhast(true).build());
-		completes(TipRegistry.HYDRATE_GHAST, b().advancement(TipRegistry.ADV_DRIED_GHAST).build());
+		completes(TipRegistry.DRIED_GHAST, b().hasDriedGhast(true).build());
+		completes(TipRegistry.HYDRATE_GHAST, b().advancement(Advancements.DRIED_GHAST).build());
 		completes(TipRegistry.GHASTLING, b().ghastling(true).build());
-		completes(TipRegistry.HARNESS, b().harness(true).build());
+		completes(TipRegistry.HARNESS, b().hasHarness(true).build());
 		completes(TipRegistry.RIDE_HAPPY_GHAST, b().ridingHappyGhast(true).build());
 		assertTrue(TipRegistry.HARNESS.done().test(b().ridingHappyGhast(true).build()), "the harness is on the ghast");
 	}
@@ -55,7 +55,7 @@ class Chapters1518Test {
 		completes(TipRegistry.AUTO_SMELTER, b().autoSmelter(true).build());
 		completes(TipRegistry.COPPER_BULB, b().copperBulbLit(true).build());
 		completes(TipRegistry.CRAFTER, b().crafter(true).build());
-		completes(TipRegistry.CRAFTER_CRAFTS, b().advancement(TipRegistry.ADV_CRAFTER).build());
+		completes(TipRegistry.CRAFTER_CRAFTS, b().advancement(Advancements.CRAFTER).build());
 	}
 
 	@Test

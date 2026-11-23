@@ -1,5 +1,6 @@
 package io.github.visserdavid.survivalassistant.advice;
 
+import io.github.visserdavid.survivalassistant.config.ModConfig;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -10,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class Chapter2Test {
 	private static GuideProgress chapter2() {
 		GuideProgress p = new GuideProgress();
-		TipRegistry.MILESTONES.forEach(m -> p.completed.add(m.id()));
+		TipRegistry.CHAPTER_FIRST_DAYS.forEach(m -> p.completed.add(m.id()));
 		p.chapter = 2;
 		return p;
 	}
@@ -18,8 +19,8 @@ class Chapter2Test {
 	@Test
 	void idsAreUniqueAcrossChapters() {
 		Set<String> ids = new HashSet<>();
-		TipRegistry.MILESTONES.forEach(m -> assertTrue(ids.add(m.id()), m.id()));
-		TipRegistry.CHAPTER_2.forEach(m -> assertTrue(ids.add(m.id()), m.id()));
+		TipRegistry.CHAPTER_FIRST_DAYS.forEach(m -> assertTrue(ids.add(m.id()), m.id()));
+		TipRegistry.CHAPTER_SETTLING_IN.forEach(m -> assertTrue(ids.add(m.id()), m.id()));
 	}
 
 	@Test
@@ -36,32 +37,32 @@ class Chapter2Test {
 	void chapter1PlayersNeverSeeChapter2Goals() {
 		GuideProgress p = new GuideProgress();
 		SurvivalContext rich = SurvivalContext.builder().crops(10).bread(5).diamonds(5).obsidian(20).build();
-		AdviceEngine.evaluate(rich, p, 0, AdviceEngine.Settings.DEFAULT, false);
+		AdviceEngine.evaluate(rich, p, 0, AdviceEngine.Settings.from(new ModConfig()), false);
 		assertFalse(p.completed.contains("farm"), "chapter-2 goals are only tracked in chapter 2");
 	}
 
 	@Test
 	void goalsCompleteInChapter2() {
 		GuideProgress p = chapter2();
-		SurvivalContext c = SurvivalContext.builder().crops(6).bread(3).bred(2).armorPieces(4).bow(true).arrows(16)
-				.diamonds(3).pickaxe(4).obsidian(10).flintAndSteel(true).enchantingTable(true).build();
-		AdviceEngine.evaluate(c, p, 0, AdviceEngine.Settings.DEFAULT, false);
-		assertTrue(TipRegistry.chapterDone(2, p.completed));
+		SurvivalContext c = SurvivalContext.builder().crops(6).bread(3).animalsBred(2).armorPieces(4).hasBow(true).arrows(16)
+				.diamonds(3).pickaxeTier(4).obsidian(10).hasFlintAndSteel(true).hasEnchantingTable(true).build();
+		AdviceEngine.evaluate(c, p, 0, AdviceEngine.Settings.from(new ModConfig()), false);
+		assertTrue(Chapters.get(2).done(p.completed));
 	}
 
 	@Test
 	void bowNeedsArrowsToo() {
 		GuideProgress p = chapter2();
-		AdviceEngine.evaluate(SurvivalContext.builder().bow(true).arrows(4).build(), p, 0, AdviceEngine.Settings.DEFAULT, false);
+		AdviceEngine.evaluate(SurvivalContext.builder().hasBow(true).arrows(4).build(), p, 0, AdviceEngine.Settings.from(new ModConfig()), false);
 		assertFalse(p.completed.contains("bow"));
 	}
 
 	@Test
 	void chapterDone() {
 		Set<String> done = new HashSet<>();
-		assertFalse(TipRegistry.chapterDone(1, done));
-		TipRegistry.MILESTONES.forEach(m -> done.add(m.id()));
-		assertTrue(TipRegistry.chapterDone(1, done));
-		assertFalse(TipRegistry.chapterDone(2, done));
+		assertFalse(Chapters.get(1).done(done));
+		TipRegistry.CHAPTER_FIRST_DAYS.forEach(m -> done.add(m.id()));
+		assertTrue(Chapters.get(1).done(done));
+		assertFalse(Chapters.get(2).done(done));
 	}
 }

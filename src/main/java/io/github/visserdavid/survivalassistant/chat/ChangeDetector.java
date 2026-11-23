@@ -1,5 +1,6 @@
 package io.github.visserdavid.survivalassistant.chat;
 
+import io.github.visserdavid.survivalassistant.util.Ticks;
 import java.util.ArrayDeque;
 import java.util.Comparator;
 import java.util.Deque;
@@ -33,11 +34,11 @@ public final class ChangeDetector {
 	public record Change(Kind kind, String subject) {}
 
 	/** A moment is worth a remark for 30 seconds. */
-	public static final long MOMENT_TTL = 30 * 20;
+	public static final long MOMENT_TTL = Ticks.seconds(30);
 	/** A new biome must hold for 5 seconds (no remarks while walking along a border). */
-	public static final long BIOME_SETTLE = 5 * 20;
+	public static final long BIOME_SETTLE = Ticks.seconds(5);
 	/** First remark comes this long after the guide starts watching (leaves room for the welcome). */
-	public static final long FIRST_REMARK_DELAY = 30 * 20;
+	public static final long FIRST_REMARK_DELAY = Ticks.seconds(30);
 	/** Biomes remembered as "already talked about". */
 	private static final int RECENT_BIOMES = 4;
 

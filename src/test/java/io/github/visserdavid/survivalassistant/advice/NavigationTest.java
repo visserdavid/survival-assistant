@@ -1,5 +1,6 @@
 package io.github.visserdavid.survivalassistant.advice;
 
+import io.github.visserdavid.survivalassistant.config.ModConfig;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -71,20 +72,20 @@ class NavigationTest {
 	@Test
 	void safetyWarnings() {
 		GuideProgress p = new GuideProgress();
-		assertEquals(TipRegistry.DIG_DOWN, firstTip(SurvivalContext.builder().digDown(2).build(), p));
+		assertEquals(TipRegistry.DIG_DOWN, firstTip(SurvivalContext.builder().digDownStreak(2).build(), p));
 		assertEquals(TipRegistry.LAVA_NEAR, firstTip(SurvivalContext.builder().lava(true).build(), new GuideProgress()));
-		assertEquals(TipRegistry.PHANTOMS, firstTip(SurvivalContext.builder().time(15000).sheltered(true)
-				.sinceRest(SurvivalContext.PHANTOM_WARNING_TICKS).build(), new GuideProgress()));
-		assertNotEquals(TipRegistry.PHANTOMS, firstTip(SurvivalContext.builder().time(15000).sheltered(true)
-				.sinceRest(20000).build(), new GuideProgress()), "slept recently: no phantom warning");
+		assertEquals(TipRegistry.PHANTOMS, firstTip(SurvivalContext.builder().timeOfDay(15000).sheltered(true)
+				.ticksSinceRest(SurvivalContext.PHANTOM_WARNING_TICKS).build(), new GuideProgress()));
+		assertNotEquals(TipRegistry.PHANTOMS, firstTip(SurvivalContext.builder().timeOfDay(15000).sheltered(true)
+				.ticksSinceRest(20000).build(), new GuideProgress()), "slept recently: no phantom warning");
 		assertEquals(TipRegistry.FALLING_BLOCK, firstTip(SurvivalContext.builder().sheltered(true).underground(true)
-				.fallingAbove(true).torches(5).build(), new GuideProgress()));
-		assertNotEquals(TipRegistry.DIG_DOWN, firstTip(SurvivalContext.builder().digDown(1).build(), new GuideProgress()),
+				.fallingBlockAbove(true).torches(5).build(), new GuideProgress()));
+		assertNotEquals(TipRegistry.DIG_DOWN, firstTip(SurvivalContext.builder().digDownStreak(1).build(), new GuideProgress()),
 				"one break under your feet is fine (e.g. placing a block)");
 	}
 
 	private static Tip firstTip(SurvivalContext c, GuideProgress p) {
-		return AdviceEngine.evaluate(c, p, 0, AdviceEngine.Settings.DEFAULT, false).stream()
+		return AdviceEngine.evaluate(c, p, 0, AdviceEngine.Settings.from(new ModConfig()), false).stream()
 				.filter(m -> !m.praise()).findFirst().orElseThrow().tip();
 	}
 }

@@ -1,5 +1,6 @@
 package io.github.visserdavid.survivalassistant.advice;
 
+import io.github.visserdavid.survivalassistant.util.Ticks;
 /**
  * Decides whether the guide keeps helping, asks to stay longer, offers the next chapter, says goodbye, or
  * congratulates the player. Pure logic, no Minecraft types.
@@ -8,9 +9,9 @@ public final class GuideLifecycle {
 	private GuideLifecycle() {}
 
 	/** Without an answer to an open question, the guide leaves after one full day. */
-	public static final long ANSWER_TICKS = 24000;
+	public static final long ANSWER_TICKS = Ticks.PER_DAY;
 	/** One reminder halfway through that day. */
-	public static final long REMIND_TICKS = 12000;
+	public static final long REMIND_TICKS = Ticks.PER_DAY / 2;
 
 	public enum Step {
 		/** Keep helping as usual. */

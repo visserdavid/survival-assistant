@@ -128,7 +128,7 @@ public final class TaskHud implements HudElement {
 	private int wantedWidth(Font font, HudSnapshot snap, boolean full, long now) {
 		int wanted = PAD + font.width(title(snap)) + GAP + clockWidth(font) + PAD;
 		if (full) {
-			for (Tip m : TipRegistry.milestones(snap.chapter())) {
+			for (Tip m : Chapters.get(snap.chapter()).goals()) {
 				wanted = Math.max(wanted, FULL_X + font.width(taskName(m.id())) + GAP + font.width("99/99") + PAD);
 			}
 			Optional<Recipes.Recipe> recipe = currentRecipe(snap);
@@ -170,7 +170,7 @@ public final class TaskHud implements HudElement {
 	}
 
 	private static int fullHeight(HudSnapshot snap) {
-		return PAD + HEADER_H + TipRegistry.milestones(snap.chapter()).size() * ROW_H + PAD;
+		return PAD + HEADER_H + Chapters.get(snap.chapter()).goals().size() * ROW_H + PAD;
 	}
 
 	/** Compact lines: optionally the task that was just completed (flashing), then the open tasks. */
@@ -197,7 +197,7 @@ public final class TaskHud implements HudElement {
 			knownLevel = level;
 		}
 		if (knownCompleted != null) {
-			for (Tip m : TipRegistry.milestones(snap.chapter())) {
+			for (Tip m : Chapters.get(snap.chapter()).goals()) {
 				if (completed.contains(m.id()) && !knownCompleted.contains(m.id())) {
 					flashId = m.id();
 					flashStart = now;
@@ -365,7 +365,7 @@ public final class TaskHud implements HudElement {
 	private void drawFullList(GuiGraphicsExtractor g, Font font, HudSnapshot snap, int y, long now) {
 		Set<String> completed = new HashSet<>(snap.completed());
 		String current = snap.next().isEmpty() ? "" : snap.next().get(0).id();
-		for (Tip m : TipRegistry.milestones(snap.chapter())) {
+		for (Tip m : Chapters.get(snap.chapter()).goals()) {
 			boolean done = completed.contains(m.id());
 			boolean isCurrent = m.id().equals(current);
 			int color = done ? GREEN : isCurrent ? GOLD : GRAY;

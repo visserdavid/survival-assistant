@@ -30,15 +30,15 @@ class Chapters910Test {
 	@Test
 	void endGoals() {
 		completes(TipRegistry.ENDER_PEARLS, b().enderPearls(12).build());
-		completes(TipRegistry.EYES_OF_ENDER, b().eyes(12).build());
-		completes(TipRegistry.FIND_STRONGHOLD, b().advancement(TipRegistry.ADV_STRONGHOLD).build());
+		completes(TipRegistry.EYES_OF_ENDER, b().eyesOfEnder(12).build());
+		completes(TipRegistry.FIND_STRONGHOLD, b().advancement(Advancements.STRONGHOLD).build());
 		completes(TipRegistry.ENTER_END, b().dimension(SurvivalContext.END).build());
-		completes(TipRegistry.DRAGON, b().advancement(TipRegistry.ADV_DRAGON).build());
-		completes(TipRegistry.END_CITY, b().advancement(TipRegistry.ADV_END_CITY).build());
-		completes(TipRegistry.ELYTRA, b().elytra(true).build());
+		completes(TipRegistry.DRAGON, b().advancement(Advancements.DRAGON).build());
+		completes(TipRegistry.END_CITY, b().advancement(Advancements.END_CITY).build());
+		completes(TipRegistry.ELYTRA, b().hasElytra(true).build());
 		// pearls thrown and eyes used: the earlier goals stay done once the player is further
-		assertTrue(TipRegistry.ENDER_PEARLS.done().test(b().advancement(TipRegistry.ADV_STRONGHOLD).build()));
-		assertTrue(TipRegistry.EYES_OF_ENDER.done().test(b().advancement(TipRegistry.ADV_ENTER_END).build()));
+		assertTrue(TipRegistry.ENDER_PEARLS.done().test(b().advancement(Advancements.STRONGHOLD).build()));
+		assertTrue(TipRegistry.EYES_OF_ENDER.done().test(b().advancement(Advancements.ENTER_END).build()));
 	}
 
 	@Test
@@ -51,6 +51,6 @@ class Chapters910Test {
 
 	@Test
 	void noOverworldNightWarningsInTheEnd() {
-		assertNull(AdviceEngine.activeUrgent(b().dimension(SurvivalContext.END).time(15000).thundering(true).build()));
+		assertNull(AdviceEngine.activeUrgent(b().dimension(SurvivalContext.END).timeOfDay(15000).thundering(true).build()));
 	}
 }

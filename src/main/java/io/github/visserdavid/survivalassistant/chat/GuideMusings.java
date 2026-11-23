@@ -1,5 +1,6 @@
 package io.github.visserdavid.survivalassistant.chat;
 
+import io.github.visserdavid.survivalassistant.util.Ticks;
 import io.github.visserdavid.survivalassistant.advice.AdviceEngine;
 import io.github.visserdavid.survivalassistant.advice.GuideProgress;
 import io.github.visserdavid.survivalassistant.advice.SurvivalContext;
@@ -39,14 +40,14 @@ public final class GuideMusings {
 		ModConfig cfg = ModConfig.get();
 		long now = player.level().getGameTime();
 		MuseScheduler scheduler = SCHEDULERS.computeIfAbsent(player.getUUID(),
-				id -> new MuseScheduler(cfg.museIntervalSeconds * 20L));
+				id -> new MuseScheduler(Ticks.seconds(cfg.museIntervalSeconds)));
 
 		Surroundings s = SurroundingsCollector.collect(player, ctx, cfg.chatSightRadius);
 		// Without the character only urgent warnings go to chat, so no musings either.
 		boolean blocked = guide == null || now < progress.muteUntil || AdviceEngine.activeUrgent(ctx) != null
 				|| GuideChat.busy(player);
 		boolean dangerZones = cfg.musingsInDangerZones || ALL.equals(progress.musings);
-		MuseScheduler.Input in = new MuseScheduler.Input(s.biomeGroup(), !ctx.isNight(), ctx.underground(),
+		MuseScheduler.Input in = new MuseScheduler.Input(s.biomeGroup(), !ctx.world().isNight(), ctx.world().underground(),
 				s.friendly().keySet(), blocked, dangerZones, Persona.aboutKey(progress.aboutIndex));
 
 		scheduler.update(in, now).ifPresent(key -> {

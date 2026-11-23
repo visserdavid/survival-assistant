@@ -30,21 +30,22 @@ public final class PlaceNotices {
 	private PlaceNotices() {}
 
 	public static @Nullable String next(SurvivalContext ctx, Set<String> seen) {
-		if (ctx.inNether() && !seen.contains("nether")) return "nether";
-		if (ctx.inVillage() && !seen.contains("village")) return "village";
-		if (ctx.inVillage() && ctx.isNight() && !seen.contains("village_night")) return "village_night";
-		if (ctx.structure().equals("desert_pyramid") && !seen.contains("desert_temple")) return "desert_temple";
-		if (ctx.structure().equals("jungle_pyramid") && !seen.contains("jungle_temple")) return "jungle_temple";
-		if (ctx.structure().equals("trial_chambers") && !seen.contains("trial_chambers")) return "trial_chambers";
-		if (ctx.inWreck() && !seen.contains("wreck")) return "wreck";
-		if (ctx.structure().equals("stronghold") && !seen.contains("stronghold")) return "stronghold";
-		if (ctx.inEnd() && !seen.contains("end")) return "end";
-		if (ctx.structure().equals("end_city") && !seen.contains("end_city")) return "end_city";
-		if (ctx.structure().equals("bastion_remnant") && !seen.contains("bastion")) return "bastion";
-		if (ctx.structure().equals("ancient_city") && !seen.contains("ancient_city")) return "ancient_city";
-		if (ctx.structure().equals("pillager_outpost") && !seen.contains("outpost")) return "outpost";
-		if (ctx.witherSkulls() > 0 && !seen.contains("wither")) return "wither";
-		if (ctx.structure().equals("trail_ruins") && !seen.contains("trail_ruins")) return "trail_ruins";
+		SurvivalContext.World w = ctx.world();
+		if (w.inNether() && !seen.contains("nether")) return "nether";
+		if (w.inVillage() && !seen.contains("village")) return "village";
+		if (w.inVillage() && w.isNight() && !seen.contains("village_night")) return "village_night";
+		if (w.in(Structures.DESERT_PYRAMID) && !seen.contains("desert_temple")) return "desert_temple";
+		if (w.in(Structures.JUNGLE_PYRAMID) && !seen.contains("jungle_temple")) return "jungle_temple";
+		if (w.in(Structures.TRIAL_CHAMBERS) && !seen.contains("trial_chambers")) return "trial_chambers";
+		if (w.inWreck() && !seen.contains("wreck")) return "wreck";
+		if (w.in(Structures.STRONGHOLD) && !seen.contains("stronghold")) return "stronghold";
+		if (w.inEnd() && !seen.contains("end")) return "end";
+		if (w.in(Structures.END_CITY) && !seen.contains("end_city")) return "end_city";
+		if (w.in(Structures.BASTION_REMNANT) && !seen.contains("bastion")) return "bastion";
+		if (w.in(Structures.ANCIENT_CITY) && !seen.contains("ancient_city")) return "ancient_city";
+		if (w.in(Structures.PILLAGER_OUTPOST) && !seen.contains("outpost")) return "outpost";
+		if (ctx.inv().witherSkulls() > 0 && !seen.contains("wither")) return "wither";
+		if (w.in(Structures.TRAIL_RUINS) && !seen.contains("trail_ruins")) return "trail_ruins";
 		return null;
 	}
 }

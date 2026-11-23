@@ -1,5 +1,6 @@
 package io.github.visserdavid.survivalassistant.chat;
 
+import io.github.visserdavid.survivalassistant.util.Ticks;
 import io.github.visserdavid.survivalassistant.GuideManager;
 import io.github.visserdavid.survivalassistant.SurvivalAssistant;
 import io.github.visserdavid.survivalassistant.advice.AdviceEngine;
@@ -249,7 +250,7 @@ public final class GuideChat {
 
 	private static State state(ServerPlayer player) {
 		return STATES.computeIfAbsent(player.getUUID(),
-				id -> new State(ModConfig.get().chatCooldownSeconds * 20L));
+				id -> new State(Ticks.seconds(ModConfig.get().chatCooldownSeconds)));
 	}
 
 	public static void forget(UUID playerId) {

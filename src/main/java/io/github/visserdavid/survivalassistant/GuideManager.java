@@ -1,5 +1,6 @@
 package io.github.visserdavid.survivalassistant;
 
+import io.github.visserdavid.survivalassistant.util.Ticks;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -80,7 +81,7 @@ public final class GuideManager {
 	// ---------------------------------------------------------------- ticking
 
 	public static void tick(MinecraftServer server) {
-		if (server.getTickCount() % 20 != 0) return;
+		if (server.getTickCount() % Ticks.PER_SECOND != 0) return;
 		for (ServerPlayer player : server.getPlayerList().getPlayers()) {
 			try {
 				process(player);
@@ -155,7 +156,7 @@ public final class GuideManager {
 		checkDepthNotices(player, progress, guide);
 
 		long now = player.level().getGameTime();
-		long interval = cfg.tipIntervalSeconds * 20L;
+		long interval = Ticks.seconds(cfg.tipIntervalSeconds);
 		Long last = LAST_EVAL.get(player.getUUID());
 		if (last != null && now - last < interval) return;
 		LAST_EVAL.put(player.getUUID(), now);
@@ -189,7 +190,7 @@ public final class GuideManager {
 			DEATHS.remove(player.getUUID());
 			death = null;
 		}
-		boolean duskOrNight = ctx.isDusk() || ctx.isNight();
+		boolean duskOrNight = ctx.world().isDusk() || ctx.world().isNight();
 		return Navigation.pick(death == null ? null : death.mark(), death == null ? 0 : death.tick(),
 				home(player, progress), here, now, duskOrNight, cfg.homeDistance);
 	}
@@ -246,8 +247,7 @@ public final class GuideManager {
 	}
 
 	private static AdviceEngine.Settings settings() {
-		ModConfig cfg = ModConfig.get();
-		return new AdviceEngine.Settings(cfg.urgentCooldownSeconds * 20L, cfg.milestoneCooldownSeconds * 20L);
+		return AdviceEngine.Settings.from(ModConfig.get());
 	}
 
 	/** Configured period of the current chapter (without extensions); 0 = no limit. */
@@ -268,21 +268,21 @@ public final class GuideManager {
 
 	private static int doneInChapter(GuideProgress progress) {
 		int n = 0;
-		for (Tip m : TipRegistry.milestones(progress.chapter)) if (progress.completed.contains(m.id())) n++;
+		for (Tip m : Chapters.get(progress.chapter).goals()) if (progress.completed.contains(m.id())) n++;
 		return n;
 	}
 
 	private static GuideLifecycle.Step lifecycle(ServerPlayer player, GuideProgress progress) {
 		ModConfig cfg = ModConfig.get();
 		return GuideLifecycle.decide(new GuideLifecycle.State(dayIndex(player, progress), baseDays(progress), progress.extraDays,
-				cfg.extendDays, TipRegistry.chapterDone(progress.chapter, progress.completed), nextChapterAvailable(progress),
+				cfg.extendDays, Chapters.get(progress.chapter).done(progress.completed), nextChapterAvailable(progress),
 				progress.chapterOffered, progress.finished, progress.askedAtTick, progress.reminded,
 				player.level().getOverworldClockTime()));
 	}
 
 	public static int dayIndex(ServerPlayer player, GuideProgress progress) {
 		long clock = player.level().getOverworldClockTime();
-		return (int) Math.max(0, clock / 24000L - progress.startTick / 24000L);
+		return (int) Math.max(0, Ticks.day(clock) - Ticks.day(progress.startTick));
 	}
 
 	// ---------------------------------------------------------------- guide entity
@@ -319,7 +319,7 @@ public final class GuideManager {
 	private static void retire(ServerPlayer player, GuideProgress progress, String messageKey) {
 		GuideEntity guide = GUIDES.get(player.getUUID());
 		int done = doneInChapter(progress);
-		int total = TipRegistry.milestones(progress.chapter).size();
+		int total = Chapters.get(progress.chapter).goals().size();
 		say(player, guide, Component.translatable("survivalassistant." + messageKey + ".1"), false);
 		say(player, guide, Component.translatable("survivalassistant.farewell.summary", done, total), false);
 		if (ModConfig.get().allowRecall) {
@@ -424,7 +424,7 @@ public final class GuideManager {
 
 	/** Title, sound and particles. */
 	private static void celebrate(ServerPlayer player, @Nullable GuideEntity guide, GuideProgress progress) {
-		int total = TipRegistry.milestones(progress.chapter).size();
+		int total = Chapters.get(progress.chapter).goals().size();
 		player.connection.send(new ClientboundSetTitleTextPacket(
 				Component.translatable("survivalassistant.congrats.title").withStyle(ChatFormatting.GOLD)));
 		player.connection.send(new ClientboundSetSubtitleTextPacket(
@@ -527,7 +527,7 @@ public final class GuideManager {
 	public static void onGuideClicked(ServerPlayer player, GuideEntity guide) {
 		GuideProgress progress = GuideState.of(player);
 		evaluateAndSay(player, guide, progress, true);
-		int done = doneInChapter(progress), total = TipRegistry.milestones(progress.chapter).size();
+		int done = doneInChapter(progress), total = Chapters.get(progress.chapter).goals().size();
 		// Later chapters have no day limit, so they show the chapter instead of the days left.
 		Component line = dayLimit(progress) <= 0
 				? Component.translatable("survivalassistant.progress_chapter", done, total,
@@ -665,7 +665,7 @@ public final class GuideManager {
 	/** /guide continue: start the first chapter that is open (after the current one is finished). */
 	public static boolean continueChapter(ServerPlayer player) {
 		GuideProgress progress = GuideState.of(player);
-		if (!TipRegistry.chapterDone(progress.chapter, progress.completed)) return false;
+		if (!Chapters.get(progress.chapter).done(progress.completed)) return false;
 		java.util.List<Chapter> open = Chapters.available(progress.chapter, progress.completed);
 		return !open.isEmpty() && startChapter(player, open.get(0));
 	}
@@ -693,6 +693,6 @@ public final class GuideManager {
 
 	/** /guide mute <minutes> */
 	public static void mute(ServerPlayer player, int minutes) {
-		GuideState.of(player).muteUntil = player.level().getGameTime() + minutes * 60L * 20L;
+		GuideState.of(player).muteUntil = player.level().getGameTime() + Ticks.minutes(minutes);
 	}
 }

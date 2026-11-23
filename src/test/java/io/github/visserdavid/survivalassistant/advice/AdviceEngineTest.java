@@ -1,5 +1,6 @@
 package io.github.visserdavid.survivalassistant.advice;
 
+import io.github.visserdavid.survivalassistant.config.ModConfig;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AdviceEngineTest {
-	private static final AdviceEngine.Settings S = AdviceEngine.Settings.DEFAULT;
+	private static final AdviceEngine.Settings S = AdviceEngine.Settings.from(new ModConfig());
 
 	private static List<AdviceEngine.Message> eval(SurvivalContext c, GuideProgress p, long now) {
 		return AdviceEngine.evaluate(c, p, now, S, false);
@@ -37,7 +38,7 @@ class AdviceEngineTest {
 	void skippingAheadCompletesEarlierMilestones() {
 		GuideProgress p = new GuideProgress();
 		// Stone pickaxe + stone sword implies wood, table and wooden pickaxe were done.
-		Tip next = only(eval(SurvivalContext.builder().pickaxe(2).sword(2).build(), p, 0));
+		Tip next = only(eval(SurvivalContext.builder().pickaxeTier(2).swordTier(2).build(), p, 0));
 		assertEquals(TipRegistry.FURNACE, next);
 		assertTrue(p.completed.containsAll(List.of("wood", "crafting_table", "wooden_pickaxe", "stone_tools")));
 	}
@@ -53,19 +54,19 @@ class AdviceEngineTest {
 
 	@Test
 	void duskWithoutShelterIsUrgent() {
-		List<AdviceEngine.Message> msgs = eval(SurvivalContext.builder().time(11500).build(), new GuideProgress(), 0);
+		List<AdviceEngine.Message> msgs = eval(SurvivalContext.builder().timeOfDay(11500).build(), new GuideProgress(), 0);
 		assertEquals(TipRegistry.DUSK, only(msgs));
 		assertTrue(msgs.get(msgs.size() - 1).urgent());
 	}
 
 	@Test
 	void duskButShelteredIsNotUrgent() {
-		assertEquals(TipRegistry.WOOD, only(eval(SurvivalContext.builder().time(11500).sheltered(true).build(), new GuideProgress(), 0)));
+		assertEquals(TipRegistry.WOOD, only(eval(SurvivalContext.builder().timeOfDay(11500).sheltered(true).build(), new GuideProgress(), 0)));
 	}
 
 	@Test
 	void creeperBeatsEverything() {
-		SurvivalContext c = SurvivalContext.builder().time(14000).food(2).health(4).hostiles(3).creeper(true).build();
+		SurvivalContext c = SurvivalContext.builder().timeOfDay(14000).food(2).health(4).hostiles(3).creeper(true).build();
 		assertEquals(TipRegistry.CREEPER, only(eval(c, new GuideProgress(), 0)));
 	}
 
@@ -78,7 +79,7 @@ class AdviceEngineTest {
 	@Test
 	void urgentCooldownPreventsSpamAndHoldsBackMilestones() {
 		GuideProgress p = new GuideProgress();
-		SurvivalContext night = SurvivalContext.builder().time(15000).build();
+		SurvivalContext night = SurvivalContext.builder().timeOfDay(15000).build();
 		assertEquals(TipRegistry.NIGHT_OUTSIDE, only(eval(night, p, 0)));
 		assertTrue(eval(night, p, 100).isEmpty(), "on cooldown: nothing at all");
 		assertEquals(TipRegistry.NIGHT_OUTSIDE, only(eval(night, p, S.urgentCooldownTicks())));
@@ -87,7 +88,7 @@ class AdviceEngineTest {
 	@Test
 	void warningOnCooldownDoesNotHoldBackMilestones() {
 		GuideProgress p = new GuideProgress();
-		SurvivalContext cave = SurvivalContext.builder().sheltered(true).underground(true).pickaxe(2).sword(2).build();
+		SurvivalContext cave = SurvivalContext.builder().sheltered(true).underground(true).pickaxeTier(2).swordTier(2).build();
 		assertEquals(TipRegistry.UNDERGROUND, only(eval(cave, p, 0)));
 		assertEquals(TipRegistry.FURNACE, only(eval(cave, p, 100)));
 	}
@@ -105,7 +106,7 @@ class AdviceEngineTest {
 	void muteSilencesUnsolicitedButNotForcedTips() {
 		GuideProgress p = new GuideProgress();
 		p.muteUntil = 1000;
-		SurvivalContext c = SurvivalContext.builder().time(15000).build();
+		SurvivalContext c = SurvivalContext.builder().timeOfDay(15000).build();
 		assertTrue(eval(c, p, 0).isEmpty());
 		assertEquals(TipRegistry.NIGHT_OUTSIDE, only(AdviceEngine.evaluate(c, p, 0, S, true)));
 	}
@@ -121,7 +122,7 @@ class AdviceEngineTest {
 	@Test
 	void shelterCompletesAfterFirstNight() {
 		GuideProgress p = new GuideProgress();
-		SurvivalContext day1 = SurvivalContext.builder().day(1).pickaxe(2).sword(2).furnace(true).foodItems(6).bed(true).torches(10).build();
+		SurvivalContext day1 = SurvivalContext.builder().dayIndex(1).pickaxeTier(2).swordTier(2).hasFurnace(true).foodItems(6).hasBed(true).torches(10).build();
 		assertEquals(TipRegistry.CHEST, only(eval(day1, p, 0)));
 		assertTrue(p.completed.contains("shelter"));
 	}
@@ -154,11 +155,11 @@ class AdviceEngineTest {
 	@Test
 	void everythingDoneMeansSilence() {
 		GuideProgress p = new GuideProgress();
-		SurvivalContext all = SurvivalContext.builder().day(2).pickaxe(3).sword(3).furnace(true).foodItems(10).bed(true)
-				.torches(20).chest(true).iron(5).shield(true).ironArmor(true).waterBucket(true).build();
+		SurvivalContext all = SurvivalContext.builder().dayIndex(2).pickaxeTier(3).swordTier(3).hasFurnace(true).foodItems(10).hasBed(true)
+				.torches(20).hasChest(true).iron(5).hasShield(true).hasIronArmor(true).hasWaterBucket(true).build();
 		List<AdviceEngine.Message> msgs = eval(all, p, 0);
 		assertTrue(msgs.stream().allMatch(AdviceEngine.Message::praise));
-		assertEquals(TipRegistry.MILESTONES.size(), p.completed.size());
+		assertEquals(TipRegistry.CHAPTER_FIRST_DAYS.size(), p.completed.size());
 		assertNull(AdviceEngine.nextMilestone(p));
 		assertTrue(AdviceEngine.evaluate(all, p, 1, S, true).isEmpty());
 	}

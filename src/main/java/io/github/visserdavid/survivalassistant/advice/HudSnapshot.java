@@ -33,7 +33,7 @@ public record HudSnapshot(boolean active, int dayIndex, int maxDays, int chapter
 	public static HudSnapshot of(SurvivalContext ctx, GuideProgress progress, int maxDays, Optional<Navigation.Waypoint> waypoint) {
 		List<Entry> next = new ArrayList<>(SHOWN_TASKS);
 		List<String> completed = new ArrayList<>();
-		for (Tip m : TipRegistry.milestones(progress.chapter)) {
+		for (Tip m : Chapters.get(progress.chapter).goals()) {
 			if (progress.completed.contains(m.id())) {
 				completed.add(m.id());
 				continue;
@@ -43,7 +43,7 @@ public record HudSnapshot(boolean active, int dayIndex, int maxDays, int chapter
 			next.add(new Entry(m.id(), value, m.hasCounter() ? m.target() : 0));
 		}
 		Tip urgent = AdviceEngine.activeUrgent(ctx);
-		return new HudSnapshot(true, ctx.dayIndex(), maxDays, progress.chapter, List.copyOf(completed), List.copyOf(next),
+		return new HudSnapshot(true, ctx.world().dayIndex(), maxDays, progress.chapter, List.copyOf(completed), List.copyOf(next),
 				urgent == null ? "" : urgent.id(), waypoint, SafeSignal.show(ctx));
 	}
 }
