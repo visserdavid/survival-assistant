@@ -44,7 +44,14 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          echo "VERSION=${TAG#v}" >> "$GITHUB_ENV"
+          version="${TAG#v}"
+          built="$(sed -n 's/^version=//p' gradle.properties | tr -d '\r')"
+          if [ "$version" != "$built" ]; then
+            echo "::error::Tag $TAG doesn't match version=$built in gradle.properties"
+            exit 1
+          fi
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+          echo "MC_VERSION=$(sed -n 's/^minecraft_version=//p' gradle.properties | tr -d '\r')" >> "$GITHUB_ENV"
           gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json body -q .body > changelog.md
 
       - uses: Kir-Antipov/mc-publish@c23376546a97f5ba7984e94445da359459b14419 # v3.3
@@ -59,7 +66,7 @@ jobs:
           version-type: release
           changelog-file: changelog.md
           loaders: fabric
-          game-versions: 26.3
+          game-versions: ${{ env.MC_VERSION }}
           java: 25
           # Mod Menu only adds the "Configure" button for the settings screen
           dependencies: |

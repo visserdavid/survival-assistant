@@ -91,4 +91,36 @@ class ModConfigTest {
 		assertFalse(ModConfig.validEndpoint("ftp://example.org"));
 		assertFalse(ModConfig.validEndpoint("http://" + "a".repeat(ModConfig.MAX_ENDPOINT_LENGTH)));
 	}
+
+	/** The defaults as the README documents them: change both together. */
+	@Test
+	void defaultsMatchTheReadme() {
+		ModConfig c = new ModConfig();
+		assertTrue(c.moreChapters);
+		assertEquals(2, c.tipIntervalSeconds);
+		assertEquals(180, c.milestoneCooldownSeconds);
+		assertEquals(60, c.urgentCooldownSeconds);
+		assertTrue(c.allowRecall);
+		assertTrue(c.npcEnabledByDefault);
+		assertTrue(c.depthNotices);
+		assertTrue(c.navigation);
+		assertEquals(64, c.homeDistance);
+		assertEquals(GuideNames.DEFAULT, c.guideName);
+		assertTrue(c.spawnOnJoin);
+		assertTrue(c.pointAtResources);
+		assertTrue(c.musings);
+		assertEquals(300, c.museIntervalSeconds);
+		assertFalse(c.musingsInDangerZones);
+		assertFalse(c.chatEnabled);
+		assertEquals("http://127.0.0.1:8080/v1/chat/completions", c.chatEndpoint);
+		assertEquals("local", c.chatModel);
+		assertTrue(c.chatSpontaneous);
+		assertEquals(120, c.chatCooldownSeconds);
+		assertEquals(16, c.chatHearingDistance);
+		assertEquals(16, c.chatSightRadius);
+		assertEquals(80, c.chatMaxTokens);
+		assertEquals(-1, c.chatTemperature);
+		assertEquals(20, c.chatTimeoutSeconds);
+		assertEquals(6, c.chatHistoryTurns);
+	}
 }

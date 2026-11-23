@@ -26,10 +26,12 @@ python tools/recipe_check.py         # check every recipe card against the game 
 - `src/main`: common and server code; the guide logic runs on the server.
 - `src/client`: rendering, HUD, keys, the settings screen and skins.
 
-**Server loop.** `GuideManager` is the hub, ticked from `SurvivalAssistant`. It delegates to `GuideSessions` (per-player runtime state), `GuideEntities` (the NPC), `GuideSpeech` (chat lines), `ChapterMenu` and `GuideNavigation`. Each evaluation runs in this order:
+**Server loop.** `GuideManager` is the hub, ticked from `SurvivalAssistant` (each player once a second, spread over the ticks). What players ask for (the `/guide` commands, the settings screen) lives in `GuideActions`. It delegates to `GuideSessions` (per-player runtime state), `GuideEntities` (the NPC), `GuideSpeech` (chat lines, sounds only to the owning player), `ChapterMenu` and `GuideNavigation` (death waypoint; the fallback home is a crafting table, chest or bed the player placed in the overworld). Each evaluation runs in this order:
 1. `advice/ContextCollector` reads the world into an immutable `SurvivalContext`.
 2. `AdviceEngine`/`TipRegistry` pick tips.
-3. `GuideLifecycle` decides chapter flow (continue, congratulate, offer chapter, remind, farewell).
+3. `GuideLifecycle` decides chapter flow (continue, congratulate, offer chapter, remind, farewell). Chapter days and
+   the chapter-menu question count in **played time** (`GuideProgress.playedTicks`, raised once a second while the
+   guide is active), not the world clock: a frozen daylight cycle or `/time set` must not break them.
 4. `HudSnapshot` is built for the client.
 
 **Pure logic, testable without Minecraft.** Most of `advice/` and `chat/` is plain Java:
@@ -42,13 +44,14 @@ Tests live under `src/test` and cover this layer. Tests must not touch `Survival
 
 **State and sync.** Both use Fabric attachments in `state/`:
 - `GuideState`: per-player `GuideProgress`, saved with the player through `GuideProgressCodec`.
-  - **Never rename a codec key**: old worlds use them. Unknown keys are ignored.
+  - **Never rename a codec key**: old worlds use them. Unknown keys are ignored; fields are lenient (a wrong type falls back to the default instead of losing all progress). Replaced keys stay readable (`asked_at` → `asked_played`).
   - DFU's `optionalFieldOf(name, default)` leaves out values that equal the default.
-- `HudState`: a `HudSnapshot` synced to the owning client only. It is not saved and is sent only when it changed.
+- `HudState`: a `HudSnapshot` synced to the owning client only. It is not saved and is sent only when it changed. Its stream codec lives in `HudCodec`, so it can be unit tested (registering the attachment needs the game).
 - `SettingsPayloads`: custom payloads for the settings screen.
   - Request → Sync: the player's `GuideChoices`, the `ModConfig` as JSON, and `canEdit`.
   - ChoicesUpdate and ConfigUpdate back to the server.
-  - `GuideSettings` handles them on the server and checks again that the sender is the singleplayer owner or a gamemaster-level operator.
+  - `GuideSettings` handles them on the server (at most one change per second per player) and checks again that the sender is the singleplayer owner or an **admin** operator (level 3). Others never receive the config JSON, because it holds the chat endpoint.
+  - Small talk: `chatEnabled` is the server's master switch; players can only switch it off for themselves.
 
 **Config.** There are two files:
 - `config/ModConfig`: server, `config/survivalassistant.json`;
@@ -83,7 +86,7 @@ For bulk text changes, use a small Python script in the scratchpad that edits `m
 
 ## Releases
 
-- The version is in `gradle.properties`. A published GitHub release (tag `vX.Y.Z`, jar attached) triggers `.github/workflows/publish.yml`, which publishes to Modrinth through `mc-publish`, with Mod Menu as an optional dependency.
+- The version is in `gradle.properties`. A published GitHub release (tag `vX.Y.Z`, jar attached) triggers `.github/workflows/publish.yml`, which publishes to Modrinth through `mc-publish`, with Mod Menu as an optional dependency. It fails when the tag differs from `version` in `gradle.properties`, and it would also publish to CurseForge once `CURSEFORGE_ID`/`CURSEFORGE_TOKEN` are set.
 - The project body on Modrinth is `docs/listing/description.md` without its leading HTML comment.
 - Modrinth tokens last at most a week. Refresh the `MODRINTH_TOKEN` secret before each release, and never print or commit the token.
 

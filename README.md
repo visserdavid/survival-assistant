@@ -36,7 +36,7 @@ heights and other facts were **checked against the game's own data files**; see
   time), and now and then he tells one by himself when there is nothing left to say about the place you're in.
 - With small talk on you can simply ask him: "Pim, where are you from?" The model answers from the same
   background, so his story stays consistent.
-- Prefer another name? `/guide name <name>` (up to 16 letters, digits or spaces; `/guide name reset` goes back).
+- Prefer another name? `/guide name <name>` (up to 16 letters, digits, spaces, `-` or `_`; `/guide name reset` goes back).
   Server owners can change the default with `guideName` in the config.
 
 ### Chapters: a Minecraft tutorial
@@ -191,7 +191,8 @@ archaeology, the trial challenges, the happy ghast and automation.
   tips and the task card. It is quiet while a warning is active or the guide is muted, and waits at least 2 minutes
   between spontaneous remarks.
 - Runs fully local with [llama.cpp](https://github.com/ggml-org/llama.cpp): start `llama-server` with a small
-  instruct model before you play. Without a server the guide simply stays quiet; nothing else changes.
+  instruct model before you play. Without a server the guide stays quiet (it only says it can't talk right now when you call it by name, and the
+  log gets one warning); nothing else changes.
 - Off by default. The server decides: switch it on with `chatEnabled` in the config (or *Small talk allowed* in the
   settings screen, World tab). Then every player has it, and each player can switch it off for themselves with
   `/guide chat off` (and back on with `/guide chat on`).
@@ -377,7 +378,7 @@ The settings screen writes these files; you can also edit them by hand (server o
 - Java **25**
 
 Download the jar from the [GitHub releases](https://github.com/visserdavid/survival-assistant/releases)
-(Modrinth and CurseForge pages are coming). Put the mod jar and Fabric API in your `mods` folder. The mod is needed on the server (or in singleplayer)
+(the Modrinth page is being prepared). Put the mod jar and Fabric API in your `mods` folder. The mod is needed on the server (or in singleplayer)
 for the guide and advice, and on the client for the cards.
 
 ## Building from source
@@ -397,7 +398,8 @@ Developer tools:
 - `tools/recipe_check.py` checks every recipe card against the game's recipe data.
 - `tools/biome_facts.py` regenerates [docs/biomes-and-heights.md](docs/biomes-and-heights.md) from the Minecraft jar.
 - Both find the Minecraft jar in the Loom cache after a build (`tools/mcjar.py`); pass `--jar <path>` to use another.
-  The CI workflow runs the build, the tests, the language check and the recipe check on every push.
+  The CI workflow runs the build, the tests, the language check and the recipe check on every push to `main` and
+  on pull requests.
 - `tools/make_icon.py` builds the transparent PNG icons from `docs/images/SurvivalAssistant.jpg`
   (`uv run --with pillow python tools/make_icon.py`).
 
@@ -415,7 +417,9 @@ loot tables, tags and code:
 - [Biomes and heights](docs/biomes-and-heights.md): ore placement and mob spawns per biome, extracted from the 26.3 data
 - [Small talk models](docs/research-chat-models.md): which local language model to use, with measurements
 
-The pure advice logic (`advice` and `chat` packages) has no Minecraft dependencies and is covered by unit tests.
+Most of the advice logic (chapters, tips, the lifecycle, the small talk prompt and scheduling, in the `advice` and
+`chat` packages) is plain Java without Minecraft types and is covered by unit tests; the classes that read the world
+(such as `ContextCollector`) are not.
 
 ## How this mod was made (AI use)
 This mod was made with a lot of help from AI. To be open about what that means:

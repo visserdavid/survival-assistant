@@ -6,9 +6,10 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+GRADLE_HOME = os.environ.get("GRADLE_USER_HOME") or os.path.join(os.path.expanduser("~"), ".gradle")
 PATTERNS = (
     # Loom 1.19 keeps the game in the Gradle user cache ...
-    os.path.join(os.path.expanduser("~"), ".gradle", "caches", "fabric-loom", "minecraftMaven", "net", "minecraft",
+    os.path.join(GRADLE_HOME, "caches", "fabric-loom", "minecraftMaven", "net", "minecraft",
                  "minecraft-common-*", "*", "minecraft-common-*.jar"),
     # ... older Loom versions kept it in the project
     str(ROOT / ".gradle" / "loom-cache" / "minecraftMaven" / "net" / "minecraft" / "minecraft-common-*" / "*"

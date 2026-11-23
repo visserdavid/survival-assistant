@@ -36,6 +36,7 @@ def expand_helpers(text):
 def java_recipes(text):
     consts = dict(re.findall(r'String (\w+) = "([^"]+)";', text))
     text = expand_helpers(text)
+    declared = len(re.findall(r"new Recipe\(", text))
     out = []
     for m in re.finditer(r'new Recipe\(("[^"]+"|\w+), (\d+), List\.of\(([^)]*)\),\s*Map\.of\(([^)]*)\)\)', text):
         result = m.group(1).strip('"') if m.group(1).startswith('"') else consts[m.group(1)]
@@ -44,7 +45,20 @@ def java_recipes(text):
         for ch, val in re.findall(r"'(.)', (\"[^\"]+\"|\w+)", m.group(4)):
             key[ch] = val.strip('"') if val.startswith('"') else consts[val]
         out.append((result, int(m.group(2)), pattern, key))
+    # a recipe written in another form would otherwise be skipped without a word
+    assert len(out) == declared, f"parsed {len(out)} of {declared} recipes: update the pattern in java_recipes()"
     return out
+
+
+def matches_any_order(items, ingredients, accepts):
+    """True when every item can be paired with its own ingredient (shapeless recipes ignore the order)."""
+    if not items:
+        return not ingredients
+    first, rest = items[0], items[1:]
+    for i, ing in enumerate(ingredients):
+        if first in accepts(ing) and matches_any_order(rest, ingredients[:i] + ingredients[i + 1:], accepts):
+            return True
+    return False
 
 
 class Jar:
@@ -100,9 +114,8 @@ def check(jar):
             cells = [key[c] for row in pattern for c in row if c != " "]
             if len(cells) != len(data["ingredients"]):
                 problems.append("ingredient count differs")
-            for item, ing in zip(cells, data["ingredients"]):
-                if item not in jar.accepts(ing):
-                    problems.append(f"{item} not accepted")
+            elif not matches_any_order(cells, list(data["ingredients"]), jar.accepts):
+                problems.append(f"{cells} don't match the ingredients")
         status = "OK " if not problems else "BAD"
         errors += bool(problems)
         print(f"{status} {name:18} {'; '.join(problems)}")

@@ -1747,6 +1747,29 @@ def check_chars(lang, key, text):
         sys.exit(f"[{lang}] unsafe character(s) {bad} in {key!r}: use plain text or an icon in the HUD code instead.")
 
 
+def no_duplicates(source):
+    """A json.load hook that fails on a key written twice (the second would silently win)."""
+    def hook(pairs):
+        seen = set()
+        for k, _ in pairs:
+            if k in seen:
+                sys.exit(f"{source}: key {k!r} appears twice")
+            seen.add(k)
+        return dict(pairs)
+    return hook
+
+
+def check_table_duplicates():
+    """The English/Dutch table is a dict literal, where a repeated key silently replaces the first: check the source."""
+    with open(os.path.abspath(__file__), encoding="utf-8") as f:
+        source = f.read()
+    table = source[source.index("\nL = {"):source.index("\n}\n", source.index("\nL = {"))]
+    keys = re.findall(r'^    (?:P \+ )?"([^"]+)":', table, re.M)
+    dupes = sorted({k for k in keys if keys.count(k) > 1})
+    if dupes:
+        sys.exit(f"tools/make_lang.py: keys written twice in L: {dupes}")
+
+
 def load_translations():
     """tools/lang/<code>.json: key -> text, for every language beyond English and Dutch."""
     here = os.path.dirname(os.path.abspath(__file__))
@@ -1755,7 +1778,7 @@ def load_translations():
         code = os.path.splitext(os.path.basename(path))[0]
         with open(path, encoding="utf-8") as f:
             # "~" is short for "survivalassistant." to keep the translation files readable
-            out[code] = {k.replace("~", P): v for k, v in json.load(f).items()}
+            out[code] = {k.replace("~", P): v for k, v in json.load(f, object_pairs_hook=no_duplicates(path)).items()}
     return out
 
 
@@ -1792,6 +1815,7 @@ def main():
     parser = argparse.ArgumentParser(description="Write and check the language files.")
     parser.add_argument("out_dir", help="for example src/main/resources/assets/survivalassistant/lang")
     out_dir = parser.parse_args().out_dir
+    check_table_duplicates()
     languages = check_languages()
     english = languages["en_us"]
     written = 0
