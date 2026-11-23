@@ -71,7 +71,10 @@ class ChaptersTest {
 				"nether/find_fortress", "nether/brew_potion", "story/enchant_item", "husbandry/tame_an_animal",
 				"husbandry/fishy_business", "husbandry/safely_harvest_honey", "adventure/throw_trident",
 				"adventure/minecraft_trials_edition", "adventure/under_lock_and_key", "story/follow_ender_eye",
-				"story/enter_the_end", "end/kill_dragon", "end/find_end_city", "end/elytra"), Chapters.trackedAdvancements());
+				"story/enter_the_end", "end/kill_dragon", "end/find_end_city", "end/elytra", "nether/obtain_ancient_debris",
+				"nether/find_bastion", "nether/charge_respawn_anchor", "nether/get_wither_skull", "nether/summon_wither",
+				"nether/create_beacon", "nether/create_full_beacon", "adventure/avoid_vibration", "adventure/voluntary_exile",
+				"adventure/hero_of_the_village", "adventure/totem_of_undying"), Chapters.trackedAdvancements());
 	}
 
 	@Test

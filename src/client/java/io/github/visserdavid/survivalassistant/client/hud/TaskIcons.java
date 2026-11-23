@@ -93,6 +93,31 @@ public final class TaskIcons {
 		put("dragon", Items.DRAGON_HEAD);
 		put("end_city", Items.PURPUR_BLOCK);
 		put("elytra", Items.ELYTRA);
+		// chapter 11: netherite
+		put("ancient_debris", Items.ANCIENT_DEBRIS);
+		put("netherite_ingot", Items.NETHERITE_INGOT);
+		put("find_bastion", Items.GILDED_BLACKSTONE);
+		put("upgrade_template", Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE);
+		put("netherite_gear", Items.NETHERITE_SWORD);
+		put("respawn_anchor", Items.RESPAWN_ANCHOR);
+		// chapter 12: the Wither
+		put("wither_skulls", Items.WITHER_SKELETON_SKULL);
+		put("soul_sand", Items.SOUL_SAND);
+		put("summon_wither", Items.WITHER_ROSE);
+		put("nether_star", Items.NETHER_STAR);
+		put("beacon", Items.BEACON);
+		put("full_beacon", Items.DIAMOND_BLOCK);
+		// chapter 13: the Deep Dark
+		put("find_ancient_city", Items.SCULK_CATALYST);
+		put("sneak_past", Items.SCULK_SENSOR);
+		put("echo_shards", Items.ECHO_SHARD);
+		put("recovery_compass", Items.RECOVERY_COMPASS);
+		// chapter 14: raids
+		put("find_outpost", Items.CROSSBOW);
+		put("raid_captain", Items.BANNER.white());
+		put("ominous_bottle", Items.OMINOUS_BOTTLE);
+		put("win_raid", Items.BELL);
+		put("totem", Items.TOTEM_OF_UNDYING);
 		// alerts
 		put("creeper", Items.CREEPER_HEAD);
 		put("danger", Items.IRON_SWORD);
@@ -108,6 +133,7 @@ public final class TaskIcons {
 		put("falling_block", Items.GRAVEL);
 		put("ghast", Items.GHAST_TEAR);
 		put("piglins", Items.GOLD_INGOT);
+		put("warden", Items.SCULK_SHRIEKER);
 		// navigation strip
 		put("nav_death", Items.SKELETON_SKULL);
 		put("nav_home", Items.COMPASS);

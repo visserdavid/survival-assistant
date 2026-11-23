@@ -49,7 +49,11 @@ public final class TipRegistry {
 	public static final Tip UNDERGROUND = Tip.warning("underground", 2,
 			c -> c.underground() && c.torches() == 0);
 
-	public static final List<Tip> URGENT = List.of(CREEPER, DIG_DOWN, LAVA_NEAR, DANGER, HUNGRY_EAT, HUNGRY_HUNT, DUSK, NIGHT_OUTSIDE,
+	/** A warden nearby: never fight it, sneak away (it hunts by sound). */
+	public static final Tip WARDEN = Tip.urgent("warden", 2,
+			SurvivalContext::wardenNearby);
+
+	public static final List<Tip> URGENT = List.of(WARDEN, CREEPER, DIG_DOWN, LAVA_NEAR, DANGER, HUNGRY_EAT, HUNGRY_HUNT, DUSK, NIGHT_OUTSIDE,
 			PHANTOMS, GHAST, PIGLINS, THUNDER, FALLING_BLOCK, UNDERGROUND);
 
 	// --- Day 1: progression milestones. "done" checks include later progress, so skipping ahead counts. ---
@@ -149,6 +153,17 @@ public final class TipRegistry {
 	public static final String ADV_DRAGON = "end/kill_dragon";
 	public static final String ADV_END_CITY = "end/find_end_city";
 	public static final String ADV_ELYTRA = "end/elytra";
+	public static final String ADV_DEBRIS = "nether/obtain_ancient_debris";
+	public static final String ADV_BASTION = "nether/find_bastion";
+	public static final String ADV_ANCHOR = "nether/charge_respawn_anchor";
+	public static final String ADV_WITHER_SKULL = "nether/get_wither_skull";
+	public static final String ADV_SUMMON_WITHER = "nether/summon_wither";
+	public static final String ADV_BEACON = "nether/create_beacon";
+	public static final String ADV_FULL_BEACON = "nether/create_full_beacon";
+	public static final String ADV_SNEAK = "adventure/avoid_vibration";
+	public static final String ADV_RAID_CAPTAIN = "adventure/voluntary_exile";
+	public static final String ADV_RAID = "adventure/hero_of_the_village";
+	public static final String ADV_TOTEM = "adventure/totem_of_undying";
 
 	// --- Chapter 3: villages and trading (docs/research-chapters-3-5.md) ---
 	public static final Tip FIND_VILLAGE = Tip.milestone("find_village", 2,
@@ -283,6 +298,68 @@ public final class TipRegistry {
 			c -> c.hasElytra() || c.has(ADV_ELYTRA));
 
 	public static final List<Tip> CHAPTER_END = List.of(ENDER_PEARLS, EYES_OF_ENDER, FIND_STRONGHOLD, ENTER_END, DRAGON, END_CITY, ELYTRA);
+
+	// --- Chapter 11: netherite and bastions (docs/research-chapters-11-14.md) ---
+	public static final Tip ANCIENT_DEBRIS = Tip.milestone("ancient_debris", 2,
+			c -> c.has(ADV_DEBRIS));
+	public static final Tip NETHERITE_INGOT = Tip.milestone("netherite_ingot", 2,
+			c -> c.hasNetheriteIngot() || c.hasNetheriteGear());
+	public static final Tip FIND_BASTION = Tip.milestone("find_bastion", 2,
+			c -> c.has(ADV_BASTION));
+	public static final Tip UPGRADE_TEMPLATE = Tip.milestone("upgrade_template", 2,
+			c -> c.hasUpgradeTemplate() || c.hasNetheriteGear());
+	public static final Tip NETHERITE_GEAR = Tip.milestone("netherite_gear", 2,
+			SurvivalContext::hasNetheriteGear);
+	public static final Tip RESPAWN_ANCHOR = Tip.milestone("respawn_anchor", 2,
+			c -> c.has(ADV_ANCHOR));
+
+	public static final List<Tip> CHAPTER_NETHERITE = List.of(ANCIENT_DEBRIS, NETHERITE_INGOT, FIND_BASTION, UPGRADE_TEMPLATE,
+			NETHERITE_GEAR, RESPAWN_ANCHOR);
+
+	// --- Chapter 12: the Wither and the beacon ---
+	public static final Tip WITHER_SKULLS = Tip.milestone("wither_skulls", 2,
+			c -> c.witherSkulls() >= 3 || c.has(ADV_SUMMON_WITHER),
+			SurvivalContext::witherSkulls, 3);
+	public static final Tip SOUL_SAND = Tip.milestone("soul_sand", 2,
+			c -> c.soulSand() >= 4 || c.has(ADV_SUMMON_WITHER),
+			SurvivalContext::soulSand, 4);
+	public static final Tip SUMMON_WITHER = Tip.milestone("summon_wither", 2,
+			c -> c.has(ADV_SUMMON_WITHER));
+	public static final Tip NETHER_STAR = Tip.milestone("nether_star", 2,
+			c -> c.hasNetherStar() || c.has(ADV_BEACON));
+	public static final Tip BEACON = Tip.milestone("beacon", 2,
+			c -> c.has(ADV_BEACON));
+	public static final Tip FULL_BEACON = Tip.milestone("full_beacon", 2,
+			c -> c.has(ADV_FULL_BEACON));
+
+	public static final List<Tip> CHAPTER_WITHER = List.of(WITHER_SKULLS, SOUL_SAND, SUMMON_WITHER, NETHER_STAR, BEACON, FULL_BEACON);
+
+	// --- Chapter 13: the Deep Dark and the ancient city ---
+	public static final Tip FIND_ANCIENT_CITY = Tip.milestone("find_ancient_city", 2,
+			c -> c.structure().equals("ancient_city"));
+	public static final Tip SNEAK_PAST = Tip.milestone("sneak_past", 2,
+			c -> c.has(ADV_SNEAK));
+	public static final Tip ECHO_SHARDS = Tip.milestone("echo_shards", 2,
+			c -> c.echoShards() >= 8 || c.hasRecoveryCompass(),
+			SurvivalContext::echoShards, 8);
+	public static final Tip RECOVERY_COMPASS = Tip.milestone("recovery_compass", 2,
+			SurvivalContext::hasRecoveryCompass);
+
+	public static final List<Tip> CHAPTER_DEEP_DARK = List.of(FIND_ANCIENT_CITY, SNEAK_PAST, ECHO_SHARDS, RECOVERY_COMPASS);
+
+	// --- Chapter 14: raids and illagers ---
+	public static final Tip FIND_OUTPOST = Tip.milestone("find_outpost", 2,
+			c -> c.structure().equals("pillager_outpost") || c.has(ADV_RAID_CAPTAIN));
+	public static final Tip RAID_CAPTAIN = Tip.milestone("raid_captain", 2,
+			c -> c.has(ADV_RAID_CAPTAIN));
+	public static final Tip OMINOUS_BOTTLE = Tip.milestone("ominous_bottle", 2,
+			c -> c.hasOminousBottle() || c.has(ADV_RAID));
+	public static final Tip WIN_RAID = Tip.milestone("win_raid", 2,
+			c -> c.has(ADV_RAID));
+	public static final Tip TOTEM = Tip.milestone("totem", 2,
+			c -> c.hasTotem() || c.has(ADV_TOTEM));
+
+	public static final List<Tip> CHAPTER_RAIDS = List.of(FIND_OUTPOST, RAID_CAPTAIN, OMINOUS_BOTTLE, WIN_RAID, TOTEM);
 
 	/** The goals of a chapter (see {@link Chapters}). */
 	public static List<Tip> milestones(int chapter) {

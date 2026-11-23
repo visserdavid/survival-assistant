@@ -19,6 +19,7 @@ import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.monster.piglin.Piglin;
+import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -72,6 +73,9 @@ public final class ContextCollector {
 		boolean boat = false, milk = false, heart = false, turtleHelmet = false, trident = false, filledMap = false, spyglass = false;
 		int sugarCane = 0, redstone = 0, pearls = 0, eyes = 0;
 		boolean doorOpen = false, pistonOut = false, repeater = false, hopper = false, elytra = false;
+		boolean netheriteIngot = false, template = false, netheriteGear = false, netherStar = false, recoveryCompass = false,
+				ominousBottle = false, totem = false;
+		int skulls = 0, soulSand = 0, echoShards = 0;
 		boolean[] armor = new boolean[4]; // head, chest, legs, feet: iron or better
 
 		var inv = player.getInventory();
@@ -117,6 +121,16 @@ public final class ContextCollector {
 			else if (item == Items.ENDER_PEARL) pearls += n;
 			else if (item == Items.ENDER_EYE) { eyes += n; pearls += n; }
 			else if (item == Items.ELYTRA) elytra = true;
+			else if (item == Items.NETHERITE_INGOT) netheriteIngot = true;
+			else if (item == Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE) template = true;
+			else if (item == Items.WITHER_SKELETON_SKULL) skulls += n;
+			else if (item == Items.SOUL_SAND) soulSand += n;
+			else if (item == Items.NETHER_STAR) netherStar = true;
+			else if (item == Items.ECHO_SHARD) echoShards += n;
+			else if (item == Items.RECOVERY_COMPASS) recoveryCompass = true;
+			else if (item == Items.OMINOUS_BOTTLE) ominousBottle = true;
+			else if (item == Items.TOTEM_OF_UNDYING) totem = true;
+			if (isNetheriteGear(item)) netheriteGear = true;
 			if (s.is(ItemTags.ARROWS)) arrows += n;
 			markArmor(s, armor);
 
@@ -133,6 +147,8 @@ public final class ContextCollector {
 			if (worn == Items.TURTLE_HELMET) turtleHelmet = true;
 			if (worn == Items.TRIDENT) trident = true;
 			if (worn == Items.ELYTRA) elytra = true;
+			if (worn == Items.TOTEM_OF_UNDYING) totem = true;
+			if (isNetheriteGear(worn)) netheriteGear = true;
 			if (slot == EquipmentSlot.OFFHAND) {
 				if (worn == Items.SHIELD) shield = true;
 				continue;
@@ -203,9 +219,11 @@ public final class ContextCollector {
 		AABB around = new AABB(player.blockPosition()).inflate(16);
 		int hostiles = level.getEntitiesOfClass(LivingEntity.class, around, e -> e instanceof Enemy && e.isAlive()).size();
 		AABB far = new AABB(player.blockPosition()).inflate(32);
+		boolean warden = !level.getEntitiesOfClass(Warden.class, new AABB(player.blockPosition()).inflate(24), Warden::isAlive).isEmpty();
 		boolean ghast = !overworld && !level.getEntitiesOfClass(Ghast.class, far, Ghast::isAlive).isEmpty();
 		boolean piglin = !overworld && !level.getEntitiesOfClass(Piglin.class, around, Piglin::isAlive).isEmpty();
-		String structure = overworld || SurvivalContext.END.equals(dimension) ? structureAt(level, player.blockPosition()) : "";
+		String structure = overworld || SurvivalContext.END.equals(dimension) || SurvivalContext.NETHER.equals(dimension)
+				? structureAt(level, player.blockPosition()) : "";
 		boolean inVillage = structure.startsWith("village_");
 		boolean ridingHorse = player.getVehicle() instanceof AbstractHorse horse && horse.isTamed();
 		if (player.getVehicle() instanceof AbstractBoat) boat = true;
@@ -219,7 +237,16 @@ public final class ContextCollector {
 				dimension, inVillage, emeralds, trades, enchantedBook, goldWorn, blazeRods, netherWart, bedInInventory, ghast, piglin,
 				brewingStand, bookshelves, anvil, player.experienceLevel, advancements(player),
 				structure, boat, ridingHorse, milk, sugarCane, heart, turtleHelmet, trident, filledMap, spyglass,
-				redstone, doorOpen, pistonOut, repeater, hopper, pearls, eyes, elytra);
+				redstone, doorOpen, pistonOut, repeater, hopper, pearls, eyes, elytra,
+				netheriteIngot, template, netheriteGear, skulls, soulSand, netherStar, echoShards, recoveryCompass,
+				ominousBottle, totem, warden);
+	}
+
+	/** A netherite tool, weapon or armor piece (made in a smithing table, so not the ingot, scrap or template). */
+	private static boolean isNetheriteGear(Item item) {
+		String path = BuiltInRegistries.ITEM.getKey(item).getPath();
+		return path.startsWith("netherite_") && !path.equals("netherite_ingot") && !path.equals("netherite_scrap")
+				&& !path.equals("netherite_block") && !path.endsWith("smithing_template");
 	}
 
 	/** The notable structure ({@link SurvivalContext#STRUCTURES}) the position is in, or "". */

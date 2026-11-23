@@ -36,6 +36,8 @@ package io.github.visserdavid.survivalassistant.advice;
  * @param ironDoorOpen   an iron door nearby stands open (only redstone can open one)
  * @param pistonExtended a piston nearby is pushed out (so it is powered)
  * @param enderPearls    ender pearls plus eyes of ender (an eye is made from a pearl)
+ * @param hasNetheriteGear a netherite tool, weapon or armor piece (not the ingot, scrap or template)
+ * @param wardenNearby   a warden within 24 blocks
  */
 public record SurvivalContext(
 		int dayIndex,
@@ -114,13 +116,26 @@ public record SurvivalContext(
 		boolean hopperPlaced,
 		int enderPearls,
 		int eyesOfEnder,
-		boolean hasElytra
+		boolean hasElytra,
+		// chapters 11-14 (netherite, the Wither, the Deep Dark, raids)
+		boolean hasNetheriteIngot,
+		boolean hasUpgradeTemplate,
+		boolean hasNetheriteGear,
+		int witherSkulls,
+		int soulSand,
+		boolean hasNetherStar,
+		int echoShards,
+		boolean hasRecoveryCompass,
+		boolean hasOminousBottle,
+		boolean hasTotem,
+		boolean wardenNearby
 ) {
 	/** Structures the guide knows about (ids in data/minecraft/worldgen/structure of the 26.3 data). */
 	public static final java.util.Set<String> STRUCTURES = java.util.Set.of(
 			"village_plains", "village_desert", "village_savanna", "village_snowy", "village_taiga",
 			"shipwreck", "shipwreck_beached", "ocean_ruin_cold", "ocean_ruin_warm",
-			"desert_pyramid", "jungle_pyramid", "trial_chambers", "stronghold", "end_city");
+			"desert_pyramid", "jungle_pyramid", "trial_chambers", "stronghold", "end_city",
+			"bastion_remnant", "ancient_city", "pillager_outpost");
 
 	public boolean inEnd() {
 		return END.equals(dimension);
@@ -183,6 +198,9 @@ public record SurvivalContext(
 		private boolean hasBoat, ridingTamedHorse, hasMilk, hasHeartOfTheSea, hasTurtleHelmet, hasTrident, hasFilledMap, hasSpyglass;
 		private int sugarCane, redstone, enderPearls, eyesOfEnder;
 		private boolean ironDoorOpen, pistonExtended, repeaterPlaced, hopperPlaced, hasElytra;
+		private boolean hasNetheriteIngot, hasUpgradeTemplate, hasNetheriteGear, hasNetherStar, hasRecoveryCompass,
+				hasOminousBottle, hasTotem, wardenNearby;
+		private int witherSkulls, soulSand, echoShards;
 		private boolean inVillage, hasEnchantedBook, goldArmorWorn, bedInInventory, ghastNearby, piglinNearby, hasBrewingStand, hasAnvil;
 		private float health = 20f;
 		private boolean hasCraftingTable, hasFurnace, hasBed, hasChest, hasShield, hasIronArmor, hasWaterBucket,
@@ -262,6 +280,17 @@ public record SurvivalContext(
 		public Builder enderPearls(int v) { enderPearls = v; return this; }
 		public Builder eyes(int v) { eyesOfEnder = v; return this; }
 		public Builder elytra(boolean v) { hasElytra = v; return this; }
+		public Builder netheriteIngot(boolean v) { hasNetheriteIngot = v; return this; }
+		public Builder upgradeTemplate(boolean v) { hasUpgradeTemplate = v; return this; }
+		public Builder netheriteGear(boolean v) { hasNetheriteGear = v; return this; }
+		public Builder witherSkulls(int v) { witherSkulls = v; return this; }
+		public Builder soulSand(int v) { soulSand = v; return this; }
+		public Builder netherStar(boolean v) { hasNetherStar = v; return this; }
+		public Builder echoShards(int v) { echoShards = v; return this; }
+		public Builder recoveryCompass(boolean v) { hasRecoveryCompass = v; return this; }
+		public Builder ominousBottle(boolean v) { hasOminousBottle = v; return this; }
+		public Builder totem(boolean v) { hasTotem = v; return this; }
+		public Builder warden(boolean v) { wardenNearby = v; return this; }
 
 		public SurvivalContext build() {
 			return new SurvivalContext(dayIndex, timeOfDay, health, food, logs, planks, hasCraftingTable, pickaxeTier, swordTier,
@@ -272,7 +301,8 @@ public record SurvivalContext(
 					bedInInventory, ghastNearby, piglinNearby, hasBrewingStand, bookshelves, hasAnvil, xpLevel, java.util.Set.copyOf(advancements),
 					structure, hasBoat, ridingTamedHorse, hasMilk, sugarCane, hasHeartOfTheSea, hasTurtleHelmet, hasTrident,
 					hasFilledMap, hasSpyglass, redstone, ironDoorOpen, pistonExtended, repeaterPlaced, hopperPlaced, enderPearls,
-					eyesOfEnder, hasElytra);
+					eyesOfEnder, hasElytra, hasNetheriteIngot, hasUpgradeTemplate, hasNetheriteGear, witherSkulls, soulSand,
+					hasNetherStar, echoShards, hasRecoveryCompass, hasOminousBottle, hasTotem, wardenNearby);
 		}
 	}
 }

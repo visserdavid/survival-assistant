@@ -43,6 +43,10 @@ as long as you're working on a chapter.
 | 8 | **Exploring** | 2 | A map, a spyglass, a desert or jungle temple, the trial chambers, open a vault |
 | 9 | **Redstone** | 2 | 16 redstone, an automatic iron door, a powered piston, a repeater, a hopper |
 | 10 | **The End** | 4 and 5 | 12 ender pearls, 12 eyes of ender, the stronghold, enter the End, defeat the dragon, an end city, an elytra |
+| 11 | **Netherite and bastions** | 4 | Ancient debris, a netherite ingot, a bastion, the upgrade template, netherite gear, a respawn anchor |
+| 12 | **The Wither and the beacon** | 4 and 5 | 3 wither skeleton skulls, 4 soul sand, summon and defeat the Wither, a beacon, a full beacon |
+| 13 | **The Deep Dark** | 8 | An ancient city, sneak past sculk, 8 echo shards, a recovery compass |
+| 14 | **Raids and illagers** | 3 | A pillager outpost, a raid captain, an ominous bottle, win a raid, a totem of undying |
 
 - Finish a chapter and the guide celebrates and shows the menu: finished chapters in green, the current one in
   gold, the ones you can start as buttons, locked ones in grey with what they need. Hover over a button to see
@@ -54,7 +58,7 @@ as long as you're working on a chapter.
 </p>
 
 - Switch any time with `/guide chapter <name>` (`village`, `nether`, `magic`, `husbandry`, `ocean`, `explorer`,
-  `redstone`, `end`); progress is kept. The task card shows the chapter you're in.
+  `redstone`, `end`, `netherite`, `wither`, `deep_dark`, `raids`); progress is kept. The task card shows the chapter you're in.
 
 <p align="center">
   <img src="docs/images/task-card-chapter.png" alt="Task card in chapter 6: Guide, Ch. 6, Farming and animals, current task Tame an animal, next: Collect 16 sugar cane, Catch a fish" width="460">
@@ -65,14 +69,17 @@ as long as you're working on a chapter.
 - Place notes, once each: the first time in the Nether (beds explode, piglins and gold, fast lava), in a village,
   the first night in a village, in a desert temple (the TNT trap), a jungle temple (tripwires), the trial
   chambers, at a shipwreck or ocean ruin (drowned, your air), in a stronghold (silverfish), the End (endermen, the
-  crystals, the void) and an end city (shulkers). In the Nether the guide also warns about ghasts and about piglins
-  when you're not wearing gold.
-- Finish all ten chapters and you've beaten the game with the guide at your side.
+  crystals, the void), an end city (shulkers), a bastion (brutes), an ancient city, a pillager outpost (Bad Omen)
+  and your first wither skeleton skull (where never to summon the Wither). In the Nether the guide also warns about
+  ghasts and about piglins when you're not wearing gold, and a warden nearby is the most urgent warning of all.
+- Chapters 1-10 take you from your first night to the ender dragon; 11-14 are the endgame. Still to come:
+  archaeology, trial challenges, the happy ghast and automation.
 - The checked game facts are in [docs/research-first-days.md](docs/research-first-days.md),
   [docs/research-chapter-2.md](docs/research-chapter-2.md),
   [docs/research-chapters-3-5.md](docs/research-chapters-3-5.md),
-  [docs/research-chapters-6-8.md](docs/research-chapters-6-8.md) and
-  [docs/research-chapters-9-10.md](docs/research-chapters-9-10.md).
+  [docs/research-chapters-6-8.md](docs/research-chapters-6-8.md),
+  [docs/research-chapters-9-10.md](docs/research-chapters-9-10.md) and
+  [docs/research-chapters-11-14.md](docs/research-chapters-11-14.md).
 - Finished everything with an older version? `/guide call` brings the guide back with the new chapters.
 - Don't want a character walking around? `/guide character off` removes it. The task card stays, and you
   only get urgent warnings in chat.

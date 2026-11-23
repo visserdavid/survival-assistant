@@ -24,10 +24,14 @@ public final class Chapters {
 	public static final Chapter EXPLORER = new Chapter(8, "explorer", TipRegistry.CHAPTER_EXPLORER, List.of(2), false);
 	public static final Chapter REDSTONE = new Chapter(9, "redstone", TipRegistry.CHAPTER_REDSTONE, List.of(2), false);
 	public static final Chapter END = new Chapter(10, "end", TipRegistry.CHAPTER_END, List.of(4, 5), false);
+	public static final Chapter NETHERITE = new Chapter(11, "netherite", TipRegistry.CHAPTER_NETHERITE, List.of(4), false);
+	public static final Chapter WITHER = new Chapter(12, "wither", TipRegistry.CHAPTER_WITHER, List.of(4, 5), false);
+	public static final Chapter DEEP_DARK = new Chapter(13, "deep_dark", TipRegistry.CHAPTER_DEEP_DARK, List.of(8), false);
+	public static final Chapter RAIDS = new Chapter(14, "raids", TipRegistry.CHAPTER_RAIDS, List.of(3), false);
 
 	/** In menu order; the list index is number - 1. */
 	public static final List<Chapter> ALL = List.of(FIRST_DAYS, SETTLING_IN, VILLAGE, NETHER, MAGIC, HUSBANDRY, OCEAN, EXPLORER,
-			REDSTONE, END);
+			REDSTONE, END, NETHERITE, WITHER, DEEP_DARK, RAIDS);
 
 	/** The chapter with this number; unknown numbers (an old or newer save) fall back to the nearest one. */
 	public static Chapter get(int number) {
@@ -64,5 +68,8 @@ public final class Chapters {
 			TipRegistry.ADV_TRADE, TipRegistry.ADV_IRON_GOLEM, TipRegistry.ADV_ENTER_NETHER, TipRegistry.ADV_FORTRESS,
 			TipRegistry.ADV_BREW, TipRegistry.ADV_ENCHANT, TipRegistry.ADV_TAME, TipRegistry.ADV_FISH, TipRegistry.ADV_HONEY,
 			TipRegistry.ADV_TRIDENT, TipRegistry.ADV_TRIAL_CHAMBERS, TipRegistry.ADV_VAULT, TipRegistry.ADV_STRONGHOLD,
-			TipRegistry.ADV_ENTER_END, TipRegistry.ADV_DRAGON, TipRegistry.ADV_END_CITY, TipRegistry.ADV_ELYTRA));
+			TipRegistry.ADV_ENTER_END, TipRegistry.ADV_DRAGON, TipRegistry.ADV_END_CITY, TipRegistry.ADV_ELYTRA,
+			TipRegistry.ADV_DEBRIS, TipRegistry.ADV_BASTION, TipRegistry.ADV_ANCHOR, TipRegistry.ADV_WITHER_SKULL,
+			TipRegistry.ADV_SUMMON_WITHER, TipRegistry.ADV_BEACON, TipRegistry.ADV_FULL_BEACON, TipRegistry.ADV_SNEAK,
+			TipRegistry.ADV_RAID_CAPTAIN, TipRegistry.ADV_RAID, TipRegistry.ADV_TOTEM));
 }

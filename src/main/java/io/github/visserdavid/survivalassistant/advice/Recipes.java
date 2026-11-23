@@ -114,7 +114,18 @@ public final class Recipes {
 					Map.of('I', IRON, 'C', "minecraft:chest"))),
 			// chapter 10: an eye of ender is a pearl with blaze powder (shapeless)
 			Map.entry("eyes_of_ender", new Recipe("minecraft:ender_eye", 1, List.of("PB"),
-					Map.of('P', "minecraft:ender_pearl", 'B', "minecraft:blaze_powder")))
+					Map.of('P', "minecraft:ender_pearl", 'B', "minecraft:blaze_powder"))),
+			// chapter 11: a netherite ingot is 4 scrap and 4 gold (shapeless); the respawn anchor
+			Map.entry("netherite_ingot", new Recipe("minecraft:netherite_ingot", 1, List.of("SSS", "SGG", "GG"),
+					Map.of('S', "minecraft:netherite_scrap", 'G', "minecraft:gold_ingot"))),
+			Map.entry("respawn_anchor", new Recipe("minecraft:respawn_anchor", 1, List.of("OOO", "GGG", "OOO"),
+					Map.of('O', "minecraft:crying_obsidian", 'G', "minecraft:glowstone"))),
+			// chapter 12
+			Map.entry("beacon", new Recipe("minecraft:beacon", 1, List.of("GGG", "GSG", "OOO"),
+					Map.of('G', "minecraft:glass", 'S', "minecraft:nether_star", 'O', "minecraft:obsidian"))),
+			// chapter 13
+			Map.entry("recovery_compass", new Recipe("minecraft:recovery_compass", 1, List.of("SSS", "SCS", "SSS"),
+					Map.of('S', "minecraft:echo_shard", 'C', "minecraft:compass")))
 	);
 
 	public static Optional<Recipe> forTask(String taskId) {
