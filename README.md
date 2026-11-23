@@ -87,7 +87,7 @@ archaeology, the trial challenges, the happy ghast and automation.
 
 ### Task card (top-left by default)
 <p>
-  <img src="docs/images/task-card.png" alt="Task card: Guide, Day 1/3, current task Chop wood 0/10, next: Make a crafting table, Wooden pickaxe" width="460">
+  <img src="docs/images/task-card.png" alt="Task card: Guide, Ch. 1, First days, current task Chop wood 0/10, next: Make a crafting table, Wooden pickaxe" width="460">
   <img src="docs/images/task-card-full.png" alt="Task card in full view: all 15 goals with the recipe of the current task below" width="460" align="top">
 </p>
 <p>
