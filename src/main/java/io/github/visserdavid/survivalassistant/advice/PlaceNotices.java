@@ -16,6 +16,9 @@ import java.util.Set;
  *   <li>{@code jungle_temple}: tripwires fire arrows.</li>
  *   <li>{@code trial_chambers}: trial spawners, and keys that open the vaults.</li>
  *   <li>{@code wreck}: drowned around shipwrecks and ocean ruins; watch your air.</li>
+ *   <li>{@code stronghold}: the portal room, silverfish hiding in stone bricks.</li>
+ *   <li>{@code end}: endermen, the end crystals that heal the dragon, the void.</li>
+ *   <li>{@code end_city}: shulker bullets make you float; the ship holds an elytra.</li>
  * </ul>
  */
 public final class PlaceNotices {
@@ -29,6 +32,9 @@ public final class PlaceNotices {
 		if (ctx.structure().equals("jungle_pyramid") && !seen.contains("jungle_temple")) return "jungle_temple";
 		if (ctx.structure().equals("trial_chambers") && !seen.contains("trial_chambers")) return "trial_chambers";
 		if (ctx.inWreck() && !seen.contains("wreck")) return "wreck";
+		if (ctx.structure().equals("stronghold") && !seen.contains("stronghold")) return "stronghold";
+		if (ctx.inEnd() && !seen.contains("end")) return "end";
+		if (ctx.structure().equals("end_city") && !seen.contains("end_city")) return "end_city";
 		return null;
 	}
 }

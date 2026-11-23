@@ -33,6 +33,9 @@ package io.github.visserdavid.survivalassistant.advice;
  * @param structure      id path of the notable structure the player stands in ("village_plains", "shipwreck",
  *                       "desert_pyramid", "trial_chambers", ...), or "" (see {@link #STRUCTURES})
  * @param ridingTamedHorse riding a tamed horse, donkey, mule or camel
+ * @param ironDoorOpen   an iron door nearby stands open (only redstone can open one)
+ * @param pistonExtended a piston nearby is pushed out (so it is powered)
+ * @param enderPearls    ender pearls plus eyes of ender (an eye is made from a pearl)
  */
 public record SurvivalContext(
 		int dayIndex,
@@ -102,13 +105,26 @@ public record SurvivalContext(
 		boolean hasTurtleHelmet,
 		boolean hasTrident,
 		boolean hasFilledMap,
-		boolean hasSpyglass
+		boolean hasSpyglass,
+		// chapters 9-10 (redstone, the End)
+		int redstone,
+		boolean ironDoorOpen,
+		boolean pistonExtended,
+		boolean repeaterPlaced,
+		boolean hopperPlaced,
+		int enderPearls,
+		int eyesOfEnder,
+		boolean hasElytra
 ) {
 	/** Structures the guide knows about (ids in data/minecraft/worldgen/structure of the 26.3 data). */
 	public static final java.util.Set<String> STRUCTURES = java.util.Set.of(
 			"village_plains", "village_desert", "village_savanna", "village_snowy", "village_taiga",
 			"shipwreck", "shipwreck_beached", "ocean_ruin_cold", "ocean_ruin_warm",
-			"desert_pyramid", "jungle_pyramid", "trial_chambers");
+			"desert_pyramid", "jungle_pyramid", "trial_chambers", "stronghold", "end_city");
+
+	public boolean inEnd() {
+		return END.equals(dimension);
+	}
 
 	/** In a shipwreck or an ocean ruin. */
 	public boolean inWreck() {
@@ -165,7 +181,8 @@ public record SurvivalContext(
 		private java.util.Set<String> advancements = new java.util.HashSet<>();
 		private String structure = "";
 		private boolean hasBoat, ridingTamedHorse, hasMilk, hasHeartOfTheSea, hasTurtleHelmet, hasTrident, hasFilledMap, hasSpyglass;
-		private int sugarCane;
+		private int sugarCane, redstone, enderPearls, eyesOfEnder;
+		private boolean ironDoorOpen, pistonExtended, repeaterPlaced, hopperPlaced, hasElytra;
 		private boolean inVillage, hasEnchantedBook, goldArmorWorn, bedInInventory, ghastNearby, piglinNearby, hasBrewingStand, hasAnvil;
 		private float health = 20f;
 		private boolean hasCraftingTable, hasFurnace, hasBed, hasChest, hasShield, hasIronArmor, hasWaterBucket,
@@ -237,6 +254,14 @@ public record SurvivalContext(
 		public Builder trident(boolean v) { hasTrident = v; return this; }
 		public Builder filledMap(boolean v) { hasFilledMap = v; return this; }
 		public Builder spyglass(boolean v) { hasSpyglass = v; return this; }
+		public Builder redstone(int v) { redstone = v; return this; }
+		public Builder ironDoorOpen(boolean v) { ironDoorOpen = v; return this; }
+		public Builder pistonExtended(boolean v) { pistonExtended = v; return this; }
+		public Builder repeater(boolean v) { repeaterPlaced = v; return this; }
+		public Builder hopper(boolean v) { hopperPlaced = v; return this; }
+		public Builder enderPearls(int v) { enderPearls = v; return this; }
+		public Builder eyes(int v) { eyesOfEnder = v; return this; }
+		public Builder elytra(boolean v) { hasElytra = v; return this; }
 
 		public SurvivalContext build() {
 			return new SurvivalContext(dayIndex, timeOfDay, health, food, logs, planks, hasCraftingTable, pickaxeTier, swordTier,
@@ -246,7 +271,8 @@ public record SurvivalContext(
 					hasEnchantingTable, dimension, inVillage, emeralds, trades, hasEnchantedBook, goldArmorWorn, blazeRods, netherWart,
 					bedInInventory, ghastNearby, piglinNearby, hasBrewingStand, bookshelves, hasAnvil, xpLevel, java.util.Set.copyOf(advancements),
 					structure, hasBoat, ridingTamedHorse, hasMilk, sugarCane, hasHeartOfTheSea, hasTurtleHelmet, hasTrident,
-					hasFilledMap, hasSpyglass);
+					hasFilledMap, hasSpyglass, redstone, ironDoorOpen, pistonExtended, repeaterPlaced, hopperPlaced, enderPearls,
+					eyesOfEnder, hasElytra);
 		}
 	}
 }

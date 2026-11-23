@@ -45,11 +45,15 @@ class ChaptersTest {
 		assertEquals(List.of(Chapters.SETTLING_IN), Chapters.available(1, done(Chapters.FIRST_DAYS)));
 		// base done: villages and the Nether, brewing waits for the Nether
 		Set<String> base = done(Chapters.FIRST_DAYS, Chapters.SETTLING_IN);
-		assertEquals(List.of(Chapters.VILLAGE, Chapters.NETHER, Chapters.HUSBANDRY, Chapters.OCEAN, Chapters.EXPLORER),
-				Chapters.available(2, base));
+		assertEquals(List.of(Chapters.VILLAGE, Chapters.NETHER, Chapters.HUSBANDRY, Chapters.OCEAN, Chapters.EXPLORER,
+				Chapters.REDSTONE), Chapters.available(2, base));
 		assertEquals(Chapters.Status.LOCKED, Chapters.status(Chapters.MAGIC, 2, base));
 		Set<String> nether = done(Chapters.FIRST_DAYS, Chapters.SETTLING_IN, Chapters.NETHER);
 		assertEquals(Chapters.Status.AVAILABLE, Chapters.status(Chapters.MAGIC, 4, nether));
+		// the End needs both the Nether and brewing
+		assertEquals(Chapters.Status.LOCKED, Chapters.status(Chapters.END, 4, nether));
+		assertEquals(Chapters.Status.AVAILABLE, Chapters.status(Chapters.END, 5,
+				done(Chapters.FIRST_DAYS, Chapters.SETTLING_IN, Chapters.NETHER, Chapters.MAGIC)));
 	}
 
 	@Test
@@ -66,7 +70,8 @@ class ChaptersTest {
 		assertEquals(Set.of("adventure/trade", "adventure/summon_iron_golem", "story/enter_the_nether",
 				"nether/find_fortress", "nether/brew_potion", "story/enchant_item", "husbandry/tame_an_animal",
 				"husbandry/fishy_business", "husbandry/safely_harvest_honey", "adventure/throw_trident",
-				"adventure/minecraft_trials_edition", "adventure/under_lock_and_key"), Chapters.trackedAdvancements());
+				"adventure/minecraft_trials_edition", "adventure/under_lock_and_key", "story/follow_ender_eye",
+				"story/enter_the_end", "end/kill_dragon", "end/find_end_city", "end/elytra"), Chapters.trackedAdvancements());
 	}
 
 	@Test

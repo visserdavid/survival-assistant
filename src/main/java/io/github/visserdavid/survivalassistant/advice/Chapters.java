@@ -22,9 +22,12 @@ public final class Chapters {
 	public static final Chapter HUSBANDRY = new Chapter(6, "husbandry", TipRegistry.CHAPTER_HUSBANDRY, List.of(2), false);
 	public static final Chapter OCEAN = new Chapter(7, "ocean", TipRegistry.CHAPTER_OCEAN, List.of(2), false);
 	public static final Chapter EXPLORER = new Chapter(8, "explorer", TipRegistry.CHAPTER_EXPLORER, List.of(2), false);
+	public static final Chapter REDSTONE = new Chapter(9, "redstone", TipRegistry.CHAPTER_REDSTONE, List.of(2), false);
+	public static final Chapter END = new Chapter(10, "end", TipRegistry.CHAPTER_END, List.of(4, 5), false);
 
 	/** In menu order; the list index is number - 1. */
-	public static final List<Chapter> ALL = List.of(FIRST_DAYS, SETTLING_IN, VILLAGE, NETHER, MAGIC, HUSBANDRY, OCEAN, EXPLORER);
+	public static final List<Chapter> ALL = List.of(FIRST_DAYS, SETTLING_IN, VILLAGE, NETHER, MAGIC, HUSBANDRY, OCEAN, EXPLORER,
+			REDSTONE, END);
 
 	/** The chapter with this number; unknown numbers (an old or newer save) fall back to the nearest one. */
 	public static Chapter get(int number) {
@@ -60,5 +63,6 @@ public final class Chapters {
 	private static final Set<String> TRACKED = new LinkedHashSet<>(List.of(
 			TipRegistry.ADV_TRADE, TipRegistry.ADV_IRON_GOLEM, TipRegistry.ADV_ENTER_NETHER, TipRegistry.ADV_FORTRESS,
 			TipRegistry.ADV_BREW, TipRegistry.ADV_ENCHANT, TipRegistry.ADV_TAME, TipRegistry.ADV_FISH, TipRegistry.ADV_HONEY,
-			TipRegistry.ADV_TRIDENT, TipRegistry.ADV_TRIAL_CHAMBERS, TipRegistry.ADV_VAULT));
+			TipRegistry.ADV_TRIDENT, TipRegistry.ADV_TRIAL_CHAMBERS, TipRegistry.ADV_VAULT, TipRegistry.ADV_STRONGHOLD,
+			TipRegistry.ADV_ENTER_END, TipRegistry.ADV_DRAGON, TipRegistry.ADV_END_CITY, TipRegistry.ADV_ELYTRA));
 }

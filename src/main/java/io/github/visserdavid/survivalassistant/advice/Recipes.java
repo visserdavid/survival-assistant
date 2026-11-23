@@ -103,7 +103,18 @@ public final class Recipes {
 			Map.entry("map", new Recipe("minecraft:map", 1, List.of("###", "#X#", "###"),
 					Map.of('#', "minecraft:paper", 'X', "minecraft:compass"))),
 			Map.entry("spyglass", new Recipe("minecraft:spyglass", 1, List.of(" # ", " X ", " X "),
-					Map.of('#', "minecraft:amethyst_shard", 'X', "minecraft:copper_ingot")))
+					Map.of('#', "minecraft:amethyst_shard", 'X', "minecraft:copper_ingot"))),
+			// chapter 9: redstone
+			Map.entry("iron_door", new Recipe("minecraft:iron_door", 3, List.of("##", "##", "##"), Map.of('#', IRON))),
+			Map.entry("piston", new Recipe("minecraft:piston", 1, List.of("TTT", "#X#", "#R#"),
+					Map.of('T', PLANKS, '#', COBBLE, 'X', IRON, 'R', "minecraft:redstone"))),
+			Map.entry("repeater", new Recipe("minecraft:repeater", 1, List.of("#X#", "III"),
+					Map.of('#', "minecraft:redstone_torch", 'X', "minecraft:redstone", 'I', "minecraft:stone"))),
+			Map.entry("hopper", new Recipe("minecraft:hopper", 1, List.of("I I", "ICI", " I "),
+					Map.of('I', IRON, 'C', "minecraft:chest"))),
+			// chapter 10: an eye of ender is a pearl with blaze powder (shapeless)
+			Map.entry("eyes_of_ender", new Recipe("minecraft:ender_eye", 1, List.of("PB"),
+					Map.of('P', "minecraft:ender_pearl", 'B', "minecraft:blaze_powder")))
 	);
 
 	public static Optional<Recipe> forTask(String taskId) {

@@ -144,6 +144,11 @@ public final class TipRegistry {
 	public static final String ADV_TRIDENT = "adventure/throw_trident";
 	public static final String ADV_TRIAL_CHAMBERS = "adventure/minecraft_trials_edition";
 	public static final String ADV_VAULT = "adventure/under_lock_and_key";
+	public static final String ADV_STRONGHOLD = "story/follow_ender_eye";
+	public static final String ADV_ENTER_END = "story/enter_the_end";
+	public static final String ADV_DRAGON = "end/kill_dragon";
+	public static final String ADV_END_CITY = "end/find_end_city";
+	public static final String ADV_ELYTRA = "end/elytra";
 
 	// --- Chapter 3: villages and trading (docs/research-chapters-3-5.md) ---
 	public static final Tip FIND_VILLAGE = Tip.milestone("find_village", 2,
@@ -243,6 +248,41 @@ public final class TipRegistry {
 			c -> c.has(ADV_VAULT));
 
 	public static final List<Tip> CHAPTER_EXPLORER = List.of(MAP, SPYGLASS, FIND_TEMPLE, TRIAL_CHAMBERS, OPEN_VAULT);
+
+	// --- Chapter 9: redstone (docs/research-chapters-9-10.md) ---
+	public static final Tip REDSTONE_DUST = Tip.milestone("redstone_dust", 2,
+			c -> c.redstone() >= 16,
+			SurvivalContext::redstone, 16);
+	public static final Tip IRON_DOOR = Tip.milestone("iron_door", 2,
+			SurvivalContext::ironDoorOpen);
+	public static final Tip PISTON = Tip.milestone("piston", 2,
+			SurvivalContext::pistonExtended);
+	public static final Tip REPEATER = Tip.milestone("repeater", 2,
+			SurvivalContext::repeaterPlaced);
+	public static final Tip HOPPER = Tip.milestone("hopper", 2,
+			SurvivalContext::hopperPlaced);
+
+	public static final List<Tip> CHAPTER_REDSTONE = List.of(REDSTONE_DUST, IRON_DOOR, PISTON, REPEATER, HOPPER);
+
+	// --- Chapter 10: the End ---
+	public static final Tip ENDER_PEARLS = Tip.milestone("ender_pearls", 2,
+			c -> c.enderPearls() >= 12 || c.has(ADV_STRONGHOLD),
+			SurvivalContext::enderPearls, 12);
+	public static final Tip EYES_OF_ENDER = Tip.milestone("eyes_of_ender", 2,
+			c -> c.eyesOfEnder() >= 12 || c.has(ADV_ENTER_END),
+			SurvivalContext::eyesOfEnder, 12);
+	public static final Tip FIND_STRONGHOLD = Tip.milestone("find_stronghold", 2,
+			c -> c.has(ADV_STRONGHOLD));
+	public static final Tip ENTER_END = Tip.milestone("enter_end", 2,
+			c -> c.has(ADV_ENTER_END) || c.inEnd());
+	public static final Tip DRAGON = Tip.milestone("dragon", 2,
+			c -> c.has(ADV_DRAGON));
+	public static final Tip END_CITY = Tip.milestone("end_city", 2,
+			c -> c.has(ADV_END_CITY));
+	public static final Tip ELYTRA = Tip.milestone("elytra", 2,
+			c -> c.hasElytra() || c.has(ADV_ELYTRA));
+
+	public static final List<Tip> CHAPTER_END = List.of(ENDER_PEARLS, EYES_OF_ENDER, FIND_STRONGHOLD, ENTER_END, DRAGON, END_CITY, ELYTRA);
 
 	/** The goals of a chapter (see {@link Chapters}). */
 	public static List<Tip> milestones(int chapter) {

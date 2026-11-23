@@ -79,6 +79,20 @@ public final class TaskIcons {
 		put("find_temple", Items.CHISELED_SANDSTONE);
 		put("trial_chambers", Items.TRIAL_SPAWNER);
 		put("open_vault", Items.TRIAL_KEY);
+		// chapter 9: redstone
+		put("redstone_dust", Items.REDSTONE);
+		put("iron_door", Items.IRON_DOOR);
+		put("piston", Items.PISTON);
+		put("repeater", Items.REPEATER);
+		put("hopper", Items.HOPPER);
+		// chapter 10: the End
+		put("ender_pearls", Items.ENDER_PEARL);
+		put("eyes_of_ender", Items.ENDER_EYE);
+		put("find_stronghold", Items.END_PORTAL_FRAME);
+		put("enter_end", Items.END_STONE);
+		put("dragon", Items.DRAGON_HEAD);
+		put("end_city", Items.PURPUR_BLOCK);
+		put("elytra", Items.ELYTRA);
 		// alerts
 		put("creeper", Items.CREEPER_HEAD);
 		put("danger", Items.IRON_SWORD);
