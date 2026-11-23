@@ -1,14 +1,13 @@
-<p align="center"><img src="docs/images/SurvivalAssistantGitHub.jpg" alt="Artwork: the guide and a player in a blocky forest, with the task card and environment card floating above" width="100%"></p>
-
 # <img src="docs/images/icon-512.png" alt="" width="40" align="top"> Survival Assistant
 
-A Fabric mod for **Minecraft 26.3** that helps new players get through their first days in survival.
-A friendly guide walks with you and tells you what to do next. A compact task card shows your progress,
-and an environment card explains your current biome and which ores are worth digging for at your height.
+A Fabric mod for **Minecraft 26.3** that teaches survival, from your very first night to the ender dragon and
+beyond. A friendly guide called Pim walks with you through **18 chapters**: he tells you what to do next, warns you
+when you're in danger and celebrates every goal you reach. A compact task card shows your progress, and an
+environment card explains your current biome and which ores are worth digging for at your height.
 
-All advice follows a researched beginner path. Recipes, mob spawns, ore heights and other facts were
-**checked against the game's own data files** ([research](docs/research-first-days.md),
-[biome and ore facts](docs/biomes-and-heights.md)). There are no speedrun tricks: it's aimed at an average player.
+All advice follows a researched path for an average player, without speedrun tricks. Recipes, mob spawns, ore
+heights and other facts were **checked against the game's own data files**; see
+[How the advice was verified](#how-the-advice-was-verified).
 
 ## Features
 
@@ -16,20 +15,34 @@ All advice follows a researched beginner path. Recipes, mob spawns, ore heights 
 - A guide character spawns next to you in a new world. It follows you, can't be hurt, and monsters ignore it.
 - It gives tips in chat at the right moment, praises you when you reach a goal, and looks at the nearest tree
   or stone when it tells you to gather them.
-- Sneak and right-click the guide for a tip and your progress.
+- Sneak and right-click the guide for a tip and your progress in the current chapter.
 - It never gets in your way: it doesn't push you, keeps out of your view and your path, and normal clicks,
   hits, arrows and blocks you place go straight through it. It doesn't set off pressure plates, tripwires or
-  sculk sensors, doesn't trample farmland and doesn't follow you into boats, minecarts or portals.
-- After 3 in-game days it asks whether you still need it. Click **[Yes, 3 more days]** to keep it around
-  (you can extend as often as you like), or **[No, thanks]** to say goodbye. No answer within a day means goodbye.
-- Reach all 15 goals and the guide congratulates you (title, sound and a burst of particles) and shows the
-  **chapter menu** (see below). Rather go on alone? Click **[I'll manage]**. You can always call it back with
-  `/guide call`.
+  sculk sensors, doesn't trample farmland and doesn't follow you into boats, minecarts or portals. When you
+  change dimension it simply appears next to you again.
+- Chapter 1 (the first days) lasts 3 in-game days. Then the guide asks whether you still need it: click
+  **[Yes, 3 more days]** to keep it around (as often as you like), or **[No, thanks]** to say goodbye. No answer
+  within a day means goodbye. Later chapters have no time limit.
+- Finish a chapter and the guide congratulates you (title, sound and a burst of particles) and shows the
+  chapter menu. Rather go on alone? Click **[I'll manage]**. You can always call it back with `/guide call`.
+- Don't want a character walking around? `/guide character off` removes it. The task card stays, and you only
+  get urgent warnings in chat.
+
+### Meet Pim
+- The guide has a name and a past: **Pim**, an old explorer who has travelled through more worlds than he can count.
+  His own first night went badly (lost, in a hole in the ground with a single torch), and that is why he now helps
+  newcomers. He collects maps and keeps losing them, never finished his own house, loves sunrises, foxes and fresh
+  bread, and is still afraid of creepers.
+- He introduces himself when you meet. Use `/guide about` to hear a little more about him (a different story every
+  time), and now and then he tells one by himself when there is nothing left to say about the place you're in.
+- With small talk on you can simply ask him: "Pim, where are you from?" The model answers from the same
+  background, so his story stays consistent.
+- Prefer another name? `/guide name <name>` (up to 16 letters, digits or spaces; `/guide name reset` goes back).
+  Server owners can change the default with `guideName` in the config.
 
 ### Chapters: a Minecraft tutorial
-The guide grows with you, chapter by chapter. Chapters 1 and 2 are the base; after that you pick what you want
-to learn from a menu in chat (`/guide chapters`). Only the first days have a time limit: after that the guide stays
-as long as you're working on a chapter.
+Chapters 1 and 2 are the base; after that you pick what you want to learn from a menu in chat
+(`/guide chapters`). Some chapters need others first.
 
 | # | Chapter | Opens after | Goals |
 |---|---|---|---|
@@ -52,9 +65,11 @@ as long as you're working on a chapter.
 | 17 | **The happy ghast** | 4 | A dried ghast, put it in water, a ghastling, a harness, fly on a happy ghast |
 | 18 | **Automation** | 9 and 4 | An observer, an automatic furnace, a lit copper bulb, a crafter, a crafter that crafts a crafter |
 
-- Finish a chapter and the guide celebrates and shows the menu: finished chapters in green, the current one in
-  gold, the ones you can start as buttons, locked ones in grey with what they need. Hover over a button to see
-  what the chapter is about, click it to start. Click **[I'll manage]** to let the guide go.
+Chapters 1-10 take you from your first night to the ender dragon, 11-14 are the endgame, and 15-18 cover
+archaeology, the trial challenges, the happy ghast and automation.
+
+- The menu shows finished chapters in green, the current one in gold, the ones you can start as buttons and
+  locked ones in grey with what they need. Hover over a button to see what the chapter is about; click it to start.
 
 <p align="center">
   <img src="docs/images/chapters-menu.png" alt="Chapter menu in chat: chapters 1 and 2 done, 6 Farming and animals current, 3, 4, 7, 8 and 9 as buttons, 5 and 10 locked with what they need" width="460">
@@ -63,55 +78,29 @@ as long as you're working on a chapter.
 
 - Switch any time with `/guide chapter <name>` (`village`, `nether`, `magic`, `husbandry`, `ocean`, `explorer`,
   `redstone`, `end`, `netherite`, `wither`, `deep_dark`, `raids`, `archaeology`, `trials`, `happy_ghast`,
-  `automation`); progress is kept. The task card shows the chapter you're in.
-
-<p align="center">
-  <img src="docs/images/task-card-chapter.png" alt="Task card in chapter 6: Guide, Ch. 6, Farming and animals, current task Tame an animal, next: Collect 16 sugar cane, Catch a fish" width="460">
-</p>
-
+  `automation`); progress is kept.
 - Goals like "find a fortress" or "brew a potion" use Minecraft's own advancements, so they're detected exactly
-  the way the game counts them. If you already did something, it's ticked off right away.
-- Place notes, once each: the first time in the Nether (beds explode, piglins and gold, fast lava), in a village,
-  the first night in a village, in a desert temple (the TNT trap), a jungle temple (tripwires), the trial
-  chambers, at a shipwreck or ocean ruin (drowned, your air), in a stronghold (silverfish), the End (endermen, the
-  crystals, the void), an end city (shulkers), a bastion (brutes), an ancient city, a pillager outpost (Bad Omen)
-  your first wither skeleton skull (where never to summon the Wither) and trail ruins (brush, don't mine). In the Nether the guide also warns about
-  ghasts and about piglins when you're not wearing gold, and a warden nearby is the most urgent warning of all.
-- Chapters 1-10 take you from your first night to the ender dragon; 11-14 are the endgame and 15-18 cover
-  archaeology, the trial challenges, the happy ghast and automation.
-- The checked game facts are in [docs/research-first-days.md](docs/research-first-days.md),
-  [docs/research-chapter-2.md](docs/research-chapter-2.md),
-  [docs/research-chapters-3-5.md](docs/research-chapters-3-5.md),
-  [docs/research-chapters-6-8.md](docs/research-chapters-6-8.md),
-  [docs/research-chapters-9-10.md](docs/research-chapters-9-10.md),
-  [docs/research-chapters-11-14.md](docs/research-chapters-11-14.md) and
-  [docs/research-chapters-15-18.md](docs/research-chapters-15-18.md).
+  the way the game counts them. If you already did something, it's ticked off right away, and items you use up
+  (skulls for the Wither, the heavy core in the mace) keep their goal ticked off.
 - Finished everything with an older version? `/guide call` brings the guide back with the new chapters.
-- Don't want a character walking around? `/guide character off` removes it. The task card stays, and you
-  only get urgent warnings in chat.
-
-### Your own guide skin
-- Put any Minecraft skin (PNG, 64x64) in `config/survivalassistant/skins/`, then use `/guideskin reload`
-  and `/guideskin set <name>` (the file name without `.png`, with tab completion). `/guideskin set default`
-  brings back the built-in guide.
-- File names ending in `_slim` (for example `elf_slim.png`) use the slim (Alex) arms. The skin's second
-  layer (hat, jacket, sleeves, pants) is shown too.
-- `/guideskin list` shows the skins (click one to use it) and `/guideskin folder` gives a clickable link to
-  the folder. This is client-side: only you see your choice, on any server.
 
 ### Task card (top-left by default)
 <p>
   <img src="docs/images/task-card.png" alt="Task card: Guide, Day 1/3, current task Chop wood 0/10, next: Make a crafting table, Wooden pickaxe" width="460">
   <img src="docs/images/task-card-full.png" alt="Task card in full view: all 15 goals with the recipe of the current task below" width="460" align="top">
 </p>
+<p>
+  <img src="docs/images/task-card-chapter.png" alt="Task card in chapter 6: Guide, Ch. 6, Farming and animals, current task Tame an animal, next: Collect 16 sugar cane, Catch a fish" width="460">
+</p>
 
-- 15 goals in order: wood → crafting table → wooden pickaxe → stone tools → furnace → food → bed →
-  torches → shelter → chest → iron → shield → iron pickaxe → iron armor → bucket of water.
-- Live counters (for example logs 6/10 or wool 2/3), with a check-mark animation when a goal is done.
+- The current task and the next two, with live counters (for example logs 6/10 or blaze rods 2/3) and a
+  check-mark animation when a goal is done.
+- The title shows the day in chapter 1 (Day 1/3) and the chapter in later chapters (Ch. 6 · Farming and animals).
 - A clock (the in-game clock item) with a bar that counts down to sunset, turning orange at dusk and red at night.
-- **Urgent mode**: the border pulses red, and the current-task line becomes a warning (creeper nearby,
-  low health, hunger, dusk or night outside, thunderstorm, underground without torches).
-- Press **J** to switch between compact, the full list of all 15 goals, and hidden.
+- **Urgent mode**: the border pulses red, and the current-task line becomes a warning (a warden or creeper
+  nearby, low health, hunger, dusk or night outside, a ghast, piglins without gold, a thunderstorm,
+  underground without torches, ...).
+- Press **J** to switch between compact, the full list of the chapter's goals, and hidden.
 
 ### Safety and finding your way
 <p>
@@ -126,6 +115,14 @@ as long as you're working on a chapter.
 - **Mining safety**: a warning when you dig the block under your own feet twice in a row (digging straight
   down), when lava is within a few blocks underground, or when sand/gravel hangs right above your head.
 - **Phantoms**: a reminder after two nights without sleep (phantoms come after three).
+- **The Nether**: warnings for a ghast nearby and for piglins when you're not wearing gold. A **warden** nearby
+  is the most urgent warning of all: don't fight, sneak away. Overworld warnings (night, thunder, phantoms)
+  stay quiet in the Nether and the End.
+- **Place notes**, once each: the first time in the Nether (beds explode, piglins and gold, fast lava), a village
+  and its first night, a desert temple (the TNT trap), a jungle temple (tripwires), the trial chambers, a
+  shipwreck or ocean ruin (drowned, your air), a stronghold (silverfish), the End (endermen, the crystals, the
+  void), an end city (shulkers), a bastion (brutes), an ancient city, a pillager outpost (Bad Omen), trail ruins
+  (brush, don't mine) and your first wither skeleton skull (where never to summon the Wither).
 
 ### Learning as you play
 <img src="docs/images/recipe-card.png" alt="Recipe card for the crafting table next to the inventory" width="240" align="right">
@@ -133,7 +130,7 @@ as long as you're working on a chapter.
 - **Recipe card**: open your inventory or a crafting table and a small card next to the window shows how to
   craft the item for your current task (grid, arrow, result). For 3x3 recipes in the inventory it reminds
   you that you need a crafting table. The full list (J) shows the same recipe under the goals.
-  All 18 recipes are checked against the game data (`tools/recipe_check.py`).
+  All 48 recipe cards are checked against the game data (`tools/recipe_check.py`).
 - **Crosshair info**: look at a mob for a moment and a line under the crosshair tells you what it does
   (creeper, skeleton, enderman, the new parched skeleton, sheep, ...). Look at an ore and it tells you which
   pickaxe you need: green when your tool works, red when it would break the block without dropping anything.
@@ -149,23 +146,11 @@ as long as you're working on a chapter.
 <img src="docs/images/environment-card.png" alt="Environment card: Plains, Y 65, a pro and a con of the biome, and the ores at this height: Iron, Copper, Coal" width="460">
 
 - A pro and a con for all 67 biomes (grouped into 25 families).
-- Ores at your current Y-level, most valuable first (gold = you are at its best height). Emerald only shows in mountain biomes, and the extra
-  surface gold only in badlands.
+- Ores at your current Y-level, most valuable first (gold = you are at its best height). Emerald only shows in
+  mountain biomes, and the extra surface gold only in badlands.
 - A pointer to the best height for the ore your current task needs.
 - One-time chat notes the first time you reach deepslate, the lava level, the deep dark or high mountains.
 - Press **K** to show or hide it.
-
-### Meet Pim
-- The guide has a name and a past: **Pim**, an old explorer who has travelled through more worlds than he can count.
-  His own first night went badly (lost, in a hole in the ground with a single torch), and that is why he now helps
-  newcomers. He collects maps and keeps losing them, never finished his own house, loves sunrises, foxes and fresh
-  bread, and is still afraid of creepers.
-- He introduces himself when you meet. Use `/guide about` to hear a little more about him (a different story every
-  time), and now and then he tells one by himself when there is nothing left to say about the place you're in.
-- With small talk on you can simply ask him: "Pim, where are you from?" The model answers from the same
-  background, so his story stays consistent.
-- Prefer another name? `/guide name <name>` (up to 16 letters, digits or spaces; `/guide name reset` goes back).
-  Server owners can change the default with `guideName` in the config.
 
 ### The guide's musings
 - Walk into a new biome and the guide shares a building idea for it: a farm with a red barn on the plains,
@@ -179,6 +164,15 @@ as long as you're working on a chapter.
   puts the same ideas in its own words.
 - The Nether, the End, the Deep Dark and unknown places stay quiet unless you choose `/guide musings all`
   (then only careful remarks, no building ideas there). `/guide musings off` turns them off.
+
+### Your own guide skin
+- Put any Minecraft skin (PNG, 64x64) in `config/survivalassistant/skins/`, then use `/guideskin reload`
+  and `/guideskin set <name>` (the file name without `.png`, with tab completion). `/guideskin set default`
+  brings back the built-in guide.
+- File names ending in `_slim` (for example `elf_slim.png`) use the slim (Alex) arms. The skin's second
+  layer (hat, jacket, sleeves, pants) is shown too.
+- `/guideskin list` shows the skins (click one to use it) and `/guideskin folder` gives a clickable link to
+  the folder. This is client-side: only you see your choice, on any server.
 
 ### Small talk with a local AI model (optional)
 - With a local language model running, the guide chats: it remarks on what changes around you (rain or a
@@ -207,6 +201,9 @@ The replies are short (at most 80 tokens), so a small model is enough, and it ma
 
 - Use the normal instruct model, not a "reasoning"/"thinking" variant, and skip the `mmproj` (vision) file.
 - If the game stutters, lower `-ngl` or `-c`; if replies arrive too late on the CPU, raise `chatTimeoutSeconds`.
+- No published benchmark covers the Dutch of these small models yet, so try both Gemma 4 and Qwen3.5 and keep
+  the one you like. Sizes, alternatives (Phi-4-mini, Ministral 3, Llama 3.2) and sources are in
+  [docs/research-chat-models.md](docs/research-chat-models.md).
 
 #### Installing it (Windows)
 1. **Install llama.cpp** (the `llama-server` program):
@@ -248,28 +245,27 @@ so a reply arrives in about 0.3 s. Its Dutch was clearly better than Qwen3.5 4B'
 (about 130 tokens per second, 3.0 GB) but made up words now and then. The mod adds its own guard against
 repetition (the guide remembers its last replies and is told to vary its wording) and removes emoji, which
 Minecraft's font can't show.
-- No published benchmark covers the Dutch of these small models yet, so try both Gemma 4 and Qwen3.5 and keep
-  the one you like. Sizes, alternatives (Phi-4-mini, Ministral 3, Llama 3.2) and sources are in
-  [docs/research-chat-models.md](docs/research-chat-models.md).
 
 ## Commands
 
 | Command | What it does |
 |---|---|
 | `/guide tip` | Get the most important tip right now |
+| `/guide chapters` | Show the chapters: done, open (click to start) and locked |
+| `/guide chapter <name>` | Start or switch to a chapter that is open |
+| `/guide continue` | Start the next open chapter after finishing one |
 | `/guide call` | Bring the guide to you (or back after it said goodbye) |
 | `/guide dismiss` | Send the guide away |
+| `/guide extend` | Let the guide stay 3 more days (chapter 1) |
+| `/guide mute <minutes>` | No unsolicited tips for a while (0–120) |
 | `/guide about` | The guide tells something about himself |
 | `/guide name <name>\|reset` | Give the guide your own name (saved per player) |
 | `/guide musings on\|off\|all` | The guide's remarks about biomes and animals (`all` includes the Nether, End and Deep Dark) |
 | `/guide chat on\|off` | Small talk with the guide through a local language model (saved per player) |
-| `/guide extend` | Let the guide stay 3 more days |
-| `/guide chapters` | Show the chapters: done, open (click to start) and locked |
-| `/guide chapter <name>` | Start or switch to a chapter that is open |
-| `/guide continue` | Start the next open chapter after finishing one |
-| `/guide mute <minutes>` | No unsolicited tips for a while (0–120) |
 | `/guide character on\|off` | Show or hide the guide character (saved per player) |
 | `/guideskin list\|set <name>\|reload\|folder` | Choose your own guide skin (client-side) |
+
+Keys: **J** task card mode, **K** environment card, **L** light check.
 
 ## Configuration
 
@@ -278,16 +274,16 @@ Minecraft's font can't show.
 | Option | Default | Meaning |
 |---|---|---|
 | `maxDays` | `3` | In-game days the guide stays for chapter 1 (later chapters have no time limit) |
-| `moreChapters` | `true` | Offer the next chapters after chapter 1 (was `chapter2`, still read) |
 | `extendDays` | `3` | Days added when the player says they still need the guide (`0` = never ask, just leave) |
+| `moreChapters` | `true` | Offer the next chapters after chapter 1 (was `chapter2`, still read) |
 | `tipIntervalSeconds` | `2` | How often the situation is checked |
 | `milestoneCooldownSeconds` | `180` | Minimum time between repeats of the same task tip |
 | `urgentCooldownSeconds` | `60` | Minimum time between repeats of the same warning |
 | `allowRecall` | `true` | Allow `/guide call` after the guide has left |
 | `npcEnabledByDefault` | `true` | Default for the guide character (players can override) |
-| `depthNotices` | `true` | One-time chat notes about depth and mountains |
-| `guideName` | `Pim` | The guide's name (players can choose their own with `/guide name`) |
 | `spawnOnJoin` | `true` | Give new players a guide automatically |
+| `guideName` | `Pim` | The guide's name (players can choose their own with `/guide name`) |
+| `depthNotices` | `true` | One-time chat notes about depths, mountains and special places (the Nether, temples, ...) |
 | `pointAtResources` | `true` | Guide looks at nearby trees/stone when giving those tips |
 | `navigation` | `true` | Show the way back to your items after dying, and the way home |
 | `homeDistance` | `64` | Show the way home from this distance (24 at dusk/night) |
@@ -337,8 +333,9 @@ Minecraft's font can't show.
   Venezuela), French (Canada, Switzerland), Portuguese (Portugal), German (Austria, Switzerland) and Dutch
   (Belgium). Traditional Chinese falls back to English.
 - English and Dutch are the original texts; the other 13 languages are AI translations that use Minecraft's
-  own names for items and mobs where possible and have not yet been checked by native speakers. Corrections are very welcome as an issue or pull
-  request: the texts live in `tools/lang/<code>.json` and `tools/make_lang.py` checks every key and placeholder.
+  own names for items and mobs where possible and have not yet been checked by native speakers. Corrections are
+  very welcome as an issue or pull request: the texts live in `tools/lang/<code>.json` and `tools/make_lang.py`
+  checks every key and placeholder.
 - Minecraft draws Arabic right-to-left with joined letters itself. Hindi looks like Minecraft's own Hindi: the
   game font does not join Devanagari letter combinations.
 
@@ -365,15 +362,26 @@ After every build the mod jar and sources jar are also copied to the project fol
 Developer tools:
 - `tools/make_lang.py` generates all language files (English and Dutch from its own table, the others from
   `tools/lang/<code>.json`) and checks that every language has the same keys and placeholders.
+- `tools/recipe_check.py <minecraft jar>` checks every recipe card against the game's recipe data.
 - `tools/biome_facts.py` regenerates [docs/biomes-and-heights.md](docs/biomes-and-heights.md) from the Minecraft jar.
 - `tools/make_icon.py` builds the transparent PNG icons from `docs/images/SurvivalAssistant.jpg`
   (`uv run --with pillow python tools/make_icon.py`).
 
 ## How the advice was verified
-See [docs/research-first-days.md](docs/research-first-days.md) for the sources, the consensus and a table of
-claims checked against recipes, loot tables and game code. See [docs/biomes-and-heights.md](docs/biomes-and-heights.md)
-for ore placement and mob spawns per biome, extracted from the 26.3 data. The pure advice logic
-(`advice` package) has no Minecraft dependencies and is covered by unit tests.
+Every chapter has its own research document with the sources, how each goal is detected (inventory, statistics,
+structures or Minecraft's own advancements) and the game facts behind the tips, checked against the 26.3 recipes,
+loot tables, tags and code:
+
+- [Chapter 1, the first days](docs/research-first-days.md) and [chapter 2, settling in](docs/research-chapter-2.md)
+- [Chapters 3-5](docs/research-chapters-3-5.md): villages, the Nether, brewing and enchanting
+- [Chapters 6-8](docs/research-chapters-6-8.md): farming and animals, the ocean, exploring
+- [Chapters 9-10](docs/research-chapters-9-10.md): redstone and the End
+- [Chapters 11-14](docs/research-chapters-11-14.md): netherite, the Wither, the Deep Dark, raids
+- [Chapters 15-18](docs/research-chapters-15-18.md): archaeology, trials, the happy ghast, automation
+- [Biomes and heights](docs/biomes-and-heights.md): ore placement and mob spawns per biome, extracted from the 26.3 data
+- [Small talk models](docs/research-chat-models.md): which local language model to use, with measurements
+
+The pure advice logic (`advice` and `chat` packages) has no Minecraft dependencies and is covered by unit tests.
 
 ## License
 [MIT](LICENSE) © 2026 David Visser
