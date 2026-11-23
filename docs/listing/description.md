@@ -82,8 +82,21 @@ the internet. Without it, everything else works the same. Setup instructions and
 
 ## Languages
 English, Dutch, German, French, Spanish, Italian, Portuguese (Brazil), Polish, Romanian, Russian, Ukrainian,
-Mandarin Chinese (simplified), Arabic, Hindi and Indonesian. English and Dutch are the original texts; the other
-languages are AI translations that use Minecraft's own names where possible. Corrections are very welcome on GitHub.
+Mandarin Chinese (simplified), Arabic, Hindi and Indonesian. English and Dutch are the source texts; the other
+13 languages are AI translations that use Minecraft's own names where possible and have not yet been checked by
+native speakers. Corrections are very welcome on GitHub.
+
+## How this mod was made (AI use)
+This mod was made with a lot of help from AI. To be open about it:
+
+- **Made with AI:** the code (written with Claude by Anthropic, at the developer's direction), all texts
+  including the guide's lines and story, all translations, the research (looked up with AI, then checked
+  against Minecraft 26.3's own data files), the mod icon and the guide's default skin.
+- **Not made with AI:** the idea, the choices about what the mod does and how it feels, the play testing, and
+  the screenshots (real in-game screenshots). The game facts come from Minecraft's data, not from the AI's memory.
+- **AI while you play:** none by default. Every tip and warning is a fixed, checked text. Only the optional
+  small talk uses a language model on your own computer; its replies are not checked and can be wrong, so it
+  never gives recipes, ore heights or instructions.
 
 ## Requirements
 - Minecraft 26.3, Fabric Loader 0.20.1 or newer, [Fabric API](https://modrinth.com/mod/fabric-api), Java 25

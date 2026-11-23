@@ -337,8 +337,9 @@ Keys: **J** task card mode, **K** environment card, **L** light check.
 - Regional variants with the same script get a copy: Spanish (Mexico, Argentina, Chile, Ecuador, Uruguay,
   Venezuela), French (Canada, Switzerland), Portuguese (Portugal), German (Austria, Switzerland) and Dutch
   (Belgium). Traditional Chinese falls back to English.
-- English and Dutch are the original texts; the other 13 languages are AI translations that use Minecraft's
-  own names for items and mobs where possible and have not yet been checked by native speakers. Corrections are
+- All texts were written with AI (see [How this mod was made](#how-this-mod-was-made-ai-use)). English and
+  Dutch are the source texts; the other 13 languages are AI translations of them that use Minecraft's own names
+  for items and mobs where possible and have not yet been checked by native speakers. Corrections are
   very welcome as an issue or pull request: the texts live in `tools/lang/<code>.json` and `tools/make_lang.py`
   checks every key and placeholder.
 - Minecraft draws Arabic right-to-left with joined letters itself. Hindi looks like Minecraft's own Hindi: the
@@ -388,6 +389,32 @@ loot tables, tags and code:
 - [Small talk models](docs/research-chat-models.md): which local language model to use, with measurements
 
 The pure advice logic (`advice` and `chat` packages) has no Minecraft dependencies and is covered by unit tests.
+
+## How this mod was made (AI use)
+This mod was made with a lot of help from AI. To be open about what that means:
+
+**Made with AI**
+- **Code**: written with Claude (an AI model by Anthropic, through Claude Code), at the direction of the
+  developer. The commits show this with a `Co-Authored-By: Claude` line.
+- **Texts**: all tips, the guide's lines and story, the musings, the documentation and the project pages.
+- **Translations**: all languages. English and Dutch are the source texts; the other 13 are AI translations
+  that no native speaker has checked yet.
+- **Research**: the game facts were looked up with AI, then checked against Minecraft 26.3's own data files,
+  partly with scripts (`tools/recipe_check.py`, `tools/biome_facts.py`). The research documents above show the
+  sources and the checks.
+- **Images**: the mod icon and the guide's default skin are AI-generated.
+
+**Not made with AI**
+- The idea, the choices about what the mod does and how it should feel, and the play testing in the game are the
+  developer's own.
+- The screenshots are real screenshots from the game.
+- The game facts themselves come from Minecraft's data, not from the AI's memory.
+
+**AI while you play**
+- By default the mod uses no AI at all: every tip, warning and line comes from the fixed, checked texts.
+- Only if you turn on the optional small talk does a language model write replies, live, on your own computer.
+  Those replies are not checked and can be wrong, which is why the model never gives recipes, ore heights or
+  instructions. Nothing is sent to the internet.
 
 ## License
 [MIT](LICENSE) © 2026 David Visser
