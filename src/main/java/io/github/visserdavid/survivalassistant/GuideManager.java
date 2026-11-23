@@ -26,6 +26,7 @@ import io.github.visserdavid.survivalassistant.advice.OreTable;
 import io.github.visserdavid.survivalassistant.advice.ContextCollector;
 import io.github.visserdavid.survivalassistant.advice.DigTracker;
 import io.github.visserdavid.survivalassistant.advice.GuideLifecycle;
+import io.github.visserdavid.survivalassistant.advice.GuideNames;
 import io.github.visserdavid.survivalassistant.advice.Navigation;
 import io.github.visserdavid.survivalassistant.advice.GuideProgress;
 import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
@@ -34,6 +35,7 @@ import io.github.visserdavid.survivalassistant.advice.Tip;
 import io.github.visserdavid.survivalassistant.advice.TipRegistry;
 import io.github.visserdavid.survivalassistant.chat.GuideChat;
 import io.github.visserdavid.survivalassistant.chat.GuideMusings;
+import io.github.visserdavid.survivalassistant.chat.Persona;
 import io.github.visserdavid.survivalassistant.config.ModConfig;
 import io.github.visserdavid.survivalassistant.entity.GuideEntity;
 import io.github.visserdavid.survivalassistant.entity.ai.FollowOwnerGoal;
@@ -117,7 +119,7 @@ public final class GuideManager {
 		}
 
 		if (firstMeeting) {
-			say(player, guide, Component.translatable("survivalassistant.welcome.1", player.getName()), false);
+			say(player, guide, Component.translatable("survivalassistant.welcome.1", player.getName(), guideName(player)), false);
 			say(player, guide, Component.translatable(npc ? "survivalassistant.welcome.2" : "survivalassistant.welcome_no_npc"), false);
 			LAST_EVAL.put(player.getUUID(), 0L); // give the first tip on the next pass
 			return;
@@ -283,7 +285,7 @@ public final class GuideManager {
 		GuideEntity fresh = SurvivalAssistant.GUIDE.create(level, EntitySpawnReason.MOB_SUMMONED);
 		if (fresh == null) return null;
 		fresh.setOwner(player);
-		fresh.setCustomName(Component.translatable("entity.survivalassistant.guide"));
+		fresh.setCustomName(Component.literal(guideName(player)));
 		fresh.snapTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), 0f);
 		FollowOwnerGoal.teleportNear(fresh, player.blockPosition());
 		level.addFreshEntity(fresh);
@@ -415,7 +417,7 @@ public final class GuideManager {
 
 	private static void say(ServerPlayer player, @Nullable GuideEntity guide, Component text, boolean important) {
 		MutableComponent line = Component.literal("[").withStyle(ChatFormatting.GOLD)
-				.append(Component.translatable("entity.survivalassistant.guide").withStyle(ChatFormatting.GOLD))
+				.append(Component.literal(guideName(player)).withStyle(ChatFormatting.GOLD))
 				.append(Component.literal("] ").withStyle(ChatFormatting.GOLD))
 				.append(text);
 		player.sendSystemMessage(line);
@@ -502,6 +504,34 @@ public final class GuideManager {
 		}
 		evaluateAndSay(player, guide, progress, true);
 		return true;
+	}
+
+	/** The guide's name for this player: their own choice, else the server's (see {@link GuideNames}). */
+	public static String guideName(ServerPlayer player) {
+		return GuideNames.effective(GuideState.of(player).guideName, ModConfig.get().guideName);
+	}
+
+	/** /guide name: a new name (null = back to the default); the name tag changes at once. */
+	public static void rename(ServerPlayer player, @Nullable String name) {
+		GuideState.of(player).guideName = name == null ? null : name.strip();
+		GuideEntity guide = GUIDES.get(player.getUUID());
+		if (guide != null && !guide.isRemoved()) guide.setCustomName(Component.literal(guideName(player)));
+	}
+
+	/** /guide about: the guide tells the next thing about itself. */
+	public static boolean tellAbout(ServerPlayer player) {
+		GuideProgress progress = GuideState.of(player);
+		if (progress.retired || progress.startTick < 0) return false;
+		GuideEntity guide = npcEnabled(player) ? ensureGuide(player) : null;
+		say(player, guide, Component.translatable(nextAbout(progress)), false);
+		return true;
+	}
+
+	/** The next "about me" line; every call moves on, so the guide doesn't keep telling the same story. */
+	public static String nextAbout(GuideProgress progress) {
+		String key = Persona.aboutKey(progress.aboutIndex);
+		progress.aboutIndex = (progress.aboutIndex + 1) % Persona.ABOUT_COUNT;
+		return key;
 	}
 
 	public static boolean npcEnabled(ServerPlayer player) {

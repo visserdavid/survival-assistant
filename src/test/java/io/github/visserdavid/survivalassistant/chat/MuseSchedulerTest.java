@@ -72,6 +72,17 @@ class MuseSchedulerTest {
 	}
 
 	@Test
+	void aboutItselfOnceWhenThePlaceIsTalkedOut() {
+		MuseScheduler s = started();
+		long t = MuseScheduler.FIRST_DELAY;
+		MuseScheduler.Input in = new MuseScheduler.Input("plains", true, false, Set.of(), false, false, Persona.aboutKey(0));
+		for (int i = 0; i < 3; i++) assertNotEquals(Persona.aboutKey(0), s.update(in, t + i * INTERVAL).orElseThrow(), "the place comes first");
+		assertEquals(Persona.aboutKey(0), s.update(in, t + 3 * INTERVAL).orElseThrow());
+		MuseScheduler.Input next = new MuseScheduler.Input("plains", true, false, Set.of(), false, false, Persona.aboutKey(1));
+		assertTrue(s.update(next, t + 4 * INTERVAL).isEmpty(), "once per session");
+	}
+
+	@Test
 	void notAtNightNotUndergroundNotWhenBlocked() {
 		MuseScheduler s = started();
 		long t = MuseScheduler.FIRST_DELAY;

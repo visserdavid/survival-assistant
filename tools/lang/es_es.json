@@ -1,6 +1,6 @@
 {
 "entity.~guide": "Guía",
-"~welcome.1": "¡Hola, %s! Soy tu guía. Me quedaré contigo tus primeros días y te ayudaré a sobrevivir.",
+"~welcome.1": "¡Hola, %s! Soy %s, un viejo explorador y tu guía. Me quedaré contigo tus primeros días y te ayudaré a sobrevivir.",
 "~welcome.2": "Agáchate y haz clic derecho sobre mí para un consejo, o usa /guide tip. ¿Quieres tranquilidad? /guide mute <minutos>.",
 "~comfort.1": "¡Ay! No te preocupes: tus objetos se quedan 5 minutos donde moriste. Ve a por ellos, ¡con cuidado!",
 "~comfort.2": "Le pasa a todo el mundo. Tus cosas siguen donde caíste durante 5 minutos. Date prisa, pero ve con cuidado.",
@@ -396,5 +396,16 @@
 "~muse.mob.goat": "Las cabras saltan muchísimo y pueden embestirte desde un saliente. ¡No las pierdas de vista!",
 "~muse.mob.axolotl": "Los ajolotes se hacen los muertos cuando están heridos, y te ayudan a luchar bajo el agua.",
 "~muse.mob.llama": "Las llamas escupen cuando se enfadan, y un grupo puede llevarte cofres.",
-"~muse.mob.panda": "Cada panda tiene su propia personalidad: vago, juguetón, preocupado... ¡algunos hasta estornudan!"
+"~muse.mob.panda": "Cada panda tiene su propia personalidad: vago, juguetón, preocupado... ¡algunos hasta estornudan!",
+"~about.1": "He visto más mundos de los que puedo contar, pero nunca olvidaré mi primera noche.",
+"~about.2": "Mi primera noche me perdí y me escondí en un hoyo en la tierra con una sola antorcha. Por eso ahora ayudo a los recién llegados.",
+"~about.3": "Colecciono mapas. Bueno... los colecciono y luego los pierdo.",
+"~about.4": "¿Creepers? Brr. Ese siseo todavía me hace saltar, después de tantos años.",
+"~about.5": "No hay nada como un amanecer después de una noche larga. Entonces sé que lo hemos logrado.",
+"~about.6": "Una vez, en lo más profundo, vi un Warden a lo lejos. Nunca me escabullí tan en silencio.",
+"~about.7": "¿Mi propia casa? Nunca la terminé. Siempre había otra colina detrás de la que mirar.",
+"~about.8": "Lluvia en el tejado, un zorro en la hierba, pan recién hecho... no necesito más. Ah, y nada de aguas profundas, por favor.",
+"~cmd.name_set": "Tu guía ahora se llama %s.",
+"~cmd.name_reset": "Tu guía vuelve a llamarse %s.",
+"~cmd.name_invalid": "Elige un nombre de como máximo %s letras, cifras o espacios."
 }

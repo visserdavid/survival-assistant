@@ -1,6 +1,6 @@
 {
 "entity.~guide": "Guida",
-"~welcome.1": "Ciao %s! Sono la tua guida. Resterò con te nei primi giorni e ti aiuterò a sopravvivere.",
+"~welcome.1": "Ciao %s! Sono %s, un vecchio esploratore e la tua guida. Resterò con te nei primi giorni e ti aiuterò a sopravvivere.",
 "~welcome.2": "Accovacciati e fai clic destro su di me per un consiglio, o usa /guide tip. Vuoi un po' di pace? /guide mute <minuti>.",
 "~comfort.1": "Ahi! Non preoccuparti: i tuoi oggetti restano per 5 minuti nel punto in cui sei morto. Vai a riprenderli, con cautela!",
 "~comfort.2": "Succede a tutti. Le tue cose sono ancora dove sei caduto, per 5 minuti. Sbrigati, ma stai attento.",
@@ -396,5 +396,16 @@
 "~muse.mob.goat": "Le capre saltano altissimo e possono spingerti giù da una sporgenza. Tienile d'occhio!",
 "~muse.mob.axolotl": "Gli axolotl si fingono morti quando sono feriti, e ti aiutano a combattere sott'acqua.",
 "~muse.mob.llama": "I lama sputano quando si arrabbiano, e un gruppo di loro può trasportare bauli per te.",
-"~muse.mob.panda": "Ogni panda ha il suo carattere: pigro, giocherellone, preoccupato... alcuni starnutiscono perfino!"
+"~muse.mob.panda": "Ogni panda ha il suo carattere: pigro, giocherellone, preoccupato... alcuni starnutiscono perfino!",
+"~about.1": "Ho visto più mondi di quanti ne possa contare, ma non dimenticherò mai la mia primissima notte.",
+"~about.2": "La mia prima notte mi sono perso e mi sono nascosto in una buca con una sola torcia. Per questo ora aiuto i nuovi arrivati.",
+"~about.3": "Colleziono mappe. Beh... le colleziono, e poi le perdo.",
+"~about.4": "Creeper? Brr. Quel sibilo mi fa ancora sobbalzare, dopo tutti questi anni.",
+"~about.5": "Niente batte un'alba dopo una lunga notte. È lì che so che ce l'abbiamo fatta.",
+"~about.6": "Una volta, nelle profondità, ho visto un Warden in lontananza. Non sono mai sgattaiolato via così in silenzio.",
+"~about.7": "La mia casa? Mai finita. C'era sempre un'altra collina dietro cui guardare.",
+"~about.8": "Pioggia sul tetto, una volpe nell'erba, pane fresco... non mi serve altro. Ah, e niente acqua profonda, per favore.",
+"~cmd.name_set": "Ora la tua guida si chiama %s.",
+"~cmd.name_reset": "La tua guida si chiama di nuovo %s.",
+"~cmd.name_invalid": "Scegli un nome di al massimo %s lettere, cifre o spazi."
 }

@@ -1,6 +1,6 @@
 {
 "entity.~guide": "Begleiter",
-"~welcome.1": "Hallo %s! Ich bin dein Begleiter. Ich bleibe in deinen ersten Tagen bei dir und helfe dir beim Überleben.",
+"~welcome.1": "Hallo %s! Ich bin %s, ein alter Entdecker und dein Begleiter. Ich bleibe in deinen ersten Tagen bei dir und helfe dir beim Überleben.",
 "~welcome.2": "Schleiche und rechtsklicke mich für einen Tipp oder nutze /guide tip. Brauchst du Ruhe? /guide mute <Minuten>.",
 "~comfort.1": "Autsch! Keine Sorge: Deine Gegenstände bleiben 5 Minuten dort liegen, wo du gestorben bist. Hol sie, aber vorsichtig!",
 "~comfort.2": "Das passiert jedem. Deine Sachen liegen noch 5 Minuten dort, wo du gefallen bist. Beeil dich, aber bleib sicher.",
@@ -396,5 +396,16 @@
 "~muse.mob.goat": "Ziegen springen richtig hoch und können dich von einem Vorsprung rammen. Behalte sie im Auge!",
 "~muse.mob.axolotl": "Axolotl stellen sich tot, wenn sie verletzt sind, und helfen dir unter Wasser beim Kämpfen.",
 "~muse.mob.llama": "Lamas spucken, wenn sie wütend sind, und eine Gruppe von ihnen kann Truhen für dich tragen.",
-"~muse.mob.panda": "Jeder Panda hat seinen eigenen Charakter: faul, verspielt, besorgt... manche niesen sogar!"
+"~muse.mob.panda": "Jeder Panda hat seinen eigenen Charakter: faul, verspielt, besorgt... manche niesen sogar!",
+"~about.1": "Ich habe mehr Welten gesehen, als ich zählen kann, aber meine allererste Nacht vergesse ich nie.",
+"~about.2": "In meiner ersten Nacht habe ich mich verirrt und mit einer einzigen Fackel in einem Erdloch versteckt. Deshalb helfe ich heute Neulingen.",
+"~about.3": "Ich sammle Karten. Na ja... ich sammle sie, und dann verliere ich sie.",
+"~about.4": "Creeper? Brr. Bei diesem Zischen zucke ich nach all den Jahren immer noch zusammen.",
+"~about.5": "Nichts geht über einen Sonnenaufgang nach einer langen Nacht. Dann weiß ich: Wir haben es geschafft.",
+"~about.6": "Tief unter der Erde habe ich einmal einen Wärter in der Ferne gesehen. Nie bin ich so leise davongeschlichen.",
+"~about.7": "Mein eigenes Haus? Nie fertig gebaut. Es gab immer noch einen Hügel, hinter den ich schauen wollte.",
+"~about.8": "Regen auf dem Dach, ein Fuchs im Gras, frisches Brot... mehr brauche ich nicht. Ach, und bitte kein tiefes Wasser.",
+"~cmd.name_set": "Dein Begleiter heißt jetzt %s.",
+"~cmd.name_reset": "Dein Begleiter heißt wieder %s.",
+"~cmd.name_invalid": "Wähle einen Namen mit höchstens %s Buchstaben, Ziffern oder Leerzeichen."
 }

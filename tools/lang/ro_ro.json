@@ -1,6 +1,6 @@
 {
 "entity.~guide": "Ghid",
-"~welcome.1": "Salut, %s! Sunt ghidul tău. Rămân cu tine în primele zile și te ajut să supraviețuiești.",
+"~welcome.1": "Salut, %s! Sunt %s, un explorator bătrân și ghidul tău. Rămân cu tine în primele zile și te ajut să supraviețuiești.",
 "~welcome.2": "Furișează-te și dă clic dreapta pe mine pentru un sfat sau folosește /guide tip. Vrei liniște? /guide mute <minute>.",
 "~comfort.1": "Au! Nu-ți face griji: obiectele tale rămân 5 minute acolo unde ai murit. Du-te după ele, cu grijă!",
 "~comfort.2": "Asta pățește oricine. Lucrurile tale sunt încă acolo unde ai căzut, timp de 5 minute. Grăbește-te, dar ai grijă.",
@@ -396,5 +396,16 @@
 "~muse.mob.goat": "Caprele sar foarte sus și te pot împinge de pe o margine. Ține-le sub ochi!",
 "~muse.mob.axolotl": "Axoloții se prefac morți când sunt răniți și te ajută să lupți sub apă.",
 "~muse.mob.llama": "Lamele scuipă când sunt supărate, iar un grup de lame poate căra cufere pentru tine.",
-"~muse.mob.panda": "Fiecare panda are personalitatea lui: leneș, jucăuș, îngrijorat... unii chiar strănută!"
+"~muse.mob.panda": "Fiecare panda are personalitatea lui: leneș, jucăuș, îngrijorat... unii chiar strănută!",
+"~about.1": "Am văzut mai multe lumi decât pot număra, dar prima mea noapte n-o voi uita niciodată.",
+"~about.2": "În prima mea noapte m-am rătăcit și m-am ascuns într-o groapă cu o singură torță. De aceea îi ajut acum pe cei noi.",
+"~about.3": "Colecționez hărți. Mă rog... le colecționez, apoi le pierd.",
+"~about.4": "Creeperi? Brr. Sâsâitul ăla încă mă face să tresar, după atâția ani.",
+"~about.5": "Nimic nu se compară cu un răsărit după o noapte lungă. Atunci știu că am reușit.",
+"~about.6": "Adânc sub pământ am văzut odată un Warden în depărtare. Niciodată nu m-am strecurat atât de încet.",
+"~about.7": "Casa mea? N-am terminat-o niciodată. Mereu mai era un deal după care voiam să mă uit.",
+"~about.8": "Ploaie pe acoperiș, o vulpe în iarbă, pâine proaspătă... nu-mi trebuie mai mult. A, și fără ape adânci, te rog.",
+"~cmd.name_set": "Ghidul tău se numește acum %s.",
+"~cmd.name_reset": "Ghidul tău se numește din nou %s.",
+"~cmd.name_invalid": "Alege un nume de cel mult %s litere, cifre sau spații."
 }

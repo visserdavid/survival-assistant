@@ -37,6 +37,8 @@ public final class ModConfig {
 	public boolean navigation = true;
 	/** Show the way home from this distance (blocks); at dusk/night already from 24 blocks. */
 	public int homeDistance = 64;
+	/** The guide's name (players can choose their own with /guide name). */
+	public String guideName = "Pim";
 	/** Spawn a guide automatically for new players. */
 	public boolean spawnOnJoin = true;
 	/** Let the guide look at nearby trees/stone when giving those tips. */

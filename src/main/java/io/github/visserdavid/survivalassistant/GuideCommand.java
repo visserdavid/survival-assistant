@@ -2,15 +2,17 @@ package io.github.visserdavid.survivalassistant;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import io.github.visserdavid.survivalassistant.advice.GuideNames;
 import io.github.visserdavid.survivalassistant.chat.GuideMusings;
 
-/** /guide call | dismiss | extend | continue | chat on|off | musings on|off|all | tip | mute &lt;minutes&gt; | character on|off */
+/** /guide call | dismiss | extend | continue | about | name &lt;name&gt;|reset | chat on|off | musings on|off|all | tip | mute &lt;minutes&gt; | character on|off */
 public final class GuideCommand {
 	private GuideCommand() {}
 
@@ -21,6 +23,11 @@ public final class GuideCommand {
 				.then(Commands.literal("extend").executes(c -> run(c, "extend")))
 				.then(Commands.literal("continue").executes(c -> run(c, "continue")))
 				.then(Commands.literal("tip").executes(c -> run(c, "tip")))
+				.then(Commands.literal("about").executes(c -> run(c, "about")))
+				.then(Commands.literal("name")
+						.then(Commands.literal("reset").executes(c -> name(c, null)))
+						.then(Commands.argument("name", StringArgumentType.greedyString())
+								.executes(c -> name(c, StringArgumentType.getString(c, "name")))))
 				.then(Commands.literal("mute")
 						.then(Commands.argument("minutes", IntegerArgumentType.integer(0, 120))
 								.executes(c -> {
@@ -48,6 +55,20 @@ public final class GuideCommand {
 		io.github.visserdavid.survivalassistant.state.GuideState.of(p).musings = value;
 		String key = value == null ? "on" : value;
 		c.getSource().sendSuccess(() -> Component.translatable("survivalassistant.cmd.musings_" + key), false);
+		return 1;
+	}
+
+	/** /guide name &lt;name&gt;|reset: the player's own name for the guide. */
+	private static int name(CommandContext<CommandSourceStack> c, String name) throws CommandSyntaxException {
+		ServerPlayer p = c.getSource().getPlayerOrException();
+		if (name != null && !GuideNames.valid(name)) {
+			c.getSource().sendFailure(Component.translatable("survivalassistant.cmd.name_invalid", GuideNames.MAX_LENGTH));
+			return 0;
+		}
+		GuideManager.rename(p, name);
+		String now = GuideManager.guideName(p);
+		c.getSource().sendSuccess(() -> Component.translatable(
+				name == null ? "survivalassistant.cmd.name_reset" : "survivalassistant.cmd.name_set", now), false);
 		return 1;
 	}
 
@@ -81,6 +102,7 @@ public final class GuideCommand {
 			case "dismiss" -> GuideManager.dismiss(p);
 			case "extend" -> GuideManager.extend(p);
 			case "continue" -> GuideManager.continueChapter(p);
+			case "about" -> GuideManager.tellAbout(p);
 			default -> GuideManager.tipNow(p);
 		};
 		if (!ok) {

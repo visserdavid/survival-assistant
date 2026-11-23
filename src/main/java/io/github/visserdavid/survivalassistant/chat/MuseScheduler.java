@@ -1,5 +1,7 @@
 package io.github.visserdavid.survivalassistant.chat;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -14,6 +16,7 @@ import java.util.TreeSet;
  *   <li>A new biome gets its building idea once the player has been there for {@link #SETTLE_TICKS}.</li>
  *   <li>Otherwise at most one musing per interval: an animal in sight first, then a scene or story of the biome.</li>
  *   <li>Every topic is used at most once per session.</li>
+ *   <li>When nothing about the place is left, the guide tells something about itself, once per session.</li>
  * </ul>
  */
 public final class MuseScheduler {
@@ -31,9 +34,15 @@ public final class MuseScheduler {
 	 * @param mobsInSight friendly mob ids (entity id paths) the player can see
 	 * @param blocked     the guide may not talk now (urgent, muted, no character, waiting for the model)
 	 * @param dangerZones musings in the Nether, the End, the Deep Dark and unknown places are allowed
+	 * @param selfKey     the "about me" line the guide would tell next, or null
 	 */
 	public record Input(String group, boolean daytime, boolean underground, Set<String> mobsInSight, boolean blocked,
-			boolean dangerZones) {}
+			boolean dangerZones, @Nullable String selfKey) {
+		public Input(String group, boolean daytime, boolean underground, Set<String> mobsInSight, boolean blocked,
+				boolean dangerZones) {
+			this(group, daytime, underground, mobsInSight, blocked, dangerZones, null);
+		}
+	}
 
 	private final long intervalTicks;
 	private boolean started;
@@ -42,6 +51,7 @@ public final class MuseScheduler {
 	private String settlingGroup = "";
 	private long settlingSince;
 	private final Set<String> used = new HashSet<>();
+	private boolean toldAboutSelf;
 
 	public MuseScheduler(long intervalTicks) {
 		this.intervalTicks = Math.max(QUIET_TICKS, intervalTicks);
@@ -83,6 +93,10 @@ public final class MuseScheduler {
 		}
 		for (String key : BiomeThemes.otherKeys(in.group())) {
 			if (!used.contains(key)) return pick(key, tick);
+		}
+		if (in.selfKey() != null && !toldAboutSelf) {
+			toldAboutSelf = true;
+			return pick(in.selfKey(), tick);
 		}
 		return Optional.empty();
 	}

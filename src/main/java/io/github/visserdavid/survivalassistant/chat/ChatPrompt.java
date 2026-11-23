@@ -76,6 +76,12 @@ public final class ChatPrompt {
 				+ "two playful sentences, or turn it into a light question for " + scene.playerName() + ".]";
 	}
 
+	/** The user line for a small memory the guide shares about itself (the idea is one of its "about me" lines). */
+	public static String selfNote(Scene scene, String memory) {
+		return "[You feel like sharing a small memory about yourself. Memory: " + memory + " Tell it in your own words "
+				+ "in one or two warm sentences, maybe linked to what you see right now.]";
+	}
+
 	private static List<Turn> messages(Scene scene, List<Turn> history, String lastUserText) {
 		List<Turn> out = new ArrayList<>();
 		out.add(new Turn(Role.SYSTEM, systemPrompt(scene)));
@@ -102,9 +108,10 @@ public final class ChatPrompt {
 	public static String systemPrompt(Scene scene) {
 		Surroundings s = scene.surroundings();
 		StringBuilder b = new StringBuilder();
-		b.append("You are ").append(scene.guideName()).append(", a friendly companion who walks along with ")
+		b.append("You are ").append(scene.guideName()).append(", an old explorer who walks along with ")
 				.append(scene.playerName()).append(" in the game Minecraft. You make small talk: a casual remark, ")
 				.append("a light joke, a curious question. Nothing deep.\n\n")
+				.append(Persona.describe()).append('\n')
 				.append("Rules:\n")
 				.append("- Always reply in ").append(languageName(scene.languageCode())).append(".\n")
 				.append("- Vary your wording: don't repeat phrases or openings you already used in this conversation.\n")
@@ -114,7 +121,9 @@ public final class ChatPrompt {
 				.append("- Never give recipes, ore heights, numbers or step-by-step survival instructions: you might be wrong. ")
 				.append("If the player asks for that, say the task card or a right-click on you will help.\n")
 				.append("- You can only talk. You can't give items, fight or build.\n")
-				.append("- If you don't know something, say so cheerfully.\n\n")
+				.append("- If you don't know something, say so cheerfully.\n")
+				.append("- If the player asks about you, answer from your background above: a small anecdote at most.\n")
+				.append("- Don't bring up your past unless you're asked or it really fits the moment.\n\n")
 				.append("What you see right now:\n")
 				.append("- Biome: ").append(readable(s.biomeName())).append('\n');
 		if (scene.biomePro() != null || scene.biomeCon() != null) {

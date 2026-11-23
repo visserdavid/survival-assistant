@@ -20,6 +20,10 @@ public final class GuideProgress {
 	public Boolean chatEnabled = null;
 	/** Player's choice for the guide's musings: null = on (server default), "off", or "all" (also in danger zones). */
 	public String musings = null;
+	/** Player's own name for the guide; null = the server default (see {@link GuideNames}). */
+	public String guideName = null;
+	/** Next "about me" line the guide tells (/guide about and the occasional musing). */
+	public int aboutIndex = 0;
 	/** One-time depth/biome notices already shown (e.g. "deepslate", "lava"). */
 	public final Set<String> depthNotices = new LinkedHashSet<>();
 	/** Fallback home when the player has no bed/respawn point: the first workstation they placed. */

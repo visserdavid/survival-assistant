@@ -84,8 +84,8 @@ public final class GuideChat {
 
 		GuideEntity guide = GuideManager.guideOf(player);
 		String language = language(player);
-		String guideName = guideName(language);
-		boolean named = named(text, guideName);
+		String guideName = GuideManager.guideName(player);
+		boolean named = named(text, guideName, language);
 		if (!addressed(player, guide, named, cfg)) return;
 
 		State state = state(player);
@@ -119,9 +119,11 @@ public final class GuideChat {
 		return !othersNearby || named;
 	}
 
-	private static boolean named(String text, String guideName) {
+	private static boolean named(String text, String guideName, String language) {
 		String lower = text.toLowerCase(Locale.ROOT);
-		return lower.contains(guideName.toLowerCase(Locale.ROOT)) || lower.contains("guide");
+		String localized = LangFile.get(language, "entity.survivalassistant.guide");
+		return lower.contains(guideName.toLowerCase(Locale.ROOT)) || lower.contains("guide")
+				|| (localized != null && lower.contains(localized.toLowerCase(Locale.ROOT)));
 	}
 
 	// ---------------------------------------------------------------- request and reply
@@ -151,7 +153,7 @@ public final class GuideChat {
 		SurvivalContext ctx = ContextCollector.collect(player, progress);
 		Surroundings surroundings = SurroundingsCollector.collect(player, ctx, cfg.chatSightRadius);
 		ChatPrompt.Scene scene = scene(player, surroundings, progress);
-		String note = ChatPrompt.museNote(scene, idea);
+		String note = key.startsWith("survivalassistant.about.") ? ChatPrompt.selfNote(scene, idea) : ChatPrompt.museNote(scene, idea);
 		ask(player, state, ChatPrompt.forPlayer(scene, state.history, note), note, scene.guideName(), false,
 				Component.translatable(key));
 		return true;
@@ -225,7 +227,7 @@ public final class GuideChat {
 		String language = language(player);
 		String group = s.biomeGroup();
 		Tip next = AdviceEngine.nextMilestone(progress);
-		return new ChatPrompt.Scene(language, guideName(language), player.getName().getString(), s,
+		return new ChatPrompt.Scene(language, GuideManager.guideName(player), player.getName().getString(), s,
 				LangFile.get(language, "survivalassistant.biome." + group + ".pro"),
 				LangFile.get(language, "survivalassistant.biome." + group + ".con"),
 				next == null ? null : LangFile.get(language, "survivalassistant.task." + next.id()));
@@ -234,11 +236,6 @@ public final class GuideChat {
 	private static String language(ServerPlayer player) {
 		String code = player.clientInformation().language();
 		return code == null || code.isBlank() ? "en_us" : code;
-	}
-
-	private static String guideName(String language) {
-		String name = LangFile.get(language, "entity.survivalassistant.guide");
-		return name == null ? "Guide" : name;
 	}
 
 	private static State state(ServerPlayer player) {

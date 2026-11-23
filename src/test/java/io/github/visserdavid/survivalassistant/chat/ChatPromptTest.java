@@ -28,6 +28,9 @@ class ChatPromptTest {
 		assertTrue(p.contains("3 cow, 1 fox"), "most numerous first");
 		assertTrue(p.contains("Monsters nearby: 1 zombie"));
 		assertTrue(p.contains("working on: Hak hout"));
+		assertTrue(p.contains("You are Gids, an old explorer"), "the persona");
+		assertTrue(p.contains("hole in the ground with a single torch"), "the background story");
+		assertTrue(p.contains("If the player asks about you"));
 	}
 
 	@Test

@@ -17,7 +17,7 @@ import java.util.UUID;
 /**
  * The guide's musings: a building idea when you enter a new biome, a remark about the animals around you, a scene
  * or a little story. Handwritten lines in every language; with a local language model (/guide chat on) the model
- * puts the same idea in its own words. See {@link MuseScheduler} for when and {@link BiomeThemes} for what.
+ * puts the same idea in its own words. Now and then the guide tells something about itself ({@link Persona}). See {@link MuseScheduler} for when and {@link BiomeThemes} for what.
  */
 public final class GuideMusings {
 	private GuideMusings() {}
@@ -47,9 +47,10 @@ public final class GuideMusings {
 				|| GuideChat.busy(player);
 		boolean dangerZones = cfg.musingsInDangerZones || ALL.equals(progress.musings);
 		MuseScheduler.Input in = new MuseScheduler.Input(s.biomeGroup(), !ctx.isNight(), ctx.underground(),
-				s.friendly().keySet(), blocked, dangerZones);
+				s.friendly().keySet(), blocked, dangerZones, Persona.aboutKey(progress.aboutIndex));
 
 		scheduler.update(in, now).ifPresent(key -> {
+			if (key.equals(in.selfKey())) GuideManager.nextAbout(progress); // the next story is a different one
 			if (!GuideChat.muse(player, guide, progress, key)) {
 				GuideManager.speak(player, guide, Component.translatable(key));
 			}

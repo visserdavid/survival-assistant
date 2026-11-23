@@ -1,6 +1,6 @@
 {
 "entity.~guide": "Przewodnik",
-"~welcome.1": "Cześć, %s! Jestem twoim przewodnikiem. Zostanę z tobą przez pierwsze dni i pomogę ci przetrwać.",
+"~welcome.1": "Cześć, %s! Jestem %s, stary odkrywca i twój przewodnik. Zostanę z tobą przez pierwsze dni i pomogę ci przetrwać.",
 "~welcome.2": "Skradaj się i kliknij mnie prawym przyciskiem po radę albo użyj /guide tip. Potrzebujesz ciszy? /guide mute <minuty>.",
 "~comfort.1": "Auć! Spokojnie: twoje przedmioty leżą 5 minut tam, gdzie zginąłeś. Idź po nie, ale ostrożnie!",
 "~comfort.2": "Każdemu się zdarza. Twoje rzeczy wciąż leżą tam, gdzie upadłeś, przez 5 minut. Pospiesz się, ale uważaj.",
@@ -396,5 +396,16 @@
 "~muse.mob.goat": "Kozy skaczą bardzo wysoko i potrafią zepchnąć cię z krawędzi. Miej je na oku!",
 "~muse.mob.axolotl": "Aksolotle udają martwe, gdy są ranne, i pomagają ci walczyć pod wodą.",
 "~muse.mob.llama": "Lamy plują, gdy są złe, a ich karawana może nosić dla ciebie skrzynie.",
-"~muse.mob.panda": "Każda panda ma swój charakter: leniwa, figlarna, zmartwiona... niektóre nawet kichają!"
+"~muse.mob.panda": "Każda panda ma swój charakter: leniwa, figlarna, zmartwiona... niektóre nawet kichają!",
+"~about.1": "Widziałem więcej światów, niż potrafię zliczyć, ale mojej pierwszej nocy nigdy nie zapomnę.",
+"~about.2": "Pierwszej nocy zgubiłem się i schowałem w dziurze w ziemi z jedną pochodnią. Dlatego teraz pomagam nowicjuszom.",
+"~about.3": "Zbieram mapy. No... zbieram je, a potem gubię.",
+"~about.4": "Creepery? Brr. Po tylu latach wciąż podskakuję na to syczenie.",
+"~about.5": "Nic nie przebije wschodu słońca po długiej nocy. Wtedy wiem, że się udało.",
+"~about.6": "Głęboko pod ziemią widziałem kiedyś z daleka Strażnika. Nigdy nie wymknąłem się tak cicho.",
+"~about.7": "Mój własny dom? Nigdy go nie skończyłem. Zawsze był jeszcze jakiś pagórek, za który chciałem zajrzeć.",
+"~about.8": "Deszcz na dachu, lis w trawie, świeży chleb... niczego więcej mi nie trzeba. A, i proszę, żadnej głębokiej wody.",
+"~cmd.name_set": "Twój przewodnik nazywa się teraz %s.",
+"~cmd.name_reset": "Twój przewodnik znów nazywa się %s.",
+"~cmd.name_invalid": "Wybierz imię z najwyżej %s liter, cyfr lub spacji."
 }

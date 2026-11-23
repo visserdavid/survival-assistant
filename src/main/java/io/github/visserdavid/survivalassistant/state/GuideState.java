@@ -37,8 +37,10 @@ public final class GuideState {
 			Codec.BOOL.optionalFieldOf("chapter_offered", false).forGetter(p -> p.chapterOffered),
 			Codec.BOOL.optionalFieldOf("finished", false).forGetter(p -> p.finished),
 			Codec.BOOL.optionalFieldOf("chat_enabled").forGetter(p -> Optional.ofNullable(p.chatEnabled)),
-			Codec.STRING.optionalFieldOf("musings").forGetter(p -> Optional.ofNullable(p.musings))
-	).apply(i, (start, retired, completed, npc, notices, home, extra, asked, chapter, offered, finished, chat, musings) -> {
+			Codec.STRING.optionalFieldOf("musings").forGetter(p -> Optional.ofNullable(p.musings)),
+			Codec.STRING.optionalFieldOf("guide_name").forGetter(p -> Optional.ofNullable(p.guideName)),
+			Codec.INT.optionalFieldOf("about_index", 0).forGetter(p -> p.aboutIndex)
+	).apply(i, (start, retired, completed, npc, notices, home, extra, asked, chapter, offered, finished, chat, musings, name, about) -> {
 		GuideProgress p = new GuideProgress(start, retired, new LinkedHashSet<>(completed), npc.orElse(null), new LinkedHashSet<>(notices));
 		p.homeFallback = home.orElse(null);
 		p.extraDays = extra;
@@ -48,6 +50,8 @@ public final class GuideState {
 		p.finished = finished;
 		p.chatEnabled = chat.orElse(null);
 		p.musings = musings.orElse(null);
+		p.guideName = name.orElse(null);
+		p.aboutIndex = about;
 		return p;
 	}));
 

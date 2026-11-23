@@ -99,6 +99,18 @@ sending you there. The research and checked game facts are in
 - One-time chat notes the first time you reach deepslate, the lava level, the deep dark or high mountains.
 - Press **K** to show or hide it.
 
+### Meet Pim
+- The guide has a name and a past: **Pim**, an old explorer who has travelled through more worlds than he can count.
+  His own first night went badly (lost, in a hole in the ground with a single torch), and that is why he now helps
+  newcomers. He collects maps and keeps losing them, never finished his own house, loves sunrises, foxes and fresh
+  bread, and is still afraid of creepers.
+- He introduces himself when you meet. Use `/guide about` to hear a little more about him (a different story every
+  time), and now and then he tells one by himself when there is nothing left to say about the place you're in.
+- With small talk on you can simply ask him: "Pim, where are you from?" The model answers from the same
+  background, so his story stays consistent.
+- Prefer another name? `/guide name <name>` (up to 16 letters, digits or spaces; `/guide name reset` goes back).
+  Server owners can change the default with `guideName` in the config.
+
 ### The guide's musings
 - Walk into a new biome and the guide shares a building idea for it: a farm with a red barn on the plains,
   a log cabin with a smoking chimney in the taiga, a sandstone market in the desert, a treehouse village in the
@@ -191,6 +203,8 @@ Minecraft's font can't show.
 | `/guide tip` | Get the most important tip right now |
 | `/guide call` | Bring the guide to you (or back after it said goodbye) |
 | `/guide dismiss` | Send the guide away |
+| `/guide about` | The guide tells something about himself |
+| `/guide name <name>\|reset` | Give the guide your own name (saved per player) |
 | `/guide musings on\|off\|all` | The guide's remarks about biomes and animals (`all` includes the Nether, End and Deep Dark) |
 | `/guide chat on\|off` | Small talk with the guide through a local language model (saved per player) |
 | `/guide extend` | Let the guide stay 3 more days |
@@ -215,6 +229,7 @@ Minecraft's font can't show.
 | `allowRecall` | `true` | Allow `/guide call` after the guide has left |
 | `npcEnabledByDefault` | `true` | Default for the guide character (players can override) |
 | `depthNotices` | `true` | One-time chat notes about depth and mountains |
+| `guideName` | `Pim` | The guide's name (players can choose their own with `/guide name`) |
 | `spawnOnJoin` | `true` | Give new players a guide automatically |
 | `pointAtResources` | `true` | Guide looks at nearby trees/stone when giving those tips |
 | `navigation` | `true` | Show the way back to your items after dying, and the way home |

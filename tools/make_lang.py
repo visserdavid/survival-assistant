@@ -19,8 +19,8 @@ T = P + "tip."
 L = {
     "entity.survivalassistant.guide": ("Guide", "Gids"),
 
-    P + "welcome.1": ("Hello %s! I'm your guide. I'll stay with you for your first days and help you survive.",
-                      "Hoi %s! Ik ben je gids. Ik blijf de eerste dagen bij je en help je overleven."),
+    P + "welcome.1": ("Hello %s! I'm %s, an old explorer and your guide. I'll stay with you for your first days and help you survive.",
+                      "Hoi %s! Ik ben %s, een oude ontdekkingsreiziger en je gids. Ik blijf de eerste dagen bij je en help je overleven."),
     P + "welcome.2": ("Sneak and right-click me for a tip, or use /guide tip. Want some peace and quiet? /guide mute <minutes>.",
                       "Sluip en rechtsklik op mij voor een tip, of gebruik /guide tip. Even rust? /guide mute <minuten>."),
     P + "comfort.1": ("Ouch! Don't worry: your items stay at the spot where you died for 5 minutes. Go get them, carefully!",
@@ -440,6 +440,30 @@ L = {
                            "Lama's spugen als ze boos zijn, en een kudde kan kisten voor je dragen."),
     P + "muse.mob.panda": ("Every panda has its own personality: lazy, playful, worried... some even sneeze!",
                            "Elke panda heeft een eigen karakter: lui, speels, bezorgd... sommige niezen zelfs!"),
+
+    # ---------------- the guide about itself (Persona) and /guide name ----------------
+    P + "about.1": ("I've seen more worlds than I can count, but I'll never forget my very first night.",
+        "Ik heb meer werelden gezien dan ik kan tellen, maar mijn allereerste nacht vergeet ik nooit."),
+    P + "about.2": ("My first night I got lost and hid in a hole in the ground with one torch. That's why I help newcomers now.",
+        "Mijn eerste nacht verdwaalde ik en zat ik in een kuil met één fakkel. Daarom help ik nu nieuwkomers."),
+    P + "about.3": ("I collect maps. Well... I collect them, and then I lose them.",
+        "Ik verzamel kaarten. Nou ja... ik verzamel ze, en dan raak ik ze kwijt."),
+    P + "about.4": ("Creepers? Brr. That hissing still makes me jump, after all these years.",
+        "Creepers? Brr. Van dat gesis schrik ik nog steeds, na al die jaren."),
+    P + "about.5": ("Nothing beats a sunrise after a long night. That's when I know we made it.",
+        "Er gaat niets boven een zonsopkomst na een lange nacht. Dan weet ik: we hebben het gered."),
+    P + "about.6": ("Deep underground I once saw a Warden in the distance. I've never sneaked away so quietly.",
+        "Diep onder de grond zag ik ooit een Warden in de verte. Nog nooit ben ik zo stil weggeslopen."),
+    P + "about.7": ("My own house? Never finished it. There was always another hill to look behind.",
+        "Mijn eigen huis? Nooit afgebouwd. Er was altijd nog een heuvel om achter te kijken."),
+    P + "about.8": ("Rain on the roof, a fox in the grass, fresh bread... that's all I need. Oh, and no deep water, please.",
+        "Regen op het dak, een vos in het gras, vers brood... meer heb ik niet nodig. O, en liever geen diep water."),
+    P + "cmd.name_set": ("Your guide is now called %s.",
+        "Je gids heet nu %s."),
+    P + "cmd.name_reset": ("Your guide is called %s again.",
+        "Je gids heet weer %s."),
+    P + "cmd.name_invalid": ("Choose a name of at most %s letters, digits or spaces.",
+        "Kies een naam van hoogstens %s letters, cijfers of spaties."),
 
     # ---------------- light check (L) ----------------
     P + "light.on": ("Light check on: red dots = monsters can spawn there. Place torches until they're gone.",

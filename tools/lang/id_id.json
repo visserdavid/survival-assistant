@@ -1,6 +1,6 @@
 {
 "entity.~guide": "Pemandu",
-"~welcome.1": "Halo, %s! Aku pemandumu. Aku akan menemanimu di hari-hari pertama dan membantumu bertahan hidup.",
+"~welcome.1": "Halo, %s! Aku %s, penjelajah tua sekaligus pemandumu. Aku akan menemanimu di hari-hari pertama dan membantumu bertahan hidup.",
 "~welcome.2": "Menyelinaplah dan klik kanan aku untuk tips, atau gunakan /guide tip. Mau tenang sebentar? /guide mute <menit>.",
 "~comfort.1": "Aduh! Jangan khawatir: barangmu tetap ada di tempat kamu mati selama 5 menit. Ambil lagi, tapi hati-hati!",
 "~comfort.2": "Itu terjadi pada semua orang. Barangmu masih ada di tempat kamu jatuh selama 5 menit. Cepat, tapi tetap aman.",
@@ -396,5 +396,16 @@
 "~muse.mob.goat": "Kambing bisa melompat sangat tinggi, dan bisa menyerudukmu dari tepi tebing. Awasi mereka!",
 "~muse.mob.axolotl": "Axolotl pura-pura mati saat terluka, dan mereka membantumu bertarung di dalam air.",
 "~muse.mob.llama": "Llama meludah kalau marah, dan sekelompok llama bisa membawakan peti untukmu.",
-"~muse.mob.panda": "Setiap panda punya sifat sendiri: malas, suka bermain, cemas... ada yang bahkan bersin!"
+"~muse.mob.panda": "Setiap panda punya sifat sendiri: malas, suka bermain, cemas... ada yang bahkan bersin!",
+"~about.1": "Aku sudah melihat lebih banyak dunia daripada yang bisa kuhitung, tapi malam pertamaku tak akan pernah kulupakan.",
+"~about.2": "Malam pertamaku aku tersesat dan bersembunyi di lubang tanah dengan satu obor saja. Karena itu sekarang aku membantu pendatang baru.",
+"~about.3": "Aku mengoleksi peta. Yah... aku mengoleksinya, lalu menghilangkannya.",
+"~about.4": "Creeper? Brr. Desisan itu masih membuatku kaget, bahkan setelah bertahun-tahun.",
+"~about.5": "Tak ada yang mengalahkan matahari terbit setelah malam panjang. Saat itulah aku tahu kita berhasil.",
+"~about.6": "Jauh di bawah tanah aku pernah melihat Warden dari kejauhan. Belum pernah aku mengendap-endap pergi sepelan itu.",
+"~about.7": "Rumahku sendiri? Tak pernah selesai. Selalu ada bukit lain yang ingin kulihat baliknya.",
+"~about.8": "Hujan di atap, rubah di rerumputan, roti hangat... cuma itu yang kubutuhkan. Oh, dan tolong jangan air yang dalam.",
+"~cmd.name_set": "Pemandumu sekarang bernama %s.",
+"~cmd.name_reset": "Pemandumu kembali bernama %s.",
+"~cmd.name_invalid": "Pilih nama dengan paling banyak %s huruf, angka, atau spasi."
 }
