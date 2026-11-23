@@ -641,5 +641,6 @@
 "~task.elytra": "Encuentra unos élitros",
 "~tip.elytra.1": "Algunas ciudades del End tienen un barco. Dentro, los élitros cuelgan de un marco; rompe el marco para cogerlos.",
 "~tip.elytra.2": "Ponte los élitros, salta desde lo alto y vuelve a pulsar saltar para planear. Los cohetes te dan impulso.",
-"~praise.elytra": "¡Alas! Todo el mundo es tuyo."
+"~praise.elytra": "¡Alas! Todo el mundo es tuyo.",
+"~progress_chapter": "Objetivos cumplidos: %s/%s en %s."
 }

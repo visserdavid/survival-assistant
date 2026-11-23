@@ -7,6 +7,7 @@
 	"survivalassistant.chat.unavailable": "I seem to have lost my voice. Talk to me again in a minute!",
 	"survivalassistant.all_done": "You've done everything I can teach you. You're ready for the world!",
 	"survivalassistant.progress": "Goals reached: %s/%s. I'll stay with you for %s more day(s).",
+	"survivalassistant.progress_chapter": "Goals reached: %s/%s in %s.",
 	"survivalassistant.farewell.1": "You made it through your first days! It's time for me to move on.",
 	"survivalassistant.dismissed.1": "Alright, I'll leave you to it. Good luck out there!",
 	"survivalassistant.farewell.summary": "You reached %s of %s goals. Keep exploring, and always sleep at night.",

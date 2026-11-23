@@ -44,10 +44,22 @@ as long as you're working on a chapter.
 | 9 | **Redstone** | 2 | 16 redstone, an automatic iron door, a powered piston, a repeater, a hopper |
 | 10 | **The End** | 4 and 5 | 12 ender pearls, 12 eyes of ender, the stronghold, enter the End, defeat the dragon, an end city, an elytra |
 
-- Finish a chapter and the guide celebrates and shows the menu: finished chapters in green, the ones you can
-  start as buttons, locked ones in grey with what they need. Click **[I'll manage]** to let the guide go.
+- Finish a chapter and the guide celebrates and shows the menu: finished chapters in green, the current one in
+  gold, the ones you can start as buttons, locked ones in grey with what they need. Hover over a button to see
+  what the chapter is about, click it to start. Click **[I'll manage]** to let the guide go.
+
+<p align="center">
+  <img src="docs/images/chapters-menu.png" alt="Chapter menu in chat: chapters 1 and 2 done, 6 Farming and animals current, 3, 4, 7, 8 and 9 as buttons, 5 and 10 locked with what they need" width="460">
+  <img src="docs/images/chapters-tooltip.png" alt="Chapter menu with the tooltip of Villages and trading: find a village, trade with villagers, earn emeralds and build an iron golem" width="460" align="top">
+</p>
+
 - Switch any time with `/guide chapter <name>` (`village`, `nether`, `magic`, `husbandry`, `ocean`, `explorer`,
-  `redstone`, `end`); progress is kept.
+  `redstone`, `end`); progress is kept. The task card shows the chapter you're in.
+
+<p align="center">
+  <img src="docs/images/task-card-chapter.png" alt="Task card in chapter 6: Guide, Ch. 6, Farming and animals, current task Tame an animal, next: Collect 16 sugar cane, Catch a fish" width="460">
+</p>
+
 - Goals like "find a fortress" or "brew a potion" use Minecraft's own advancements, so they're detected exactly
   the way the game counts them. If you already did something, it's ticked off right away.
 - Place notes, once each: the first time in the Nether (beds explode, piglins and gold, fast lava), in a village,

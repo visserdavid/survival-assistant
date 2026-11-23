@@ -7,6 +7,7 @@
 	"survivalassistant.chat.unavailable": "लगता है मेरी आवाज़ चली गई है। एक मिनट बाद फिर से बात करना!",
 	"survivalassistant.all_done": "जो कुछ मैं सिखा सकता था, वह सब तुमने कर लिया। अब तुम दुनिया के लिए तैयार हो!",
 	"survivalassistant.progress": "पूरे हुए लक्ष्य: %s/%s। मैं अभी %s दिन और तुम्हारे साथ रहूँगा।",
+	"survivalassistant.progress_chapter": "%3$s में पूरे हुए लक्ष्य: %1$s/%2$s।",
 	"survivalassistant.farewell.1": "तुमने अपने शुरुआती दिन पार कर लिए! अब मेरे आगे बढ़ने का समय है।",
 	"survivalassistant.dismissed.1": "ठीक है, मैं तुम्हें अकेला छोड़ता हूँ। बाहर शुभकामनाएँ!",
 	"survivalassistant.farewell.summary": "तुमने %2$s में से %1$s लक्ष्य पूरे किए। खोज जारी रखो, और रात को हमेशा सोना।",

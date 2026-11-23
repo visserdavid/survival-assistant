@@ -7,6 +7,7 @@
 	"survivalassistant.chat.unavailable": "Se pare că mi-am pierdut vocea. Mai vorbește-mi peste un minut!",
 	"survivalassistant.all_done": "Ai făcut tot ce te pot învăța. Ești gata pentru lume!",
 	"survivalassistant.progress": "Obiective atinse: %s/%s. Mai rămân cu tine %s zi/zile.",
+	"survivalassistant.progress_chapter": "Obiective atinse: %s/%s în %s.",
 	"survivalassistant.farewell.1": "Ai supraviețuit primelor zile! E timpul să-mi văd de drum.",
 	"survivalassistant.dismissed.1": "Bine, te las în pace. Mult noroc!",
 	"survivalassistant.farewell.summary": "Ai atins %s din %s obiective. Explorează în continuare și dormi mereu noaptea.",

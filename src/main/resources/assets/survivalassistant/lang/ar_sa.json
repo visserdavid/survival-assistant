@@ -7,6 +7,7 @@
 	"survivalassistant.chat.unavailable": "يبدو أنني فقدت صوتي. كلّمني مرة أخرى بعد دقيقة!",
 	"survivalassistant.all_done": "لقد فعلت كل ما أستطيع تعليمه لك. أنت مستعد للعالم!",
 	"survivalassistant.progress": "الأهداف المحققة: %s/%s. سأبقى معك %s يوم/أيام أخرى.",
+	"survivalassistant.progress_chapter": "الأهداف المحققة: %s/%s في %s.",
 	"survivalassistant.farewell.1": "لقد نجوت من أيامك الأولى! حان وقت رحيلي.",
 	"survivalassistant.dismissed.1": "حسنًا، سأتركك الآن. حظًا موفقًا!",
 	"survivalassistant.farewell.summary": "حققت %s من %s هدفًا. واصل الاستكشاف ونم دائمًا في الليل.",

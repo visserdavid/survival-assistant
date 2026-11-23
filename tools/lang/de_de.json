@@ -641,5 +641,6 @@
 "~task.elytra": "Finde Elytren",
 "~tip.elytra.1": "Bei manchen Endsiedlungen liegt ein Schiff. Darin hängen die Elytren in einem Rahmen; zerschlag den Rahmen, um sie zu nehmen.",
 "~tip.elytra.2": "Zieh die Elytren an, spring von einer Höhe und drück erneut Springen, um zu gleiten. Feuerwerk gibt dir Schub.",
-"~praise.elytra": "Flügel! Die ganze Welt gehört jetzt dir."
+"~praise.elytra": "Flügel! Die ganze Welt gehört jetzt dir.",
+"~progress_chapter": "Erreichte Ziele: %s/%s in %s."
 }

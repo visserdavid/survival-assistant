@@ -641,5 +641,6 @@
 "~task.elytra": "Trouver des élytres",
 "~tip.elytra.1": "Certaines cités de l'End ont un navire. Les élytres y sont accrochées dans un cadre ; casse le cadre pour les prendre.",
 "~tip.elytra.2": "Équipe les élytres, saute d'en haut et appuie de nouveau sur saut pour planer. Les feux d'artifice te donnent de l'élan.",
-"~praise.elytra": "Des ailes ! Le monde entier est à toi."
+"~praise.elytra": "Des ailes ! Le monde entier est à toi.",
+"~progress_chapter": "Objectifs atteints : %s/%s dans %s."
 }

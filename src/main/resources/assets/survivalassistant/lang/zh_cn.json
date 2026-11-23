@@ -7,6 +7,7 @@
 	"survivalassistant.chat.unavailable": "我好像失声了。过一分钟再跟我说话吧！",
 	"survivalassistant.all_done": "我能教你的你都做到了。你已经准备好闯荡世界了！",
 	"survivalassistant.progress": "已达成目标：%s/%s。我还会陪你 %s 天。",
+	"survivalassistant.progress_chapter": "已完成目标：%s/%s（%s）。",
 	"survivalassistant.farewell.1": "你撑过了最初的几天！我该继续上路了。",
 	"survivalassistant.dismissed.1": "好吧，我不打扰你了。祝你好运！",
 	"survivalassistant.farewell.summary": "你达成了 %s 个目标（共 %s 个）。继续探索吧，晚上一定要睡觉。",

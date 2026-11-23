@@ -7,6 +7,7 @@
 	"survivalassistant.chat.unavailable": "Sepertinya suaraku hilang. Ajak aku bicara lagi sebentar lagi!",
 	"survivalassistant.all_done": "Kamu sudah melakukan semua yang bisa kuajarkan. Kamu siap menghadapi dunia!",
 	"survivalassistant.progress": "Tujuan tercapai: %s/%s. Aku akan menemanimu %s hari lagi.",
+	"survivalassistant.progress_chapter": "Tujuan tercapai: %s/%s di %s.",
 	"survivalassistant.farewell.1": "Kamu berhasil melewati hari-hari pertamamu! Saatnya aku melanjutkan perjalanan.",
 	"survivalassistant.dismissed.1": "Baiklah, aku tinggalkan kamu. Semoga berhasil di luar sana!",
 	"survivalassistant.farewell.summary": "Kamu mencapai %s dari %s tujuan. Terus menjelajah, dan selalu tidur di malam hari.",

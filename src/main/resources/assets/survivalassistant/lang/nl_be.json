@@ -7,6 +7,7 @@
 	"survivalassistant.chat.unavailable": "Ik ben even mijn stem kwijt. Praat over een minuutje nog eens met me!",
 	"survivalassistant.all_done": "Je hebt alles gedaan wat ik je kan leren. Je bent klaar voor de wereld!",
 	"survivalassistant.progress": "Doelen gehaald: %s/%s. Ik blijf nog %s dag(en) bij je.",
+	"survivalassistant.progress_chapter": "Doelen gehaald: %s/%s in %s.",
 	"survivalassistant.farewell.1": "Je hebt je eerste dagen overleefd! Tijd voor mij om verder te trekken.",
 	"survivalassistant.dismissed.1": "Goed, ik laat je verder alleen. Veel succes daarbuiten!",
 	"survivalassistant.farewell.summary": "Je haalde %s van de %s doelen. Blijf ontdekken en slaap elke nacht.",

@@ -507,9 +507,14 @@ public final class GuideManager {
 	public static void onGuideClicked(ServerPlayer player, GuideEntity guide) {
 		GuideProgress progress = GuideState.of(player);
 		evaluateAndSay(player, guide, progress, true);
-		say(player, null, Component.translatable("survivalassistant.progress",
-				doneInChapter(progress), TipRegistry.milestones(progress.chapter).size(),
-				Math.max(0, dayLimit(progress) - dayIndex(player, progress))).withStyle(ChatFormatting.GRAY), false);
+		int done = doneInChapter(progress), total = TipRegistry.milestones(progress.chapter).size();
+		// Later chapters have no day limit, so they show the chapter instead of the days left.
+		Component line = dayLimit(progress) <= 0
+				? Component.translatable("survivalassistant.progress_chapter", done, total,
+						Component.translatable(Chapters.get(progress.chapter).titleKey()))
+				: Component.translatable("survivalassistant.progress", done, total,
+						Math.max(0, dayLimit(progress) - dayIndex(player, progress)));
+		say(player, null, line.copy().withStyle(ChatFormatting.GRAY), false);
 	}
 
 	public static void onRespawn(ServerPlayer newPlayer) {

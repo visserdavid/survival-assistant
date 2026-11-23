@@ -641,5 +641,6 @@
 "~task.elytra": "Temukan elytra",
 "~tip.elytra.1": "Beberapa kota End punya kapal. Di dalamnya elytra tergantung di bingkai; pecahkan bingkainya untuk mengambilnya.",
 "~tip.elytra.2": "Pakai elytra, lompat dari tempat tinggi, lalu tekan lompat lagi untuk meluncur. Kembang api memberimu dorongan.",
-"~praise.elytra": "Sayap! Seluruh dunia kini milikmu."
+"~praise.elytra": "Sayap! Seluruh dunia kini milikmu.",
+"~progress_chapter": "Tujuan tercapai: %s/%s di %s."
 }

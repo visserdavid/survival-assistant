@@ -641,5 +641,6 @@
 "~task.elytra": "Trova un'elitra",
 "~tip.elytra.1": "Alcune città dell'End hanno una nave. Dentro, l'elitra è appesa in una cornice; rompi la cornice per prenderla.",
 "~tip.elytra.2": "Indossa l'elitra, salta da un punto alto e premi di nuovo salto per planare. I fuochi d'artificio ti danno una spinta.",
-"~praise.elytra": "Ali! Il mondo intero ora è tuo."
+"~praise.elytra": "Ali! Il mondo intero ora è tuo.",
+"~progress_chapter": "Obiettivi raggiunti: %s/%s in %s."
 }

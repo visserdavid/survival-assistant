@@ -641,5 +641,6 @@
 "~task.elytra": "Znajdź elytrę",
 "~tip.elytra.1": "Przy niektórych miastach Kresu jest statek. W środku elytra wisi w ramce; rozbij ramkę, żeby ją zabrać.",
 "~tip.elytra.2": "Załóż elytrę, skocz z wysoka i naciśnij skok jeszcze raz, żeby szybować. Fajerwerki dodają ci prędkości.",
-"~praise.elytra": "Skrzydła! Cały świat należy teraz do ciebie."
+"~praise.elytra": "Skrzydła! Cały świat należy teraz do ciebie.",
+"~progress_chapter": "Osiągnięte cele: %s/%s w rozdziale %s."
 }

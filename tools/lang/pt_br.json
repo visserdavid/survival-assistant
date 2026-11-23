@@ -641,5 +641,6 @@
 "~task.elytra": "Encontre um élitro",
 "~tip.elytra.1": "Algumas cidades do End têm um navio. Lá dentro, o élitro fica numa moldura; quebre a moldura para pegá-lo.",
 "~tip.elytra.2": "Vista o élitro, pule de um lugar alto e aperte pular de novo para planar. Fogos de artifício dão um impulso.",
-"~praise.elytra": "Asas! O mundo inteiro é seu agora."
+"~praise.elytra": "Asas! O mundo inteiro é seu agora.",
+"~progress_chapter": "Metas alcançadas: %s/%s em %s."
 }

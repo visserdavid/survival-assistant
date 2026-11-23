@@ -33,6 +33,7 @@ L = {
                      "Je hebt alles gedaan wat ik je kan leren. Je bent klaar voor de wereld!"),
     P + "progress": ("Goals reached: %s/%s. I'll stay with you for %s more day(s).",
                      "Doelen gehaald: %s/%s. Ik blijf nog %s dag(en) bij je."),
+    P + "progress_chapter": ("Goals reached: %s/%s in %s.", "Doelen gehaald: %s/%s in %s."),
     P + "farewell.1": ("You made it through your first days! It's time for me to move on.",
                        "Je hebt je eerste dagen overleefd! Tijd voor mij om verder te trekken."),
     P + "dismissed.1": ("Alright, I'll leave you to it. Good luck out there!",

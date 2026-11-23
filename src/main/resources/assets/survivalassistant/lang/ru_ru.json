@@ -7,6 +7,7 @@
 	"survivalassistant.chat.unavailable": "Кажется, я потерял голос. Заговори со мной через минутку!",
 	"survivalassistant.all_done": "Ты сделал всё, чему я могу научить. Ты готов к большому миру!",
 	"survivalassistant.progress": "Целей выполнено: %s/%s. Я побуду с тобой ещё дней: %s.",
+	"survivalassistant.progress_chapter": "Целей достигнуто: %s/%s в главе %s.",
 	"survivalassistant.farewell.1": "Ты пережил свои первые дни! Мне пора двигаться дальше.",
 	"survivalassistant.dismissed.1": "Хорошо, оставлю тебя. Удачи!",
 	"survivalassistant.farewell.summary": "Ты выполнил %s из %s целей. Продолжай исследовать и всегда спи по ночам.",

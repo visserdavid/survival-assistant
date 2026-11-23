@@ -641,5 +641,6 @@
 "~task.elytra": "Găsește o elitră",
 "~tip.elytra.1": "Unele orașe din End au o navă. Înăuntru, elitra atârnă într-o ramă; sparge rama ca s-o iei.",
 "~tip.elytra.2": "Pune elitra, sari de la înălțime și apasă din nou săritura ca să planezi. Artificiile îți dau avânt.",
-"~praise.elytra": "Aripi! Toată lumea e acum a ta."
+"~praise.elytra": "Aripi! Toată lumea e acum a ta.",
+"~progress_chapter": "Obiective atinse: %s/%s în %s."
 }
