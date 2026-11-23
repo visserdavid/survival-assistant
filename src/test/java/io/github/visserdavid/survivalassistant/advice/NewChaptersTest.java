@@ -84,7 +84,7 @@ class NewChaptersTest {
 	void hudCardFollowsTheChapter() {
 		GuideProgress p = new GuideProgress();
 		p.chapter = Chapters.NETHER.number();
-		HudSnapshot s = HudSnapshot.of(b().build(), p, 0);
+		HudSnapshot s = HudSnapshot.of(b().build(), p);
 		assertEquals(4, s.chapter());
 		assertEquals("gold_armor", s.next().get(0).id());
 		assertEquals(TipRegistry.GOLD_ARMOR, AdviceEngine.nextMilestone(p));

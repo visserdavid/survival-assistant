@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GuideProgressCodecTest {
-	/** Player data as 0.20.0 and earlier saved it: one flat map. */
+	/** Player data as 0.20.0 saved it: one flat map (extra_days belonged to the old day limit and is ignored now). */
 	private static final String OLD_FORMAT = """
 			{
 			  "start_tick": 48000, "retired": false, "completed": ["wood", "crafting_table", "farm"],
@@ -40,7 +40,6 @@ class GuideProgressCodecTest {
 		assertEquals(Boolean.FALSE, p.npcEnabled);
 		assertEquals(Set.of("deepslate", "nether"), p.depthNotices);
 		assertEquals(new Navigation.Mark("minecraft:overworld", 10, 64, -5), p.homeFallback);
-		assertEquals(3, p.extraDays);
 		assertEquals(51000, p.askedAtTick);
 		assertEquals(2, p.chapter);
 		assertTrue(p.chapterOffered);
@@ -69,6 +68,7 @@ class GuideProgressCodecTest {
 		// values equal to their default are left out, as before
 		expected.remove("retired");
 		expected.remove("finished");
+		expected.remove("extra_days"); // no longer saved
 		assertEquals(expected, written);
 	}
 }

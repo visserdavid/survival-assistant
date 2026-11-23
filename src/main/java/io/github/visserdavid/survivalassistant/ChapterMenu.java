@@ -3,7 +3,6 @@ package io.github.visserdavid.survivalassistant;
 import io.github.visserdavid.survivalassistant.advice.Chapter;
 import io.github.visserdavid.survivalassistant.advice.Chapters;
 import io.github.visserdavid.survivalassistant.advice.GuideProgress;
-import io.github.visserdavid.survivalassistant.config.ModConfig;
 import io.github.visserdavid.survivalassistant.entity.GuideEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
@@ -22,7 +21,7 @@ import org.jspecify.annotations.Nullable;
 import static io.github.visserdavid.survivalassistant.GuideSpeech.button;
 import static io.github.visserdavid.survivalassistant.GuideSpeech.say;
 
-/** The questions the guide asks with clickable answers: the chapter menu and "do you still need me?". */
+/** The chapter menu with clickable chapters, and the celebration of a finished chapter. */
 final class ChapterMenu {
 	/** Indent of the menu lines under the guide's question. */
 	private static final String INDENT = "   ";
@@ -78,16 +77,6 @@ final class ChapterMenu {
 						.append(Component.translatable("survivalassistant.chapters.locked", needs)).withStyle(ChatFormatting.GRAY);
 			}
 		};
-	}
-
-	/** "Do you still need me?" with clickable yes/no buttons. */
-	static void askToExtend(ServerPlayer player, @Nullable GuideEntity guide, String questionKey) {
-		int days = ModConfig.get().extendDays;
-		say(player, guide, Component.translatable(questionKey).withStyle(ChatFormatting.AQUA), true);
-		player.sendSystemMessage(Component.literal(INDENT)
-				.append(button("survivalassistant.extend.yes", "survivalassistant.extend.yes_hover", "/guide extend", ChatFormatting.GREEN, days))
-				.append("  ")
-				.append(button("survivalassistant.extend.no", "survivalassistant.extend.no_hover", "/guide dismiss", ChatFormatting.RED)));
 	}
 
 	/** Title, sound and particles for a finished chapter. */

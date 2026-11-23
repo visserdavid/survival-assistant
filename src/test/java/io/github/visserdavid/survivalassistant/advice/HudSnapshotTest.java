@@ -11,7 +11,7 @@ class HudSnapshotTest {
 	private static HudSnapshot snap(SurvivalContext c, GuideProgress p) {
 		// The server always evaluates (which records completed milestones) before building the snapshot.
 		AdviceEngine.evaluate(c, p, 0, AdviceEngine.Settings.from(new ModConfig()), false);
-		return HudSnapshot.of(c, p, 3);
+		return HudSnapshot.of(c, p);
 	}
 
 	private static List<String> ids(HudSnapshot s) {
@@ -26,7 +26,7 @@ class HudSnapshotTest {
 		assertEquals(new HudSnapshot.Entry("wood", 0, 10), s.next().get(0));
 		assertEquals(0, s.next().get(1).target(), "crafting table has no counter");
 		assertEquals("", s.urgentId());
-		assertEquals(3, s.maxDays());
+		assertEquals(1, s.chapter());
 	}
 
 	@Test
@@ -62,7 +62,7 @@ class HudSnapshotTest {
 	void lastTasksShowFewerLines() {
 		GuideProgress p = new GuideProgress();
 		TipRegistry.CHAPTER_FIRST_DAYS.stream().limit(TipRegistry.CHAPTER_FIRST_DAYS.size() - 1).forEach(m -> p.completed.add(m.id()));
-		HudSnapshot s = HudSnapshot.of(SurvivalContext.builder().build(), p, 3);
+		HudSnapshot s = HudSnapshot.of(SurvivalContext.builder().build(), p);
 		assertEquals(List.of("water_bucket"), ids(s));
 	}
 
@@ -70,7 +70,7 @@ class HudSnapshotTest {
 	void allDoneMeansNoTasks() {
 		GuideProgress p = new GuideProgress();
 		TipRegistry.CHAPTER_FIRST_DAYS.forEach(m -> p.completed.add(m.id()));
-		assertTrue(HudSnapshot.of(SurvivalContext.builder().build(), p, 3).next().isEmpty());
+		assertTrue(HudSnapshot.of(SurvivalContext.builder().build(), p).next().isEmpty());
 	}
 
 	@Test
@@ -99,7 +99,7 @@ class HudSnapshotTest {
 		for (Chapter c : Chapters.ALL) for (Tip t : c.goals()) p.completed.add(t.id());
 		for (Chapter c : Chapters.ALL) {
 			p.chapter = c.number();
-			HudSnapshot s = HudSnapshot.of(SurvivalContext.builder().build(), p, 0);
+			HudSnapshot s = HudSnapshot.of(SurvivalContext.builder().build(), p);
 			assertEquals(c.goals().stream().map(Tip::id).toList(), s.completed(), c.id());
 			assertTrue(s.completed().size() <= HudSnapshot.MAX_COMPLETED, "fits on the wire: " + c.id());
 		}

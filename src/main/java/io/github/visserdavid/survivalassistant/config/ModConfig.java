@@ -11,10 +11,6 @@ import java.nio.file.Path;
 /** Simple JSON config at config/survivalassistant.json. Missing fields fall back to defaults. */
 public final class ModConfig {
 
-	/** Number of in-game days the guide stays for chapter 1 (later chapters last as long as the player is busy). */
-	public int maxDays = 3;
-	/** When the period ends the guide asks whether it is still needed; "yes" adds this many days. 0 = never ask. */
-	public int extendDays = 3;
 	/** After chapter 1, offer the next chapters (settling in, then villages, the Nether, brewing and enchanting). */
 	@SerializedName(value = "moreChapters", alternate = {"chapter2"})
 	public boolean moreChapters = true;
@@ -110,8 +106,6 @@ public final class ModConfig {
 	/** Brings every value into its valid range; empty or missing texts get their default. */
 	void validate() {
 		ModConfig d = new ModConfig();
-		maxDays = Math.max(0, maxDays);
-		extendDays = Math.max(0, extendDays);
 		tipIntervalSeconds = Math.max(1, tipIntervalSeconds);
 		milestoneCooldownSeconds = Math.max(0, milestoneCooldownSeconds);
 		urgentCooldownSeconds = Math.max(0, urgentCooldownSeconds);

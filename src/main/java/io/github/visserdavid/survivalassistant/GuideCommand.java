@@ -20,7 +20,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.Predicate;
 
-/** /guide call | dismiss | extend | continue | chapters | chapter &lt;id&gt; | about | name &lt;name&gt;|reset | chat on|off | musings on|off|all | tip | mute &lt;minutes&gt; | character on|off */
+/** /guide call | dismiss | continue | chapters | chapter &lt;id&gt; | about | name &lt;name&gt;|reset | chat on|off | musings on|off|all | tip | mute &lt;minutes&gt; | character on|off */
 public final class GuideCommand {
 	private GuideCommand() {}
 
@@ -28,7 +28,6 @@ public final class GuideCommand {
 		dispatcher.register(Commands.literal("guide")
 				.then(Commands.literal("call").executes(GuideCommand::call))
 				.then(Commands.literal("dismiss").executes(c -> run(c, GuideManager::dismiss)))
-				.then(Commands.literal("extend").executes(c -> run(c, GuideManager::extend)))
 				.then(Commands.literal("continue").executes(c -> run(c, GuideManager::continueChapter)))
 				.then(Commands.literal("chapters").executes(c -> run(c, GuideManager::chapters)))
 				.then(Commands.literal("chapter")

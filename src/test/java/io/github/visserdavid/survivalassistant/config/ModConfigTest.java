@@ -14,7 +14,7 @@ class ModConfigTest {
 		assertEquals(d.chatEndpoint, c.chatEndpoint);
 		assertEquals(d.chatCooldownSeconds, c.chatCooldownSeconds);
 		assertEquals(d.museIntervalSeconds, c.museIntervalSeconds);
-		assertEquals(d.maxDays, c.maxDays);
+		assertEquals(d.tipIntervalSeconds, c.tipIntervalSeconds);
 		assertEquals(GuideNames.DEFAULT, c.guideName);
 	}
 
@@ -26,7 +26,7 @@ class ModConfigTest {
 		c.museIntervalSeconds = 5;
 		c.chatTimeoutSeconds = -3;
 		c.chatSightRadius = 1000;
-		c.extendDays = -1;
+		c.homeDistance = -1;
 		c.chatEndpoint = null;
 		c.chatModel = " ";
 		c.guideName = "!!!";
@@ -36,7 +36,7 @@ class ModConfigTest {
 		assertEquals(60, c.museIntervalSeconds);
 		assertEquals(1, c.chatTimeoutSeconds);
 		assertEquals(64, c.chatSightRadius);
-		assertEquals(0, c.extendDays);
+		assertEquals(1, c.homeDistance);
 		assertEquals(new ModConfig().chatEndpoint, c.chatEndpoint);
 		assertEquals("local", c.chatModel);
 		assertEquals(GuideNames.DEFAULT, c.guideName);

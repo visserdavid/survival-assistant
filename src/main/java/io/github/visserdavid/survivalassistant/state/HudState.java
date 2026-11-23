@@ -43,8 +43,6 @@ public final class HudState {
 
 	public static final StreamCodec<ByteBuf, HudSnapshot> STREAM_CODEC = StreamCodec.composite(
 			ByteBufCodecs.BOOL, HudSnapshot::active,
-			ByteBufCodecs.VAR_INT, HudSnapshot::dayIndex,
-			ByteBufCodecs.VAR_INT, HudSnapshot::maxDays,
 			ByteBufCodecs.VAR_INT, HudSnapshot::chapter,
 			ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list(HudSnapshot.MAX_COMPLETED)), HudSnapshot::completed,
 			ENTRY_CODEC.apply(ByteBufCodecs.list(HudSnapshot.SHOWN_TASKS)), HudSnapshot::next,

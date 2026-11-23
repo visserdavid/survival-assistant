@@ -28,9 +28,7 @@ public final class GuideProgress {
 	public final Set<String> depthNotices = new LinkedHashSet<>();
 	/** Fallback home when the player has no bed/respawn point: the first workstation they placed. */
 	public Navigation.Mark homeFallback = null;
-	/** Days added because the player said they still needed the guide. */
-	public int extraDays = 0;
-	/** Overworld clock tick when the guide asked "do you still need me?"; -1 = no open question. */
+	/** Overworld clock tick when the guide offered the next chapter; -1 = no open question. */
 	public long askedAtTick = -1;
 	/** Current chapter of goals (1 = first days, 2 = settling in). */
 	public int chapter = 1;
@@ -47,11 +45,10 @@ public final class GuideProgress {
 	/** The reminder for the open question was already given. */
 	public boolean reminded = false;
 
-	/** Resets the guide period (used when the guide is called back). */
+	/** Starts the guide again (called back, or a new chapter). */
 	public void restart(long startTick) {
 		this.startTick = startTick;
 		this.retired = false;
-		this.extraDays = 0;
 		this.askedAtTick = -1;
 		this.reminded = false;
 		this.chapterOffered = false;

@@ -84,8 +84,7 @@ public final class GuideManager {
 			return;
 		}
 		if (step == GuideLifecycle.Step.FAREWELL) {
-			retire(player, progress, progress.chapterOffered ? "chapters.no_answer"
-					: progress.askedAtTick >= 0 ? "extend.no_answer" : "farewell");
+			retire(player, progress, "chapters.no_answer");
 			return;
 		}
 
@@ -106,15 +105,11 @@ public final class GuideManager {
 			return;
 		}
 
-		if (step == GuideLifecycle.Step.ASK) {
-			progress.askedAtTick = player.level().getOverworldClockTime();
-			ChapterMenu.askToExtend(player, guide, "survivalassistant.extend.ask");
-		} else if (step == GuideLifecycle.Step.OFFER_CHAPTER) {
+		if (step == GuideLifecycle.Step.OFFER_CHAPTER) {
 			ChapterMenu.offerNextChapter(player, guide, progress);
 		} else if (step == GuideLifecycle.Step.REMIND) {
 			progress.reminded = true;
-			if (progress.chapterOffered) ChapterMenu.show(player, guide, progress, "survivalassistant.chapters.reminder");
-			else ChapterMenu.askToExtend(player, guide, "survivalassistant.extend.reminder");
+			ChapterMenu.show(player, guide, progress, "survivalassistant.chapters.reminder");
 		}
 
 		if (progress.comfortPending) {
@@ -142,8 +137,7 @@ public final class GuideManager {
 		checkPlaceNotices(player, guide, ctx, progress);
 		GuideChat.observe(player, guide, ctx, progress);
 		GuideMusings.observe(player, guide, ctx, progress);
-		HudState.update(player, HudSnapshot.of(ctx, progress, dayLimit(progress),
-				GuideNavigation.waypoint(player, progress, ctx, now)));
+		HudState.update(player, HudSnapshot.of(ctx, progress, GuideNavigation.waypoint(player, progress, ctx, now)));
 	}
 
 	private static void respond(ServerPlayer player, @Nullable GuideEntity guide, SurvivalContext ctx, GuideProgress progress, boolean forced) {
@@ -203,33 +197,15 @@ public final class GuideManager {
 
 	// ---------------------------------------------------------------- lifecycle
 
-	/** Configured period of the current chapter (without extensions); 0 = no limit. */
-	private static int baseDays(GuideProgress progress) {
-		return Chapters.get(progress.chapter).limited() ? ModConfig.get().maxDays : 0;
-	}
-
-	/** The guide period including extensions; 0 = no limit (the guide stays while the chapter runs). */
-	public static int dayLimit(GuideProgress progress) {
-		int base = baseDays(progress);
-		return base <= 0 ? 0 : base + progress.extraDays;
-	}
-
 	/** Another chapter can be started after the current one. */
 	private static boolean nextChapterAvailable(GuideProgress progress) {
 		return ModConfig.get().moreChapters && !Chapters.available(progress.chapter, progress.completed).isEmpty();
 	}
 
 	private static GuideLifecycle.Step lifecycle(ServerPlayer player, GuideProgress progress) {
-		ModConfig cfg = ModConfig.get();
-		return GuideLifecycle.decide(new GuideLifecycle.State(dayIndex(player, progress), baseDays(progress), progress.extraDays,
-				cfg.extendDays, Chapters.get(progress.chapter).done(progress.completed), nextChapterAvailable(progress),
-				progress.chapterOffered, progress.finished, progress.askedAtTick, progress.reminded,
-				player.level().getOverworldClockTime()));
-	}
-
-	public static int dayIndex(ServerPlayer player, GuideProgress progress) {
-		long clock = player.level().getOverworldClockTime();
-		return (int) Math.max(0, Ticks.day(clock) - Ticks.day(progress.startTick));
+		return GuideLifecycle.decide(new GuideLifecycle.State(Chapters.get(progress.chapter).done(progress.completed),
+				nextChapterAvailable(progress), progress.chapterOffered, progress.finished, progress.askedAtTick,
+				progress.reminded, player.level().getOverworldClockTime()));
 	}
 
 	private static void retire(ServerPlayer player, GuideProgress progress, String messageKey) {
@@ -311,11 +287,8 @@ public final class GuideManager {
 		evaluateAndSay(player, guide, progress, true);
 		Chapter chapter = Chapters.get(progress.chapter);
 		int done = chapter.doneCount(progress.completed), total = chapter.goals().size();
-		// Later chapters have no day limit, so they show the chapter instead of the days left.
-		Component line = dayLimit(progress) <= 0
-				? Component.translatable("survivalassistant.progress_chapter", done, total, Component.translatable(chapter.titleKey()))
-				: Component.translatable("survivalassistant.progress", done, total,
-						Math.max(0, dayLimit(progress) - dayIndex(player, progress)));
+		Component line = Component.translatable("survivalassistant.progress_chapter", done, total,
+				Component.translatable(chapter.titleKey()));
 		say(player, null, line.copy().withStyle(ChatFormatting.GRAY), false);
 	}
 
@@ -399,7 +372,7 @@ public final class GuideManager {
 		if (guide == null) return false;
 		FollowOwnerGoal.teleportNear(guide, player.blockPosition());
 		say(player, guide, Component.translatable("survivalassistant.recall"), false);
-		HudState.update(player, HudSnapshot.of(ContextCollector.collect(player, progress), progress, dayLimit(progress)));
+		HudState.update(player, HudSnapshot.of(ContextCollector.collect(player, progress), progress));
 		return true;
 	}
 
@@ -409,20 +382,6 @@ public final class GuideManager {
 		if (progress.retired) return false;
 		if (progress.startTick < 0) progress.startTick = player.level().getOverworldClockTime();
 		retire(player, progress, "dismissed");
-		return true;
-	}
-
-	/** /guide extend: the guide stays a few more days. */
-	public static boolean extend(ServerPlayer player) {
-		GuideProgress progress = GuideState.of(player);
-		int days = ModConfig.get().extendDays;
-		if (progress.retired || progress.startTick < 0 || days <= 0 || progress.chapterOffered) return false;
-		progress.extraDays += days;
-		progress.askedAtTick = -1;
-		progress.reminded = false;
-		int left = Math.max(0, dayLimit(progress) - dayIndex(player, progress));
-		say(player, GuideEntities.get(player), Component.translatable("survivalassistant.extend.confirmed", left).withStyle(ChatFormatting.GREEN), false);
-		GuideSessions.of(player.getUUID()).evaluateSoon(); // refresh the card on the next pass
 		return true;
 	}
 

@@ -32,12 +32,6 @@ class ChaptersTest {
 	}
 
 	@Test
-	void onlyTheFirstDaysHaveADayLimit() {
-		assertTrue(Chapters.FIRST_DAYS.limited());
-		Chapters.ALL.stream().skip(1).forEach(c -> assertFalse(c.limited(), c.id()));
-	}
-
-	@Test
 	void prerequisites() {
 		// fresh player in chapter 1: nothing else is open
 		assertEquals(List.of(), Chapters.available(1, Set.of()));
@@ -81,11 +75,11 @@ class ChaptersTest {
 
 	@Test
 	void unlimitedChaptersNeverSendTheGuideAway() {
-		GuideLifecycle.State late = new GuideLifecycle.State(50, 0, 0, 3, false, true, false, false, -1, false, 50 * 24000L);
+		GuideLifecycle.State late = new GuideLifecycle.State(false, true, false, false, -1, false, 50 * 24000L);
 		assertEquals(GuideLifecycle.Step.CONTINUE, GuideLifecycle.decide(late));
-		GuideLifecycle.State doneNoMore = new GuideLifecycle.State(50, 0, 0, 3, true, false, false, false, -1, false, 50 * 24000L);
+		GuideLifecycle.State doneNoMore = new GuideLifecycle.State(true, false, false, false, -1, false, 50 * 24000L);
 		assertEquals(GuideLifecycle.Step.CONGRATULATE, GuideLifecycle.decide(doneNoMore));
-		GuideLifecycle.State doneMore = new GuideLifecycle.State(50, 0, 0, 3, true, true, false, false, -1, false, 50 * 24000L);
+		GuideLifecycle.State doneMore = new GuideLifecycle.State(true, true, false, false, -1, false, 50 * 24000L);
 		assertEquals(GuideLifecycle.Step.OFFER_CHAPTER, GuideLifecycle.decide(doneMore));
 	}
 }

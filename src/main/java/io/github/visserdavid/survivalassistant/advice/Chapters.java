@@ -8,29 +8,30 @@ import java.util.Set;
 
 /**
  * The tutorial: chapters 1 and 2 are the base, after that the player picks a themed chapter from a menu.
+ * No chapter has a time limit: the guide stays as long as the player is working on it.
  * Pure logic, no Minecraft types.
  */
 public final class Chapters {
 	private Chapters() {}
 
-	public static final Chapter FIRST_DAYS = new Chapter(1, "first_days", TipRegistry.CHAPTER_FIRST_DAYS, List.of(), true);
-	public static final Chapter SETTLING_IN = new Chapter(2, "settling_in", TipRegistry.CHAPTER_SETTLING_IN, List.of(1), false);
-	public static final Chapter VILLAGE = new Chapter(3, "village", TipRegistry.CHAPTER_VILLAGE, List.of(2), false);
-	public static final Chapter NETHER = new Chapter(4, "nether", TipRegistry.CHAPTER_NETHER, List.of(2), false);
-	public static final Chapter MAGIC = new Chapter(5, "magic", TipRegistry.CHAPTER_MAGIC, List.of(4), false);
-	public static final Chapter HUSBANDRY = new Chapter(6, "husbandry", TipRegistry.CHAPTER_HUSBANDRY, List.of(2), false);
-	public static final Chapter OCEAN = new Chapter(7, "ocean", TipRegistry.CHAPTER_OCEAN, List.of(2), false);
-	public static final Chapter EXPLORER = new Chapter(8, "explorer", TipRegistry.CHAPTER_EXPLORER, List.of(2), false);
-	public static final Chapter REDSTONE = new Chapter(9, "redstone", TipRegistry.CHAPTER_REDSTONE, List.of(2), false);
-	public static final Chapter END = new Chapter(10, "end", TipRegistry.CHAPTER_END, List.of(4, 5), false);
-	public static final Chapter NETHERITE = new Chapter(11, "netherite", TipRegistry.CHAPTER_NETHERITE, List.of(4), false);
-	public static final Chapter WITHER = new Chapter(12, "wither", TipRegistry.CHAPTER_WITHER, List.of(4, 5), false);
-	public static final Chapter DEEP_DARK = new Chapter(13, "deep_dark", TipRegistry.CHAPTER_DEEP_DARK, List.of(8), false);
-	public static final Chapter RAIDS = new Chapter(14, "raids", TipRegistry.CHAPTER_RAIDS, List.of(3), false);
-	public static final Chapter ARCHAEOLOGY = new Chapter(15, "archaeology", TipRegistry.CHAPTER_ARCHAEOLOGY, List.of(8), false);
-	public static final Chapter TRIALS = new Chapter(16, "trials", TipRegistry.CHAPTER_TRIALS, List.of(8), false);
-	public static final Chapter HAPPY_GHAST = new Chapter(17, "happy_ghast", TipRegistry.CHAPTER_HAPPY_GHAST, List.of(4), false);
-	public static final Chapter AUTOMATION = new Chapter(18, "automation", TipRegistry.CHAPTER_AUTOMATION, List.of(9, 4), false);
+	public static final Chapter FIRST_DAYS = new Chapter(1, "first_days", TipRegistry.CHAPTER_FIRST_DAYS, List.of());
+	public static final Chapter SETTLING_IN = new Chapter(2, "settling_in", TipRegistry.CHAPTER_SETTLING_IN, List.of(1));
+	public static final Chapter VILLAGE = new Chapter(3, "village", TipRegistry.CHAPTER_VILLAGE, List.of(2));
+	public static final Chapter NETHER = new Chapter(4, "nether", TipRegistry.CHAPTER_NETHER, List.of(2));
+	public static final Chapter MAGIC = new Chapter(5, "magic", TipRegistry.CHAPTER_MAGIC, List.of(4));
+	public static final Chapter HUSBANDRY = new Chapter(6, "husbandry", TipRegistry.CHAPTER_HUSBANDRY, List.of(2));
+	public static final Chapter OCEAN = new Chapter(7, "ocean", TipRegistry.CHAPTER_OCEAN, List.of(2));
+	public static final Chapter EXPLORER = new Chapter(8, "explorer", TipRegistry.CHAPTER_EXPLORER, List.of(2));
+	public static final Chapter REDSTONE = new Chapter(9, "redstone", TipRegistry.CHAPTER_REDSTONE, List.of(2));
+	public static final Chapter END = new Chapter(10, "end", TipRegistry.CHAPTER_END, List.of(4, 5));
+	public static final Chapter NETHERITE = new Chapter(11, "netherite", TipRegistry.CHAPTER_NETHERITE, List.of(4));
+	public static final Chapter WITHER = new Chapter(12, "wither", TipRegistry.CHAPTER_WITHER, List.of(4, 5));
+	public static final Chapter DEEP_DARK = new Chapter(13, "deep_dark", TipRegistry.CHAPTER_DEEP_DARK, List.of(8));
+	public static final Chapter RAIDS = new Chapter(14, "raids", TipRegistry.CHAPTER_RAIDS, List.of(3));
+	public static final Chapter ARCHAEOLOGY = new Chapter(15, "archaeology", TipRegistry.CHAPTER_ARCHAEOLOGY, List.of(8));
+	public static final Chapter TRIALS = new Chapter(16, "trials", TipRegistry.CHAPTER_TRIALS, List.of(8));
+	public static final Chapter HAPPY_GHAST = new Chapter(17, "happy_ghast", TipRegistry.CHAPTER_HAPPY_GHAST, List.of(4));
+	public static final Chapter AUTOMATION = new Chapter(18, "automation", TipRegistry.CHAPTER_AUTOMATION, List.of(9, 4));
 
 	/** In menu order; the list index is number - 1. */
 	public static final List<Chapter> ALL = List.of(FIRST_DAYS, SETTLING_IN, VILLAGE, NETHER, MAGIC, HUSBANDRY, OCEAN, EXPLORER,

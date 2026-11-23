@@ -228,13 +228,8 @@ public final class TaskHud implements HudElement {
 	}
 
 	private static Component title(HudSnapshot snap) {
-		if (snap.maxDays() <= 0) {
-			// later chapters have no day limit: show the chapter instead
-			return Component.translatable("survivalassistant.hud.title_chapter", snap.chapter(),
-					Component.translatable(Chapters.get(snap.chapter()).titleKey()));
-		}
-		int day = Math.min(snap.dayIndex() + 1, Math.max(1, snap.maxDays()));
-		return Component.translatable("survivalassistant.hud.title", day, snap.maxDays());
+		return Component.translatable("survivalassistant.hud.title_chapter", snap.chapter(),
+				Component.translatable(Chapters.get(snap.chapter()).titleKey()));
 	}
 
 	private Component taskName(String id) {

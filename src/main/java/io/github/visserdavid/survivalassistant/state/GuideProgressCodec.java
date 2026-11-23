@@ -13,6 +13,7 @@ import java.util.Optional;
 /**
  * How {@link GuideProgress} is saved with the player. The fields are read in three groups, but all keys stay flat
  * in one map, so the saved data looks exactly like it always did. Never rename a key: old worlds use them.
+ * Keys that are no longer used (such as {@code extra_days} from the old day limit) are simply ignored.
  */
 final class GuideProgressCodec {
 	private GuideProgressCodec() {}
@@ -26,7 +27,7 @@ final class GuideProgressCodec {
 
 	/** Where the player is in the tutorial. */
 	private record Course(long startTick, boolean retired, int chapter, List<String> completed, boolean chapterOffered,
-			boolean finished, int extraDays, long askedAtTick) {
+			boolean finished, long askedAtTick) {
 		static final MapCodec<Course> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
 				Codec.LONG.optionalFieldOf("start_tick", -1L).forGetter(Course::startTick),
 				Codec.BOOL.optionalFieldOf("retired", false).forGetter(Course::retired),
@@ -34,13 +35,12 @@ final class GuideProgressCodec {
 				Codec.STRING.listOf().optionalFieldOf("completed", List.of()).forGetter(Course::completed),
 				Codec.BOOL.optionalFieldOf("chapter_offered", false).forGetter(Course::chapterOffered),
 				Codec.BOOL.optionalFieldOf("finished", false).forGetter(Course::finished),
-				Codec.INT.optionalFieldOf("extra_days", 0).forGetter(Course::extraDays),
 				Codec.LONG.optionalFieldOf("asked_at", -1L).forGetter(Course::askedAtTick)
 		).apply(i, Course::new));
 
 		static Course of(GuideProgress p) {
 			return new Course(p.startTick, p.retired, p.chapter, List.copyOf(p.completed), p.chapterOffered, p.finished,
-					p.extraDays, p.askedAtTick);
+					p.askedAtTick);
 		}
 	}
 
@@ -87,7 +87,6 @@ final class GuideProgressCodec {
 		p.completed.addAll(course.completed());
 		p.chapterOffered = course.chapterOffered();
 		p.finished = course.finished();
-		p.extraDays = course.extraDays();
 		p.askedAtTick = course.askedAtTick();
 		p.npcEnabled = orNull(choices.npcEnabled());
 		p.chatEnabled = orNull(choices.chatEnabled());

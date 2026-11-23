@@ -60,7 +60,7 @@ class SafeSignalTest {
 
 	@Test
 	void theTaskCardCarriesTheSignal() {
-		assertTrue(HudSnapshot.of(litCave().build(), new GuideProgress(), 3).safe());
-		assertFalse(HudSnapshot.of(SurvivalContext.builder().build(), new GuideProgress(), 3).safe());
+		assertTrue(HudSnapshot.of(litCave().build(), new GuideProgress()).safe());
+		assertFalse(HudSnapshot.of(SurvivalContext.builder().build(), new GuideProgress()).safe());
 	}
 }

@@ -26,7 +26,7 @@ class Chapter2Test {
 	@Test
 	void chapter2StartsWithTheFarm() {
 		assertEquals(TipRegistry.FARM, AdviceEngine.nextMilestone(chapter2()));
-		HudSnapshot s = HudSnapshot.of(SurvivalContext.builder().crops(2).build(), chapter2(), 4);
+		HudSnapshot s = HudSnapshot.of(SurvivalContext.builder().crops(2).build(), chapter2());
 		assertEquals(2, s.chapter());
 		assertEquals("farm", s.next().get(0).id());
 		assertEquals(2, s.next().get(0).value());

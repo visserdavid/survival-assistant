@@ -20,9 +20,8 @@ heights and other facts were **checked against the game's own data files**; see
   hits, arrows and blocks you place go straight through it. It doesn't set off pressure plates, tripwires or
   sculk sensors, doesn't trample farmland and doesn't follow you into boats, minecarts or portals. When you
   change dimension it simply appears next to you again.
-- Chapter 1 (the first days) lasts 3 in-game days. Then the guide asks whether you still need it: click
-  **[Yes, 3 more days]** to keep it around (as often as you like), or **[No, thanks]** to say goodbye. No answer
-  within a day means goodbye. Later chapters have no time limit.
+- No chapter has a time limit, the first days included: the guide stays as long as you're working on a chapter.
+  Take your time.
 - Finish a chapter and the guide congratulates you (title, sound and a burst of particles) and shows the
   chapter menu. Rather go on alone? Click **[I'll manage]**. You can always call it back with `/guide call`.
 - Don't want a character walking around? `/guide character off` removes it. The task card stays, and you only
@@ -46,7 +45,7 @@ Chapters 1 and 2 are the base; after that you pick what you want to learn from a
 
 | # | Chapter | Opens after | Goals |
 |---|---|---|---|
-| 1 | **First days** | – | Wood, tools, a shelter, food, torches, iron, a shield (15 goals, 3 days) |
+| 1 | **First days** | – | Wood, tools, a shelter, food, torches, iron, a shield (15 goals) |
 | 2 | **Settling in** | 1 | A farm, bread, breeding, full iron armor, a bow, diamonds, obsidian, an enchanting table |
 | 3 | **Villages and trading** | 2 | Find a village, trade (5 times), 10 emeralds, an enchanted book from a librarian, an iron golem |
 | 4 | **The Nether** | 2 | Golden armor for the piglins, enter the Nether, find a fortress, blaze rods, Nether wart, back home safely |
@@ -97,7 +96,7 @@ archaeology, the trial challenges, the happy ghast and automation.
 
 - The current task and the next two, with live counters (for example logs 6/10 or blaze rods 2/3) and a
   check-mark animation when a goal is done.
-- The title shows the day in chapter 1 (Day 1/3) and the chapter in later chapters (Ch. 6 · Farming and animals).
+- The title shows the chapter you are in (for example Ch. 6 · Farming and animals).
 - A clock (the in-game clock item) with a bar that counts down to sunset, turning orange at dusk and red at night.
 - **Urgent mode**: the border pulses red, and the current-task line becomes a warning (a warden or creeper
   nearby, low health, hunger, dusk or night outside, a ghast, piglins without gold, a thunderstorm,
@@ -261,7 +260,6 @@ Minecraft's font can't show.
 | `/guide continue` | Start the next open chapter after finishing one |
 | `/guide call` | Bring the guide to you (or back after it said goodbye) |
 | `/guide dismiss` | Send the guide away |
-| `/guide extend` | Let the guide stay 3 more days (chapter 1) |
 | `/guide mute <minutes>` | No unsolicited tips for a while (0–120) |
 | `/guide about` | The guide tells something about himself |
 | `/guide name <name>\|reset` | Give the guide your own name (saved per player) |
@@ -278,8 +276,6 @@ Keys: **J** task card mode, **K** environment card, **L** light check.
 
 | Option | Default | Meaning |
 |---|---|---|
-| `maxDays` | `3` | In-game days the guide stays for chapter 1 (later chapters have no time limit) |
-| `extendDays` | `3` | Days added when the player says they still need the guide (`0` = never ask, just leave) |
 | `moreChapters` | `true` | Offer the next chapters after chapter 1 (was `chapter2`, still read) |
 | `tipIntervalSeconds` | `2` | How often the situation is checked |
 | `milestoneCooldownSeconds` | `180` | Minimum time between repeats of the same task tip |
