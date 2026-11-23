@@ -724,7 +724,7 @@ L = {
         "De Wither en het baken"),
     P + "chapter.deep_dark.title": ("The Deep Dark",
         "De Deep Dark"),
-    P + "chapter.raids.title": ("Raids and illagers",
+    P + "chapter.raids.title": ("Raids and Illagers",
         "Overvallen en Illagers"),
     P + "chapter.netherite.desc": ("Ancient debris, a netherite ingot, a bastion, the upgrade template, netherite gear and a respawn anchor.",
         "Oud puin, een netherietstaaf, een bastion, het upgradesjabloon, netheriet uitrusting en een respawn anchor."),
