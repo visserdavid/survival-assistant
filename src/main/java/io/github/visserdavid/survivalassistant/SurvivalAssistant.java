@@ -1,12 +1,17 @@
 package io.github.visserdavid.survivalassistant;
 
+import io.github.visserdavid.survivalassistant.chat.GuideChat;
+import io.github.visserdavid.survivalassistant.config.ModConfig;
+import io.github.visserdavid.survivalassistant.entity.GuideEntity;
+import io.github.visserdavid.survivalassistant.state.GuideState;
+import io.github.visserdavid.survivalassistant.state.HudState;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
-import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -17,11 +22,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import io.github.visserdavid.survivalassistant.chat.GuideChat;
-import io.github.visserdavid.survivalassistant.config.ModConfig;
-import io.github.visserdavid.survivalassistant.entity.GuideEntity;
-import io.github.visserdavid.survivalassistant.state.GuideState;
-import io.github.visserdavid.survivalassistant.state.HudState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

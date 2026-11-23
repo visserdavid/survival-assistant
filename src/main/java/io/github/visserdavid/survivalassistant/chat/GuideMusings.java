@@ -1,12 +1,12 @@
 package io.github.visserdavid.survivalassistant.chat;
 
-import io.github.visserdavid.survivalassistant.util.Ticks;
+import io.github.visserdavid.survivalassistant.GuideManager;
 import io.github.visserdavid.survivalassistant.advice.AdviceEngine;
 import io.github.visserdavid.survivalassistant.advice.GuideProgress;
 import io.github.visserdavid.survivalassistant.advice.SurvivalContext;
 import io.github.visserdavid.survivalassistant.config.ModConfig;
 import io.github.visserdavid.survivalassistant.entity.GuideEntity;
-import io.github.visserdavid.survivalassistant.GuideManager;
+import io.github.visserdavid.survivalassistant.util.Ticks;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import org.jspecify.annotations.Nullable;

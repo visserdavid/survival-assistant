@@ -1,12 +1,12 @@
 package io.github.visserdavid.survivalassistant.client.hud;
 
+import io.github.visserdavid.survivalassistant.advice.LightScan;
+import io.github.visserdavid.survivalassistant.advice.SpawnSpots;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.network.chat.Component;
-import io.github.visserdavid.survivalassistant.advice.LightScan;
-import io.github.visserdavid.survivalassistant.advice.SpawnSpots;
 
 import java.util.ArrayList;
 import java.util.Comparator;

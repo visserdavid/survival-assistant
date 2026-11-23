@@ -1,5 +1,9 @@
 package io.github.visserdavid.survivalassistant.client.hud;
 
+import io.github.visserdavid.survivalassistant.advice.BiomeGroup;
+import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
+import io.github.visserdavid.survivalassistant.advice.OreTable;
+import io.github.visserdavid.survivalassistant.state.HudState;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -13,10 +17,6 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import io.github.visserdavid.survivalassistant.advice.BiomeGroup;
-import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
-import io.github.visserdavid.survivalassistant.advice.OreTable;
-import io.github.visserdavid.survivalassistant.state.HudState;
 
 import java.util.ArrayList;
 import java.util.EnumMap;

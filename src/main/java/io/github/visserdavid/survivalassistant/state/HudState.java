@@ -1,5 +1,8 @@
 package io.github.visserdavid.survivalassistant.state;
 
+import io.github.visserdavid.survivalassistant.SurvivalAssistant;
+import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
+import io.github.visserdavid.survivalassistant.advice.Navigation;
 import io.netty.buffer.ByteBuf;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
@@ -8,9 +11,6 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ByIdMap;
-import io.github.visserdavid.survivalassistant.SurvivalAssistant;
-import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
-import io.github.visserdavid.survivalassistant.advice.Navigation;
 
 import java.util.Objects;
 

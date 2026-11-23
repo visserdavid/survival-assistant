@@ -1,5 +1,7 @@
 package io.github.visserdavid.survivalassistant.entity.ai;
 
+import io.github.visserdavid.survivalassistant.advice.GuideSpacing;
+import io.github.visserdavid.survivalassistant.entity.GuideEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -10,8 +12,6 @@ import net.minecraft.world.level.block.TripWireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
-import io.github.visserdavid.survivalassistant.advice.GuideSpacing;
-import io.github.visserdavid.survivalassistant.entity.GuideEntity;
 import org.jspecify.annotations.Nullable;
 
 /** Finds a safe spot for the guide near its owner: beside or behind them, never in front or in the way. */

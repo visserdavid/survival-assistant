@@ -3,6 +3,8 @@ package io.github.visserdavid.survivalassistant.client.skin;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import io.github.visserdavid.survivalassistant.client.hud.HudConfig;
+import io.github.visserdavid.survivalassistant.skin.SkinNames;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.ChatFormatting;
@@ -11,11 +13,10 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
-import io.github.visserdavid.survivalassistant.client.hud.HudConfig;
-import io.github.visserdavid.survivalassistant.skin.SkinNames;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /** /guideskin list | set &lt;name&gt; | reload | folder (client side: only changes what you see). */
 public final class SkinCommand {
@@ -60,7 +61,7 @@ public final class SkinCommand {
 	}
 
 	private static int set(CommandContext<FabricClientCommandSource> c) {
-		String name = StringArgumentType.getString(c, "name").toLowerCase(java.util.Locale.ROOT);
+		String name = StringArgumentType.getString(c, "name").toLowerCase(Locale.ROOT);
 		if (!name.equals(SkinNames.DEFAULT) && !GuideSkins.names().contains(name)) {
 			c.getSource().sendError(Component.translatable(P + "not_found", name));
 			return 0;

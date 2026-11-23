@@ -1,11 +1,11 @@
 package io.github.visserdavid.survivalassistant.client.hud;
 
+import io.github.visserdavid.survivalassistant.advice.Recipes;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
-import io.github.visserdavid.survivalassistant.advice.Recipes;
 
 import java.util.HashMap;
 import java.util.Map;

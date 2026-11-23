@@ -1,19 +1,7 @@
 package io.github.visserdavid.survivalassistant.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.minecraft.ChatFormatting;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
-import net.minecraft.client.KeyMapping;
-import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.network.chat.Component;
 import io.github.visserdavid.survivalassistant.SurvivalAssistant;
-import io.github.visserdavid.survivalassistant.entity.GuideEntity;
 import io.github.visserdavid.survivalassistant.client.hud.CrosshairInfo;
 import io.github.visserdavid.survivalassistant.client.hud.EnvironmentCard;
 import io.github.visserdavid.survivalassistant.client.hud.HudConfig;
@@ -22,6 +10,19 @@ import io.github.visserdavid.survivalassistant.client.hud.RecipeOverlay;
 import io.github.visserdavid.survivalassistant.client.hud.TaskHud;
 import io.github.visserdavid.survivalassistant.client.skin.GuideSkins;
 import io.github.visserdavid.survivalassistant.client.skin.SkinCommand;
+import io.github.visserdavid.survivalassistant.entity.GuideEntity;
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.network.chat.Component;
 
 import java.util.Locale;
 
@@ -37,10 +38,10 @@ public class SurvivalAssistantClient implements ClientModInitializer {
 
 		HudConfig.load();
 		// the guide can only be clicked while sneaking, so normal clicks and hits pass through it
-		GuideEntity.clientPickable = guide -> {
-			var player = net.minecraft.client.Minecraft.getInstance().player;
+		GuideEntity.setClientPickable(guide -> {
+			var player = Minecraft.getInstance().player;
 			return player != null && player.isShiftKeyDown();
-		};
+		});
 		GuideSkins.init();
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, context) -> SkinCommand.register(dispatcher));
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> client.execute(() -> {

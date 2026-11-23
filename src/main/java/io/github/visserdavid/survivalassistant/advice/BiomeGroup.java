@@ -1,6 +1,7 @@
 package io.github.visserdavid.survivalassistant.advice;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -87,6 +88,6 @@ public enum BiomeGroup {
 	}
 
 	public String key() {
-		return name().toLowerCase(java.util.Locale.ROOT);
+		return name().toLowerCase(Locale.ROOT);
 	}
 }

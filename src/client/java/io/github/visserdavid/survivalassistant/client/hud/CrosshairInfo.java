@@ -1,5 +1,8 @@
 package io.github.visserdavid.survivalassistant.client.hud;
 
+import io.github.visserdavid.survivalassistant.advice.CrosshairAdvice;
+import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
+import io.github.visserdavid.survivalassistant.state.HudState;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
@@ -19,9 +22,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import io.github.visserdavid.survivalassistant.advice.CrosshairAdvice;
-import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
-import io.github.visserdavid.survivalassistant.state.HudState;
 
 import java.util.List;
 

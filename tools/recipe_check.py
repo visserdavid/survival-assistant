@@ -17,8 +17,23 @@ from pathlib import Path
 SRC = Path(__file__).resolve().parent.parent / "src/main/java/io/github/visserdavid/survivalassistant/advice/Recipes.java"
 
 
+def expand_helpers(text):
+    """Writes out calls to small recipe helpers such as pickaxe("minecraft:iron_pickaxe", IRON) as plain recipes."""
+    helper = re.compile(r'private static Recipe (\w+)\(String (\w+), String (\w+)\) \{\s*return (new Recipe\(.*?\)\));\s*\}', re.S)
+    for name, p1, p2, body in helper.findall(text):
+        text = helper.sub("", text, count=1)
+
+        def call(m, p1=p1, p2=p2, body=body):
+            filled = re.sub(rf"\b{p2}\b", lambda _: m.group(2), body)
+            return re.sub(rf"\b{p1}\b", lambda _: m.group(1), filled)
+
+        text = re.sub(rf'\b{name}\(("[^"]+"|\w+), ("[^"]+"|\w+)\)', call, text)
+    return text
+
+
 def java_recipes(text):
     consts = dict(re.findall(r'String (\w+) = "([^"]+)";', text))
+    text = expand_helpers(text)
     out = []
     for m in re.finditer(r'new Recipe\(("[^"]+"|\w+), (\d+), List\.of\(([^)]*)\),\s*Map\.of\(([^)]*)\)\)', text):
         result = m.group(1).strip('"') if m.group(1).startswith('"') else consts[m.group(1)]

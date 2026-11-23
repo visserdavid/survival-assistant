@@ -1,10 +1,14 @@
 package io.github.visserdavid.survivalassistant.entity;
 
+import io.github.visserdavid.survivalassistant.GuideManager;
+import io.github.visserdavid.survivalassistant.entity.ai.FollowOwnerGoal;
+import io.github.visserdavid.survivalassistant.entity.ai.KeepClearGoal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
@@ -15,10 +19,6 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import io.github.visserdavid.survivalassistant.GuideManager;
-import io.github.visserdavid.survivalassistant.entity.ai.FollowOwnerGoal;
-import io.github.visserdavid.survivalassistant.entity.ai.KeepClearGoal;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import org.jspecify.annotations.Nullable;
@@ -40,7 +40,10 @@ public class GuideEntity extends PathfinderMob {
 	 * Client-side check whether the local player may click the guide (set by the client entrypoint: while sneaking).
 	 * The server checks the owner itself.
 	 */
-	public static Predicate<GuideEntity> clientPickable = guide -> true;
+	private static volatile Predicate<GuideEntity> clientPickable = guide -> true;
+	/** Path types the guide avoids: places that would hurt a player who follows. */
+	private static final PathType[] DANGERS = {PathType.LAVA, PathType.FIRE, PathType.FIRE_IN_NEIGHBOR, PathType.DAMAGING,
+			PathType.DAMAGING_IN_NEIGHBOR, PathType.POWDER_SNOW, PathType.ON_TOP_OF_POWDER_SNOW};
 
 	private @Nullable UUID ownerId;
 	private @Nullable BlockPos pointAt;
@@ -51,11 +54,12 @@ public class GuideEntity extends PathfinderMob {
 		this.setPermanentlyInvulnerable(true);
 		this.setCustomNameVisible(true);
 		this.blocksBuilding = false; // a block can be placed where the guide stands (sealing a shelter at night)
-		// stay away from places that would hurt a player who follows
-		for (PathType danger : new PathType[]{PathType.LAVA, PathType.FIRE, PathType.FIRE_IN_NEIGHBOR, PathType.DAMAGING,
-				PathType.DAMAGING_IN_NEIGHBOR, PathType.POWDER_SNOW, PathType.ON_TOP_OF_POWDER_SNOW}) {
-			this.setPathfindingMalus(danger, -1f);
-		}
+		for (PathType danger : DANGERS) this.setPathfindingMalus(danger, -1f);
+	}
+
+	/** Sets the client-side check whether the local player may click the guide (see {@link #isPickable()}). */
+	public static void setClientPickable(Predicate<GuideEntity> check) {
+		clientPickable = check;
 	}
 
 	public static AttributeSupplier.Builder createAttributes() {
@@ -79,10 +83,6 @@ public class GuideEntity extends PathfinderMob {
 
 	public void setOwner(ServerPlayer player) {
 		this.ownerId = player.getUUID();
-	}
-
-	public @Nullable UUID getOwnerId() {
-		return ownerId;
 	}
 
 	public @Nullable ServerPlayer getOwner() {

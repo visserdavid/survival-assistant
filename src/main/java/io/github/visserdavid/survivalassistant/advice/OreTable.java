@@ -1,8 +1,11 @@
 package io.github.visserdavid.survivalassistant.advice;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Where valuable ores generate in the overworld, verified against the 26.3 worldgen data
@@ -74,7 +77,7 @@ public final class OreTable {
 	public enum Direction { UP, DOWN, HERE, MOUNTAIN }
 
 	/** Which ore a task needs, or null if the task doesn't involve mining. */
-	public static String oreForTask(String taskId) {
+	public static @Nullable String oreForTask(String taskId) {
 		if (taskId == null) return null;
 		return switch (taskId) {
 			case "torches" -> "coal";
@@ -86,7 +89,7 @@ public final class OreTable {
 	}
 
 	/** @param taskId current task id, "" when all milestones are done, null when unknown */
-	public static Pointer pointerFor(String taskId, int y, BiomeGroup g) {
+	public static @Nullable Pointer pointerFor(String taskId, int y, BiomeGroup g) {
 		String ore = oreForTask(taskId);
 		if (ore == null || !g.isOverworld()) return null;
 		if (ore.equals("iron") && y >= MOUNTAIN_IRON_LEVEL) {
@@ -105,7 +108,7 @@ public final class OreTable {
 	 * The first one-time notice that applies here and hasn't been shown yet, or null.
 	 * Ids: deep_dark, lava, deepslate, high_iron.
 	 */
-	public static String newNotice(int y, BiomeGroup g, java.util.Set<String> shown) {
+	public static @Nullable String newNotice(int y, BiomeGroup g, Set<String> shown) {
 		if (!g.isOverworld()) return null;
 		List<String> candidates = new ArrayList<>();
 		if (g == BiomeGroup.DEEP_DARK) candidates.add("deep_dark");
@@ -116,7 +119,7 @@ public final class OreTable {
 	}
 
 	/** One depth/biome hazard id worth showing, or null. Highest priority first. */
-	public static String hazardAt(int y, BiomeGroup g) {
+	public static @Nullable String hazardAt(int y, BiomeGroup g) {
 		if (g == BiomeGroup.DEEP_DARK) return "deep_dark";
 		if (y < LAVA_LEVEL) return "lava";
 		if (y < DEEPSLATE_LEVEL) return "deepslate";

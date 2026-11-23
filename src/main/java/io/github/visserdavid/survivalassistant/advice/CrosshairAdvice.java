@@ -1,5 +1,6 @@
 package io.github.visserdavid.survivalassistant.advice;
 
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -34,7 +35,7 @@ public final class CrosshairAdvice {
 		WOODEN, STONE, IRON, DIAMOND;
 
 		public String langKey() {
-			return "survivalassistant.tool." + name().toLowerCase(java.util.Locale.ROOT) + "_pickaxe";
+			return "survivalassistant.tool." + name().toLowerCase(Locale.ROOT) + "_pickaxe";
 		}
 	}
 

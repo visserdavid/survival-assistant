@@ -1,5 +1,13 @@
 package io.github.visserdavid.survivalassistant.client.hud;
 
+import io.github.visserdavid.survivalassistant.advice.Chapters;
+import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
+import io.github.visserdavid.survivalassistant.advice.Navigation;
+import io.github.visserdavid.survivalassistant.advice.Recipes;
+import io.github.visserdavid.survivalassistant.advice.SafeSignal;
+import io.github.visserdavid.survivalassistant.advice.Tip;
+import io.github.visserdavid.survivalassistant.advice.TipRegistry;
+import io.github.visserdavid.survivalassistant.state.HudState;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -8,14 +16,6 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
-import io.github.visserdavid.survivalassistant.advice.Navigation;
-import io.github.visserdavid.survivalassistant.advice.Recipes;
-import io.github.visserdavid.survivalassistant.advice.SafeSignal;
-import io.github.visserdavid.survivalassistant.advice.Tip;
-import io.github.visserdavid.survivalassistant.advice.Chapters;
-import io.github.visserdavid.survivalassistant.advice.TipRegistry;
-import io.github.visserdavid.survivalassistant.state.HudState;
 
 import java.util.ArrayList;
 import java.util.HashSet;

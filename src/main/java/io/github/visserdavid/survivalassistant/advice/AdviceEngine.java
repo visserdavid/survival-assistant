@@ -2,6 +2,8 @@ package io.github.visserdavid.survivalassistant.advice;
 
 import io.github.visserdavid.survivalassistant.config.ModConfig;
 import io.github.visserdavid.survivalassistant.util.Ticks;
+import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,14 +76,14 @@ public final class AdviceEngine {
 	}
 
 	/** The highest-priority urgent tip/warning that applies right now, ignoring cooldowns; null if none. */
-	public static Tip activeUrgent(SurvivalContext ctx) {
+	public static @Nullable Tip activeUrgent(SurvivalContext ctx) {
 		for (Tip u : TipRegistry.URGENT) {
 			if (u.applies().test(ctx)) return u;
 		}
 		return null;
 	}
 
-	public static Tip nextMilestone(GuideProgress progress) {
+	public static @Nullable Tip nextMilestone(GuideProgress progress) {
 		for (Tip m : Chapters.get(progress.chapter).goals()) {
 			if (!progress.completed.contains(m.id())) return m;
 		}

@@ -1,13 +1,13 @@
 package io.github.visserdavid.survivalassistant.client.skin;
 
 import com.mojang.blaze3d.platform.NativeImage;
+import io.github.visserdavid.survivalassistant.SurvivalAssistant;
+import io.github.visserdavid.survivalassistant.client.hud.HudConfig;
+import io.github.visserdavid.survivalassistant.skin.SkinNames;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.Identifier;
-import io.github.visserdavid.survivalassistant.SurvivalAssistant;
-import io.github.visserdavid.survivalassistant.client.hud.HudConfig;
-import io.github.visserdavid.survivalassistant.skin.SkinNames;
 
 import java.io.IOException;
 import java.io.InputStream;

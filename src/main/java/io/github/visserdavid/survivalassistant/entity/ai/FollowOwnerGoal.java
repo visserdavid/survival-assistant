@@ -1,10 +1,10 @@
 package io.github.visserdavid.survivalassistant.entity.ai;
 
+import io.github.visserdavid.survivalassistant.entity.GuideEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.level.pathfinder.PathType;
-import io.github.visserdavid.survivalassistant.entity.GuideEntity;
 import org.jspecify.annotations.Nullable;
 
 import java.util.EnumSet;

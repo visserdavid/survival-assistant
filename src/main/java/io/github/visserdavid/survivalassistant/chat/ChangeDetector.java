@@ -1,6 +1,7 @@
 package io.github.visserdavid.survivalassistant.chat;
 
 import io.github.visserdavid.survivalassistant.util.Ticks;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.EnumMap;

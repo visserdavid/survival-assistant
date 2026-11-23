@@ -1,5 +1,9 @@
 package io.github.visserdavid.survivalassistant.client.hud;
 
+import io.github.visserdavid.survivalassistant.SurvivalAssistant;
+import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
+import io.github.visserdavid.survivalassistant.advice.Recipes;
+import io.github.visserdavid.survivalassistant.state.HudState;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -9,10 +13,6 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CraftingScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
-import io.github.visserdavid.survivalassistant.SurvivalAssistant;
-import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
-import io.github.visserdavid.survivalassistant.advice.Recipes;
-import io.github.visserdavid.survivalassistant.state.HudState;
 
 import java.lang.reflect.Field;
 import java.util.Optional;

@@ -1,13 +1,13 @@
 package io.github.visserdavid.survivalassistant.client;
 
+import io.github.visserdavid.survivalassistant.client.skin.GuideSkins;
+import io.github.visserdavid.survivalassistant.entity.GuideEntity;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.resources.Identifier;
-import io.github.visserdavid.survivalassistant.client.skin.GuideSkins;
-import io.github.visserdavid.survivalassistant.entity.GuideEntity;
 
 /**
  * Renders the guide with the player model geometry: the built-in skin, or the player's own pick from the skins

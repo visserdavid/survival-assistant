@@ -1,5 +1,7 @@
 package io.github.visserdavid.survivalassistant.advice;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,6 +21,22 @@ public final class Recipes {
 	 * @param key      character to item id
 	 */
 	public record Recipe(String resultId, int count, List<String> pattern, Map<Character, String> key) {
+		/** The crafting grid is 3x3. */
+		public static final int GRID = 3;
+
+		public Recipe {
+			pattern = List.copyOf(pattern);
+			key = Map.copyOf(key);
+			if (count < 1) throw new IllegalArgumentException(resultId + ": count must be at least 1");
+			if (pattern.isEmpty() || pattern.size() > GRID) throw new IllegalArgumentException(resultId + ": 1 to 3 rows");
+			for (String row : pattern) {
+				if (row.isEmpty() || row.length() > GRID) throw new IllegalArgumentException(resultId + ": 1 to 3 slots per row");
+				for (char c : row.toCharArray()) {
+					if (c != ' ' && !key.containsKey(c)) throw new IllegalArgumentException(resultId + ": '" + c + "' is not in the key");
+				}
+			}
+		}
+
 		/** 2x2 recipes also work in the inventory; larger ones need a crafting table. */
 		public boolean needsTable() {
 			if (pattern.size() > 2) return true;
@@ -27,7 +45,7 @@ public final class Recipes {
 		}
 
 		/** Item id in grid slot (row, col), or null for an empty slot. */
-		public String at(int row, int col) {
+		public @Nullable String at(int row, int col) {
 			if (row >= pattern.size()) return null;
 			String line = pattern.get(row);
 			if (col >= line.length()) return null;
@@ -47,31 +65,37 @@ public final class Recipes {
 	private static final String STICK = "minecraft:stick";
 	private static final String COBBLE = "minecraft:cobblestone";
 	private static final String IRON = "minecraft:iron_ingot";
+	private static final String STRING = "minecraft:string";
+	private static final String REDSTONE = "minecraft:redstone";
+
+	/** A bucket: for water (chapter 1) and for milk (chapter 6). */
+	private static final Recipe BUCKET = new Recipe("minecraft:bucket", 1, List.of("# #", " # "), Map.of('#', IRON));
+
+	/** Every pickaxe has the same shape: three of the material over two sticks. */
+	private static Recipe pickaxe(String resultId, String material) {
+		return new Recipe(resultId, 1, List.of("XXX", " # ", " # "), Map.of('X', material, '#', STICK));
+	}
 
 	/** Task id to recipe. Tasks without a crafting step (food, shelter, iron, breeding, mining) have none. */
 	public static final Map<String, Recipe> BY_TASK = Map.ofEntries(
 			Map.entry("wood", new Recipe("minecraft:oak_planks", 4, List.of("L"), Map.of('L', "minecraft:oak_log"))),
 			Map.entry("crafting_table", new Recipe("minecraft:crafting_table", 1, List.of("##", "##"), Map.of('#', PLANKS))),
-			Map.entry("wooden_pickaxe", new Recipe("minecraft:wooden_pickaxe", 1, List.of("XXX", " # ", " # "),
-					Map.of('X', PLANKS, '#', STICK))),
-			Map.entry("stone_tools", new Recipe("minecraft:stone_pickaxe", 1, List.of("XXX", " # ", " # "),
-					Map.of('X', COBBLE, '#', STICK))),
+			Map.entry("wooden_pickaxe", pickaxe("minecraft:wooden_pickaxe", PLANKS)),
+			Map.entry("stone_tools", pickaxe("minecraft:stone_pickaxe", COBBLE)),
 			Map.entry("furnace", new Recipe("minecraft:furnace", 1, List.of("###", "# #", "###"), Map.of('#', COBBLE))),
 			Map.entry("bed", new Recipe("minecraft:white_bed", 1, List.of("###", "XXX"),
 					Map.of('#', "minecraft:white_wool", 'X', PLANKS))),
 			Map.entry("torches", new Recipe("minecraft:torch", 4, List.of("X", "#"), Map.of('X', "minecraft:coal", '#', STICK))),
 			Map.entry("chest", new Recipe("minecraft:chest", 1, List.of("###", "# #", "###"), Map.of('#', PLANKS))),
 			Map.entry("shield", new Recipe("minecraft:shield", 1, List.of("WoW", "WWW", " W "), Map.of('W', PLANKS, 'o', IRON))),
-			Map.entry("iron_pickaxe", new Recipe("minecraft:iron_pickaxe", 1, List.of("XXX", " # ", " # "),
-					Map.of('X', IRON, '#', STICK))),
+			Map.entry("iron_pickaxe", pickaxe("minecraft:iron_pickaxe", IRON)),
 			Map.entry("iron_armor", new Recipe("minecraft:iron_chestplate", 1, List.of("X X", "XXX", "XXX"), Map.of('X', IRON))),
-			Map.entry("water_bucket", new Recipe("minecraft:bucket", 1, List.of("# #", " # "), Map.of('#', IRON))),
+			Map.entry("water_bucket", BUCKET),
 			// chapter 2
 			Map.entry("farm", new Recipe("minecraft:wooden_hoe", 1, List.of("XX", " #", " #"), Map.of('X', PLANKS, '#', STICK))),
 			Map.entry("bread", new Recipe("minecraft:bread", 1, List.of("###"), Map.of('#', "minecraft:wheat"))),
-			Map.entry("bow", new Recipe("minecraft:bow", 1, List.of(" #X", "# X", " #X"), Map.of('#', STICK, 'X', "minecraft:string"))),
-			Map.entry("diamond_pickaxe", new Recipe("minecraft:diamond_pickaxe", 1, List.of("XXX", " # ", " # "),
-					Map.of('X', "minecraft:diamond", '#', STICK))),
+			Map.entry("bow", new Recipe("minecraft:bow", 1, List.of(" #X", "# X", " #X"), Map.of('#', STICK, 'X', STRING))),
+			Map.entry("diamond_pickaxe", pickaxe("minecraft:diamond_pickaxe", "minecraft:diamond")),
 			Map.entry("flint_and_steel", new Recipe("minecraft:flint_and_steel", 1, List.of("IF"),
 					Map.of('I', IRON, 'F', "minecraft:flint"))),
 			Map.entry("enchanting_table", new Recipe("minecraft:enchanting_table", 1, List.of(" B ", "D#D", "###"),
@@ -88,9 +112,9 @@ public final class Recipes {
 			Map.entry("anvil", new Recipe("minecraft:anvil", 1, List.of("III", " i ", "iii"),
 					Map.of('I', "minecraft:iron_block", 'i', IRON))),
 			// chapter 6: a bucket for the milk, a fishing rod, a campfire under the hive, a saddle
-			Map.entry("milk", new Recipe("minecraft:bucket", 1, List.of("# #", " # "), Map.of('#', IRON))),
+			Map.entry("milk", BUCKET),
 			Map.entry("fishing", new Recipe("minecraft:fishing_rod", 1, List.of("  #", " #X", "# X"),
-					Map.of('#', STICK, 'X', "minecraft:string"))),
+					Map.of('#', STICK, 'X', STRING))),
 			Map.entry("honey", new Recipe("minecraft:campfire", 1, List.of(" S ", "SCS", "LLL"),
 					Map.of('S', STICK, 'C', "minecraft:coal", 'L', "minecraft:oak_log"))),
 			Map.entry("horse", new Recipe("minecraft:saddle", 1, List.of(" X ", "X#X"),
@@ -107,9 +131,9 @@ public final class Recipes {
 			// chapter 9: redstone
 			Map.entry("iron_door", new Recipe("minecraft:iron_door", 3, List.of("##", "##", "##"), Map.of('#', IRON))),
 			Map.entry("piston", new Recipe("minecraft:piston", 1, List.of("TTT", "#X#", "#R#"),
-					Map.of('T', PLANKS, '#', COBBLE, 'X', IRON, 'R', "minecraft:redstone"))),
+					Map.of('T', PLANKS, '#', COBBLE, 'X', IRON, 'R', REDSTONE))),
 			Map.entry("repeater", new Recipe("minecraft:repeater", 1, List.of("#X#", "III"),
-					Map.of('#', "minecraft:redstone_torch", 'X', "minecraft:redstone", 'I', "minecraft:stone"))),
+					Map.of('#', "minecraft:redstone_torch", 'X', REDSTONE, 'I', "minecraft:stone"))),
 			Map.entry("hopper", new Recipe("minecraft:hopper", 1, List.of("I I", "ICI", " I "),
 					Map.of('I', IRON, 'C', "minecraft:chest"))),
 			// chapter 10: an eye of ender is a pearl with blaze powder (shapeless)
@@ -140,11 +164,11 @@ public final class Recipes {
 					Map.of('L', "minecraft:leather", 'G', "minecraft:glass", '#', "minecraft:white_wool"))),
 			// chapter 18
 			Map.entry("observer", new Recipe("minecraft:observer", 1, List.of("###", "RRQ", "###"),
-					Map.of('#', COBBLE, 'R', "minecraft:redstone", 'Q', "minecraft:quartz"))),
+					Map.of('#', COBBLE, 'R', REDSTONE, 'Q', "minecraft:quartz"))),
 			Map.entry("copper_bulb", new Recipe("minecraft:copper_bulb", 4, List.of(" C ", "CBC", " R "),
-					Map.of('C', "minecraft:copper_block", 'B', "minecraft:blaze_rod", 'R', "minecraft:redstone"))),
+					Map.of('C', "minecraft:copper_block", 'B', "minecraft:blaze_rod", 'R', REDSTONE))),
 			Map.entry("crafter", new Recipe("minecraft:crafter", 1, List.of("###", "#C#", "RDR"),
-					Map.of('#', IRON, 'C', "minecraft:crafting_table", 'R', "minecraft:redstone", 'D', "minecraft:dropper")))
+					Map.of('#', IRON, 'C', "minecraft:crafting_table", 'R', REDSTONE, 'D', "minecraft:dropper")))
 	);
 
 	public static Optional<Recipe> forTask(String taskId) {
