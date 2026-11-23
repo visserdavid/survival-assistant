@@ -71,9 +71,11 @@ archaeology, the trial challenges, the happy ghast and automation.
 - The menu shows finished chapters in green, the current one in gold, the ones you can start as buttons and
   locked ones in grey with what they need. Hover over a button to see what the chapter is about; click it to start.
 
-<p align="center">
-  <img src="docs/images/chapters-menu.png" alt="Chapter menu in chat: chapters 1 and 2 done, 6 Farming and animals current, 3, 4, 7, 8 and 9 as buttons, 5 and 10 locked with what they need" width="460">
-  <img src="docs/images/chapters-tooltip.png" alt="Chapter menu with the tooltip of Villages and trading: find a village, trade with villagers, earn emeralds and build an iron golem" width="460" align="top">
+<p>
+  <img src="docs/images/chapters-menu.png" alt="Chapter menu in chat: chapters 1 and 2 done, 6 Farming and animals current, 3, 4, 7, 8 and 9 as buttons, 5 and 10 locked with what they need" width="600">
+</p>
+<p>
+  <img src="docs/images/chapters-tooltip.png" alt="Chapter menu with the tooltip of Villages and trading: find a village, trade with villagers, earn emeralds and build an iron golem" width="958">
 </p>
 
 - Switch any time with `/guide chapter <name>` (`village`, `nether`, `magic`, `husbandry`, `ocean`, `explorer`,
