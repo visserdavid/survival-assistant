@@ -1,20 +1,22 @@
 """Checks advice/Recipes.java against the recipe data in the Minecraft jar.
 
-Usage: python tools/recipe_check.py <path to minecraft-common jar>
-(the jar Loom uses lives under ~/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-common-deobf/)
+Usage (after a Gradle build, so Loom has downloaded the game):
+    python tools/recipe_check.py [--jar <minecraft-common jar>]
 
 For every recipe in Recipes.java it loads data/minecraft/recipe/<result>.json and checks that
 - the shape (pattern with spaces) is identical, or for shapeless recipes the ingredient counts match;
 - every item shown in the grid is accepted by the game for that slot (tags are expanded);
 - the result count matches.
 """
+import argparse
 import json
 import re
 import sys
 import zipfile
-from pathlib import Path
 
-SRC = Path(__file__).resolve().parent.parent / "src/main/java/io/github/visserdavid/survivalassistant/advice/Recipes.java"
+from mcjar import ROOT, find_jar
+
+SRC = ROOT / "src/main/java/io/github/visserdavid/survivalassistant/advice/Recipes.java"
 
 
 def expand_helpers(text):
@@ -46,8 +48,8 @@ def java_recipes(text):
 
 
 class Jar:
-    def __init__(self, path):
-        self.z = zipfile.ZipFile(path)
+    def __init__(self, z):
+        self.z = z
 
     def json(self, name):
         return json.loads(self.z.read(name))
@@ -70,7 +72,14 @@ class Jar:
 
 
 def main():
-    jar = Jar(sys.argv[1])
+    parser = argparse.ArgumentParser(description="Check advice/Recipes.java against the game's recipe data.")
+    parser.add_argument("--jar", help="minecraft-common jar (default: the one in the Loom cache)")
+    with zipfile.ZipFile(find_jar(parser.parse_args().jar)) as z:
+        sys.exit(check(Jar(z)))
+
+
+def check(jar):
+    """Prints a line per recipe; returns the exit code (1 when a recipe differs from the game)."""
     recipes = java_recipes(SRC.read_text(encoding="utf-8"))
     assert recipes, "no recipes parsed"
     errors = 0
@@ -98,7 +107,7 @@ def main():
         errors += bool(problems)
         print(f"{status} {name:18} {'; '.join(problems)}")
     print(f"{len(recipes)} recipes, {errors} problem(s)")
-    sys.exit(1 if errors else 0)
+    return 1 if errors else 0
 
 
 if __name__ == "__main__":

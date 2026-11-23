@@ -1,4 +1,4 @@
-# Builds and tests the mod and checks the language files on every push and pull request.
+# Builds and tests the mod, checks the language files and the recipe cards on every push and pull request.
 name: Build
 
 on:
@@ -35,3 +35,6 @@ jobs:
         run: |
           python tools/make_lang.py src/main/resources/assets/survivalassistant/lang
           git diff --exit-code -- src/main/resources/assets/survivalassistant/lang
+
+      - name: Recipe cards match the game data
+        run: python tools/recipe_check.py

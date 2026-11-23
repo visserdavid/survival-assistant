@@ -5,6 +5,7 @@ Usage: python tools/make_lang.py src/main/resources/assets/survivalassistant/lan
 English and Dutch live in the table below; other languages in tools/lang/<code>.json (key -> text).
 Every language must have exactly the English keys and the same number of %s placeholders.
 """
+import argparse
 import glob
 import json
 import os
@@ -1622,20 +1623,6 @@ def load_translations():
     return out
 
 
-languages = {"en_us": {k: v[0] for k, v in L.items()}, "nl_nl": {k: v[1] for k, v in L.items()}}
-languages.update(load_translations())
-
-english = languages["en_us"]
-for code, table in languages.items():
-    missing = [k for k in english if k not in table]
-    extra = [k for k in table if k not in english]
-    if missing or extra:
-        sys.exit(f"[{code}] missing keys: {missing[:10]} ({len(missing)}), unknown keys: {extra[:10]} ({len(extra)})")
-    for key, text in table.items():
-        check_chars(code, key, text)
-        if len(PLACEHOLDER.findall(text)) != len(PLACEHOLDER.findall(english[key])):
-            sys.exit(f"[{code}] placeholder count differs from English in {key!r}: {text!r}")
-
 # Minecraft falls back to English when the chosen language has no file, so regional variants with the same script
 # get a copy (Traditional Chinese zh_tw/zh_hk do not: different characters).
 VARIANTS = {
@@ -1646,12 +1633,40 @@ VARIANTS = {
     "nl_nl": ["nl_be"],
 }
 
-out_dir = sys.argv[1]
-written = 0
-for code, table in languages.items():
-    for target in [code] + VARIANTS.get(code, []):
-        with open(f"{out_dir}/{target}.json", "w", encoding="utf-8") as f:
-            json.dump({k: table[k] for k in english}, f, ensure_ascii=False, indent="\t")
-            f.write("\n")
-        written += 1
-print(len(L), "keys,", len(languages), "languages,", written, "files")
+
+def check_languages():
+    """All languages, checked: the same keys as English, safe characters, the same placeholders."""
+    languages = {"en_us": {k: v[0] for k, v in L.items()}, "nl_nl": {k: v[1] for k, v in L.items()}}
+    languages.update(load_translations())
+
+    english = languages["en_us"]
+    for code, table in languages.items():
+        missing = [k for k in english if k not in table]
+        extra = [k for k in table if k not in english]
+        if missing or extra:
+            sys.exit(f"[{code}] missing keys: {missing[:10]} ({len(missing)}), unknown keys: {extra[:10]} ({len(extra)})")
+        for key, text in table.items():
+            check_chars(code, key, text)
+            if len(PLACEHOLDER.findall(text)) != len(PLACEHOLDER.findall(english[key])):
+                sys.exit(f"[{code}] placeholder count differs from English in {key!r}: {text!r}")
+    return languages
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Write and check the language files.")
+    parser.add_argument("out_dir", help="for example src/main/resources/assets/survivalassistant/lang")
+    out_dir = parser.parse_args().out_dir
+    languages = check_languages()
+    english = languages["en_us"]
+    written = 0
+    for code, table in languages.items():
+        for target in [code] + VARIANTS.get(code, []):
+            with open(f"{out_dir}/{target}.json", "w", encoding="utf-8") as f:
+                json.dump({k: table[k] for k in english}, f, ensure_ascii=False, indent="\t")
+                f.write("\n")
+            written += 1
+    print(len(L), "keys,", len(languages), "languages,", written, "files")
+
+
+if __name__ == "__main__":
+    main()

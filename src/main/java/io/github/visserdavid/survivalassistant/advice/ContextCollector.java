@@ -196,8 +196,8 @@ public final class ContextCollector {
 			markArmor(s, armor);
 
 			if (s.has(DataComponents.FOOD)) foodItems += n;
-			if (s.is(ItemTags.PICKAXES)) pickaxe = Math.max(pickaxe, toolTier(item));
-			if (s.is(ItemTags.SWORDS) || s.is(ItemTags.AXES)) weapon = Math.max(weapon, toolTier(item));
+			if (s.is(ItemTags.PICKAXES)) pickaxe = Math.max(pickaxe, Gear.toolTier(path(item)));
+			if (s.is(ItemTags.SWORDS) || s.is(ItemTags.AXES)) weapon = Math.max(weapon, Gear.toolTier(path(item)));
 		}
 
 		for (EquipmentSlot slot : WORN_SLOTS) {
@@ -231,7 +231,7 @@ public final class ContextCollector {
 		else if (item == Items.ELYTRA) b.hasElytra(true);
 		else if (item == Items.TOTEM_OF_UNDYING) b.hasTotem(true);
 		else if (item == Items.MACE) b.hasMace(true);
-		if (isNetheriteGear(item)) b.hasNetheriteGear(true);
+		if (Gear.isNetheriteGear(path(item))) b.hasNetheriteGear(true);
 	}
 
 	/** Placed blocks nearby (players usually place a crafting table, furnace or bed right after crafting it). */
@@ -332,13 +332,6 @@ public final class ContextCollector {
 		return SpawnSpots.scan(level, feet, LightScan.LIT_RADIUS, LightScan.LIT_VERTICAL, limit, 1, pos -> {}) == 0;
 	}
 
-	/** A netherite tool, weapon or armor piece (made in a smithing table, so not the ingot, scrap or template). */
-	private static boolean isNetheriteGear(Item item) {
-		String path = BuiltInRegistries.ITEM.getKey(item).getPath();
-		return path.startsWith("netherite_") && !path.equals("netherite_ingot") && !path.equals("netherite_scrap")
-				&& !path.equals("netherite_block") && !path.endsWith("smithing_template");
-	}
-
 	/** The notable structure ({@link Structures#ALL}) the position is in, or "". */
 	private static String structureAt(ServerLevel level, BlockPos pos) {
 		StructureStart start = level.structureManager().getStructureWithPieceAt(pos,
@@ -385,8 +378,7 @@ public final class ContextCollector {
 	/** 0 head, 1 chest, 2 legs, 3 feet for an iron, diamond or netherite armor piece; -1 for anything else. */
 	private static int armorSlot(ItemStack s) {
 		if (s.isEmpty()) return -1;
-		String path = BuiltInRegistries.ITEM.getKey(s.getItem()).getPath();
-		if (!(path.startsWith("iron_") || path.startsWith("diamond_") || path.startsWith("netherite_"))) return -1;
+		if (!Gear.ironOrBetter(path(s.getItem()))) return -1;
 		if (s.is(ItemTags.HEAD_ARMOR)) return 0;
 		if (s.is(ItemTags.CHEST_ARMOR)) return 1;
 		if (s.is(ItemTags.LEG_ARMOR)) return 2;
@@ -394,13 +386,7 @@ public final class ContextCollector {
 		return -1;
 	}
 
-	/** 1 wood or gold, 2 stone or copper, 3 iron, 4 diamond, netherite or anything else. */
-	private static int toolTier(Item item) {
-		if (item == Items.WOODEN_PICKAXE || item == Items.WOODEN_SWORD || item == Items.WOODEN_AXE
-				|| item == Items.GOLDEN_PICKAXE || item == Items.GOLDEN_SWORD || item == Items.GOLDEN_AXE) return 1;
-		if (item == Items.STONE_PICKAXE || item == Items.STONE_SWORD || item == Items.STONE_AXE
-				|| item == Items.COPPER_PICKAXE || item == Items.COPPER_SWORD || item == Items.COPPER_AXE) return 2;
-		if (item == Items.IRON_PICKAXE || item == Items.IRON_SWORD || item == Items.IRON_AXE) return 3;
-		return 4; // diamond, netherite or modded: treat as top tier
+	private static String path(Item item) {
+		return BuiltInRegistries.ITEM.getKey(item).getPath();
 	}
 }

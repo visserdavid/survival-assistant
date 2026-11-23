@@ -369,8 +369,10 @@ After every build the mod jar and sources jar are also copied to the project fol
 Developer tools:
 - `tools/make_lang.py` generates all language files (English and Dutch from its own table, the others from
   `tools/lang/<code>.json`) and checks that every language has the same keys and placeholders.
-- `tools/recipe_check.py <minecraft jar>` checks every recipe card against the game's recipe data.
+- `tools/recipe_check.py` checks every recipe card against the game's recipe data.
 - `tools/biome_facts.py` regenerates [docs/biomes-and-heights.md](docs/biomes-and-heights.md) from the Minecraft jar.
+- Both find the Minecraft jar in the Loom cache after a build (`tools/mcjar.py`); pass `--jar <path>` to use another.
+  The CI workflow runs the build, the tests, the language check and the recipe check on every push.
 - `tools/make_icon.py` builds the transparent PNG icons from `docs/images/SurvivalAssistant.jpg`
   (`uv run --with pillow python tools/make_icon.py`).
 
