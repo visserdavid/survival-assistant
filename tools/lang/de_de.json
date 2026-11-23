@@ -842,5 +842,8 @@
 "~task.crafter_crafts": "Lass einen Werker einen Werker bauen",
 "~tip.crafter_crafts.1": "Leg das Rezept des Werkers in einen Werker: Eisen, eine Werkbank, Redstone und einen Spender. Gib ihm einen Impuls, und er baut einen neuen Werker.",
 "~tip.crafter_crafts.2": "Nimm einen Knopf für den Impuls und fang das Ergebnis mit einem Trichter auf.",
-"~praise.crafter_crafts": "Werker, die Werker bauen! Meister der Automatisierung."
+"~praise.crafter_crafts": "Werker, die Werker bauen! Meister der Automatisierung.",
+"~alert.lit_safe": "Gut beleuchtet: hier spawnen keine Monster",
+"~safe.lit.1": "Schön hell hier: In diesem Licht können keine Monster spawnen.",
+"~safe.lit.2": "Diese Stelle ist gut beleuchtet. Hier kommen keine neuen Monster, aber behalte die dunklen Ränder im Auge."
 }

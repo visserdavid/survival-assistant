@@ -28,6 +28,8 @@ danger and celebrates every goal you reach.
 - **Safety warnings** for creepers, digging straight down, lava, the night, phantoms, ghasts, piglins without gold
   and, most urgent of all, the warden. One-time notes in special places: the Nether, temples, trial chambers,
   strongholds, the End, bastions, ancient cities and more.
+- **Safe in the light**: in a well-lit cave or a lit spot at night the guide tells you you're safe, instead of
+  warning about the dark.
 - **A recipe card** next to your inventory for the item your task needs, and **crosshair info** for mobs and ores.
 - **An environment card** with a pro and a con for every biome and the ores worth digging for at your height.
 - **A light check** (key L) that shows every spot where monsters can spawn.

@@ -842,5 +842,8 @@
 "~task.crafter_crafts": "Niech konstruktor zrobi konstruktor",
 "~tip.crafter_crafts.1": "Ułóż w konstruktorze przepis na konstruktor: żelazo, stół rzemieślniczy, czerwony proszek i podajnik. Daj impuls, a zrobi nowy konstruktor.",
 "~tip.crafter_crafts.2": "Użyj przycisku do impulsu i zbierz wynik lejem.",
-"~praise.crafter_crafts": "Konstruktory robiące konstruktory! Mistrz automatyzacji."
+"~praise.crafter_crafts": "Konstruktory robiące konstruktory! Mistrz automatyzacji.",
+"~alert.lit_safe": "Dobrze oświetlone: tu nie pojawiają się potwory",
+"~safe.lit.1": "Ładnie tu jasno: w tym świetle nie mogą pojawić się potwory.",
+"~safe.lit.2": "To miejsce jest dobrze oświetlone. Nie pojawią się tu nowe potwory, ale uważaj na ciemne krawędzie."
 }

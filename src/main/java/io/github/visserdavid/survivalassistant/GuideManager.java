@@ -25,6 +25,7 @@ import io.github.visserdavid.survivalassistant.advice.BiomeGroup;
 import io.github.visserdavid.survivalassistant.advice.Chapter;
 import io.github.visserdavid.survivalassistant.advice.Chapters;
 import io.github.visserdavid.survivalassistant.advice.PlaceNotices;
+import io.github.visserdavid.survivalassistant.advice.SafeSignal;
 import io.github.visserdavid.survivalassistant.advice.OreTable;
 import io.github.visserdavid.survivalassistant.advice.ContextCollector;
 import io.github.visserdavid.survivalassistant.advice.DigTracker;
@@ -63,6 +64,13 @@ public final class GuideManager {
 	/** Where and when each player last died (kept here, not on the player, so it survives the respawn copy). */
 	private static final Map<UUID, DeathRecord> DEATHS = new HashMap<>();
 	private static final Map<UUID, DigTracker> DIGS = new HashMap<>();
+	/** Whether each player stood in a well-lit spot at the last evaluation, and when the guide last said so. */
+	private static final Map<UUID, LightMemory> LIGHT = new HashMap<>();
+
+	private static final class LightMemory {
+		boolean wasSafe;
+		long lastNotice = SafeSignal.NEVER;
+	}
 
 	private record DeathRecord(Navigation.Mark mark, long tick) {}
 	private static final double RESPAWN_DIST_SQR = 48 * 48;
@@ -162,6 +170,7 @@ public final class GuideManager {
 		SurvivalContext ctx = ContextCollector.collect(player, progress, dig == null ? 0 : dig.current(now),
 				progress.homeFallback == null ? pos -> progress.homeFallback = mark(player, pos) : null);
 		respond(player, guide, ctx, progress, forced);
+		checkLight(player, guide, ctx, progress, now);
 		checkPlaceNotices(player, guide, ctx, progress);
 		GuideChat.observe(player, guide, ctx, progress);
 		GuideMusings.observe(player, guide, ctx, progress);
@@ -386,6 +395,17 @@ public final class GuideManager {
 		}
 	}
 
+	/** Coming from the dark into a well-lit spot: the guide says it's safe here (once, with a cooldown; not while muted). */
+	private static void checkLight(ServerPlayer player, @Nullable GuideEntity guide, SurvivalContext ctx, GuideProgress progress, long now) {
+		LightMemory memory = LIGHT.computeIfAbsent(player.getUUID(), id -> new LightMemory());
+		boolean safe = SafeSignal.show(ctx);
+		if (SafeSignal.notice(memory.wasSafe, safe, now, memory.lastNotice) && now >= progress.muteUntil) {
+			say(player, guide, randomVariant("survivalassistant.safe.lit", 2, player.getRandom()).withStyle(ChatFormatting.GREEN), false);
+			memory.lastNotice = now;
+		}
+		memory.wasSafe = safe;
+	}
+
 	/** One-time notes about special places (the Nether, a village, a night in a village). */
 	private static void checkPlaceNotices(ServerPlayer player, @Nullable GuideEntity guide, SurvivalContext ctx, GuideProgress progress) {
 		if (!ModConfig.get().depthNotices) return;
@@ -526,6 +546,7 @@ public final class GuideManager {
 		removeGuide(player.getUUID(), false);
 		LAST_EVAL.remove(player.getUUID());
 		DIGS.remove(player.getUUID());
+		LIGHT.remove(player.getUUID());
 		GuideChat.forget(player.getUUID());
 		GuideMusings.forget(player.getUUID());
 	}
@@ -536,6 +557,7 @@ public final class GuideManager {
 		LAST_EVAL.clear();
 		DEATHS.clear();
 		DIGS.clear();
+		LIGHT.clear();
 		GuideChat.clear();
 		GuideMusings.clear();
 	}

@@ -842,5 +842,8 @@
 "~task.crafter_crafts": "Faire fabriquer un fabricant par un fabricant",
 "~tip.crafter_crafts.1": "Place la recette du fabricant dans un fabricant : du fer, un établi, de la redstone et un dropper. Donne-lui une impulsion et il fabrique un nouveau fabricant.",
 "~tip.crafter_crafts.2": "Utilise un bouton pour l'impulsion et récupère le résultat avec un entonnoir.",
-"~praise.crafter_crafts": "Des fabricants qui fabriquent des fabricants ! Maître de l'automatisation."
+"~praise.crafter_crafts": "Des fabricants qui fabriquent des fabricants ! Maître de l'automatisation.",
+"~alert.lit_safe": "Bien éclairé : aucun monstre n'apparaît ici",
+"~safe.lit.1": "Bien lumineux ici : aucun monstre ne peut apparaître avec cette lumière.",
+"~safe.lit.2": "Cet endroit est bien éclairé. Pas de nouveaux monstres ici, mais surveille les bords sombres."
 }

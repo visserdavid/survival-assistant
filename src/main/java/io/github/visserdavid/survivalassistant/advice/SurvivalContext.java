@@ -41,6 +41,8 @@ package io.github.visserdavid.survivalassistant.advice;
  * @param ghastlingNearby a baby happy ghast (ghastling) within 16 blocks
  * @param autoSmelter    a furnace nearby with a hopper above it (feeding in) and a hopper below it (taking out)
  * @param copperBulbLit  a lit copper bulb nearby (any oxidation stage)
+ * @param litArea        no monster can spawn within a few blocks (see {@link LightScan#LIT_RADIUS}); only checked when
+ *                       the dark matters ({@link #darkMatters()}), false otherwise
  */
 public record SurvivalContext(
 		int dayIndex,
@@ -146,7 +148,8 @@ public record SurvivalContext(
 		boolean observerPlaced,
 		boolean crafterPlaced,
 		boolean autoSmelter,
-		boolean copperBulbLit
+		boolean copperBulbLit,
+		boolean litArea
 ) {
 	/** Structures the guide knows about (ids in data/minecraft/worldgen/structure of the 26.3 data). */
 	public static final java.util.Set<String> STRUCTURES = java.util.Set.of(
@@ -201,6 +204,16 @@ public record SurvivalContext(
 		return timeOfDay >= SUNSET && timeOfDay < NIGHT_START;
 	}
 
+	/** Monsters could spawn around the player: underground, or outside without a roof at dusk, at night or in a thunderstorm. */
+	public boolean darkMatters() {
+		return darkMatters(underground, inOverworld(), sheltered, isDusk() || isNight(), thundering);
+	}
+
+	/** {@link #darkMatters()} from its parts, for the collector (which decides whether to check the light at all). */
+	public static boolean darkMatters(boolean underground, boolean overworld, boolean sheltered, boolean duskOrNight, boolean thundering) {
+		return underground || (overworld && !sheltered && (duskOrNight || thundering));
+	}
+
 	public static Builder builder() {
 		return new Builder();
 	}
@@ -220,7 +233,7 @@ public record SurvivalContext(
 				hasOminousBottle, hasTotem, wardenNearby;
 		private int witherSkulls, soulSand, echoShards, breezeRods;
 		private boolean hasBrush, hasDecoratedPot, hasWindCharge, hasHeavyCore, hasMace, hasDriedGhast, ghastlingNearby,
-				hasHarness, ridingHappyGhast, observerPlaced, crafterPlaced, autoSmelter, copperBulbLit;
+				hasHarness, ridingHappyGhast, observerPlaced, crafterPlaced, autoSmelter, copperBulbLit, litArea;
 		private boolean inVillage, hasEnchantedBook, goldArmorWorn, bedInInventory, ghastNearby, piglinNearby, hasBrewingStand, hasAnvil;
 		private float health = 20f;
 		private boolean hasCraftingTable, hasFurnace, hasBed, hasChest, hasShield, hasIronArmor, hasWaterBucket,
@@ -325,6 +338,7 @@ public record SurvivalContext(
 		public Builder crafter(boolean v) { crafterPlaced = v; return this; }
 		public Builder autoSmelter(boolean v) { autoSmelter = v; return this; }
 		public Builder copperBulbLit(boolean v) { copperBulbLit = v; return this; }
+		public Builder litArea(boolean v) { litArea = v; return this; }
 
 		public SurvivalContext build() {
 			return new SurvivalContext(dayIndex, timeOfDay, health, food, logs, planks, hasCraftingTable, pickaxeTier, swordTier,
@@ -338,7 +352,7 @@ public record SurvivalContext(
 					eyesOfEnder, hasElytra, hasNetheriteIngot, hasUpgradeTemplate, hasNetheriteGear, witherSkulls, soulSand,
 					hasNetherStar, echoShards, hasRecoveryCompass, hasOminousBottle, hasTotem, wardenNearby, hasBrush,
 					hasDecoratedPot, breezeRods, hasWindCharge, hasHeavyCore, hasMace, hasDriedGhast, ghastlingNearby, hasHarness,
-					ridingHappyGhast, observerPlaced, crafterPlaced, autoSmelter, copperBulbLit);
+					ridingHappyGhast, observerPlaced, crafterPlaced, autoSmelter, copperBulbLit, litArea);
 		}
 	}
 }

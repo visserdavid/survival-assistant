@@ -5,11 +5,8 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.NaturalSpawner;
-import net.minecraft.world.level.block.state.BlockState;
 import io.github.visserdavid.survivalassistant.advice.LightScan;
+import io.github.visserdavid.survivalassistant.advice.SpawnSpots;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -68,31 +65,7 @@ public final class LightCheck {
 	private static void scan(Minecraft mc, ClientLevel level) {
 		spots.clear();
 		BlockPos origin = mc.player.blockPosition();
-		int limit = limit(level);
-		int r = LightScan.RADIUS, v = LightScan.VERTICAL;
-		BlockPos.MutableBlockPos feet = new BlockPos.MutableBlockPos();
-		BlockPos.MutableBlockPos below = new BlockPos.MutableBlockPos();
-		BlockPos.MutableBlockPos head = new BlockPos.MutableBlockPos();
-		for (int dx = -r; dx <= r; dx++) {
-			for (int dz = -r; dz <= r; dz++) {
-				if (dx * dx + dz * dz > r * r) continue;
-				for (int dy = -v; dy <= v; dy++) {
-					feet.set(origin.getX() + dx, origin.getY() + dy, origin.getZ() + dz);
-					if (!level.isLoaded(feet)) continue;
-					if (level.getBrightness(LightLayer.BLOCK, feet) > limit) continue;
-					below.setWithOffset(feet, 0, -1, 0);
-					head.setWithOffset(feet, 0, 1, 0);
-					BlockState floor = level.getBlockState(below);
-					BlockState feetState = level.getBlockState(feet);
-					BlockState headState = level.getBlockState(head);
-					boolean ok = LightScan.monsterCanSpawn(level.getBrightness(LightLayer.BLOCK, feet), limit,
-							floor.isValidSpawn(level, below, EntityTypes.ZOMBIE),
-							NaturalSpawner.isValidEmptySpawnBlock(level, feet, feetState, feetState.getFluidState(), EntityTypes.ZOMBIE),
-							NaturalSpawner.isValidEmptySpawnBlock(level, head, headState, headState.getFluidState(), EntityTypes.ZOMBIE));
-					if (ok) spots.add(feet.immutable());
-				}
-			}
-		}
+		SpawnSpots.scan(level, origin, LightScan.RADIUS, LightScan.VERTICAL, limit(level), Integer.MAX_VALUE, spots::add);
 		if (spots.size() > LightScan.MAX_MARKERS) {
 			spots.sort(Comparator.comparingDouble(p -> p.distSqr(origin)));
 			spots.subList(LightScan.MAX_MARKERS, spots.size()).clear();

@@ -257,6 +257,9 @@ public final class ContextCollector {
 		if (player.getVehicle() instanceof AbstractBoat) boat = true;
 		int trades = player.getStats().getValue(Stats.CUSTOM.get(Stats.TRADED_WITH_VILLAGER));
 		boolean creeper = !level.getEntitiesOfClass(Creeper.class, new AABB(player.blockPosition()).inflate(7), Creeper::isAlive).isEmpty();
+		boolean duskOrNight = timeOfDay >= SurvivalContext.SUNSET && timeOfDay < SurvivalContext.NIGHT_END;
+		boolean litArea = SurvivalContext.darkMatters(underground, overworld, sheltered, duskOrNight, level.isThundering())
+				&& litAround(level, player.blockPosition());
 
 		return new SurvivalContext(dayIndex, timeOfDay, player.getHealth(), player.getFoodData().getFoodLevel(),
 				logs, planks, table, pickaxe, weapon, cobble, furnace, foodItems, bed, wool, torches, chest, iron, shield, ironArmor,
@@ -268,7 +271,14 @@ public final class ContextCollector {
 				redstone, doorOpen, pistonOut, repeater, hopper, pearls, eyes, elytra,
 				netheriteIngot, template, netheriteGear, skulls, soulSand, netherStar, echoShards, recoveryCompass,
 				ominousBottle, totem, warden, brush, pot, breezeRods, windCharge, heavyCore, mace, driedGhast, ghastling, harness,
-				ridingHappyGhast, observer, crafter, autoSmelter, bulbLit);
+				ridingHappyGhast, observer, crafter, autoSmelter, bulbLit, litArea);
+	}
+
+	/** No monster can spawn close by: light matters in this dimension and every spot nearby is lit. */
+	private static boolean litAround(ServerLevel level, BlockPos feet) {
+		int limit = level.dimensionType().monsterSpawnBlockLightLimit();
+		if (!LightScan.lightMatters(limit)) return false;
+		return SpawnSpots.scan(level, feet, LightScan.LIT_RADIUS, LightScan.LIT_VERTICAL, limit, 1, pos -> {}) == 0;
 	}
 
 	/** A netherite tool, weapon or armor piece (made in a smithing table, so not the ingot, scrap or template). */

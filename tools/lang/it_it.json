@@ -842,5 +842,8 @@
 "~task.crafter_crafts": "Fai fabbricare un fabbricatore a un fabbricatore",
 "~tip.crafter_crafts.1": "Metti la ricetta del fabbricatore in un fabbricatore: ferro, un banco da lavoro, redstone e un dropper. Dagli un impulso e ne fabbrica un altro.",
 "~tip.crafter_crafts.2": "Usa un pulsante per l'impulso e raccogli il risultato con una tramoggia.",
-"~praise.crafter_crafts": "Fabbricatori che fabbricano fabbricatori! Maestro dell'automazione."
+"~praise.crafter_crafts": "Fabbricatori che fabbricano fabbricatori! Maestro dell'automazione.",
+"~alert.lit_safe": "Ben illuminato: qui non compaiono mostri",
+"~safe.lit.1": "Bello luminoso qui: con questa luce non possono comparire mostri.",
+"~safe.lit.2": "Questo posto è ben illuminato. Qui non arrivano nuovi mostri, ma tieni d'occhio i bordi bui."
 }

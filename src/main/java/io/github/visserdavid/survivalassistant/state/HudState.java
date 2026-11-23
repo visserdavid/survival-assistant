@@ -50,6 +50,7 @@ public final class HudState {
 			ENTRY_CODEC.apply(ByteBufCodecs.list(HudSnapshot.SHOWN_TASKS)), HudSnapshot::next,
 			ByteBufCodecs.STRING_UTF8, HudSnapshot::urgentId,
 			ByteBufCodecs.optional(WAYPOINT_CODEC), HudSnapshot::waypoint,
+			ByteBufCodecs.BOOL, HudSnapshot::safe,
 			HudSnapshot::new);
 
 	public static final AttachmentType<HudSnapshot> HUD = AttachmentRegistry.create(SurvivalAssistant.id("hud"),

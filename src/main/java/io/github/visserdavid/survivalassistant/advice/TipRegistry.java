@@ -27,9 +27,9 @@ public final class TipRegistry {
 	public static final Tip HUNGRY_HUNT = Tip.urgent("hungry_hunt", 2,
 			c -> c.food() <= 6 && c.foodItems() == 0);
 	public static final Tip DUSK = Tip.urgent("dusk", 3,
-			c -> c.inOverworld() && c.isDusk() && !c.sheltered());
+			c -> c.inOverworld() && c.isDusk() && !c.sheltered() && !c.litArea());
 	public static final Tip NIGHT_OUTSIDE = Tip.urgent("night_outside", 2,
-			c -> c.inOverworld() && c.isNight() && !c.sheltered());
+			c -> c.inOverworld() && c.isNight() && !c.sheltered() && !c.litArea());
 	/** Phantoms after 3 nights without sleep (verified: PhantomSpawner, 72000 ticks); warn from the 2nd night. */
 	public static final Tip PHANTOMS = Tip.warning("phantoms", 2,
 			c -> c.inOverworld() && c.isNight() && c.ticksSinceRest() >= SurvivalContext.PHANTOM_WARNING_TICKS);
@@ -42,12 +42,12 @@ public final class TipRegistry {
 	/** Sand or gravel right above your head underground can fall on you. */
 	public static final Tip FALLING_BLOCK = Tip.warning("falling_block", 1,
 			c -> c.underground() && c.fallingBlockAbove());
-	/** Monsters can spawn in daylight during thunderstorms. */
+	/** Monsters can spawn in daylight during thunderstorms (not where it's well lit). */
 	public static final Tip THUNDER = Tip.warning("thunder", 1,
-			c -> c.inOverworld() && c.thundering() && !c.sheltered());
-	/** Underground without light: never dig straight down, bring torches. */
+			c -> c.inOverworld() && c.thundering() && !c.sheltered() && !c.litArea());
+	/** Underground in the dark without torches: never dig straight down, bring torches. Not in a well-lit cave. */
 	public static final Tip UNDERGROUND = Tip.warning("underground", 2,
-			c -> c.underground() && c.torches() == 0);
+			c -> c.underground() && c.torches() == 0 && !c.litArea());
 
 	/** A warden nearby: never fight it, sneak away (it hunts by sound). */
 	public static final Tip WARDEN = Tip.urgent("warden", 2,

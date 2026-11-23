@@ -16,6 +16,9 @@ public final class LightScan {
 	public static final int MAX_MARKERS = 250;
 	/** Rescan / redraw interval in ticks (0.5 s). */
 	public static final int INTERVAL_TICKS = 10;
+	/** "Well lit" check on the server: no spawnable spot within this radius (and {@link #LIT_VERTICAL} up/down). */
+	public static final int LIT_RADIUS = 6;
+	public static final int LIT_VERTICAL = 2;
 	/** Block light at or above this value never allows spawns in any dimension. */
 	public static final int MAX_LIGHT = 15;
 

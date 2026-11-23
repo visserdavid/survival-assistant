@@ -117,6 +117,9 @@ archaeology, the trial challenges, the happy ghast and automation.
 - **Mining safety**: a warning when you dig the block under your own feet twice in a row (digging straight
   down), when lava is within a few blocks underground, or when sand/gravel hangs right above your head.
 - **Phantoms**: a reminder after two nights without sleep (phantoms come after three).
+- **Safe in the light**: monsters only spawn in the dark. In a well-lit cave, or on a well-lit spot outside at
+  night, the dark warnings stay quiet; instead the task card shows a green "Well lit" line and the guide tells
+  you once that you're safe here. Monsters that are already around still get their warning.
 - **The Nether**: warnings for a ghast nearby and for piglins when you're not wearing gold. A **warden** nearby
   is the most urgent warning of all: don't fight, sneak away. Overworld warnings (night, thunder, phantoms)
   stay quiet in the Nether and the End.

@@ -842,5 +842,8 @@
 "~task.crafter_crafts": "Buat perakit merakit perakit",
 "~tip.crafter_crafts.1": "Masukkan resep perakit ke dalam perakit: besi, meja kerajinan, redstone, dan penjatuh. Beri pulsa dan ia membuat perakit baru.",
 "~tip.crafter_crafts.2": "Gunakan tombol untuk pulsanya, lalu tampung hasilnya dengan corong.",
-"~praise.crafter_crafts": "Perakit yang merakit perakit! Ahli otomatisasi."
+"~praise.crafter_crafts": "Perakit yang merakit perakit! Ahli otomatisasi.",
+"~alert.lit_safe": "Terang: monster tidak muncul di sini",
+"~safe.lit.1": "Terang sekali di sini: monster tidak bisa muncul dalam cahaya ini.",
+"~safe.lit.2": "Tempat ini terang. Tidak ada monster baru di sini, tapi awasi tepi yang gelap."
 }

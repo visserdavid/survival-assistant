@@ -842,5 +842,8 @@
 "~task.crafter_crafts": "Haz que un autocrafter fabrique un autocrafter",
 "~tip.crafter_crafts.1": "Pon la receta del autocrafter en un autocrafter: hierro, una mesa de crafteo, redstone y un soltador. Dale un pulso y fabricará otro autocrafter.",
 "~tip.crafter_crafts.2": "Usa un botón para el pulso y recoge el resultado con una tolva.",
-"~praise.crafter_crafts": "¡Autocrafters que fabrican autocrafters! Maestro de la automatización."
+"~praise.crafter_crafts": "¡Autocrafters que fabrican autocrafters! Maestro de la automatización.",
+"~alert.lit_safe": "Bien iluminado: aquí no aparecen monstruos",
+"~safe.lit.1": "Qué claro está aquí: con esta luz no pueden aparecer monstruos.",
+"~safe.lit.2": "Este sitio está bien iluminado. Aquí no saldrán monstruos nuevos, pero vigila los bordes oscuros."
 }

@@ -842,5 +842,8 @@
 "~task.crafter_crafts": "Pune un meșter automat să facă un meșter automat",
 "~tip.crafter_crafts.1": "Pune rețeta meșterului într-un meșter: fier, o masă de lucru, redstone și un aruncător. Dă-i un impuls și face un meșter nou.",
 "~tip.crafter_crafts.2": "Folosește un buton pentru impuls și prinde rezultatul cu o pâlnie.",
-"~praise.crafter_crafts": "Meșteri care fac meșteri! Maestru al automatizării."
+"~praise.crafter_crafts": "Meșteri care fac meșteri! Maestru al automatizării.",
+"~alert.lit_safe": "Bine luminat: aici nu apar monștri",
+"~safe.lit.1": "E frumos și luminos aici: în lumina asta nu pot apărea monștri.",
+"~safe.lit.2": "Locul ăsta e bine luminat. Aici nu apar monștri noi, dar fii atent la marginile întunecate."
 }

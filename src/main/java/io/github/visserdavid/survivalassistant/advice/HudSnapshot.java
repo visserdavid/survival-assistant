@@ -14,13 +14,14 @@ import java.util.Optional;
  * @param next      the current task followed by up to 2 upcoming tasks
  * @param urgentId  id of the urgent tip/warning that applies right now, or "" when all is calm
  * @param waypoint  where the navigation strip points (death spot or home), if anywhere
+ * @param safe      the spot is well lit and calm: the card shows the green "safe" line (see {@link SafeSignal})
  */
 public record HudSnapshot(boolean active, int dayIndex, int maxDays, int chapter, List<String> completed, List<Entry> next, String urgentId,
-		Optional<Navigation.Waypoint> waypoint) {
+		Optional<Navigation.Waypoint> waypoint, boolean safe) {
 	public static final int SHOWN_TASKS = 3;
 	/** Upper bound for {@link #completed} on the wire: no chapter has more goals than this. */
 	public static final int MAX_COMPLETED = 64;
-	public static final HudSnapshot INACTIVE = new HudSnapshot(false, 0, 0, 1, List.of(), List.of(), "", Optional.empty());
+	public static final HudSnapshot INACTIVE = new HudSnapshot(false, 0, 0, 1, List.of(), List.of(), "", Optional.empty(), false);
 
 	/** One task line. {@code target == 0} means the task has no counter. */
 	public record Entry(String id, int value, int target) {}
@@ -43,6 +44,6 @@ public record HudSnapshot(boolean active, int dayIndex, int maxDays, int chapter
 		}
 		Tip urgent = AdviceEngine.activeUrgent(ctx);
 		return new HudSnapshot(true, ctx.dayIndex(), maxDays, progress.chapter, List.copyOf(completed), List.copyOf(next),
-				urgent == null ? "" : urgent.id(), waypoint);
+				urgent == null ? "" : urgent.id(), waypoint, SafeSignal.show(ctx));
 	}
 }

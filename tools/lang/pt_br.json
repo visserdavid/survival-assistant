@@ -842,5 +842,8 @@
 "~task.crafter_crafts": "Faça um fabricador fabricar um fabricador",
 "~tip.crafter_crafts.1": "Coloque a receita do fabricador num fabricador: ferro, uma bancada, redstone e um liberador. Dê um pulso e ele faz outro fabricador.",
 "~tip.crafter_crafts.2": "Use um botão para o pulso e recolha o resultado com um funil.",
-"~praise.crafter_crafts": "Fabricadores fabricando fabricadores! Mestre da automação."
+"~praise.crafter_crafts": "Fabricadores fabricando fabricadores! Mestre da automação.",
+"~alert.lit_safe": "Bem iluminado: nenhum monstro surge aqui",
+"~safe.lit.1": "Bem claro aqui: com essa luz nenhum monstro pode surgir.",
+"~safe.lit.2": "Este lugar está bem iluminado. Aqui não surgem novos monstros, mas fique de olho nas bordas escuras."
 }

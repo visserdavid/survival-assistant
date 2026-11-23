@@ -1,5 +1,6 @@
 package io.github.visserdavid.survivalassistant.client.hud;
 
+import io.github.visserdavid.survivalassistant.advice.SafeSignal;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -152,6 +153,7 @@ public final class TaskIcons {
 		put("night_outside", Items.CLOCK);
 		put("thunder", Items.TRIDENT);
 		put("underground", Items.TORCH);
+		put(SafeSignal.ID, Items.TORCH);
 		put("dig_down", Items.LADDER);
 		put("lava_near", Items.LAVA_BUCKET);
 		put("phantoms", Items.PHANTOM_MEMBRANE);

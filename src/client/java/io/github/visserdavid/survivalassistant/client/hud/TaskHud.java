@@ -11,6 +11,7 @@ import net.minecraft.world.item.Items;
 import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
 import io.github.visserdavid.survivalassistant.advice.Navigation;
 import io.github.visserdavid.survivalassistant.advice.Recipes;
+import io.github.visserdavid.survivalassistant.advice.SafeSignal;
 import io.github.visserdavid.survivalassistant.advice.Tip;
 import io.github.visserdavid.survivalassistant.advice.Chapters;
 import io.github.visserdavid.survivalassistant.advice.TipRegistry;
@@ -148,6 +149,9 @@ public final class TaskHud implements HudElement {
 		if (!snap.urgentId().isEmpty()) {
 			wanted = Math.max(wanted, ICON_X + font.width(alertName(snap.urgentId())) + PAD);
 		}
+		if (showSafe(snap)) {
+			wanted = Math.max(wanted, SMALL_X + font.width(alertName(SafeSignal.ID)) + PAD);
+		}
 		return wanted;
 	}
 
@@ -156,8 +160,13 @@ public final class TaskHud implements HudElement {
 	}
 
 	private int compactHeight(HudSnapshot snap, long now) {
-		int rows = Math.max(0, linesForCompact(snap, now).size() - 1);
+		int rows = Math.max(0, linesForCompact(snap, now).size() - 1) + (showSafe(snap) ? 1 : 0);
 		return PAD + HEADER_H + CURRENT_H + rows * ROW_H + PAD;
+	}
+
+	/** The green "well lit, safe here" row under the tasks (compact card only); a warning always wins. */
+	private static boolean showSafe(HudSnapshot snap) {
+		return snap.safe() && snap.urgentId().isEmpty();
 	}
 
 	private static int fullHeight(HudSnapshot snap) {
@@ -284,6 +293,13 @@ public final class TaskHud implements HudElement {
 			drawSmallRow(g, font, lines.get(i), rowY, GRAY, now);
 			rowY += ROW_H;
 		}
+		if (showSafe(snap)) drawSafeRow(g, font, rowY, now);
+	}
+
+	private void drawSafeRow(GuiGraphicsExtractor g, Font font, int y, long now) {
+		smallIcon(g, TaskIcons.get(SafeSignal.ID), PAD + 6, y);
+		PixelIcons.dot(g, PAD, y + 4, GREEN);
+		HudText.fit(g, font, alertName(SafeSignal.ID), SMALL_X, y + 1, width - SMALL_X - PAD, GREEN, true, now);
 	}
 
 	private void drawHeader(GuiGraphicsExtractor g, Minecraft mc, Font font, HudSnapshot snap, long now) {

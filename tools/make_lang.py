@@ -1121,6 +1121,14 @@ L = {
     P + "praise.crafter_crafts": ("A crafter crafting crafters! Master of automation.",
         "Crafters die crafters maken! Meester van de automatisering."),
 
+    # ---------------- 0.20: well-lit safe signal ----------------
+    P + "alert.lit_safe": ("Well lit: no monsters spawn here",
+        "Goed verlicht: hier spawnen geen monsters"),
+    P + "safe.lit.1": ("Nice and bright here: no monsters can spawn in this light.",
+        "Lekker licht hier: in dit licht kunnen geen monsters spawnen."),
+    P + "safe.lit.2": ("This spot is well lit. No new monsters here, but keep an eye on the dark edges.",
+        "Deze plek is goed verlicht. Hier komen geen nieuwe monsters, maar let op de donkere randen."),
+
     # ---------------- HUD task card ----------------
     P + "hud.title": ("Guide · Day %s/%s", "Gids · Dag %s/%s"),
     P + "hud.all_done": ("All goals reached!", "Alle doelen gehaald!"),
