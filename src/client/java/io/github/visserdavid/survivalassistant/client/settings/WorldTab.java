@@ -45,7 +45,7 @@ final class WorldTab {
 		rows.header("navigation")
 				.toggle("navigation", w.navigation, v -> w.navigation = v)
 				// 16 to 256 blocks in steps of 8
-				.slider("home_distance", 2, 32, w.homeDistance / 8, v -> blocks(v * 8), v -> w.homeDistance = v * 8);
+				.slider("home_distance", 2, 32, w.homeDistance / 8, v -> Rows.blocks(v * 8), v -> w.homeDistance = v * 8);
 
 		rows.header("musings")
 				.toggle("musings_default", w.musings, v -> w.musings = v)
@@ -70,8 +70,8 @@ final class WorldTab {
 		rows.text("chat_model", w.chatModel, new ModConfig().chatModel, 128, v -> true,
 				v -> w.chatModel = v.isBlank() ? new ModConfig().chatModel : v.strip());
 		rows.slider("chat_cooldown", 1, 60, w.chatCooldownSeconds / 10, v -> duration(v * 10), v -> w.chatCooldownSeconds = v * 10)
-				.slider("chat_hearing", 1, 64, w.chatHearingDistance, WorldTab::blocks, v -> w.chatHearingDistance = v)
-				.slider("chat_sight", 1, 64, w.chatSightRadius, WorldTab::blocks, v -> w.chatSightRadius = v)
+				.slider("chat_hearing", 1, 64, w.chatHearingDistance, Rows::blocks, v -> w.chatHearingDistance = v)
+				.slider("chat_sight", 1, 64, w.chatSightRadius, Rows::blocks, v -> w.chatSightRadius = v)
 				// 16 to 512 tokens in steps of 16
 				.slider("chat_max_tokens", 1, 32, w.chatMaxTokens / 16, v -> Component.literal(Integer.toString(v * 16)), v -> w.chatMaxTokens = v * 16)
 				// 0 = the model server's own setting (-1 in the file), else 0.1 to 2.0
@@ -88,10 +88,6 @@ final class WorldTab {
 
 	private static Component minutes(int m) {
 		return Component.translatable(KEY + "unit.minutes", m);
-	}
-
-	private static Component blocks(int b) {
-		return Component.translatable(KEY + "unit.blocks", b);
 	}
 
 	/** 0 = "off", under a minute in seconds, else minutes and seconds ("2 min 30 s"). */

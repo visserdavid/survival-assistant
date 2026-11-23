@@ -43,7 +43,10 @@ final class DisplayTab {
 
 		rows.header("helpers")
 				.toggle("recipe_card", c.recipeCard, v -> c.recipeCard = v)
-				.toggle("crosshair_info", c.crosshairInfo, v -> c.crosshairInfo = v);
+				.toggle("crosshair_info", c.crosshairInfo, v -> c.crosshairInfo = v)
+				.cycle("crosshair_place", List.of(ClientConfig.Place.values()), c.crosshairPlace, m -> name("crosshair_place", m),
+						v -> c.crosshairPlace = v)
+				.slider("crosshair_range", 3, 32, c.crosshairRange, Rows::blocks, v -> c.crosshairRange = v);
 
 		List<String> skins = new ArrayList<>();
 		skins.add(SkinNames.DEFAULT);

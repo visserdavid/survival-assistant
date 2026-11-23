@@ -92,6 +92,7 @@ public final class EnvironmentCard implements HudElement {
 		// snap == null: a server without this mod
 		if (!cfg.showEnvironment || mc.player == null || mc.level == null || snap == null || HudDraw.hidden(mc)) {
 			layout.environmentWanted = 0;
+			layout.envHidden();
 			return;
 		}
 
@@ -120,6 +121,8 @@ public final class EnvironmentCard implements HudElement {
 		boolean top = HudDraw.topCorner(cfg);
 		int sy = !layout.taskVisible ? HudDraw.cornerY(cfg, g.guiHeight(), sh)
 				: top ? layout.taskY + layout.taskH + 2 : layout.taskY - sh - 2;
+
+		layout.envShown(x, sy, sw, sh, width);
 
 		g.pose().pushMatrix();
 		g.pose().translate(x, sy);

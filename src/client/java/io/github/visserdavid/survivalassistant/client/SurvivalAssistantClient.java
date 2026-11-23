@@ -8,6 +8,7 @@ import io.github.visserdavid.survivalassistant.client.hud.EnvironmentCard;
 import io.github.visserdavid.survivalassistant.client.hud.HudLayout;
 import io.github.visserdavid.survivalassistant.client.hud.LightCheck;
 import io.github.visserdavid.survivalassistant.client.hud.RecipeOverlay;
+import io.github.visserdavid.survivalassistant.client.hud.TargetCard;
 import io.github.visserdavid.survivalassistant.client.hud.TaskHud;
 import io.github.visserdavid.survivalassistant.client.settings.SettingsAccess;
 import io.github.visserdavid.survivalassistant.client.skin.GuideSkins;
@@ -65,13 +66,15 @@ public class SurvivalAssistantClient implements ClientModInitializer {
 		}));
 	}
 
-	/** The task card, the environment card under it, the crosshair info and the recipe card. */
+	/** The task card, the environment card under it, the mob/ore info (crosshair or card) and the recipe card. */
 	private static CrosshairInfo registerHud() {
 		HudLayout layout = new HudLayout();
 		CrosshairInfo crosshair = new CrosshairInfo();
 		HudElementRegistry.attachElementAfter(VanillaHudElements.BOSS_BAR, SurvivalAssistant.id("task_card"), new TaskHud(layout));
 		HudElementRegistry.attachElementAfter(SurvivalAssistant.id("task_card"), SurvivalAssistant.id("environment_card"),
 				new EnvironmentCard(layout));
+		HudElementRegistry.attachElementAfter(SurvivalAssistant.id("environment_card"), SurvivalAssistant.id("target_card"),
+				new TargetCard(layout, crosshair));
 		HudElementRegistry.attachElementAfter(VanillaHudElements.CROSSHAIR, SurvivalAssistant.id("crosshair_info"), crosshair);
 		RecipeOverlay.register();
 		return crosshair;

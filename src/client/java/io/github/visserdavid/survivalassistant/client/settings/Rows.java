@@ -54,6 +54,11 @@ final class Rows {
 		return Component.translatable(KEY + id);
 	}
 
+	/** "16 blocks" in the player's language. */
+	static Component blocks(int count) {
+		return Component.translatable(KEY + "unit.blocks", count);
+	}
+
 	static Tooltip tip(String id) {
 		return Tooltip.create(Component.translatable(KEY + id + ".tip"));
 	}

@@ -13,6 +13,24 @@ public final class HudLayout {
 	int taskX, taskY, taskW, taskH;
 	int taskCardWidth = HudText.MIN_WIDTH;
 
+	/** The environment card is drawn this frame; its screen rectangle and unscaled width follow. */
+	boolean envVisible;
+	int envX, envY, envW, envH;
+	int envCardWidth = HudText.MIN_WIDTH;
+
+	void envHidden() {
+		envVisible = false;
+	}
+
+	void envShown(int x, int y, int w, int h, int cardWidth) {
+		envVisible = true;
+		envX = x;
+		envY = y;
+		envW = w;
+		envH = h;
+		envCardWidth = cardWidth;
+	}
+
 	void taskHidden() {
 		taskVisible = false;
 	}

@@ -30,7 +30,8 @@ danger and celebrates every goal you reach.
   strongholds, the End, bastions, ancient cities and more.
 - **Safe in the light**: in a well-lit cave or a lit spot at night the guide tells you you're safe, instead of
   warning about the dark.
-- **A recipe card** next to your inventory for the item your task needs, and **crosshair info** for mobs and ores.
+- **A recipe card** next to your inventory for the item your task needs, and **info about the mob or ore you look at**,
+  from up to 16 blocks away: read about that creeper before it hisses.
 - **An environment card** with a pro and a con for every biome and the ores worth digging for at your height.
 - **A light check** (key L) that shows every spot where monsters can spawn.
 - **Your way back**: an arrow to your lost items after dying, and the way home at dusk.

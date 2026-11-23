@@ -35,12 +35,18 @@ public final class ClientConfig {
 	public EnvLines envLines = EnvLines.FULL;
 	/** Recipe card for the current task next to the inventory / crafting table. */
 	public boolean recipeCard = true;
-	/** Tip under the crosshair when looking at a mob or an ore. */
+	/** Info when looking at a mob or an ore. */
 	public boolean crosshairInfo = true;
+	/** Mobs up to this many blocks away get info (3 - 32); ores keep the normal reach. */
+	public int crosshairRange = 16;
+	/** Where the mob/ore info appears: under the crosshair or in a card under the environment card. */
+	public Place crosshairPlace = Place.CROSSHAIR;
 	/** Guide skin from config/survivalassistant/skins (file name without .png), or "default". */
 	public String guideSkin = "default";
 
 	public enum EnvLines { FULL, COMPACT }
+
+	public enum Place { CROSSHAIR, CARD }
 
 	public static ClientConfig get() {
 		return instance;
@@ -76,7 +82,9 @@ public final class ClientConfig {
 		if (mode == null) mode = Mode.COMPACT;
 		if (envLines == null) envLines = EnvLines.FULL;
 		if (guideSkin == null || guideSkin.isBlank()) guideSkin = "default";
+		if (crosshairPlace == null) crosshairPlace = Place.CROSSHAIR;
 		scale = Math.clamp(scale, 0.5f, 2.0f);
+		crosshairRange = Math.clamp(crosshairRange, 3, 32);
 	}
 
 	/** A separate copy to edit in the settings screen. */

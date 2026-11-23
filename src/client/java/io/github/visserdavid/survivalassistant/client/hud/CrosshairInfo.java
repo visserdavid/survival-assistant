@@ -1,6 +1,7 @@
 package io.github.visserdavid.survivalassistant.client.hud;
 
 import io.github.visserdavid.survivalassistant.advice.CrosshairAdvice;
+import io.github.visserdavid.survivalassistant.advice.CrosshairHold;
 import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
 import io.github.visserdavid.survivalassistant.state.HudState;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
@@ -16,20 +17,30 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
- * One or two lines under the crosshair about what the player is looking at: a tip for mobs, and for ores which
- * pickaxe is needed (red when the held tool would break the block without dropping anything).
+ * Info about what the player is looking at: a tip for mobs, and for ores which pickaxe is needed (red when the held
+ * tool would break the block without dropping anything). Shown in one or two lines under the crosshair, or handed to
+ * the {@link TargetCard}, depending on the settings.
+ *
+ * <p>Mobs are found up to the distance in the settings (a creeper should be read about before it hisses); blocks
+ * stop that look, so a mob behind a wall gives no tip. Ores keep the normal reach: that info is about mining.
  */
 public final class CrosshairInfo implements HudElement {
 	private static final int MAX_TEXT_W = 220;
@@ -43,51 +54,80 @@ public final class CrosshairInfo implements HudElement {
 	/** What was under the crosshair last tick, and for how many ticks in a row. */
 	private @Nullable Object target;
 	private int dwell;
-	/** Ready-made content while the target stays the same, and its wrapped rows. */
-	private @Nullable Line line;
+	/** The info for the current target, and the info on screen (it may stay a while in the card). */
+	private @Nullable Info line;
+	private @Nullable Info shown;
+	private final CrosshairHold hold = new CrosshairHold();
+	/** Wrapped rows of {@link #shown} for under the crosshair. */
 	private List<FormattedCharSequence> rows = List.of();
 	private int textWidth;
 	private boolean rowsStale;
 
-	private record Line(Component text, int color, ItemStack icon) {}
+	/** What to show: the text, its colour and an optional icon (the pickaxe for ores). */
+	record Info(Component text, int color, ItemStack icon) {}
+
+	/** The info to show now, or null. */
+	@Nullable Info shown() {
+		return shown;
+	}
 
 	/** Called every client tick. */
 	public void tick(Minecraft mc) {
-		Object now = currentTarget(mc);
+		ClientConfig cfg = ClientConfig.get();
+		Object now = cfg.crosshairInfo ? currentTarget(mc, cfg.crosshairRange) : null;
 		if (now == null || !now.equals(target)) {
 			target = now;
 			dwell = 0;
 			line = null;
-			return;
+		} else if (++dwell >= CrosshairAdvice.DWELL_TICKS) {
+			// rebuilt every tick, so switching tools updates the colour at once
+			line = build(mc, now);
 		}
-		dwell++;
-		if (dwell < CrosshairAdvice.DWELL_TICKS) return;
-		// rebuilt every tick, so switching tools updates the colour at once
-		Line fresh = build(mc, now);
-		if (fresh == null ? line != null : !fresh.equals(line)) {
-			line = fresh;
+		boolean keep = hold.tick(line != null, cfg.crosshairPlace == ClientConfig.Place.CARD);
+		Info show = line != null ? line : keep ? shown : null;
+		if (!Objects.equals(show, shown)) {
+			shown = show;
 			rowsStale = true;
 		}
 	}
 
-	private static @Nullable Object currentTarget(Minecraft mc) {
+	/** A mob with a tip within the range, else whatever is within normal reach (a block, or a mob up close). */
+	private static @Nullable Object currentTarget(Minecraft mc, int range) {
 		if (mc.player == null || mc.level == null) return null;
 		HitResult hit = mc.hitResult;
-		if (hit instanceof EntityHitResult eh) return eh.getEntity();
+		if (hit instanceof EntityHitResult eh && hasTip(eh.getEntity())) return eh.getEntity();
+		Entity far = mobInSight(mc.player, range);
+		if (far != null) return far;
 		if (hit instanceof BlockHitResult bh && hit.getType() == HitResult.Type.BLOCK) {
 			return bh.getBlockPos().immutable();
 		}
 		return null;
 	}
 
-	private static @Nullable Line build(Minecraft mc, Object target) {
+	/** The nearest mob with a tip along the view line, up to {@code range} blocks; blocks stop the look. */
+	private static @Nullable Entity mobInSight(Player player, int range) {
+		Vec3 eye = player.getEyePosition(1f);
+		Vec3 end = eye.add(player.getViewVector(1f).scale(range));
+		BlockHitResult wall = player.level().clip(new ClipContext(eye, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
+		if (wall.getType() != HitResult.Type.MISS) end = wall.getLocation();
+		AABB area = player.getBoundingBox().expandTowards(end.subtract(eye)).inflate(1);
+		EntityHitResult hit = ProjectileUtil.getEntityHitResult(player, eye, end, area,
+				e -> e != player && e.isAlive() && !e.isSpectator() && !e.isInvisible() && hasTip(e), eye.distanceToSqr(end));
+		return hit == null ? null : hit.getEntity();
+	}
+
+	private static boolean hasTip(Entity entity) {
+		return CrosshairAdvice.hasMobTip(BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).getPath());
+	}
+
+	private static @Nullable Info build(Minecraft mc, Object target) {
 		if (target instanceof Entity entity) {
 			String path = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).getPath();
 			if (!CrosshairAdvice.hasMobTip(path)) return null;
 			MutableComponent text = entity.getType().getDescription().copy().withStyle(ChatFormatting.GOLD)
 					.append(Component.literal(": ").withStyle(ChatFormatting.GOLD))
 					.append(Component.translatable("survivalassistant.mob." + path));
-			return new Line(text, HudColors.WHITE, ItemStack.EMPTY);
+			return new Info(text, HudColors.WHITE, ItemStack.EMPTY);
 		}
 		if (target instanceof BlockPos pos) {
 			BlockState state = mc.level.getBlockState(pos);
@@ -100,7 +140,7 @@ public final class CrosshairInfo implements HudElement {
 			Component text = works
 					? Component.translatable("survivalassistant.cross.ok", name)
 					: Component.translatable("survivalassistant.cross.needs", name, Component.translatable(need.langKey()));
-			return new Line(text, works ? HudColors.GREEN : HudColors.RED, ItemIcons.of(pickaxeItem(need)));
+			return new Info(text, works ? HudColors.GREEN : HudColors.RED, ItemIcons.of(pickaxeItem(need)));
 		}
 		return null;
 	}
@@ -117,8 +157,9 @@ public final class CrosshairInfo implements HudElement {
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor g, DeltaTracker delta) {
 		Minecraft mc = Minecraft.getInstance();
-		Line l = line;
-		if (l == null || mc.player == null || !ClientConfig.get().crosshairInfo) return;
+		Info l = shown;
+		ClientConfig cfg = ClientConfig.get();
+		if (l == null || mc.player == null || !cfg.crosshairInfo || cfg.crosshairPlace != ClientConfig.Place.CROSSHAIR) return;
 		if (HudDraw.hidden(mc) || mc.gui.screen() != null) return;
 		HudSnapshot snap = mc.player.getAttached(HudState.HUD);
 		if (snap == null || !snap.active()) return;

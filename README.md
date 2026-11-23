@@ -138,6 +138,9 @@ archaeology, the trial challenges, the happy ghast and automation.
 - **Crosshair info**: look at a mob for a moment and a line under the crosshair tells you what it does
   (creeper, skeleton, enderman, the new parched skeleton, sheep, ...). Look at an ore and it tells you which
   pickaxe you need: green when your tool works, red when it would break the block without dropping anything.
+  Mobs get their tip from up to 16 blocks away (3 to 32 in the settings; walls block the view), so you can read
+  about a creeper before it hisses. In the settings you can move the info from the crosshair to a third card under
+  the environment card, where it stays for 2 seconds after you look away.
 
 ### Light check (key L)
 - Press **L** and small red dots appear on every nearby spot where a monster could spawn (dark floor with
@@ -277,7 +280,7 @@ by default (Options → Controls → Key Binds → Survival Assistant).
 All options can be changed in the game, in the settings screen. Open it with the **Configure** button in
 [Mod Menu](https://modrinth.com/mod/modmenu) (optional), with `/guidesettings`, or with its key. It has three tabs:
 
-- **Display**: the task card (mode, corner, size), the environment card, the recipe card, crosshair info, the
+- **Display**: the task card (mode, corner, size), the environment card, the recipe card, mob and ore info (distance, crosshair or card), the
   guide's skin, and a button for the keys. Stored on your computer.
 - **My guide**: the guide character, your own name for the guide, musings and small talk. Stored with your player
   on the server, so this works on multiplayer servers too.
@@ -332,7 +335,9 @@ The settings screen writes these files; you can also edit them by hand (server o
 | `showEnvironment` | `true` | Show the environment card (K) |
 | `envLines` | `FULL` | `COMPACT` shows only the biome header and ore line |
 | `recipeCard` | `true` | Recipe card next to the inventory / crafting table |
-| `crosshairInfo` | `true` | Tip under the crosshair for mobs and ores |
+| `crosshairInfo` | `true` | Info about the mob or ore you look at |
+| `crosshairRange` | `16` | Mobs up to this many blocks away get info (3–32); ores keep the normal reach |
+| `crosshairPlace` | `CROSSHAIR` | `CROSSHAIR` (under the crosshair) or `CARD` (a card under the environment card) |
 | `guideSkin` | `default` | Guide skin from `config/survivalassistant/skins` (set with `/guideskin set`) |
 | `scale` | `1.0` | Extra scale on top of the GUI scale (0.5–2.0) |
 | `margin` | `4` | Distance from the screen edge |
