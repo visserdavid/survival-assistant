@@ -10,8 +10,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class RecipesTest {
 	@Test
 	void everyCraftableTaskHasARecipe() {
-		Set<String> noCrafting = Set.of("food", "shelter", "iron", "breed", "full_iron_armor", "diamonds", "obsidian");
-		for (Tip m : java.util.stream.Stream.concat(TipRegistry.MILESTONES.stream(), TipRegistry.CHAPTER_2.stream()).toList()) {
+		Set<String> noCrafting = Set.of("food", "shelter", "iron", "breed", "full_iron_armor", "diamonds", "obsidian",
+				"find_village", "first_trade", "trades", "emeralds", "enchanted_book", "enter_nether", "find_fortress", "blaze_rods",
+				"nether_wart", "home_safe", "brew_potion", "level_30", "enchant");
+		for (Tip m : Chapters.ALL.stream().flatMap(c -> c.goals().stream()).toList()) {
 			assertEquals(!noCrafting.contains(m.id()), Recipes.forTask(m.id()).isPresent(), m.id());
 		}
 	}

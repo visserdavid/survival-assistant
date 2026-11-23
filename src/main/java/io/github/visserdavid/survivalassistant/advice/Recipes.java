@@ -75,7 +75,18 @@ public final class Recipes {
 			Map.entry("flint_and_steel", new Recipe("minecraft:flint_and_steel", 1, List.of("IF"),
 					Map.of('I', IRON, 'F', "minecraft:flint"))),
 			Map.entry("enchanting_table", new Recipe("minecraft:enchanting_table", 1, List.of(" B ", "D#D", "###"),
-					Map.of('B', "minecraft:book", 'D', "minecraft:diamond", '#', "minecraft:obsidian")))
+					Map.of('B', "minecraft:book", 'D', "minecraft:diamond", '#', "minecraft:obsidian"))),
+			// chapter 3: an iron block for the golem (4 of them in a T, carved pumpkin on top)
+			Map.entry("iron_golem", new Recipe("minecraft:iron_block", 1, List.of("###", "###", "###"), Map.of('#', IRON))),
+			// chapter 4: a golden helmet keeps piglins calm
+			Map.entry("gold_armor", new Recipe("minecraft:golden_helmet", 1, List.of("XXX", "X X"), Map.of('X', "minecraft:gold_ingot"))),
+			// chapter 5
+			Map.entry("brewing_stand", new Recipe("minecraft:brewing_stand", 1, List.of(" B ", "###"),
+					Map.of('B', "minecraft:blaze_rod", '#', COBBLE))),
+			Map.entry("bookshelves", new Recipe("minecraft:bookshelf", 1, List.of("###", "XXX", "###"),
+					Map.of('#', PLANKS, 'X', "minecraft:book"))),
+			Map.entry("anvil", new Recipe("minecraft:anvil", 1, List.of("III", " i ", "iii"),
+					Map.of('I', "minecraft:iron_block", 'i', IRON)))
 	);
 
 	public static Optional<Recipe> forTask(String taskId) {

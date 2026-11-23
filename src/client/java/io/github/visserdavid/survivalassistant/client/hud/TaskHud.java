@@ -12,6 +12,7 @@ import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
 import io.github.visserdavid.survivalassistant.advice.Navigation;
 import io.github.visserdavid.survivalassistant.advice.Recipes;
 import io.github.visserdavid.survivalassistant.advice.Tip;
+import io.github.visserdavid.survivalassistant.advice.Chapters;
 import io.github.visserdavid.survivalassistant.advice.TipRegistry;
 import io.github.visserdavid.survivalassistant.state.HudState;
 
@@ -190,9 +191,13 @@ public final class TaskHud implements HudElement {
 	}
 
 	private static Component title(HudSnapshot snap) {
+		if (snap.maxDays() <= 0) {
+			// later chapters have no day limit: show the chapter instead
+			return Component.translatable("survivalassistant.hud.title_chapter", snap.chapter(),
+					Component.translatable(Chapters.get(snap.chapter()).titleKey()));
+		}
 		int day = Math.min(snap.dayIndex() + 1, Math.max(1, snap.maxDays()));
-		return Component.translatable(snap.chapter() >= 2 ? "survivalassistant.hud.title_ch2" : "survivalassistant.hud.title",
-				day, snap.maxDays());
+		return Component.translatable("survivalassistant.hud.title", day, snap.maxDays());
 	}
 
 	private static Optional<Recipes.Recipe> currentRecipe(HudSnapshot snap) {

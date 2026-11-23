@@ -22,6 +22,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import io.github.visserdavid.survivalassistant.advice.AdviceEngine;
 import io.github.visserdavid.survivalassistant.advice.BiomeGroup;
+import io.github.visserdavid.survivalassistant.advice.Chapter;
+import io.github.visserdavid.survivalassistant.advice.Chapters;
+import io.github.visserdavid.survivalassistant.advice.PlaceNotices;
 import io.github.visserdavid.survivalassistant.advice.OreTable;
 import io.github.visserdavid.survivalassistant.advice.ContextCollector;
 import io.github.visserdavid.survivalassistant.advice.DigTracker;
@@ -104,7 +107,7 @@ public final class GuideManager {
 			return;
 		}
 		if (step == GuideLifecycle.Step.FAREWELL) {
-			retire(player, progress, progress.chapterOffered ? "chapter2.no_answer"
+			retire(player, progress, progress.chapterOffered ? "chapters.no_answer"
 					: progress.askedAtTick >= 0 ? "extend.no_answer" : "farewell");
 			return;
 		}
@@ -132,7 +135,7 @@ public final class GuideManager {
 			offerNextChapter(player, guide, progress);
 		} else if (step == GuideLifecycle.Step.REMIND) {
 			progress.reminded = true;
-			if (progress.chapterOffered) askChapter2(player, guide, "survivalassistant.chapter2.reminder");
+			if (progress.chapterOffered) showChapters(player, guide, progress, "survivalassistant.chapters.reminder");
 			else askToExtend(player, guide, "survivalassistant.extend.reminder");
 		}
 
@@ -159,6 +162,7 @@ public final class GuideManager {
 		SurvivalContext ctx = ContextCollector.collect(player, progress, dig == null ? 0 : dig.current(now),
 				progress.homeFallback == null ? pos -> progress.homeFallback = mark(player, pos) : null);
 		respond(player, guide, ctx, progress, forced);
+		checkPlaceNotices(player, guide, ctx, progress);
 		GuideChat.observe(player, guide, ctx, progress);
 		GuideMusings.observe(player, guide, ctx, progress);
 		HudState.update(player, HudSnapshot.of(ctx, progress, dayLimit(progress), waypoint(player, progress, ctx, now)));
@@ -237,20 +241,20 @@ public final class GuideManager {
 		return new AdviceEngine.Settings(cfg.urgentCooldownSeconds * 20L, cfg.milestoneCooldownSeconds * 20L);
 	}
 
-	/** Configured period of the current chapter (without extensions). */
+	/** Configured period of the current chapter (without extensions); 0 = no limit. */
 	private static int baseDays(GuideProgress progress) {
-		ModConfig cfg = ModConfig.get();
-		return progress.chapter >= 2 ? cfg.chapter2Days : cfg.maxDays;
+		return Chapters.get(progress.chapter).limited() ? ModConfig.get().maxDays : 0;
 	}
 
-	/** The guide period including extensions. */
+	/** The guide period including extensions; 0 = no limit (the guide stays while the chapter runs). */
 	public static int dayLimit(GuideProgress progress) {
-		return baseDays(progress) + progress.extraDays;
+		int base = baseDays(progress);
+		return base <= 0 ? 0 : base + progress.extraDays;
 	}
 
-	/** Another chapter can follow the current one. */
+	/** Another chapter can be started after the current one. */
 	private static boolean nextChapterAvailable(GuideProgress progress) {
-		return ModConfig.get().chapter2 && progress.chapter < TipRegistry.LAST_CHAPTER;
+		return ModConfig.get().moreChapters && !Chapters.available(progress.chapter, progress.completed).isEmpty();
 	}
 
 	private static int doneInChapter(GuideProgress progress) {
@@ -320,7 +324,7 @@ public final class GuideManager {
 	/** All goals of the last chapter reached: a proper celebration, then the guide leaves. */
 	private static void congratulate(ServerPlayer player, GuideProgress progress) {
 		GuideEntity guide = GUIDES.get(player.getUUID());
-		String key = progress.chapter >= 2 ? "survivalassistant.congrats.chapter2." : "survivalassistant.congrats.";
+		String key = progress.chapter <= 1 ? "survivalassistant.congrats." : "survivalassistant.congrats.all.";
 		say(player, guide, Component.translatable(key + "1").withStyle(ChatFormatting.GREEN), false);
 		say(player, guide, Component.translatable(key + "2"), false);
 		if (ModConfig.get().allowRecall) {
@@ -334,23 +338,61 @@ public final class GuideManager {
 		HudState.update(player, HudSnapshot.INACTIVE);
 	}
 
-	/** All goals of chapter 1 reached: celebrate, then offer chapter 2. The guide stays until the player answers. */
+	/** All goals of a chapter reached: celebrate, then show the chapter menu. The guide stays until the player picks. */
 	private static void offerNextChapter(ServerPlayer player, @Nullable GuideEntity guide, GuideProgress progress) {
-		say(player, guide, Component.translatable("survivalassistant.congrats.1").withStyle(ChatFormatting.GREEN), false);
+		Chapter done = Chapters.get(progress.chapter);
+		say(player, guide, (done.number() == 1 ? Component.translatable("survivalassistant.congrats.1")
+				: Component.translatable("survivalassistant.chapter.done", Component.translatable(done.titleKey())))
+				.withStyle(ChatFormatting.GREEN), false);
 		celebrate(player, guide, progress);
 		progress.chapterOffered = true;
 		progress.askedAtTick = player.level().getOverworldClockTime();
 		progress.reminded = false;
-		askChapter2(player, guide, "survivalassistant.chapter2.offer");
+		showChapters(player, guide, progress, "survivalassistant.chapters.offer");
 	}
 
-	/** "Want to continue with chapter 2?" with clickable yes/no buttons. */
-	private static void askChapter2(ServerPlayer player, @Nullable GuideEntity guide, String questionKey) {
-		say(player, guide, Component.translatable(questionKey).withStyle(ChatFormatting.AQUA), true);
-		player.sendSystemMessage(Component.literal("   ")
-				.append(button("survivalassistant.chapter2.yes", "survivalassistant.chapter2.yes_hover", "/guide continue", ChatFormatting.GREEN))
-				.append("  ")
-				.append(button("survivalassistant.extend.no", "survivalassistant.extend.no_hover", "/guide dismiss", ChatFormatting.RED)));
+	/**
+	 * The chapter menu in chat: finished chapters in green, the ones you can start as buttons, locked ones in grey
+	 * with what they need. After a finished chapter it ends with a button to let the guide go.
+	 */
+	private static void showChapters(ServerPlayer player, @Nullable GuideEntity guide, GuideProgress progress, String headerKey) {
+		say(player, guide, Component.translatable(headerKey).withStyle(ChatFormatting.AQUA), true);
+		for (Chapter c : Chapters.ALL) {
+			Component title = Component.translatable(c.titleKey());
+			MutableComponent line = Component.literal("   ");
+			switch (Chapters.status(c, progress.chapter, progress.completed)) {
+				case DONE -> line.append(Component.literal("\u2714 " + c.number() + ". ").append(title).withStyle(ChatFormatting.GREEN));
+				case CURRENT -> line.append(Component.literal("\u25B6 " + c.number() + ". ").append(title)
+						.append(" ").append(Component.translatable("survivalassistant.chapters.current")).withStyle(ChatFormatting.GOLD));
+				case AVAILABLE -> line.append(Component.literal("[" + c.number() + ". ").append(title).append("]")
+						.withStyle(Style.EMPTY.withColor(ChatFormatting.AQUA).withBold(true)
+								.withClickEvent(new ClickEvent.RunCommand("/guide chapter " + c.id()))
+								.withHoverEvent(new HoverEvent.ShowText(Component.translatable("survivalassistant.chapter." + c.id() + ".desc")))));
+				case LOCKED -> {
+					MutableComponent needs = Component.empty();
+					for (int i = 0; i < c.requires().size(); i++) {
+						if (i > 0) needs.append(", ");
+						needs.append(Component.translatable(Chapters.get(c.requires().get(i)).titleKey()));
+					}
+					line.append(Component.literal(c.number() + ". ").append(title).append(" ")
+							.append(Component.translatable("survivalassistant.chapters.locked", needs)).withStyle(ChatFormatting.GRAY));
+				}
+			}
+			player.sendSystemMessage(line);
+		}
+		if (progress.chapterOffered) {
+			player.sendSystemMessage(Component.literal("   ")
+					.append(button("survivalassistant.chapters.leave", "survivalassistant.chapters.leave_hover", "/guide dismiss", ChatFormatting.RED)));
+		}
+	}
+
+	/** One-time notes about special places (the Nether, a village, a night in a village). */
+	private static void checkPlaceNotices(ServerPlayer player, @Nullable GuideEntity guide, SurvivalContext ctx, GuideProgress progress) {
+		if (!ModConfig.get().depthNotices) return;
+		String id = PlaceNotices.next(ctx, progress.depthNotices);
+		if (id == null) return;
+		progress.depthNotices.add(id);
+		say(player, guide, Component.translatable("survivalassistant.place." + id).withStyle(ChatFormatting.AQUA), true);
 	}
 
 	private static MutableComponent button(String labelKey, String hoverKey, String command, ChatFormatting color, Object... args) {
@@ -559,6 +601,8 @@ public final class GuideManager {
 		} else if (progress.startTick < 0) {
 			progress.restart(player.level().getOverworldClockTime());
 		}
+		// Finished everything before new chapters existed (or switched them on)? Then the menu comes up again.
+		if (progress.finished && nextChapterAvailable(progress)) progress.finished = false;
 		GuideEntity guide = ensureGuide(player);
 		if (guide == null) return false;
 		FollowOwnerGoal.teleportNear(guide, player.blockPosition());
@@ -591,16 +635,32 @@ public final class GuideManager {
 		return true;
 	}
 
-	/** /guide continue: start chapter 2 (after all chapter-1 goals). */
+	/** /guide continue: start the first chapter that is open (after the current one is finished). */
 	public static boolean continueChapter(ServerPlayer player) {
 		GuideProgress progress = GuideState.of(player);
-		if (progress.retired || progress.startTick < 0 || !nextChapterAvailable(progress)
-				|| !TipRegistry.chapterDone(progress.chapter, progress.completed)) return false;
-		progress.chapter++;
+		if (!TipRegistry.chapterDone(progress.chapter, progress.completed)) return false;
+		java.util.List<Chapter> open = Chapters.available(progress.chapter, progress.completed);
+		return !open.isEmpty() && startChapter(player, open.get(0));
+	}
+
+	/** /guide chapter <id>: start or switch to a chapter that is open. Progress in other chapters is kept. */
+	public static boolean startChapter(ServerPlayer player, Chapter chapter) {
+		GuideProgress progress = GuideState.of(player);
+		if (progress.retired || progress.startTick < 0 || !ModConfig.get().moreChapters) return false;
+		if (Chapters.status(chapter, progress.chapter, progress.completed) != Chapters.Status.AVAILABLE) return false;
+		progress.chapter = chapter.number();
 		progress.restart(player.level().getOverworldClockTime());
 		GuideEntity guide = GUIDES.get(player.getUUID());
-		say(player, guide, Component.translatable("survivalassistant.chapter2.start", dayLimit(progress)).withStyle(ChatFormatting.GREEN), true);
-		LAST_EVAL.put(player.getUUID(), 0L); // first chapter-2 tip on the next pass
+		say(player, guide, Component.translatable("survivalassistant.chapter." + chapter.id() + ".start").withStyle(ChatFormatting.GREEN), true);
+		LAST_EVAL.put(player.getUUID(), 0L); // first tip of the chapter on the next pass
+		return true;
+	}
+
+	/** /guide chapters: show the chapter menu. */
+	public static boolean chapters(ServerPlayer player) {
+		GuideProgress progress = GuideState.of(player);
+		if (progress.retired || progress.startTick < 0) return false;
+		showChapters(player, GUIDES.get(player.getUUID()), progress, "survivalassistant.chapters.header");
 		return true;
 	}
 

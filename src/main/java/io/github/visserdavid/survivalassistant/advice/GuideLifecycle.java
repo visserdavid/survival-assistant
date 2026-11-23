@@ -33,7 +33,7 @@ public final class GuideLifecycle {
 	 * Everything the decision needs.
 	 *
 	 * @param dayIndex         days since the guide (or this chapter) started (0 = first day)
-	 * @param baseDays         configured period for this chapter
+	 * @param baseDays         configured period for this chapter; 0 or less = no limit (stays while the chapter runs)
 	 * @param extraDays        days added by extensions so far
 	 * @param extendDays       days one extension adds; 0 or less = never ask, just leave
 	 * @param allDone          every goal of the current chapter reached
@@ -53,7 +53,7 @@ public final class GuideLifecycle {
 			if (!s.chapterOffered()) return Step.OFFER_CHAPTER;
 			return waitForAnswer(s);
 		}
-		if (s.dayIndex() < s.baseDays() + s.extraDays()) return Step.CONTINUE;
+		if (s.baseDays() <= 0 || s.dayIndex() < s.baseDays() + s.extraDays()) return Step.CONTINUE;
 		if (s.extendDays() <= 0) return Step.FAREWELL;
 		if (s.askedAtTick() < 0) return Step.ASK;
 		return waitForAnswer(s);

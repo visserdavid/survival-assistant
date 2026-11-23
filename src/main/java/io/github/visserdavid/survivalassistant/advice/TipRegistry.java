@@ -27,24 +27,30 @@ public final class TipRegistry {
 	public static final Tip HUNGRY_HUNT = Tip.urgent("hungry_hunt", 2,
 			c -> c.food() <= 6 && c.foodItems() == 0);
 	public static final Tip DUSK = Tip.urgent("dusk", 3,
-			c -> c.isDusk() && !c.sheltered());
+			c -> c.inOverworld() && c.isDusk() && !c.sheltered());
 	public static final Tip NIGHT_OUTSIDE = Tip.urgent("night_outside", 2,
-			c -> c.isNight() && !c.sheltered());
+			c -> c.inOverworld() && c.isNight() && !c.sheltered());
 	/** Phantoms after 3 nights without sleep (verified: PhantomSpawner, 72000 ticks); warn from the 2nd night. */
 	public static final Tip PHANTOMS = Tip.warning("phantoms", 2,
-			c -> c.isNight() && c.ticksSinceRest() >= SurvivalContext.PHANTOM_WARNING_TICKS);
+			c -> c.inOverworld() && c.isNight() && c.ticksSinceRest() >= SurvivalContext.PHANTOM_WARNING_TICKS);
+	/** A ghast nearby in the Nether: its fireballs can be hit back. */
+	public static final Tip GHAST = Tip.warning("ghast", 2,
+			c -> c.inNether() && c.ghastNearby());
+	/** Piglins attack players without golden armor (item tag piglin_safe_armor). */
+	public static final Tip PIGLINS = Tip.warning("piglins", 2,
+			c -> c.inNether() && c.piglinNearby() && !c.goldArmorWorn());
 	/** Sand or gravel right above your head underground can fall on you. */
 	public static final Tip FALLING_BLOCK = Tip.warning("falling_block", 1,
 			c -> c.underground() && c.fallingBlockAbove());
 	/** Monsters can spawn in daylight during thunderstorms. */
 	public static final Tip THUNDER = Tip.warning("thunder", 1,
-			c -> c.thundering() && !c.sheltered());
+			c -> c.inOverworld() && c.thundering() && !c.sheltered());
 	/** Underground without light: never dig straight down, bring torches. */
 	public static final Tip UNDERGROUND = Tip.warning("underground", 2,
 			c -> c.underground() && c.torches() == 0);
 
 	public static final List<Tip> URGENT = List.of(CREEPER, DIG_DOWN, LAVA_NEAR, DANGER, HUNGRY_EAT, HUNGRY_HUNT, DUSK, NIGHT_OUTSIDE,
-			PHANTOMS, THUNDER, FALLING_BLOCK, UNDERGROUND);
+			PHANTOMS, GHAST, PIGLINS, THUNDER, FALLING_BLOCK, UNDERGROUND);
 
 	// --- Day 1: progression milestones. "done" checks include later progress, so skipping ahead counts. ---
 	public static final Tip WOOD = Tip.milestone("wood", 3,
@@ -125,16 +131,75 @@ public final class TipRegistry {
 	public static final List<Tip> CHAPTER_2 = List.of(
 			FARM, BREAD, BREED, FULL_IRON_ARMOR, BOW, DIAMONDS, DIAMOND_PICKAXE, OBSIDIAN, FLINT_AND_STEEL, ENCHANTING_TABLE);
 
-	public static final int LAST_CHAPTER = 2;
+	// --- Vanilla advancements used as goals (ids checked in the 26.3 data: data/minecraft/advancement) ---
+	public static final String ADV_TRADE = "adventure/trade";
+	public static final String ADV_IRON_GOLEM = "adventure/summon_iron_golem";
+	public static final String ADV_ENTER_NETHER = "story/enter_the_nether";
+	public static final String ADV_FORTRESS = "nether/find_fortress";
+	public static final String ADV_BREW = "nether/brew_potion";
+	public static final String ADV_ENCHANT = "story/enchant_item";
 
-	/** The goals of a chapter (1 or 2). */
+	// --- Chapter 3: villages and trading (docs/research-chapters-3-5.md) ---
+	public static final Tip FIND_VILLAGE = Tip.milestone("find_village", 2,
+			c -> c.inVillage() || c.has(ADV_TRADE));
+	public static final Tip FIRST_TRADE = Tip.milestone("first_trade", 2,
+			c -> c.has(ADV_TRADE) || c.trades() >= 1);
+	public static final Tip TRADES = Tip.milestone("trades", 2,
+			c -> c.trades() >= 5,
+			SurvivalContext::trades, 5);
+	public static final Tip EMERALDS = Tip.milestone("emeralds", 2,
+			c -> c.emeralds() >= 10,
+			SurvivalContext::emeralds, 10);
+	public static final Tip ENCHANTED_BOOK = Tip.milestone("enchanted_book", 2,
+			SurvivalContext::hasEnchantedBook);
+	public static final Tip IRON_GOLEM = Tip.milestone("iron_golem", 2,
+			c -> c.has(ADV_IRON_GOLEM));
+
+	public static final List<Tip> CHAPTER_VILLAGE = List.of(FIND_VILLAGE, FIRST_TRADE, TRADES, EMERALDS, ENCHANTED_BOOK, IRON_GOLEM);
+
+	// --- Chapter 4: the Nether ---
+	public static final Tip GOLD_ARMOR = Tip.milestone("gold_armor", 2,
+			SurvivalContext::goldArmorWorn);
+	public static final Tip ENTER_NETHER = Tip.milestone("enter_nether", 2,
+			c -> c.has(ADV_ENTER_NETHER) || c.inNether());
+	public static final Tip FIND_FORTRESS = Tip.milestone("find_fortress", 2,
+			c -> c.has(ADV_FORTRESS));
+	public static final Tip BLAZE_RODS = Tip.milestone("blaze_rods", 2,
+			c -> c.blazeRods() >= 3,
+			SurvivalContext::blazeRods, 3);
+	public static final Tip NETHER_WART = Tip.milestone("nether_wart", 2,
+			c -> c.netherWart() >= 4,
+			SurvivalContext::netherWart, 4);
+	public static final Tip HOME_SAFE = Tip.milestone("home_safe", 2,
+			c -> c.inOverworld() && c.blazeRods() >= 1 && c.has(ADV_ENTER_NETHER));
+
+	public static final List<Tip> CHAPTER_NETHER = List.of(GOLD_ARMOR, ENTER_NETHER, FIND_FORTRESS, BLAZE_RODS, NETHER_WART, HOME_SAFE);
+
+	// --- Chapter 5: brewing and enchanting ---
+	public static final Tip BREWING_STAND = Tip.milestone("brewing_stand", 2,
+			c -> c.hasBrewingStand() || c.has(ADV_BREW));
+	public static final Tip BREW_POTION = Tip.milestone("brew_potion", 2,
+			c -> c.has(ADV_BREW));
+	public static final Tip BOOKSHELVES = Tip.milestone("bookshelves", 2,
+			c -> c.bookshelves() >= 15,
+			SurvivalContext::bookshelves, 15);
+	public static final Tip LEVEL_30 = Tip.milestone("level_30", 2,
+			c -> c.xpLevel() >= 30,
+			SurvivalContext::xpLevel, 30);
+	public static final Tip ENCHANT = Tip.milestone("enchant", 2,
+			c -> c.has(ADV_ENCHANT));
+	public static final Tip ANVIL = Tip.milestone("anvil", 2,
+			SurvivalContext::hasAnvil);
+
+	public static final List<Tip> CHAPTER_MAGIC = List.of(BREWING_STAND, BREW_POTION, BOOKSHELVES, LEVEL_30, ENCHANT, ANVIL);
+
+	/** The goals of a chapter (see {@link Chapters}). */
 	public static List<Tip> milestones(int chapter) {
-		return chapter >= 2 ? CHAPTER_2 : MILESTONES;
+		return Chapters.get(chapter).goals();
 	}
 
 	/** True when every goal of the chapter is in {@code completed}. */
 	public static boolean chapterDone(int chapter, java.util.Set<String> completed) {
-		for (Tip m : milestones(chapter)) if (!completed.contains(m.id())) return false;
-		return true;
+		return Chapters.get(chapter).done(completed);
 	}
 }

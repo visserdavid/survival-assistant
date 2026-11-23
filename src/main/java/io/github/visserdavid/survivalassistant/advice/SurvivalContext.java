@@ -23,6 +23,13 @@ package io.github.visserdavid.survivalassistant.advice;
  * @param cropsNearby    planted crops (block tag crops) within a few blocks
  * @param animalsBred    statistic animals_bred
  * @param armorPieces    armor slots (head, chest, legs, feet) covered by iron or better, worn or carried
+ * @param dimension      "overworld", "nether", "end" (or the path of another dimension id)
+ * @param inVillage      standing inside a village (structure check)
+ * @param trades         statistic traded_with_villager
+ * @param goldArmorWorn  wearing at least one piece of piglin-safe (golden) armor
+ * @param bedInInventory a bed in the inventory (not a placed one)
+ * @param bookshelves    valid bookshelves around the best enchanting table nearby (15 is the maximum that counts)
+ * @param advancements   the vanilla advancements the chapters track that this player has completed
  */
 public record SurvivalContext(
 		int dayIndex,
@@ -64,8 +71,42 @@ public record SurvivalContext(
 		int diamonds,
 		int obsidian,
 		boolean hasFlintAndSteel,
-		boolean hasEnchantingTable
+		boolean hasEnchantingTable,
+		// chapters 3-5 (village, Nether, brewing and enchanting)
+		String dimension,
+		boolean inVillage,
+		int emeralds,
+		int trades,
+		boolean hasEnchantedBook,
+		boolean goldArmorWorn,
+		int blazeRods,
+		int netherWart,
+		boolean bedInInventory,
+		boolean ghastNearby,
+		boolean piglinNearby,
+		boolean hasBrewingStand,
+		int bookshelves,
+		boolean hasAnvil,
+		int xpLevel,
+		java.util.Set<String> advancements
 ) {
+	public static final String OVERWORLD = "overworld";
+	public static final String NETHER = "nether";
+	public static final String END = "end";
+
+	public boolean inOverworld() {
+		return OVERWORLD.equals(dimension);
+	}
+
+	public boolean inNether() {
+		return NETHER.equals(dimension);
+	}
+
+	/** True when the player completed this vanilla advancement (only ids from {@link Chapters#trackedAdvancements()}). */
+	public boolean has(String advancement) {
+		return advancements.contains(advancement);
+	}
+
 	/** Phantoms can spawn after 72000 ticks (3 days) without sleep; we warn from the second night on. */
 	public static final int PHANTOM_WARNING_TICKS = 48000;
 
@@ -88,7 +129,11 @@ public record SurvivalContext(
 	/** Convenience builder, mainly for tests. Defaults: day 0, morning, full health and food, empty inventory, outside. */
 	public static final class Builder {
 		private int dayIndex, timeOfDay = 1000, food = 20, logs, planks, pickaxeTier, swordTier, cobblestone, foodItems, wool, torches, iron, hostilesNearby, ticksSinceRest, digDownStreak,
-				cropsNearby, bread, animalsBred, armorPieces, arrows, diamonds, obsidian;
+				cropsNearby, bread, animalsBred, armorPieces, arrows, diamonds, obsidian,
+				emeralds, trades, blazeRods, netherWart, bookshelves, xpLevel;
+		private String dimension = OVERWORLD;
+		private java.util.Set<String> advancements = new java.util.HashSet<>();
+		private boolean inVillage, hasEnchantedBook, goldArmorWorn, bedInInventory, ghastNearby, piglinNearby, hasBrewingStand, hasAnvil;
 		private float health = 20f;
 		private boolean hasCraftingTable, hasFurnace, hasBed, hasChest, hasShield, hasIronArmor, hasWaterBucket,
 				sheltered, underground, thundering, creeperNearby, lavaNearby, fallingBlockAbove,
@@ -133,13 +178,30 @@ public record SurvivalContext(
 		public Builder obsidian(int v) { obsidian = v; return this; }
 		public Builder flintAndSteel(boolean v) { hasFlintAndSteel = v; return this; }
 		public Builder enchantingTable(boolean v) { hasEnchantingTable = v; return this; }
+		public Builder dimension(String v) { dimension = v; return this; }
+		public Builder village(boolean v) { inVillage = v; return this; }
+		public Builder emeralds(int v) { emeralds = v; return this; }
+		public Builder trades(int v) { trades = v; return this; }
+		public Builder enchantedBook(boolean v) { hasEnchantedBook = v; return this; }
+		public Builder goldArmor(boolean v) { goldArmorWorn = v; return this; }
+		public Builder blazeRods(int v) { blazeRods = v; return this; }
+		public Builder netherWart(int v) { netherWart = v; return this; }
+		public Builder bedInInventory(boolean v) { bedInInventory = v; return this; }
+		public Builder ghast(boolean v) { ghastNearby = v; return this; }
+		public Builder piglin(boolean v) { piglinNearby = v; return this; }
+		public Builder brewingStand(boolean v) { hasBrewingStand = v; return this; }
+		public Builder bookshelves(int v) { bookshelves = v; return this; }
+		public Builder anvil(boolean v) { hasAnvil = v; return this; }
+		public Builder xpLevel(int v) { xpLevel = v; return this; }
+		public Builder advancement(String v) { advancements.add(v); return this; }
 
 		public SurvivalContext build() {
 			return new SurvivalContext(dayIndex, timeOfDay, health, food, logs, planks, hasCraftingTable, pickaxeTier, swordTier,
 					cobblestone, hasFurnace, foodItems, hasBed, wool, torches, hasChest, iron, hasShield, hasIronArmor, hasWaterBucket,
 					sheltered, underground, thundering, hostilesNearby, creeperNearby, ticksSinceRest, lavaNearby, fallingBlockAbove,
 					digDownStreak, cropsNearby, bread, animalsBred, armorPieces, hasBow, arrows, diamonds, obsidian, hasFlintAndSteel,
-					hasEnchantingTable);
+					hasEnchantingTable, dimension, inVillage, emeralds, trades, hasEnchantedBook, goldArmorWorn, blazeRods, netherWart,
+					bedInInventory, ghastNearby, piglinNearby, hasBrewingStand, bookshelves, hasAnvil, xpLevel, java.util.Set.copyOf(advancements));
 		}
 	}
 }

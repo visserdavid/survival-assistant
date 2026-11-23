@@ -39,6 +39,27 @@ public final class TaskIcons {
 		put("iron_pickaxe", Items.IRON_PICKAXE);
 		put("iron_armor", Items.IRON_CHESTPLATE);
 		put("water_bucket", Items.WATER_BUCKET);
+		// chapter 3: villages and trading
+		put("find_village", Items.BELL);
+		put("first_trade", Items.EMERALD);
+		put("trades", Items.EMERALD);
+		put("emeralds", Items.EMERALD_BLOCK);
+		put("enchanted_book", Items.ENCHANTED_BOOK);
+		put("iron_golem", Items.CARVED_PUMPKIN);
+		// chapter 4: the Nether
+		put("gold_armor", Items.GOLDEN_HELMET);
+		put("enter_nether", Items.OBSIDIAN);
+		put("find_fortress", Items.NETHER_BRICKS);
+		put("blaze_rods", Items.BLAZE_ROD);
+		put("nether_wart", Items.NETHER_WART);
+		put("home_safe", Items.GRASS_BLOCK);
+		// chapter 5: brewing and enchanting
+		put("brewing_stand", Items.BREWING_STAND);
+		put("brew_potion", Items.POTION);
+		put("bookshelves", Items.BOOKSHELF);
+		put("level_30", Items.EXPERIENCE_BOTTLE);
+		put("enchant", Items.ENCHANTING_TABLE);
+		put("anvil", Items.ANVIL);
 		// alerts
 		put("creeper", Items.CREEPER_HEAD);
 		put("danger", Items.IRON_SWORD);
@@ -52,6 +73,8 @@ public final class TaskIcons {
 		put("lava_near", Items.LAVA_BUCKET);
 		put("phantoms", Items.PHANTOM_MEMBRANE);
 		put("falling_block", Items.GRAVEL);
+		put("ghast", Items.GHAST_TEAR);
+		put("piglins", Items.GOLD_INGOT);
 		// navigation strip
 		put("nav_death", Items.SKELETON_SKULL);
 		put("nav_home", Items.COMPASS);
