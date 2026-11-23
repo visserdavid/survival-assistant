@@ -46,7 +46,7 @@ as long as you're working on a chapter.
 | 11 | **Netherite and bastions** | 4 | Ancient debris, a netherite ingot, a bastion, the upgrade template, netherite gear, a respawn anchor |
 | 12 | **The Wither and the beacon** | 4 and 5 | 3 wither skeleton skulls, 4 soul sand, summon and defeat the Wither, a beacon, a full beacon |
 | 13 | **The Deep Dark** | 8 | An ancient city, sneak past sculk, 8 echo shards, a recovery compass |
-| 14 | **Raids and illagers** | 3 | A pillager outpost, a raid captain, an ominous bottle, win a raid, a totem of undying |
+| 14 | **Raids and pillagers** | 3 | A pillager outpost, a raid captain, an ominous bottle, win a raid, a totem of undying |
 | 15 | **Archaeology and trims** | 8 | A brush, trail ruins, a pottery sherd, a decorated pot, an armor trim, a sniffer egg |
 | 16 | **Trial challenges** | 8 | 2 breeze rods, wind charges, an ominous vault, the heavy core, the mace |
 | 17 | **The happy ghast** | 4 | A dried ghast, put it in water, a ghastling, a harness, fly on a happy ghast |
