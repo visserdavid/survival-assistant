@@ -10,8 +10,6 @@ All advice follows a researched beginner path. Recipes, mob spawns, ore heights 
 **checked against the game's own data files** ([research](docs/research-first-days.md),
 [biome and ore facts](docs/biomes-and-heights.md)). There are no speedrun tricks: it's aimed at an average player.
 
-<!-- In-game screenshots: put images in docs/images/ and link them here (the banner above is artwork). -->
-
 ## Features
 
 ### The guide
@@ -43,14 +41,11 @@ sending you there. The research and checked game facts are in
   the folder. This is client-side: only you see your choice, on any server.
 
 ### Task card (top-left by default)
-```
-┌─ Guide · Day 1/3 ── [clock] ▮▮▮▮▯▯ ┐
-│ [log] Chop wood            6/10  │   current task: icon, live counter, progress bar
-│       ██████░░░░                 │
-│  · Make a crafting table         │   next two tasks
-│  · Wooden pickaxe                │
-└──────────────────────────────────┘
-```
+<p>
+  <img src="docs/images/task-card.png" alt="Task card: Guide, Day 1/3, current task Chop wood 0/10, next: Make a crafting table, Wooden pickaxe" width="460">
+  <img src="docs/images/task-card-full.png" alt="Task card in full view: all 15 goals with the recipe of the current task below" width="460" align="top">
+</p>
+
 - 15 goals in order: wood → crafting table → wooden pickaxe → stone tools → furnace → food → bed →
   torches → shelter → chest → iron → shield → iron pickaxe → iron armor → bucket of water.
 - Live counters (for example logs 6/10 or wool 2/3), with a check-mark animation when a goal is done.
@@ -60,6 +55,11 @@ sending you there. The research and checked game facts are in
 - Press **J** to switch between compact, the full list of all 15 goals, and hidden.
 
 ### Safety and finding your way
+<p>
+  <img src="docs/images/nav-items.png" alt="Navigation strip: Your items: 77 blocks, max 4:55 left" width="460">
+  <img src="docs/images/nav-home.png" alt="Navigation strip: Home: 76 blocks" width="460">
+</p>
+
 - **Back to your items**: after you die, the bottom of the task card shows a rotating arrow, the distance to
   where you died and how long your items stay (max 5:00). It disappears once you've been there.
 - **Way home**: when you're more than 64 blocks from your bed (or first workstation), or it gets dark and
@@ -69,10 +69,12 @@ sending you there. The research and checked game facts are in
 - **Phantoms**: a reminder after two nights without sleep (phantoms come after three).
 
 ### Learning as you play
+<img src="docs/images/recipe-card.png" alt="Recipe card for the crafting table next to the inventory" width="240" align="right">
+
 - **Recipe card**: open your inventory or a crafting table and a small card next to the window shows how to
   craft the item for your current task (grid, arrow, result). For 3x3 recipes in the inventory it reminds
   you that you need a crafting table. The full list (J) shows the same recipe under the goals.
-  All 12 recipes are checked against the game data (`tools/recipe_check.py`).
+  All 18 recipes are checked against the game data (`tools/recipe_check.py`).
 - **Crosshair info**: look at a mob for a moment and a line under the crosshair tells you what it does
   (creeper, skeleton, enderman, the new parched skeleton, sheep, ...). Look at an ore and it tells you which
   pickaxe you need: green when your tool works, red when it would break the block without dropping anything.
@@ -85,15 +87,8 @@ sending you there. The research and checked game facts are in
   can spawn at night. In the Nether light doesn't stop spawns, and the check says so.
 
 ### Environment card (below the task card)
-```
-┌ [sand] Desert ───────────── Y 64 ┐
-│ + Sand for glass, cactus, temples │   biome pro
-│ - Only rabbits and camels; husks  │   biome con
-│ [pickaxe] here: Iron Copper Coal  │   ores at this height (gold = best height)
-│ [raw iron] Iron: go down, ~Y 16   │   pointer for your current task
-│ [lava] Below Y -54: lava lakes    │   depth hazard, when relevant
-└───────────────────────────────────┘
-```
+<img src="docs/images/environment-card.png" alt="Environment card: Plains, Y 65, a pro and a con of the biome, and the ores at this height: Iron, Copper, Coal" width="460">
+
 - A pro and a con for all 67 biomes (grouped into 25 families).
 - Ores at your current Y-level, most valuable first (gold = you are at its best height). Emerald only shows in mountain biomes, and the extra
   surface gold only in badlands.
@@ -241,7 +236,8 @@ because sync tools like OneDrive lock files in `build/`. On other systems it use
 After every build the mod jar and sources jar are also copied to the project folder itself (git-ignored).
 
 Developer tools:
-- `tools/make_lang.py` generates `en_us.json` and `nl_nl.json` from one table, so both languages always have the same keys.
+- `tools/make_lang.py` generates all language files (English and Dutch from its own table, the others from
+  `tools/lang/<code>.json`) and checks that every language has the same keys and placeholders.
 - `tools/biome_facts.py` regenerates [docs/biomes-and-heights.md](docs/biomes-and-heights.md) from the Minecraft jar.
 - `tools/make_icon.py` builds the transparent PNG icons from `docs/images/SurvivalAssistant.jpg`
   (`uv run --with pillow python tools/make_icon.py`).
