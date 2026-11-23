@@ -199,7 +199,26 @@ llama-server -m Qwen3.5-4B-Q4_K_M.gguf -ngl 0 -c 2048 --port 8080   # CPU only, 
 | `margin` | `4` | Distance from the screen edge |
 
 ## Languages
-English and Dutch (Nederlands). The game language decides which one is used.
+15 languages; the game language decides which one is used:
+
+| | | |
+|---|---|---|
+| English (`en_us`) | Mandarin Chinese, simplified (`zh_cn`) | Hindi (`hi_in`) |
+| Spanish (`es_es`) | Arabic (`ar_sa`) | French (`fr_fr`) |
+| Portuguese, Brazil (`pt_br`) | Russian (`ru_ru`) | Indonesian (`id_id`) |
+| Dutch (`nl_nl`) | German (`de_de`) | Italian (`it_it`) |
+| Polish (`pl_pl`) | Ukrainian (`uk_ua`) | Romanian (`ro_ro`) |
+
+- The list: the most spoken languages worldwide (Ethnologue 2025) plus the most spoken European ones. Bengali is
+  in the world top 10 but Minecraft has no Bengali language option, so Indonesian (number 10) takes its place.
+- Regional variants with the same script get a copy: Spanish (Mexico, Argentina, Chile, Ecuador, Uruguay,
+  Venezuela), French (Canada, Switzerland), Portuguese (Portugal), German (Austria, Switzerland) and Dutch
+  (Belgium). Traditional Chinese falls back to English.
+- English and Dutch are the original texts; the other 13 languages are AI translations that use Minecraft's
+  own names for items and mobs where possible and have not yet been checked by native speakers. Corrections are very welcome as an issue or pull
+  request: the texts live in `tools/lang/<code>.json` and `tools/make_lang.py` checks every key and placeholder.
+- Minecraft draws Arabic right-to-left with joined letters itself. Hindi looks like Minecraft's own Hindi: the
+  game font does not join Devanagari letter combinations.
 
 ## Requirements and installation
 - Minecraft **26.3**

@@ -1,9 +1,16 @@
 """Writes en_us.json and nl_nl.json for Survival Assistant with identical key sets.
 
 Usage: python tools/make_lang.py src/main/resources/assets/survivalassistant/lang
+
+English and Dutch live in the table below; other languages in tools/lang/<code>.json (key -> text).
+Every language must have exactly the English keys and the same number of %s placeholders.
 """
+import glob
 import json
+import os
+import re
 import sys
+import unicodedata
 
 P = "survivalassistant."
 T = P + "tip."
@@ -488,16 +495,65 @@ L = {
     }.items() for k, v in (("pro", pc[0]), ("con", pc[1]))},
 }
 
-# Only ASCII and Latin-1: other Unicode symbols may be missing from Minecraft's font and render as boxes.
-for key, texts in L.items():
-    for text in texts:
-        bad = sorted({ch for ch in text if ord(ch) > 0xFF})
-        if bad:
-            sys.exit(f"Unsafe character(s) {bad} in {key!r}: use plain text or an icon in the HUD code instead.")
+# ---------------------------------------------------------------- checks and output
+
+# Letters, digits, punctuation, spaces and combining marks of any script are fine: Minecraft's font (with its Unifont
+# fallback) has them, and it shapes Arabic and orders right-to-left text itself. Symbols (pickaxes, arrows, emoji, ...)
+# may be missing from the font and render as boxes or wrong glyphs, so the HUD draws those as icons instead.
+ALLOWED_CATEGORIES = ("L", "M", "N", "P", "Z")
+EXTRA_ALLOWED = {"+", "<", ">", "=", "%", "·", "$"}  # used in tips, the HUD title and positional %1$s placeholders
+PLACEHOLDER = re.compile(r"%(?:\d+\$)?s")
+
+
+def check_chars(lang, key, text):
+    bad = sorted({ch for ch in text
+                  if ch not in EXTRA_ALLOWED and not unicodedata.category(ch).startswith(ALLOWED_CATEGORIES)})
+    if bad:
+        sys.exit(f"[{lang}] unsafe character(s) {bad} in {key!r}: use plain text or an icon in the HUD code instead.")
+
+
+def load_translations():
+    """tools/lang/<code>.json: key -> text, for every language beyond English and Dutch."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    out = {}
+    for path in sorted(glob.glob(os.path.join(here, "lang", "*.json"))):
+        code = os.path.splitext(os.path.basename(path))[0]
+        with open(path, encoding="utf-8") as f:
+            # "~" is short for "survivalassistant." to keep the translation files readable
+            out[code] = {k.replace("~", P): v for k, v in json.load(f).items()}
+    return out
+
+
+languages = {"en_us": {k: v[0] for k, v in L.items()}, "nl_nl": {k: v[1] for k, v in L.items()}}
+languages.update(load_translations())
+
+english = languages["en_us"]
+for code, table in languages.items():
+    missing = [k for k in english if k not in table]
+    extra = [k for k in table if k not in english]
+    if missing or extra:
+        sys.exit(f"[{code}] missing keys: {missing[:10]} ({len(missing)}), unknown keys: {extra[:10]} ({len(extra)})")
+    for key, text in table.items():
+        check_chars(code, key, text)
+        if len(PLACEHOLDER.findall(text)) != len(PLACEHOLDER.findall(english[key])):
+            sys.exit(f"[{code}] placeholder count differs from English in {key!r}: {text!r}")
+
+# Minecraft falls back to English when the chosen language has no file, so regional variants with the same script
+# get a copy (Traditional Chinese zh_tw/zh_hk do not: different characters).
+VARIANTS = {
+    "es_es": ["es_mx", "es_ar", "es_cl", "es_ec", "es_uy", "es_ve"],
+    "fr_fr": ["fr_ca", "fr_ch"],
+    "pt_br": ["pt_pt"],
+    "de_de": ["de_at", "de_ch"],
+    "nl_nl": ["nl_be"],
+}
 
 out_dir = sys.argv[1]
-for idx, name in ((0, "en_us"), (1, "nl_nl")):
-    with open(f"{out_dir}/{name}.json", "w", encoding="utf-8") as f:
-        json.dump({k: v[idx] for k, v in L.items()}, f, ensure_ascii=False, indent="\t")
-        f.write("\n")
-print(len(L), "keys")
+written = 0
+for code, table in languages.items():
+    for target in [code] + VARIANTS.get(code, []):
+        with open(f"{out_dir}/{target}.json", "w", encoding="utf-8") as f:
+            json.dump({k: table[k] for k in english}, f, ensure_ascii=False, indent="\t")
+            f.write("\n")
+        written += 1
+print(len(L), "keys,", len(languages), "languages,", written, "files")
