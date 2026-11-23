@@ -41,4 +41,31 @@ class ModConfigTest {
 		assertEquals("local", c.chatModel);
 		assertEquals(GuideNames.DEFAULT, c.guideName);
 	}
+
+	@Test
+	void copyIsEqualButSeparate() {
+		ModConfig c = new ModConfig();
+		c.homeDistance = 100;
+		c.chatTemperature = 0.7;
+		ModConfig copy = c.copy();
+		assertNotSame(c, copy);
+		assertEquals(c.toJson(), copy.toJson());
+		copy.homeDistance = 20;
+		assertEquals(100, c.homeDistance);
+	}
+
+	@Test
+	void jsonFromTheScreenIsValidated() {
+		ModConfig c = ModConfig.fromJson("{\"homeDistance\": 0, \"museIntervalSeconds\": 5}");
+		assertEquals(1, c.homeDistance);
+		assertEquals(60, c.museIntervalSeconds);
+		// fields that are missing keep their default
+		assertEquals(new ModConfig().chatEndpoint, c.chatEndpoint);
+	}
+
+	@Test
+	void brokenJsonIsRefused() {
+		assertThrows(com.google.gson.JsonParseException.class, () -> ModConfig.fromJson("{\"homeDistance\": \"far\"}"));
+		assertThrows(com.google.gson.JsonParseException.class, () -> ModConfig.fromJson(""));
+	}
 }

@@ -79,6 +79,18 @@ public final class ClientConfig {
 		scale = Math.clamp(scale, 0.5f, 2.0f);
 	}
 
+	/** A separate copy to edit in the settings screen. */
+	public ClientConfig copy() {
+		return JsonFiles.fromJson(JsonFiles.toJson(this), ClientConfig.class);
+	}
+
+	/** Makes {@code cfg} (validated) the active settings and saves them. */
+	public static void set(ClientConfig cfg) {
+		cfg.validate();
+		instance = cfg;
+		save();
+	}
+
 	public static void save() {
 		try {
 			JsonFiles.write(path(), instance);

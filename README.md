@@ -267,10 +267,30 @@ Minecraft's font can't show.
 | `/guide chat on\|off` | Small talk with the guide through a local language model (saved per player) |
 | `/guide character on\|off` | Show or hide the guide character (saved per player) |
 | `/guideskin list\|set <name>\|reload\|folder` | Choose your own guide skin (client-side) |
+| `/guidesettings` | Open the settings screen |
 
-Keys: **J** task card mode, **K** environment card, **L** light check.
+Keys: **J** task card mode, **K** environment card, **L** light check. The settings screen has a key too, unbound
+by default (Options → Controls → Key Binds → Survival Assistant).
 
-## Configuration
+## Settings
+
+All options can be changed in the game, in the settings screen. Open it with the **Configure** button in
+[Mod Menu](https://modrinth.com/mod/modmenu) (optional), with `/guidesettings`, or with its key. It has three tabs:
+
+- **Display**: the task card (mode, corner, size), the environment card, the recipe card, crosshair info, the
+  guide's skin, and a button for the keys. Stored on your computer.
+- **My guide**: the guide character, your own name for the guide, musings and small talk. Stored with your player
+  on the server, so this works on multiplayer servers too.
+- **World**: the server options below. Without a world open you edit your own config file; in a world only the host
+  of a singleplayer world or an operator can change them, other players see them greyed out. The language model
+  options are folded away under *Advanced*.
+
+Every option has a short explanation when you hover over it. **Done** saves, **Cancel** (or Esc) discards your
+changes, and **Defaults** resets the current tab.
+
+## Configuration files
+
+The settings screen writes these files; you can also edit them by hand (server owners usually do).
 
 **Server**: `config/survivalassistant.json`
 

@@ -16,12 +16,16 @@
 	"accessWidener": "survivalassistant.accesswidener",
 	"entrypoints": {
 		"main": ["io.github.visserdavid.survivalassistant.SurvivalAssistant"],
-		"client": ["io.github.visserdavid.survivalassistant.client.SurvivalAssistantClient"]
+		"client": ["io.github.visserdavid.survivalassistant.client.SurvivalAssistantClient"],
+		"modmenu": ["io.github.visserdavid.survivalassistant.client.settings.ModMenuIntegration"]
 	},
 	"depends": {
 		"fabricloader": ">=${loader_version}",
 		"minecraft": "~${minecraft_version}",
 		"java": ">=25",
 		"fabric-api": ">=${fabric_api_min}"
+	},
+	"suggests": {
+		"modmenu": "*"
 	}
 }

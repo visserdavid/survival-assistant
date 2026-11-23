@@ -34,6 +34,8 @@ danger and celebrates every goal you reach.
 - **An environment card** with a pro and a con for every biome and the ores worth digging for at your height.
 - **A light check** (key L) that shows every spot where monsters can spawn.
 - **Your way back**: an arrow to your lost items after dying, and the way home at dusk.
+- **A settings screen** with every option, explained as you hover: open it from
+  [Mod Menu](https://modrinth.com/mod/modmenu) (optional) or with `/guidesettings`.
 
 ## 18 chapters
 | # | Chapter | Goals |

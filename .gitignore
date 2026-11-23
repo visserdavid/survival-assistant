@@ -45,3 +45,6 @@ replay_*.log
 
 __pycache__/
 *.pyc
+
+# logs written by test runs
+/logs/

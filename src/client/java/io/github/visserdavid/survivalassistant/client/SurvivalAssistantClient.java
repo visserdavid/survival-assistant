@@ -9,6 +9,7 @@ import io.github.visserdavid.survivalassistant.client.hud.HudLayout;
 import io.github.visserdavid.survivalassistant.client.hud.LightCheck;
 import io.github.visserdavid.survivalassistant.client.hud.RecipeOverlay;
 import io.github.visserdavid.survivalassistant.client.hud.TaskHud;
+import io.github.visserdavid.survivalassistant.client.settings.SettingsAccess;
 import io.github.visserdavid.survivalassistant.client.skin.GuideSkins;
 import io.github.visserdavid.survivalassistant.client.skin.SkinCommand;
 import io.github.visserdavid.survivalassistant.entity.GuideEntity;
@@ -51,7 +52,11 @@ public class SurvivalAssistantClient implements ClientModInitializer {
 		});
 		GuideSkins.init();
 		ClientLifecycleEvents.CLIENT_STARTED.register(client -> GuideSkins.reload());
-		ClientCommandRegistrationCallback.EVENT.register((dispatcher, context) -> SkinCommand.register(dispatcher));
+		ClientCommandRegistrationCallback.EVENT.register((dispatcher, context) -> {
+			SkinCommand.register(dispatcher);
+			SettingsAccess.register(dispatcher);
+		});
+		SettingsAccess.registerReceiver();
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> client.execute(() -> {
 			if (client.player != null && GuideSkins.chosenMissing()) {
 				client.player.sendSystemMessage(Component.translatable("survivalassistant.skin.fallback", ClientConfig.get().guideSkin)
@@ -72,16 +77,18 @@ public class SurvivalAssistantClient implements ClientModInitializer {
 		return crosshair;
 	}
 
-	/** J: task card mode, K: environment card, L: light check. */
+	/** J: task card mode, K: environment card, L: light check; the settings key has no default (bind it yourself). */
 	private static void registerKeys(CrosshairInfo crosshair) {
 		KeyMapping toggleHud = key("toggle_hud", InputConstants.KEY_J);
 		KeyMapping toggleEnv = key("toggle_env", InputConstants.KEY_K);
 		KeyMapping toggleLight = key("light_check", InputConstants.KEY_L);
+		KeyMapping settings = key("settings", InputConstants.UNKNOWN.getValue());
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			crosshair.tick(client);
 			while (toggleLight.consumeClick()) LightCheck.toggle(client);
 			LightCheck.tick(client);
+			while (settings.consumeClick()) SettingsAccess.open(client);
 			onPress(toggleHud, client, cfg -> {
 				cfg.mode = cfg.mode.next();
 				return "survivalassistant.hud.mode." + cfg.mode.name().toLowerCase(Locale.ROOT);

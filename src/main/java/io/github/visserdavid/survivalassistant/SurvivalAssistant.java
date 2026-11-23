@@ -47,6 +47,7 @@ public class SurvivalAssistant implements ModInitializer {
 		ModConfig.load();
 		GuideState.init();
 		HudState.init();
+		GuideSettings.register();
 		FabricDefaultAttributeRegistry.register(GUIDE, GuideEntity.createAttributes());
 
 		ServerTickEvents.END_SERVER_TICK.register(GuideManager::tick);

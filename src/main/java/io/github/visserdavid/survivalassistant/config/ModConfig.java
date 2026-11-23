@@ -79,12 +79,16 @@ public final class ModConfig {
 		return instance;
 	}
 
+	private static Path path() {
+		return FabricLoader.getInstance().getConfigDir().resolve(SurvivalAssistant.MOD_ID + ".json");
+	}
+
 	/**
 	 * Loads the config and writes it back so new options appear in the file. A file that can't be read is left
 	 * untouched (the defaults apply until it is fixed), so a typo never wipes someone's settings.
 	 */
 	public static void load() {
-		Path path = FabricLoader.getInstance().getConfigDir().resolve(SurvivalAssistant.MOD_ID + ".json");
+		Path path = path();
 		ModConfig loaded;
 		try {
 			loaded = JsonFiles.read(path, ModConfig.class);
@@ -93,14 +97,38 @@ public final class ModConfig {
 			instance = new ModConfig();
 			return;
 		}
-		ModConfig cfg = loaded == null ? new ModConfig() : loaded;
+		update(loaded == null ? new ModConfig() : loaded);
+	}
+
+	/** Makes {@code cfg} (validated) the active config and writes it to the file; used by the settings screen. */
+	public static void update(ModConfig cfg) {
 		cfg.validate();
 		instance = cfg;
 		try {
-			JsonFiles.write(path, cfg);
+			JsonFiles.write(path(), cfg);
 		} catch (IOException e) {
-			SurvivalAssistant.LOGGER.error("Could not write config {}", path, e);
+			SurvivalAssistant.LOGGER.error("Could not write config {}", path(), e);
 		}
+	}
+
+	/** A separate copy to edit (the settings screen changes this, never the active config). */
+	public ModConfig copy() {
+		return fromJson(toJson());
+	}
+
+	public String toJson() {
+		return JsonFiles.toJson(this);
+	}
+
+	/**
+	 * A config from JSON text (sent by the settings screen), validated.
+	 *
+	 * @throws com.google.gson.JsonParseException the text is not a valid config
+	 */
+	public static ModConfig fromJson(String json) {
+		ModConfig cfg = JsonFiles.fromJson(json, ModConfig.class);
+		cfg.validate();
+		return cfg;
 	}
 
 	/** Brings every value into its valid range; empty or missing texts get their default. */

@@ -47,6 +47,22 @@ public final class JsonFiles {
 		}
 	}
 
+	/** {@code value} as JSON text (for sending a config over the network). */
+	public static String toJson(Object value) {
+		return GSON.toJson(value);
+	}
+
+	/**
+	 * Parses JSON text as {@code type}.
+	 *
+	 * @throws JsonParseException the text is not valid JSON for this type
+	 */
+	public static <T> T fromJson(String json, Class<T> type) {
+		T value = GSON.fromJson(json, type);
+		if (value == null) throw new JsonParseException("empty");
+		return value;
+	}
+
 	/** The file exists but could not be read or parsed. */
 	public static final class ReadFailure extends Exception {
 		ReadFailure(Throwable cause) {
