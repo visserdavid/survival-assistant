@@ -66,7 +66,6 @@ public final class TaskHud implements HudElement {
 	private static final double PULSE_MS = 150.0;
 	private static final long BLINK_MS = 400;
 
-	private static final ItemStack CLOCK = ItemIcons.of(Items.CLOCK);
 
 	private final HudLayout layout;
 
@@ -321,7 +320,7 @@ public final class TaskHud implements HudElement {
 			g.fill(sx, barY, sx + SEG_W, barY + SEG_H, i < filled ? color : BAR_BG);
 		}
 		int clockX = barX - SMALL_ICON - 2;
-		smallIcon(g, CLOCK, clockX, PAD);
+		smallIcon(g, ItemIcons.of(Items.CLOCK), clockX, PAD);
 
 		HudText.fit(g, font, title, PAD, PAD + 1, clockX - GAP - PAD, GOLD, true, now);
 	}
