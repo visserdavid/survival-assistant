@@ -26,7 +26,7 @@ class SettingsPayloadsTest {
 	@Test
 	void syncAndUpdatesSurviveTheTrip() {
 		var sync = new SettingsPayloads.Sync(new GuideChoices(true, "", GuideChoices.MUSINGS_ON, false), "Pim",
-				"{\"homeDistance\": 64}", true);
+				"{\"homeDistance\": 64}", true, false);
 		assertEquals(sync, roundTrip(SettingsPayloads.Sync.CODEC, sync));
 		var config = new SettingsPayloads.ConfigUpdate("{\"musings\": false}");
 		assertEquals(config, roundTrip(SettingsPayloads.ConfigUpdate.CODEC, config));

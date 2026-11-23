@@ -95,14 +95,16 @@ public final class GuideCommand {
 		return 1;
 	}
 
-	/** /guide chat on|off: small talk through a local language model, stored per player. */
+	/** /guide chat on|off: small talk through a local language model, stored per player (only when the server allows it). */
 	private static int chat(CommandContext<CommandSourceStack> c, boolean enabled) throws CommandSyntaxException {
 		ServerPlayer p = c.getSource().getPlayerOrException();
+		if (enabled && !ModConfig.get().chatEnabled) {
+			c.getSource().sendFailure(Component.translatable("survivalassistant.cmd.chat_not_allowed"));
+			return 0;
+		}
 		GuideState.of(p).chatEnabled = enabled;
-		String endpoint = ModConfig.get().chatEndpoint;
-		c.getSource().sendSuccess(() -> enabled
-				? Component.translatable("survivalassistant.cmd.chat_on", endpoint)
-				: Component.translatable("survivalassistant.cmd.chat_off"), false);
+		c.getSource().sendSuccess(() -> Component.translatable(
+				enabled ? "survivalassistant.cmd.chat_on" : "survivalassistant.cmd.chat_off"), false);
 		return 1;
 	}
 

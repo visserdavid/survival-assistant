@@ -302,6 +302,7 @@ public final class GuideManager {
 		GuideSessions.disconnect(player.getUUID());
 		GuideChat.forget(player.getUUID());
 		GuideMusings.forget(player.getUUID());
+		GuideSettings.forget(player.getUUID());
 	}
 
 	public static void onServerStopping() {
@@ -309,6 +310,7 @@ public final class GuideManager {
 		GuideSessions.clear();
 		GuideChat.clear();
 		GuideMusings.clear();
+		GuideSettings.clear();
 	}
 
 	// ---------------------------------------------------------------- commands

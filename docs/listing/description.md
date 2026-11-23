@@ -79,8 +79,8 @@ then he shares a building idea for the biome you're in, or a remark about the an
 ## Optional: small talk with a local AI
 If you like, the guide can chat with you through a language model that runs **on your own computer**
 ([llama.cpp](https://github.com/ggml-org/llama.cpp)). This is **off by default**. When you turn it on
-(`/guide chat on`), the mod only connects to `llama-server` on your own machine (`127.0.0.1`); nothing is sent to
-the internet. Without it, everything else works the same. Setup instructions and model advice are in the
+(`chatEnabled`, or *Small talk allowed* in the settings), the mod connects to `llama-server` on your own machine
+(`127.0.0.1`) by default. On a server, what you say to the guide goes to the model server the server owner set up. Without it, everything else works the same. Setup instructions and model advice are in the
 [README](https://github.com/visserdavid/survival-assistant#small-talk-with-a-local-ai-model-optional).
 
 ## Languages

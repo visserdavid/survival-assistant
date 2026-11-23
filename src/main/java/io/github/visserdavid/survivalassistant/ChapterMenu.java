@@ -6,6 +6,7 @@ import io.github.visserdavid.survivalassistant.advice.GuideProgress;
 import io.github.visserdavid.survivalassistant.entity.GuideEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -86,8 +87,8 @@ final class ChapterMenu {
 				Component.translatable("survivalassistant.congrats.title").withStyle(ChatFormatting.GOLD)));
 		player.connection.send(new ClientboundSetSubtitleTextPacket(
 				Component.translatable("survivalassistant.congrats.subtitle", total)));
-		player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
-				SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.PLAYERS, 1.0f, 1.0f);
+		GuideSpeech.playTo(player, BuiltInRegistries.SOUND_EVENT.wrapAsHolder(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE),
+				SoundSource.PLAYERS, player.getX(), player.getY(), player.getZ(), 1.0f, 1.0f);
 		player.level().sendParticles(ParticleTypes.TOTEM_OF_UNDYING, player.getX(), player.getY() + 1, player.getZ(),
 				60, 0.6, 0.8, 0.6, 0.3);
 		if (guide != null && !guide.isRemoved()) {

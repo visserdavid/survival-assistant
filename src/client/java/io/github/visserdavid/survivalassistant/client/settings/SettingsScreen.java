@@ -61,8 +61,12 @@ public final class SettingsScreen extends OptionsSubScreen {
 	private @Nullable GuideChoices choicesBefore;
 	private String serverName = "";
 	private boolean canEditWorld;
+	/** The server allows small talk (else the player's switch is greyed out). */
+	private boolean chatAllowed;
 	private Source source;
 	private boolean advancedOpen;
+	/** The server sent a config this screen couldn't read. */
+	private boolean worldUnreadable;
 	private int tabIndex;
 	/** Text fields with an invalid value: "Done" waits until they are fixed. */
 	private final List<String> invalid = new ArrayList<>();
@@ -95,16 +99,21 @@ public final class SettingsScreen extends OptionsSubScreen {
 		worldBefore = cfg.toJson();
 		canEditWorld = editable;
 		serverName = cfg.guideName;
+		chatAllowed = cfg.chatEnabled;
 	}
 
 	/** The server's answer: fills the My guide and World tabs. */
 	public void receive(SettingsPayloads.Sync sync) {
 		if (source != Source.WAITING) return;
-		try {
-			setWorld(ModConfig.fromJson(sync.configJson()), sync.canEdit());
-		} catch (RuntimeException e) {
-			world = null; // shown as "not available"
+		world = null;
+		if (sync.canEdit()) {
+			try {
+				setWorld(ModConfig.fromJson(sync.configJson()), true);
+			} catch (RuntimeException e) {
+				worldUnreadable = true;
+			}
 		}
+		chatAllowed = sync.chatAllowed();
 		serverName = sync.serverName();
 		choices.set(sync.choices());
 		choicesBefore = sync.choices();
@@ -197,16 +206,20 @@ public final class SettingsScreen extends OptionsSubScreen {
 			Rows.notice(list, reason);
 			return;
 		}
-		new GuideTab(this, choices, serverName).build(list);
+		new GuideTab(this, choices, serverName, chatAllowed).build(list);
 	}
 
 	private void buildWorld(OptionsList list) {
 		if (world == null) {
-			Rows.notice(list, Component.translatable(source == Source.MISSING ? KEY + "no_server_mod" : KEY + "loading"));
+			String reason = switch (source) {
+				case MISSING -> "no_server_mod";
+				case WAITING -> "loading";
+				default -> worldUnreadable ? "world.unavailable" : "world.read_only";
+			};
+			Rows.notice(list, Component.translatable(KEY + reason).withStyle(ChatFormatting.YELLOW));
 			return;
 		}
-		if (!canEditWorld) Rows.notice(list, Component.translatable(KEY + "world.read_only").withStyle(ChatFormatting.YELLOW));
-		else if (source == Source.LOCAL) Rows.notice(list, Component.translatable(KEY + "world.local").withStyle(ChatFormatting.GRAY));
+		if (source == Source.LOCAL) Rows.notice(list, Component.translatable(KEY + "world.local").withStyle(ChatFormatting.GRAY));
 		new WorldTab(this, world, canEditWorld).build(list);
 	}
 
@@ -230,7 +243,7 @@ public final class SettingsScreen extends OptionsSubScreen {
 			}
 			case TAB_GUIDE -> {
 				ModConfig defaults = world != null ? world : new ModConfig();
-				choices.set(new GuideChoices(defaults.npcEnabledByDefault, "", GuideChoices.MUSINGS_ON, defaults.chatEnabled));
+				choices.set(new GuideChoices(defaults.npcEnabledByDefault, "", GuideChoices.MUSINGS_ON, chatAllowed));
 			}
 			case TAB_WORLD -> world = new ModConfig();
 			default -> {}

@@ -13,11 +13,13 @@ final class GuideTab {
 	private final SettingsScreen screen;
 	private final SettingsScreen.ChoicesDraft d;
 	private final String serverName;
+	private final boolean chatAllowed;
 
-	GuideTab(SettingsScreen screen, SettingsScreen.ChoicesDraft draft, String serverName) {
+	GuideTab(SettingsScreen screen, SettingsScreen.ChoicesDraft draft, String serverName, boolean chatAllowed) {
 		this.screen = screen;
 		this.d = draft;
 		this.serverName = serverName;
+		this.chatAllowed = chatAllowed;
 	}
 
 	void build(OptionsList list) {
@@ -30,6 +32,8 @@ final class GuideTab {
 
 		rows.header("small_talk")
 				.toggle("chat", d.chat, v -> d.chat = v);
+		// only the server can allow small talk; then each player can switch it off for themselves
+		if (!chatAllowed) rows.lockLast(Component.translatable(KEY + "chat.not_allowed"));
 		rows.flush();
 	}
 

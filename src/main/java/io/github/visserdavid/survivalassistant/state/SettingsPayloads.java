@@ -46,16 +46,18 @@ public final class SettingsPayloads {
 	}
 
 	/**
-	 * Server → client: the player's choices, the server's guide name, the server config and whether this player
-	 * may change it.
+	 * Server → client: the player's choices, the server's guide name, whether this player may change the server
+	 * config (and then the config itself, else ""), and whether the server allows small talk.
 	 */
-	public record Sync(GuideChoices choices, String serverName, String configJson, boolean canEdit) implements CustomPacketPayload {
+	public record Sync(GuideChoices choices, String serverName, String configJson, boolean canEdit, boolean chatAllowed)
+			implements CustomPacketPayload {
 		public static final Type<Sync> TYPE = payloadType("settings_sync");
 		public static final StreamCodec<ByteBuf, Sync> CODEC = StreamCodec.composite(
 				CHOICES_CODEC, Sync::choices,
 				ByteBufCodecs.stringUtf8(64), Sync::serverName,
 				CONFIG_JSON, Sync::configJson,
 				ByteBufCodecs.BOOL, Sync::canEdit,
+				ByteBufCodecs.BOOL, Sync::chatAllowed,
 				Sync::new);
 
 		@Override

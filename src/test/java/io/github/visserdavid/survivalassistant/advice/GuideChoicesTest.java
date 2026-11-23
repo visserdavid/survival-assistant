@@ -23,7 +23,7 @@ class GuideChoicesTest {
 		p.chatEnabled = true;
 		p.musings = GuideChoices.MUSINGS_ALL;
 		p.guideName = "Bram";
-		GuideChoices c = GuideChoices.of(p, true, false);
+		GuideChoices c = GuideChoices.of(p, true, true);
 		assertEquals(new GuideChoices(false, "Bram", GuideChoices.MUSINGS_ALL, true), c);
 		assertEquals("Bram", c.storedName());
 		assertEquals(GuideChoices.MUSINGS_ALL, c.storedMusings());
@@ -42,5 +42,16 @@ class GuideChoicesTest {
 		assertFalse(new GuideChoices(true, "!!!", GuideChoices.MUSINGS_ON, false).nameValid());
 		assertFalse(new GuideChoices(true, "a".repeat(GuideNames.MAX_LENGTH + 1), GuideChoices.MUSINGS_ON, false).nameValid());
 		assertTrue(new GuideChoices(true, " Pim ", GuideChoices.MUSINGS_ON, false).nameValid());
+	}
+
+	@Test
+	void onlyTheServerCanAllowSmallTalk() {
+		GuideProgress p = new GuideProgress();
+		assertTrue(p.chatEnabled(true), "allowed by the server: on unless the player switched it off");
+		assertFalse(p.chatEnabled(false));
+		p.chatEnabled = true;
+		assertFalse(p.chatEnabled(false), "a player can't switch it on when the server doesn't allow it");
+		p.chatEnabled = false;
+		assertFalse(p.chatEnabled(true), "a player can always switch it off");
 	}
 }

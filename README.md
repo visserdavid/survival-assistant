@@ -105,8 +105,8 @@ archaeology, the trial challenges, the happy ghast and automation.
 
 ### Safety and finding your way
 <p>
-  <img src="docs/images/nav-items.png" alt="Navigation strip: Your items: 77 blocks, max 4:55 left" width="460">
-  <img src="docs/images/nav-home.png" alt="Navigation strip: Home: 76 blocks" width="460">
+  <img src="docs/images/nav-items.png" alt="Task card at sunset with the navigation strip: Your items: 111 blocks, max 4:53 left" width="460">
+  <img src="docs/images/nav-home.png" alt="Task card with the navigation strip: Home: 69 blocks" width="460">
 </p>
 
 - **Back to your items**: after you die, the bottom of the task card shows a rotating arrow, the distance to
@@ -167,7 +167,7 @@ archaeology, the trial challenges, the happy ghast and automation.
   The facts in these lines were checked against the game.
 - Quiet by design: at most one musing every 5 minutes (a new biome's building idea comes sooner), only by day,
   outside or in friendly caves, never during a warning, while muted, or without the guide character.
-- Works without any AI, in all 15 languages. With small talk on (`/guide chat on` and a local model) the model
+- Works without any AI, in all 15 languages. With small talk on (allowed by the server and a local model running) the model
   puts the same ideas in its own words.
 - The Nether, the End, the Deep Dark and unknown places stay quiet unless you choose `/guide musings all`
   (then only careful remarks, no building ideas there). `/guide musings off` turns them off.
@@ -192,8 +192,11 @@ archaeology, the trial challenges, the happy ghast and automation.
   between spontaneous remarks.
 - Runs fully local with [llama.cpp](https://github.com/ggml-org/llama.cpp): start `llama-server` with a small
   instruct model before you play. Without a server the guide simply stays quiet; nothing else changes.
-- Off by default. Turn it on for yourself with `/guide chat on` (and off again with `/guide chat off`), or for
-  everyone on the server with `chatEnabled` in the config.
+- Off by default. The server decides: switch it on with `chatEnabled` in the config (or *Small talk allowed* in the
+  settings screen, World tab). Then every player has it, and each player can switch it off for themselves with
+  `/guide chat off` (and back on with `/guide chat on`).
+- Where your words go: by default to `llama-server` on your own computer (`127.0.0.1`). On a server, the model
+  server the server owner configured receives what you say to the guide.
 
 #### Which model?
 The model shares your computer with Minecraft, which needs 2 GB VRAM at minimum and 6 GB recommended (26.x).
@@ -233,7 +236,8 @@ The replies are short (at most 80 tokens), so a small model is enough, and it ma
    ```
    For Qwen3.5 4B use its own file name and `--temp 0.7 --top-p 0.8 --top-k 20 --presence-penalty 1.5`
    instead of the Gemma sampling settings.
-4. **Play**: double-click the start file (keep its window open), start Minecraft, and type `/guide chat on`.
+4. **Play**: double-click the start file (keep its window open), start Minecraft, and switch on *Small talk allowed* in the settings
+   screen (World tab, under Advanced), or set `chatEnabled` to `true` in `config/survivalassistant.json`.
 
 What the settings do, and why:
 
@@ -285,7 +289,7 @@ All options can be changed in the game, in the settings screen. Open it with the
 - **My guide**: the guide character, your own name for the guide, musings and small talk. Stored with your player
   on the server, so this works on multiplayer servers too.
 - **World**: the server options below. Without a world open you edit your own config file; in a world only the host
-  of a singleplayer world or an operator can change them, other players see them greyed out. The language model
+  of a singleplayer world or an admin operator (level 3) can see and change them. The language model
   options are folded away under *Advanced*.
 
 Every option has a short explanation when you hover over it. **Done** saves, **Cancel** (or Esc) discards your
@@ -314,7 +318,7 @@ The settings screen writes these files; you can also edit them by hand (server o
 | `musings` | `true` | Musings about biomes and animals (players can use `/guide musings`) |
 | `museIntervalSeconds` | `300` | Minimum time between two musings |
 | `musingsInDangerZones` | `false` | Also muse in the Nether, the End, the Deep Dark and unknown places |
-| `chatEnabled` | `false` | Small talk through a local language model (default; players can use `/guide chat on\|off`) |
+| `chatEnabled` | `false` | Allow small talk through a language model on this server (players can switch it off with `/guide chat off`) |
 | `chatEndpoint` | `http://127.0.0.1:8080/v1/chat/completions` | OpenAI-compatible endpoint (llama-server's default) |
 | `chatModel` | `local` | Model name sent along (llama-server ignores it) |
 | `chatSpontaneous` | `true` | Remark on changes in the surroundings without being asked |
@@ -437,7 +441,8 @@ This mod was made with a lot of help from AI. To be open about what that means:
 - By default the mod uses no AI at all: every tip, warning and line comes from the fixed, checked texts.
 - Only if you turn on the optional small talk does a language model write replies, live, on your own computer.
   Those replies are not checked and can be wrong, which is why the model never gives recipes, ore heights or
-  instructions. Nothing is sent to the internet.
+  instructions. By default the model runs on your own computer (`127.0.0.1`); on a server, what you say to the
+  guide goes to the model server the server owner set up.
 
 ## License
 [MIT](LICENSE) © 2026 David Visser

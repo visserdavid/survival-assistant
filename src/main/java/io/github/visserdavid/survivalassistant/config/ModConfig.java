@@ -5,6 +5,8 @@ import io.github.visserdavid.survivalassistant.SurvivalAssistant;
 import io.github.visserdavid.survivalassistant.advice.GuideNames;
 import net.fabricmc.loader.api.FabricLoader;
 
+import org.jspecify.annotations.Nullable;
+
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -45,8 +47,8 @@ public final class ModConfig {
 
 	// --- small talk through a local language model (llama.cpp llama-server or any OpenAI-compatible server)
 	/**
-	 * Default for small talk through a local language model (players can override it with /guide chat on|off).
-	 * Off by default: it needs a running model server. Without one the guide simply stays quiet.
+	 * Allow small talk through a local language model on this server. Off by default: it needs a running model server.
+	 * Only the server decides; players can switch it off for themselves with /guide chat off.
 	 */
 	public boolean chatEnabled = false;
 	/** Chat completions endpoint. llama-server listens on port 8080 by default. */
@@ -106,7 +108,7 @@ public final class ModConfig {
 		instance = cfg;
 		try {
 			JsonFiles.write(path(), cfg);
-		} catch (IOException e) {
+		} catch (IOException | RuntimeException e) {
 			SurvivalAssistant.LOGGER.error("Could not write config {}", path(), e);
 		}
 	}
@@ -139,14 +141,27 @@ public final class ModConfig {
 		urgentCooldownSeconds = Math.max(0, urgentCooldownSeconds);
 		homeDistance = Math.max(1, homeDistance);
 		museIntervalSeconds = Math.max(60, museIntervalSeconds);
-		chatCooldownSeconds = Math.max(10, chatCooldownSeconds);
-		chatHearingDistance = Math.max(1, chatHearingDistance);
+		chatCooldownSeconds = Math.clamp(chatCooldownSeconds, 10, 3600);
+		chatHearingDistance = Math.clamp(chatHearingDistance, 1, 64);
 		chatSightRadius = Math.clamp(chatSightRadius, 1, 64);
-		chatMaxTokens = Math.max(1, chatMaxTokens);
-		chatTimeoutSeconds = Math.max(1, chatTimeoutSeconds);
-		chatHistoryTurns = Math.max(0, chatHistoryTurns);
+		chatMaxTokens = Math.clamp(chatMaxTokens, 1, 1024);
+		chatTimeoutSeconds = Math.clamp(chatTimeoutSeconds, 1, 120);
+		chatHistoryTurns = Math.clamp(chatHistoryTurns, 0, 20);
+		// -1 = the model server's own setting; anything else must be a real number from 0 to 2
+		if (!Double.isFinite(chatTemperature) || chatTemperature < 0) chatTemperature = -1;
+		else chatTemperature = Math.min(chatTemperature, 2.0);
 		if (!GuideNames.valid(guideName)) guideName = d.guideName;
-		if (chatEndpoint == null || chatEndpoint.isBlank()) chatEndpoint = d.chatEndpoint;
-		if (chatModel == null || chatModel.isBlank()) chatModel = d.chatModel;
+		if (!validEndpoint(chatEndpoint)) chatEndpoint = d.chatEndpoint;
+		if (chatModel == null || chatModel.isBlank() || chatModel.length() > MAX_MODEL_LENGTH) chatModel = d.chatModel;
+	}
+
+	public static final int MAX_ENDPOINT_LENGTH = 256;
+	public static final int MAX_MODEL_LENGTH = 128;
+
+	/** An http(s) address of reasonable length (the server sends player chat there, so nothing else is accepted). */
+	public static boolean validEndpoint(@Nullable String url) {
+		if (url == null || url.isBlank() || url.length() > MAX_ENDPOINT_LENGTH) return false;
+		String lower = url.strip().toLowerCase(java.util.Locale.ROOT);
+		return lower.startsWith("http://") || lower.startsWith("https://");
 	}
 }

@@ -68,4 +68,27 @@ class ModConfigTest {
 		assertThrows(com.google.gson.JsonParseException.class, () -> ModConfig.fromJson("{\"homeDistance\": \"far\"}"));
 		assertThrows(com.google.gson.JsonParseException.class, () -> ModConfig.fromJson(""));
 	}
+
+	@Test
+	void chatSettingsAreKeptWithinSafeLimits() {
+		ModConfig c = new ModConfig();
+		c.chatEndpoint = "file:///etc/passwd";
+		c.chatModel = "m".repeat(ModConfig.MAX_MODEL_LENGTH + 1);
+		c.chatTemperature = Double.POSITIVE_INFINITY;
+		c.chatMaxTokens = 1_000_000;
+		c.chatHistoryTurns = 500;
+		c.validate();
+		assertEquals(new ModConfig().chatEndpoint, c.chatEndpoint);
+		assertEquals(new ModConfig().chatModel, c.chatModel);
+		assertEquals(-1, c.chatTemperature);
+		assertEquals(1024, c.chatMaxTokens);
+		assertEquals(20, c.chatHistoryTurns);
+
+		c.chatTemperature = 7;
+		c.validate();
+		assertEquals(2.0, c.chatTemperature);
+		assertTrue(ModConfig.validEndpoint("HTTPS://example.org/v1/chat/completions"));
+		assertFalse(ModConfig.validEndpoint("ftp://example.org"));
+		assertFalse(ModConfig.validEndpoint("http://" + "a".repeat(ModConfig.MAX_ENDPOINT_LENGTH)));
+	}
 }

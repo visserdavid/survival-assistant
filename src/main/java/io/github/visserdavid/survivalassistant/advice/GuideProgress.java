@@ -16,7 +16,7 @@ public final class GuideProgress {
 	public final Set<String> completed = new LinkedHashSet<>();
 	/** Player's own choice for the guide character; null = use the server default. */
 	public Boolean npcEnabled = null;
-	/** Player's own choice for small talk through a local language model; null = use the server default. */
+	/** Player's own choice for small talk through a local language model; null = on (when the server allows it). */
 	public Boolean chatEnabled = null;
 	/** Player's choice for the guide's musings: null = on (server default), "off", or "all" (also in danger zones). */
 	public String musings = null;
@@ -58,7 +58,8 @@ public final class GuideProgress {
 		return npcEnabled != null ? npcEnabled : serverDefault;
 	}
 
-	public boolean chatEnabled(boolean serverDefault) {
-		return chatEnabled != null ? chatEnabled : serverDefault;
+	/** Small talk is on when the server allows it and the player hasn't switched it off. */
+	public boolean chatEnabled(boolean serverAllows) {
+		return serverAllows && !Boolean.FALSE.equals(chatEnabled);
 	}
 }

@@ -9,12 +9,16 @@ import io.github.visserdavid.survivalassistant.entity.GuideEntity;
 import io.github.visserdavid.survivalassistant.state.GuideState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
@@ -47,13 +51,17 @@ final class GuideSpeech {
 		player.sendSystemMessage(line);
 		GuideMusings.noteRemark(player);
 		if (guide != null) {
-			guide.level().playSound(null, guide.getX(), guide.getY(), guide.getZ(),
-					important ? SoundEvents.VILLAGER_YES : SoundEvents.VILLAGER_AMBIENT, SoundSource.NEUTRAL,
-					important ? 0.9f : 0.5f, 1.15f);
+			playTo(player, BuiltInRegistries.SOUND_EVENT.wrapAsHolder(important ? SoundEvents.VILLAGER_YES : SoundEvents.VILLAGER_AMBIENT),
+					SoundSource.NEUTRAL, guide.getX(), guide.getY(), guide.getZ(), important ? 0.9f : 0.5f, 1.15f);
 		} else if (important) {
-			player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
-					SoundEvents.NOTE_BLOCK_BELL.value(), SoundSource.PLAYERS, 0.6f, 1.2f);
+			playTo(player, SoundEvents.NOTE_BLOCK_BELL, SoundSource.PLAYERS, player.getX(), player.getY(), player.getZ(), 0.6f, 1.2f);
 		}
+	}
+
+	/** A sound only this player hears (the guide is theirs; other players nearby shouldn't hear its tips). */
+	static void playTo(ServerPlayer player, Holder<SoundEvent> sound, SoundSource source, double x, double y, double z,
+			float volume, float pitch) {
+		player.connection.send(new ClientboundSoundPacket(sound, source, x, y, z, volume, pitch, player.getRandom().nextLong()));
 	}
 
 	/** A tip in one of its text variants; urgent tips are yellow and also show above the hotbar. */

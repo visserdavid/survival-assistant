@@ -13,31 +13,64 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 /** The server side of the settings screen: sends the current settings and applies the changes. */
 final class GuideSettings {
 	private GuideSettings() {}
 
+	/** A player can send at most one change per this many server ticks (1 second); more is ignored. */
+	private static final int MIN_TICKS_BETWEEN_UPDATES = 20;
+	/** Server tick of each player's last accepted change. */
+	private static final Map<UUID, Integer> LAST_UPDATE = new HashMap<>();
+
 	static void register() {
 		SettingsPayloads.register();
 		ServerPlayNetworking.registerGlobalReceiver(SettingsPayloads.Request.TYPE, (payload, context) -> sync(context.player()));
-		ServerPlayNetworking.registerGlobalReceiver(SettingsPayloads.ChoicesUpdate.TYPE,
-				(payload, context) -> applyChoices(context.player(), payload.choices()));
-		ServerPlayNetworking.registerGlobalReceiver(SettingsPayloads.ConfigUpdate.TYPE,
-				(payload, context) -> applyConfig(context.player(), payload.configJson()));
+		ServerPlayNetworking.registerGlobalReceiver(SettingsPayloads.ChoicesUpdate.TYPE, (payload, context) -> {
+			if (allowUpdate(context.player())) applyChoices(context.player(), payload.choices());
+		});
+		ServerPlayNetworking.registerGlobalReceiver(SettingsPayloads.ConfigUpdate.TYPE, (payload, context) -> {
+			if (allowUpdate(context.player())) applyConfig(context.player(), payload.configJson());
+		});
 	}
 
-	/** The host of a singleplayer world or an operator (the level of /gamemode) may change the server settings. */
+	static void forget(UUID player) {
+		LAST_UPDATE.remove(player);
+	}
+
+	static void clear() {
+		LAST_UPDATE.clear();
+	}
+
+	/** At most one change per second per player, so a modified client can't flood the server. */
+	private static boolean allowUpdate(ServerPlayer player) {
+		int now = player.level().getServer().getTickCount();
+		Integer last = LAST_UPDATE.get(player.getUUID());
+		if (last != null && now - last < MIN_TICKS_BETWEEN_UPDATES) return false;
+		LAST_UPDATE.put(player.getUUID(), now);
+		return true;
+	}
+
+	/**
+	 * The host of a singleplayer world or an admin operator may change the server settings. The settings include the
+	 * address the server sends player chat to, so the lower operator levels may not.
+	 */
 	static boolean canEditConfig(ServerPlayer player) {
 		return player.level().getServer().isSingleplayerOwner(player.nameAndId())
-				|| player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
+				|| player.permissions().hasPermission(Permissions.COMMANDS_ADMIN);
 	}
 
+	/** Players who may not change the server settings don't get to see them either (they include the chat address). */
 	private static void sync(ServerPlayer player) {
 		ModConfig cfg = ModConfig.get();
 		GuideChoices choices = GuideChoices.of(GuideState.of(player), cfg.npcEnabledByDefault, cfg.chatEnabled);
-		ServerPlayNetworking.send(player, new SettingsPayloads.Sync(choices, cfg.guideName, cfg.toJson(), canEditConfig(player)));
+		boolean canEdit = canEditConfig(player);
+		ServerPlayNetworking.send(player, new SettingsPayloads.Sync(choices, cfg.guideName, canEdit ? cfg.toJson() : "",
+				canEdit, cfg.chatEnabled));
 	}
 
 	/** Applies only what differs from the current choices, with the same effects as the /guide commands. */
@@ -52,7 +85,8 @@ final class GuideSettings {
 		GuideChoices now = GuideChoices.of(progress, cfg.npcEnabledByDefault, cfg.chatEnabled);
 		if (!Objects.equals(now.name(), wanted.name())) GuideManager.rename(player, wanted.storedName());
 		if (!Objects.equals(now.musings(), wanted.musings())) progress.musings = wanted.storedMusings();
-		if (now.chat() != wanted.chat()) progress.chatEnabled = wanted.chat();
+		// small talk can only be switched on when the server allows it
+		if (now.chat() != wanted.chat() && (cfg.chatEnabled || !wanted.chat())) progress.chatEnabled = wanted.chat();
 		if (now.character() != wanted.character()) GuideManager.setNpcEnabled(player, wanted.character());
 	}
 

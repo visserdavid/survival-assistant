@@ -116,6 +116,14 @@ final class Rows {
 		return this;
 	}
 
+	/** Greys out the option added last and explains why in its tooltip. */
+	Rows lockLast(Component reason) {
+		AbstractWidget last = pending.getLast();
+		last.active = false;
+		last.setTooltip(Tooltip.create(reason));
+		return this;
+	}
+
 	/** A button over the whole width (opens something; always usable). */
 	Rows wideButton(AbstractWidget button) {
 		flush();
