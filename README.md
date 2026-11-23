@@ -359,7 +359,7 @@ for the guide and advice, and on the client for the cards.
 ```sh
 ./gradlew build                 # builds the jar and runs the unit tests
 ./gradlew runClient             # starts a development client
-./gradlew installToModrinth     # copies the jar into a Modrinth App instance ("Mod Testing" by default)
+./gradlew installToModrinth     # copies the jar into a Modrinth App instance ("ModTesting" by default)
 ./gradlew installToModrinth -PmodrinthInstance="My Instance"
 ```
 Build output goes to `%LOCALAPPDATA%/gradle-builds/survivalassistant` when that variable exists (Windows),

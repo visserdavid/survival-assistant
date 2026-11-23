@@ -100,7 +100,7 @@ tasks.named("assemble") { finalizedBy("copyJarsToProject") }
 tasks.register("installToModrinth", Copy) {
 	group = "survivalassistant"
 	description = "Copies the mod jar into the Modrinth App instance's mods folder."
-	def instance = project.findProperty("modrinthInstance") ?: "Mod Testing"
+	def instance = project.findProperty("modrinthInstance") ?: "ModTesting"
 	def appData = System.getenv("APPDATA")
 	def modsDir = file("${appData ?: '.'}/ModrinthApp/profiles/${instance}/mods")
 	dependsOn tasks.named("jar")
