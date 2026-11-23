@@ -30,6 +30,9 @@ package io.github.visserdavid.survivalassistant.advice;
  * @param bedInInventory a bed in the inventory (not a placed one)
  * @param bookshelves    valid bookshelves around the best enchanting table nearby (15 is the maximum that counts)
  * @param advancements   the vanilla advancements the chapters track that this player has completed
+ * @param structure      id path of the notable structure the player stands in ("village_plains", "shipwreck",
+ *                       "desert_pyramid", "trial_chambers", ...), or "" (see {@link #STRUCTURES})
+ * @param ridingTamedHorse riding a tamed horse, donkey, mule or camel
  */
 public record SurvivalContext(
 		int dayIndex,
@@ -88,8 +91,35 @@ public record SurvivalContext(
 		int bookshelves,
 		boolean hasAnvil,
 		int xpLevel,
-		java.util.Set<String> advancements
+		java.util.Set<String> advancements,
+		// chapters 6-8 (farming and animals, the ocean, exploring)
+		String structure,
+		boolean hasBoat,
+		boolean ridingTamedHorse,
+		boolean hasMilk,
+		int sugarCane,
+		boolean hasHeartOfTheSea,
+		boolean hasTurtleHelmet,
+		boolean hasTrident,
+		boolean hasFilledMap,
+		boolean hasSpyglass
 ) {
+	/** Structures the guide knows about (ids in data/minecraft/worldgen/structure of the 26.3 data). */
+	public static final java.util.Set<String> STRUCTURES = java.util.Set.of(
+			"village_plains", "village_desert", "village_savanna", "village_snowy", "village_taiga",
+			"shipwreck", "shipwreck_beached", "ocean_ruin_cold", "ocean_ruin_warm",
+			"desert_pyramid", "jungle_pyramid", "trial_chambers");
+
+	/** In a shipwreck or an ocean ruin. */
+	public boolean inWreck() {
+		return structure.startsWith("shipwreck") || structure.startsWith("ocean_ruin");
+	}
+
+	/** In a desert or jungle temple. */
+	public boolean inTemple() {
+		return structure.equals("desert_pyramid") || structure.equals("jungle_pyramid");
+	}
+
 	public static final String OVERWORLD = "overworld";
 	public static final String NETHER = "nether";
 	public static final String END = "end";
@@ -133,6 +163,9 @@ public record SurvivalContext(
 				emeralds, trades, blazeRods, netherWart, bookshelves, xpLevel;
 		private String dimension = OVERWORLD;
 		private java.util.Set<String> advancements = new java.util.HashSet<>();
+		private String structure = "";
+		private boolean hasBoat, ridingTamedHorse, hasMilk, hasHeartOfTheSea, hasTurtleHelmet, hasTrident, hasFilledMap, hasSpyglass;
+		private int sugarCane;
 		private boolean inVillage, hasEnchantedBook, goldArmorWorn, bedInInventory, ghastNearby, piglinNearby, hasBrewingStand, hasAnvil;
 		private float health = 20f;
 		private boolean hasCraftingTable, hasFurnace, hasBed, hasChest, hasShield, hasIronArmor, hasWaterBucket,
@@ -194,6 +227,16 @@ public record SurvivalContext(
 		public Builder anvil(boolean v) { hasAnvil = v; return this; }
 		public Builder xpLevel(int v) { xpLevel = v; return this; }
 		public Builder advancement(String v) { advancements.add(v); return this; }
+		public Builder structure(String v) { structure = v; inVillage = v.startsWith("village_"); return this; }
+		public Builder boat(boolean v) { hasBoat = v; return this; }
+		public Builder ridingHorse(boolean v) { ridingTamedHorse = v; return this; }
+		public Builder milk(boolean v) { hasMilk = v; return this; }
+		public Builder sugarCane(int v) { sugarCane = v; return this; }
+		public Builder heartOfTheSea(boolean v) { hasHeartOfTheSea = v; return this; }
+		public Builder turtleHelmet(boolean v) { hasTurtleHelmet = v; return this; }
+		public Builder trident(boolean v) { hasTrident = v; return this; }
+		public Builder filledMap(boolean v) { hasFilledMap = v; return this; }
+		public Builder spyglass(boolean v) { hasSpyglass = v; return this; }
 
 		public SurvivalContext build() {
 			return new SurvivalContext(dayIndex, timeOfDay, health, food, logs, planks, hasCraftingTable, pickaxeTier, swordTier,
@@ -201,7 +244,9 @@ public record SurvivalContext(
 					sheltered, underground, thundering, hostilesNearby, creeperNearby, ticksSinceRest, lavaNearby, fallingBlockAbove,
 					digDownStreak, cropsNearby, bread, animalsBred, armorPieces, hasBow, arrows, diamonds, obsidian, hasFlintAndSteel,
 					hasEnchantingTable, dimension, inVillage, emeralds, trades, hasEnchantedBook, goldArmorWorn, blazeRods, netherWart,
-					bedInInventory, ghastNearby, piglinNearby, hasBrewingStand, bookshelves, hasAnvil, xpLevel, java.util.Set.copyOf(advancements));
+					bedInInventory, ghastNearby, piglinNearby, hasBrewingStand, bookshelves, hasAnvil, xpLevel, java.util.Set.copyOf(advancements),
+					structure, hasBoat, ridingTamedHorse, hasMilk, sugarCane, hasHeartOfTheSea, hasTurtleHelmet, hasTrident,
+					hasFilledMap, hasSpyglass);
 		}
 	}
 }

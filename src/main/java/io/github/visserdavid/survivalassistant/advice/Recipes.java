@@ -86,7 +86,24 @@ public final class Recipes {
 			Map.entry("bookshelves", new Recipe("minecraft:bookshelf", 1, List.of("###", "XXX", "###"),
 					Map.of('#', PLANKS, 'X', "minecraft:book"))),
 			Map.entry("anvil", new Recipe("minecraft:anvil", 1, List.of("III", " i ", "iii"),
-					Map.of('I', "minecraft:iron_block", 'i', IRON)))
+					Map.of('I', "minecraft:iron_block", 'i', IRON))),
+			// chapter 6: a bucket for the milk, a fishing rod, a campfire under the hive, a saddle
+			Map.entry("milk", new Recipe("minecraft:bucket", 1, List.of("# #", " # "), Map.of('#', IRON))),
+			Map.entry("fishing", new Recipe("minecraft:fishing_rod", 1, List.of("  #", " #X", "# X"),
+					Map.of('#', STICK, 'X', "minecraft:string"))),
+			Map.entry("honey", new Recipe("minecraft:campfire", 1, List.of(" S ", "SCS", "LLL"),
+					Map.of('S', STICK, 'C', "minecraft:coal", 'L', "minecraft:oak_log"))),
+			Map.entry("horse", new Recipe("minecraft:saddle", 1, List.of(" X ", "X#X"),
+					Map.of('X', "minecraft:leather", '#', IRON))),
+			// chapter 7
+			Map.entry("boat", new Recipe("minecraft:oak_boat", 1, List.of("# #", "###"), Map.of('#', PLANKS))),
+			Map.entry("turtle_helmet", new Recipe("minecraft:turtle_helmet", 1, List.of("XXX", "X X"),
+					Map.of('X', "minecraft:turtle_scute"))),
+			// chapter 8
+			Map.entry("map", new Recipe("minecraft:map", 1, List.of("###", "#X#", "###"),
+					Map.of('#', "minecraft:paper", 'X', "minecraft:compass"))),
+			Map.entry("spyglass", new Recipe("minecraft:spyglass", 1, List.of(" # ", " X ", " X "),
+					Map.of('#', "minecraft:amethyst_shard", 'X', "minecraft:copper_ingot")))
 	);
 
 	public static Optional<Recipe> forTask(String taskId) {

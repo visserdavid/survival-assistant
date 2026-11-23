@@ -38,20 +38,25 @@ as long as you're working on a chapter.
 | 3 | **Villages and trading** | 2 | Find a village, trade (5 times), 10 emeralds, an enchanted book from a librarian, an iron golem |
 | 4 | **The Nether** | 2 | Golden armor for the piglins, enter the Nether, find a fortress, blaze rods, Nether wart, back home safely |
 | 5 | **Brewing and enchanting** | 4 | A brewing stand, your first potion, 15 bookshelves, level 30, enchanting, an anvil |
+| 6 | **Farming and animals** | 2 | Tame an animal, milk, 16 sugar cane, catch a fish, honey (safely), ride your own horse |
+| 7 | **The ocean** | 2 | A boat, a shipwreck or ocean ruin, buried treasure, a turtle shell, a trident |
+| 8 | **Exploring** | 2 | A map, a spyglass, a desert or jungle temple, the trial chambers, open a vault |
 
 - Finish a chapter and the guide celebrates and shows the menu: finished chapters in green, the ones you can
   start as buttons, locked ones in grey with what they need. Click **[I'll manage]** to let the guide go.
-- Switch any time with `/guide chapter <name>` (`village`, `nether`, `magic`, ...); progress is kept.
+- Switch any time with `/guide chapter <name>` (`village`, `nether`, `magic`, `husbandry`, `ocean`, `explorer`);
+  progress is kept.
 - Goals like "find a fortress" or "brew a potion" use Minecraft's own advancements, so they're detected exactly
   the way the game counts them. If you already did something, it's ticked off right away.
 - Place notes, once each: the first time in the Nether (beds explode, piglins and gold, fast lava), in a village,
-  and the first night in a village. In the Nether the guide also warns about ghasts and about piglins when
-  you're not wearing gold.
-- More chapters are planned: farming and animals, the ocean, exploring (temples, trial chambers), redstone,
-  and the End.
+  the first night in a village, in a desert temple (the TNT trap), a jungle temple (tripwires), the trial
+  chambers, and at a shipwreck or ocean ruin (drowned, your air). In the Nether the guide also warns about ghasts
+  and about piglins when you're not wearing gold.
+- Still to come: redstone and the End.
 - The checked game facts are in [docs/research-first-days.md](docs/research-first-days.md),
-  [docs/research-chapter-2.md](docs/research-chapter-2.md) and
-  [docs/research-chapters-3-5.md](docs/research-chapters-3-5.md).
+  [docs/research-chapter-2.md](docs/research-chapter-2.md),
+  [docs/research-chapters-3-5.md](docs/research-chapters-3-5.md) and
+  [docs/research-chapters-6-8.md](docs/research-chapters-6-8.md).
 - Finished everything with an older version? `/guide call` brings the guide back with the new chapters.
 - Don't want a character walking around? `/guide character off` removes it. The task card stays, and you
   only get urgent warnings in chat.

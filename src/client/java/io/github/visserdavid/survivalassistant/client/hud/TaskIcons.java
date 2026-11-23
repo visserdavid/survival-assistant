@@ -60,6 +60,25 @@ public final class TaskIcons {
 		put("level_30", Items.EXPERIENCE_BOTTLE);
 		put("enchant", Items.ENCHANTING_TABLE);
 		put("anvil", Items.ANVIL);
+		// chapter 6: farming and animals
+		put("tame_animal", Items.LEAD);
+		put("milk", Items.MILK_BUCKET);
+		put("sugar_cane", Items.SUGAR_CANE);
+		put("fishing", Items.FISHING_ROD);
+		put("honey", Items.HONEY_BOTTLE);
+		put("horse", Items.SADDLE);
+		// chapter 7: the ocean
+		put("boat", Items.OAK_BOAT);
+		put("find_wreck", Items.SUSPICIOUS_GRAVEL);
+		put("treasure", Items.HEART_OF_THE_SEA);
+		put("turtle_helmet", Items.TURTLE_HELMET);
+		put("trident", Items.TRIDENT);
+		// chapter 8: exploring
+		put("map", Items.FILLED_MAP);
+		put("spyglass", Items.SPYGLASS);
+		put("find_temple", Items.CHISELED_SANDSTONE);
+		put("trial_chambers", Items.TRIAL_SPAWNER);
+		put("open_vault", Items.TRIAL_KEY);
 		// alerts
 		put("creeper", Items.CREEPER_HEAD);
 		put("danger", Items.IRON_SWORD);

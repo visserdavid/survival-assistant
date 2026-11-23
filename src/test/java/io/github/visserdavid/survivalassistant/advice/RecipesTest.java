@@ -12,7 +12,8 @@ class RecipesTest {
 	void everyCraftableTaskHasARecipe() {
 		Set<String> noCrafting = Set.of("food", "shelter", "iron", "breed", "full_iron_armor", "diamonds", "obsidian",
 				"find_village", "first_trade", "trades", "emeralds", "enchanted_book", "enter_nether", "find_fortress", "blaze_rods",
-				"nether_wart", "home_safe", "brew_potion", "level_30", "enchant");
+				"nether_wart", "home_safe", "brew_potion", "level_30", "enchant",
+				"tame_animal", "sugar_cane", "find_wreck", "treasure", "trident", "find_temple", "trial_chambers", "open_vault");
 		for (Tip m : Chapters.ALL.stream().flatMap(c -> c.goals().stream()).toList()) {
 			assertEquals(!noCrafting.contains(m.id()), Recipes.forTask(m.id()).isPresent(), m.id());
 		}

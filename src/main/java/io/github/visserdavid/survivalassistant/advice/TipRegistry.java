@@ -138,6 +138,12 @@ public final class TipRegistry {
 	public static final String ADV_FORTRESS = "nether/find_fortress";
 	public static final String ADV_BREW = "nether/brew_potion";
 	public static final String ADV_ENCHANT = "story/enchant_item";
+	public static final String ADV_TAME = "husbandry/tame_an_animal";
+	public static final String ADV_FISH = "husbandry/fishy_business";
+	public static final String ADV_HONEY = "husbandry/safely_harvest_honey";
+	public static final String ADV_TRIDENT = "adventure/throw_trident";
+	public static final String ADV_TRIAL_CHAMBERS = "adventure/minecraft_trials_edition";
+	public static final String ADV_VAULT = "adventure/under_lock_and_key";
 
 	// --- Chapter 3: villages and trading (docs/research-chapters-3-5.md) ---
 	public static final Tip FIND_VILLAGE = Tip.milestone("find_village", 2,
@@ -192,6 +198,51 @@ public final class TipRegistry {
 			SurvivalContext::hasAnvil);
 
 	public static final List<Tip> CHAPTER_MAGIC = List.of(BREWING_STAND, BREW_POTION, BOOKSHELVES, LEVEL_30, ENCHANT, ANVIL);
+
+	// --- Chapter 6: farming and animals (docs/research-chapters-6-8.md) ---
+	public static final Tip TAME_ANIMAL = Tip.milestone("tame_animal", 2,
+			c -> c.has(ADV_TAME));
+	public static final Tip HORSE = Tip.milestone("horse", 2,
+			SurvivalContext::ridingTamedHorse);
+	public static final Tip MILK = Tip.milestone("milk", 2,
+			SurvivalContext::hasMilk);
+	public static final Tip SUGAR_CANE = Tip.milestone("sugar_cane", 2,
+			c -> c.sugarCane() >= 16,
+			SurvivalContext::sugarCane, 16);
+	public static final Tip FISHING = Tip.milestone("fishing", 2,
+			c -> c.has(ADV_FISH));
+	public static final Tip HONEY = Tip.milestone("honey", 2,
+			c -> c.has(ADV_HONEY));
+
+	public static final List<Tip> CHAPTER_HUSBANDRY = List.of(TAME_ANIMAL, MILK, SUGAR_CANE, FISHING, HONEY, HORSE);
+
+	// --- Chapter 7: the ocean ---
+	public static final Tip BOAT = Tip.milestone("boat", 2,
+			SurvivalContext::hasBoat);
+	public static final Tip FIND_WRECK = Tip.milestone("find_wreck", 2,
+			SurvivalContext::inWreck);
+	public static final Tip TREASURE = Tip.milestone("treasure", 2,
+			SurvivalContext::hasHeartOfTheSea);
+	public static final Tip TURTLE_HELMET = Tip.milestone("turtle_helmet", 2,
+			SurvivalContext::hasTurtleHelmet);
+	public static final Tip TRIDENT = Tip.milestone("trident", 2,
+			c -> c.hasTrident() || c.has(ADV_TRIDENT));
+
+	public static final List<Tip> CHAPTER_OCEAN = List.of(BOAT, FIND_WRECK, TREASURE, TURTLE_HELMET, TRIDENT);
+
+	// --- Chapter 8: exploring ---
+	public static final Tip MAP = Tip.milestone("map", 2,
+			SurvivalContext::hasFilledMap);
+	public static final Tip SPYGLASS = Tip.milestone("spyglass", 2,
+			SurvivalContext::hasSpyglass);
+	public static final Tip FIND_TEMPLE = Tip.milestone("find_temple", 2,
+			SurvivalContext::inTemple);
+	public static final Tip TRIAL_CHAMBERS = Tip.milestone("trial_chambers", 2,
+			c -> c.has(ADV_TRIAL_CHAMBERS) || c.structure().equals("trial_chambers"));
+	public static final Tip OPEN_VAULT = Tip.milestone("open_vault", 2,
+			c -> c.has(ADV_VAULT));
+
+	public static final List<Tip> CHAPTER_EXPLORER = List.of(MAP, SPYGLASS, FIND_TEMPLE, TRIAL_CHAMBERS, OPEN_VAULT);
 
 	/** The goals of a chapter (see {@link Chapters}). */
 	public static List<Tip> milestones(int chapter) {

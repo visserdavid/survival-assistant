@@ -2,6 +2,7 @@ package io.github.visserdavid.survivalassistant.advice;
 
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -11,22 +12,24 @@ import net.minecraft.stats.Stats;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.StructureTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EnchantingTableBlock;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.phys.AABB;
 import org.jspecify.annotations.Nullable;
 
@@ -65,6 +68,8 @@ public final class ContextCollector {
 		boolean bow = false, flintAndSteel = false, enchantingTable = false;
 		int emeralds = 0, blazeRods = 0, netherWart = 0, bookshelves = 0;
 		boolean enchantedBook = false, bedInInventory = false, brewingStand = false, anvil = false, goldWorn = false;
+		boolean boat = false, milk = false, heart = false, turtleHelmet = false, trident = false, filledMap = false, spyglass = false;
+		int sugarCane = 0;
 		boolean[] armor = new boolean[4]; // head, chest, legs, feet: iron or better
 
 		var inv = player.getInventory();
@@ -98,6 +103,14 @@ public final class ContextCollector {
 			else if (item == Items.NETHER_WART) netherWart += n;
 			else if (item == Items.BREWING_STAND) brewingStand = true;
 			else if (s.is(ItemTags.ANVIL)) anvil = true;
+			else if (s.is(ItemTags.BOATS) || s.is(ItemTags.CHEST_BOATS)) boat = true;
+			else if (item == Items.MILK_BUCKET) milk = true;
+			else if (item == Items.SUGAR_CANE) sugarCane += n;
+			else if (item == Items.HEART_OF_THE_SEA) heart = true;
+			else if (item == Items.TURTLE_HELMET) turtleHelmet = true;
+			else if (item == Items.TRIDENT) trident = true;
+			else if (item == Items.FILLED_MAP) filledMap = true;
+			else if (item == Items.SPYGLASS) spyglass = true;
 			if (s.is(ItemTags.ARROWS)) arrows += n;
 			markArmor(s, armor);
 
@@ -111,6 +124,8 @@ public final class ContextCollector {
 			Item worn = player.getItemBySlot(slot).getItem();
 			markArmor(player.getItemBySlot(slot), armor);
 			if (player.getItemBySlot(slot).is(ItemTags.PIGLIN_SAFE_ARMOR)) goldWorn = true;
+			if (worn == Items.TURTLE_HELMET) turtleHelmet = true;
+			if (worn == Items.TRIDENT) trident = true;
 			if (slot == EquipmentSlot.OFFHAND) {
 				if (worn == Items.SHIELD) shield = true;
 				continue;
@@ -179,8 +194,10 @@ public final class ContextCollector {
 		AABB far = new AABB(player.blockPosition()).inflate(32);
 		boolean ghast = !overworld && !level.getEntitiesOfClass(Ghast.class, far, Ghast::isAlive).isEmpty();
 		boolean piglin = !overworld && !level.getEntitiesOfClass(Piglin.class, around, Piglin::isAlive).isEmpty();
-		boolean inVillage = overworld && level.structureManager()
-				.getStructureWithPieceAt(player.blockPosition(), StructureTags.VILLAGE).isValid();
+		String structure = overworld ? structureAt(level, player.blockPosition()) : "";
+		boolean inVillage = structure.startsWith("village_");
+		boolean ridingHorse = player.getVehicle() instanceof AbstractHorse horse && horse.isTamed();
+		if (player.getVehicle() instanceof AbstractBoat) boat = true;
 		int trades = player.getStats().getValue(Stats.CUSTOM.get(Stats.TRADED_WITH_VILLAGER));
 		boolean creeper = !level.getEntitiesOfClass(Creeper.class, new AABB(player.blockPosition()).inflate(7), Creeper::isAlive).isEmpty();
 
@@ -189,7 +206,17 @@ public final class ContextCollector {
 				waterBucket, sheltered, underground, level.isThundering(), hostiles, creeper, sinceRest, lava, fallingAbove,
 				digDownStreak, crops, bread, bred, armorPieces, bow, arrows, diamonds, obsidian, flintAndSteel, enchantingTable,
 				dimension, inVillage, emeralds, trades, enchantedBook, goldWorn, blazeRods, netherWart, bedInInventory, ghast, piglin,
-				brewingStand, bookshelves, anvil, player.experienceLevel, advancements(player));
+				brewingStand, bookshelves, anvil, player.experienceLevel, advancements(player),
+				structure, boat, ridingHorse, milk, sugarCane, heart, turtleHelmet, trident, filledMap, spyglass);
+	}
+
+	/** The notable structure ({@link SurvivalContext#STRUCTURES}) the position is in, or "". */
+	private static String structureAt(ServerLevel level, BlockPos pos) {
+		StructureStart start = level.structureManager().getStructureWithPieceAt(pos,
+				holder -> holder.is(key -> SurvivalContext.STRUCTURES.contains(key.identifier().getPath())));
+		if (!start.isValid()) return "";
+		Identifier id = level.registryAccess().lookupOrThrow(Registries.STRUCTURE).getKey(start.getStructure());
+		return id == null ? "" : id.getPath();
 	}
 
 	/** "overworld", "nether", "end", or the path of another dimension's id. */
