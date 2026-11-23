@@ -87,7 +87,23 @@ Tips:
 - If answers arrive too late on the CPU, raise `chatTimeoutSeconds` or lower `chatMaxTokens`.
 - If the guide sounds too wild or too dull, change `chatTemperature` (0.6 calm – 1.0 playful).
 
-## 5. What we could not verify
+## 5. Measured on our test machine (November 2026)
+RTX 5070 (12 GB), Ryzen 7 7700, 32 GB RAM, llama.cpp build 12602 (Vulkan), `-ngl 99 -c 4096 --parallel 1`,
+six guide requests in a row with history (musings, a question, rain), replies in Dutch:
+
+| Model | VRAM used | Speed | Notes |
+|---|---|---|---|
+| Gemma 4 E4B Q4_K_M | about 3.2 GB | 115-130 tokens/s (about 0.3 s per reply) | Natural, playful Dutch with small grammar slips; added an emoji once (the mod now removes emoji). |
+| Qwen3.5 4B Q4_K_M | about 3.0 GB | about 130 tokens/s | Longer replies, more invented Dutch words. |
+
+- `-fa off` was as fast as the default and avoids a flash-attention fallback to the CPU with Vulkan.
+- `--parallel 1` (instead of the default 4 slots) kept replies consistently fast; with 4 slots some requests
+  took 7 s because the prompt had to be processed again.
+- Google's recommended Gemma 4 sampling (`--temp 1.0 --top-p 0.95 --top-k 64`) gave the most accurate and
+  varied replies; the DRY sampler (`--dry-multiplier 0.8`) is added against repeated phrases over a long session.
+- Thinking stayed off (`enable_thinking: false`): no reasoning text, replies within a fraction of a second.
+
+## 6. What we could not verify
 - Dutch-language quality of the small 2026 models (no published benchmark yet).
 - Exact VRAM use: GGUF file sizes differ between community builds, and the reported 2.2 GiB for Gemma 4 E4B is a
   single, unverified measurement.

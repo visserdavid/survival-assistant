@@ -67,6 +67,17 @@ class ChatPromptTest {
 		assertTrue(json.contains("\"content\":\"zei \\\"hoi\\\"\\nen\\\\dan\""), json);
 		assertTrue(json.contains("\"temperature\":0.80"));
 		assertTrue(json.contains("\"enable_thinking\":false"));
+		String serverDefault = ChatPrompt.toRequestJson(List.of(new ChatPrompt.Turn(ChatPrompt.Role.USER, "hoi")), "local", 80, -1);
+		assertFalse(serverDefault.contains("temperature"), "below 0: leave the temperature to the server");
+	}
+
+	@Test
+	void emojiAreRemoved() {
+		assertEquals("Oh, een boerderij!", ChatPrompt.cleanReply("Oh, een boerderij! 😊", "Gids"));
+		assertEquals("Kijk, koeien!", ChatPrompt.cleanReply("Kijk, koeien! 🐄❤️", "Gids"));
+		assertEquals("Thumbs up", ChatPrompt.cleanReply("Thumbs 👍🏽 up", "Gids"));
+		assertEquals("你好，朋友！", ChatPrompt.cleanReply("你好，朋友！🎉", "Gids"), "other scripts stay");
+		assertEquals("Привет! مرحبا", ChatPrompt.cleanReply("Привет! مرحبا", "Gids"));
 	}
 
 	@Test

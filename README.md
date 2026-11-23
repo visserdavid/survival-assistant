@@ -137,14 +137,49 @@ The replies are short (at most 80 tokens), so a small model is enough, and it ma
 | 6 GB VRAM or less, or integrated graphics | **Qwen3.5 4B** | CPU: `-ngl 0` (needs 16 GB+ RAM) | about 3 GB of RAM |
 | an older or slow CPU on top of that | Qwen3.5 2B | GPU or CPU | about 1.5 GB |
 
-```
-llama-server -m gemma-4-E4B-it-Q4_K_M.gguf -ngl 99 -c 4096 --port 8080
-llama-server -m Qwen3.5-4B-Q4_K_M.gguf -ngl 0 -c 2048 --port 8080   # CPU only, VRAM stays free
-```
 - Use the normal instruct model, not a "reasoning"/"thinking" variant, and skip the `mmproj` (vision) file.
-  The mod already switches thinking off with every request.
 - If the game stutters, lower `-ngl` or `-c`; if replies arrive too late on the CPU, raise `chatTimeoutSeconds`.
-  `chatTemperature` sets the mood (0.6 calm, 1.0 playful).
+
+#### Installing it (Windows)
+1. **Install llama.cpp** (the `llama-server` program):
+   ```
+   winget install ggml.llamacpp
+   ```
+   This build uses Vulkan, so it works on NVIDIA, AMD and Intel graphics. Check that it sees your card with
+   `llama-server --list-devices` (for example `Vulkan0: NVIDIA GeForce RTX 5070`).
+2. **Download a model** (one `.gguf` file) into a folder of your choice, for example `C:\Users\<you>\models`:
+   - Gemma 4 E4B, 5.0 GB: [gemma-4-E4B-it-Q4_K_M.gguf](https://huggingface.co/unsloth/gemma-4-E4B-it-GGUF/resolve/main/gemma-4-E4B-it-Q4_K_M.gguf)
+   - Qwen3.5 4B, 2.7 GB: [Qwen3.5-4B-Q4_K_M.gguf](https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf)
+3. **Create a start file** next to the model, for example `start-guide-gemma.bat`:
+   ```bat
+   @echo off
+   cd /d "%~dp0"
+   llama-server -m gemma-4-E4B-it-Q4_K_M.gguf --device Vulkan0 -ngl 99 -c 4096 --parallel 1 -fa off ^
+     --port 8080 --host 127.0.0.1 --chat-template-kwargs "{\"enable_thinking\":false}" ^
+     --temp 1.0 --top-p 0.95 --top-k 64 --dry-multiplier 0.8 --dry-base 1.75 --dry-allowed-length 2
+   pause
+   ```
+   For Qwen3.5 4B use its own file name and `--temp 0.7 --top-p 0.8 --top-k 20 --presence-penalty 1.5`
+   instead of the Gemma sampling settings.
+4. **Play**: double-click the start file (keep its window open), start Minecraft, and type `/guide chat on`.
+
+What the settings do, and why:
+
+| Setting | Why |
+|---|---|
+| `--device Vulkan0` | Use the graphics card, not a second (integrated) GPU. Pick the number `--list-devices` shows for your card. |
+| `-ngl 99` | The whole model on the graphics card: replies in well under a second. |
+| `-c 4096 --parallel 1` | One player needs one slot; 4096 tokens fit the guide's prompt and its remembered conversation. |
+| `-fa off` | With Vulkan, flash attention for this model partly falls back to the CPU; off is just as fast here. |
+| `enable_thinking false` | **No reasoning.** A reasoning model first writes a hidden plan, which takes seconds and adds nothing to a one-line remark. The mod also sends this with every request. |
+| `--temp 1.0 --top-p 0.95 --top-k 64` | Google's recommended Gemma 4 sampling: playful but coherent. (Qwen: `0.7 / 0.8 / 20`.) |
+| `--dry-*` (Gemma), `--presence-penalty 1.5` (Qwen) | Discourage repeating words and phrases from earlier replies, so the guide doesn't keep saying the same thing. |
+
+Measured on an RTX 5070 (12 GB): Gemma 4 E4B used about 3.2 GB of VRAM and wrote 115–130 tokens per second,
+so a reply arrives in about 0.3 s. Its Dutch was clearly better than Qwen3.5 4B's, which was a bit faster
+(about 130 tokens per second, 3.0 GB) but made up words now and then. The mod adds its own guard against
+repetition (the guide remembers its last replies and is told to vary its wording) and removes emoji, which
+Minecraft's font can't show.
 - No published benchmark covers the Dutch of these small models yet, so try both Gemma 4 and Qwen3.5 and keep
   the one you like. Sizes, alternatives (Phi-4-mini, Ministral 3, Llama 3.2) and sources are in
   [docs/research-chat-models.md](docs/research-chat-models.md).
@@ -195,7 +230,7 @@ llama-server -m Qwen3.5-4B-Q4_K_M.gguf -ngl 0 -c 2048 --port 8080   # CPU only, 
 | `chatHearingDistance` | `16` | The guide reacts to chat within this distance |
 | `chatSightRadius` | `16` | Mobs within this distance (and in sight) count as nearby |
 | `chatMaxTokens` | `80` | Maximum reply length |
-| `chatTemperature` | `0.8` | Higher is more playful |
+| `chatTemperature` | `-1` | `-1` uses the server's setting (recommended); 0.6 is calm, 1.0 playful |
 | `chatTimeoutSeconds` | `20` | Give up on an answer after this long |
 | `chatHistoryTurns` | `6` | Exchanges the guide remembers within a session |
 

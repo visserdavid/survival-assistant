@@ -107,6 +107,7 @@ public final class ChatPrompt {
 				.append("a light joke, a curious question. Nothing deep.\n\n")
 				.append("Rules:\n")
 				.append("- Always reply in ").append(languageName(scene.languageCode())).append(".\n")
+				.append("- Vary your wording: don't repeat phrases or openings you already used in this conversation.\n")
 				.append("- At most two short sentences, like a chat message. No lists, no emoji, no quotation marks, ")
 				.append("no actions between asterisks.\n")
 				.append("- Talk to the player directly. Never put your own name in front of your reply.\n")
@@ -163,10 +164,11 @@ public final class ChatPrompt {
 	// ---------------------------------------------------------------- JSON
 
 	/** Request body for an OpenAI-compatible {@code /v1/chat/completions} endpoint such as llama-server. */
+	/** @param temperature sent along when 0 or higher; below 0 the server's own setting is used */
 	public static String toRequestJson(List<Turn> messages, String model, int maxTokens, double temperature) {
 		StringBuilder b = new StringBuilder("{\"model\":").append(quote(model))
 				.append(",\"max_tokens\":").append(maxTokens)
-				.append(",\"temperature\":").append(String.format(Locale.ROOT, "%.2f", temperature))
+				.append(temperature >= 0 ? ",\"temperature\":" + String.format(Locale.ROOT, "%.2f", temperature) : "")
 				.append(",\"stream\":false")
 				// Reasoning models (Qwen and others) would otherwise think first: slow and pointless for small talk.
 				.append(",\"chat_template_kwargs\":{\"enable_thinking\":false}")
@@ -210,11 +212,30 @@ public final class ChatPrompt {
 		if (raw == null) return "";
 		String s = THINK.matcher(raw).replaceAll("");
 		s = ACTIONS.matcher(s).replaceAll("");
+		s = stripSymbols(s);
 		s = s.replaceAll("\\s+", " ").strip();
 		String prefix = guideName + ":";
 		if (s.regionMatches(true, 0, prefix, 0, prefix.length())) s = s.substring(prefix.length()).strip();
 		s = stripQuotes(s);
 		return shorten(s);
+	}
+
+	/**
+	 * Removes emoji and other pictographs: Minecraft's font has no glyphs for them, so they would show up as boxes.
+	 * Letters, digits, punctuation and spaces of every script stay.
+	 */
+	static String stripSymbols(String s) {
+		StringBuilder b = new StringBuilder(s.length());
+		s.codePoints().forEach(cp -> {
+			int type = Character.getType(cp);
+			boolean symbol = type == Character.OTHER_SYMBOL || type == Character.SURROGATE || type == Character.PRIVATE_USE
+					|| type == Character.UNASSIGNED
+					|| cp == 0x200D // zero-width joiner (glues emoji together)
+					|| (cp >= 0xFE00 && cp <= 0xFE0F) // variation selectors (emoji presentation)
+					|| (cp >= 0x1F3FB && cp <= 0x1F3FF); // skin tone modifiers
+			if (!symbol) b.appendCodePoint(cp);
+		});
+		return b.toString();
 	}
 
 	private static String stripQuotes(String s) {

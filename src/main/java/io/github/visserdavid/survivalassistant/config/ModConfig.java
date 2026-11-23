@@ -70,8 +70,11 @@ public final class ModConfig {
 	public int chatSightRadius = 16;
 	/** Maximum length of a reply in tokens. */
 	public int chatMaxTokens = 80;
-	/** Higher is more playful, lower is more predictable. */
-	public double chatTemperature = 0.8;
+	/**
+	 * Higher is more playful, lower is more predictable. -1 (default) uses the server's setting, so the model's
+	 * recommended sampling (set when starting llama-server) applies.
+	 */
+	public double chatTemperature = -1;
 	/** Give up on an answer after this many seconds. */
 	public int chatTimeoutSeconds = 20;
 	/** How many exchanges the guide remembers within a session. */
