@@ -33,6 +33,7 @@ import io.github.visserdavid.survivalassistant.advice.SurvivalContext;
 import io.github.visserdavid.survivalassistant.advice.Tip;
 import io.github.visserdavid.survivalassistant.advice.TipRegistry;
 import io.github.visserdavid.survivalassistant.chat.GuideChat;
+import io.github.visserdavid.survivalassistant.chat.GuideMusings;
 import io.github.visserdavid.survivalassistant.config.ModConfig;
 import io.github.visserdavid.survivalassistant.entity.GuideEntity;
 import io.github.visserdavid.survivalassistant.entity.ai.FollowOwnerGoal;
@@ -157,6 +158,7 @@ public final class GuideManager {
 				progress.homeFallback == null ? pos -> progress.homeFallback = mark(player, pos) : null);
 		respond(player, guide, ctx, progress, forced);
 		GuideChat.observe(player, guide, ctx, progress);
+		GuideMusings.observe(player, guide, ctx, progress);
 		HudState.update(player, HudSnapshot.of(ctx, progress, dayLimit(progress), waypoint(player, progress, ctx, now)));
 	}
 
@@ -417,6 +419,7 @@ public final class GuideManager {
 				.append(Component.literal("] ").withStyle(ChatFormatting.GOLD))
 				.append(text);
 		player.sendSystemMessage(line);
+		GuideMusings.noteRemark(player);
 		if (guide != null) {
 			guide.level().playSound(null, guide.getX(), guide.getY(), guide.getZ(),
 					important ? SoundEvents.VILLAGER_YES : SoundEvents.VILLAGER_AMBIENT, SoundSource.NEUTRAL,
@@ -475,6 +478,7 @@ public final class GuideManager {
 		LAST_EVAL.remove(player.getUUID());
 		DIGS.remove(player.getUUID());
 		GuideChat.forget(player.getUUID());
+		GuideMusings.forget(player.getUUID());
 	}
 
 	public static void onServerStopping() {
@@ -484,6 +488,7 @@ public final class GuideManager {
 		DEATHS.clear();
 		DIGS.clear();
 		GuideChat.clear();
+		GuideMusings.clear();
 	}
 
 	/** /guide tip */

@@ -99,6 +99,19 @@ sending you there. The research and checked game facts are in
 - One-time chat notes the first time you reach deepslate, the lava level, the deep dark or high mountains.
 - Press **K** to show or hide it.
 
+### The guide's musings
+- Walk into a new biome and the guide shares a building idea for it: a farm with a red barn on the plains,
+  a log cabin with a smoking chimney in the taiga, a sandstone market in the desert, a treehouse village in the
+  jungle. Every biome family has its own idea, a scene and a small story or question.
+- Animals in sight get a remark of their own (sheep growing their wool back, a fox asleep, bees and a campfire, ...).
+  The facts in these lines were checked against the game.
+- Quiet by design: at most one musing every 5 minutes (a new biome's building idea comes sooner), only by day,
+  outside or in friendly caves, never during a warning, while muted, or without the guide character.
+- Works without any AI, in all 15 languages. With small talk on (`/guide chat on` and a local model) the model
+  puts the same ideas in its own words.
+- The Nether, the End, the Deep Dark and unknown places stay quiet unless you choose `/guide musings all`
+  (then only careful remarks, no building ideas there). `/guide musings off` turns them off.
+
 ### Small talk with a local AI model (optional)
 - With a local language model running, the guide chats: it remarks on what changes around you (rain or a
   thunderstorm, sunrise and nightfall, entering a cave, a new biome, a mob it hasn't talked about yet) and answers
@@ -143,6 +156,7 @@ llama-server -m Qwen3.5-4B-Q4_K_M.gguf -ngl 0 -c 2048 --port 8080   # CPU only, 
 | `/guide tip` | Get the most important tip right now |
 | `/guide call` | Bring the guide to you (or back after it said goodbye) |
 | `/guide dismiss` | Send the guide away |
+| `/guide musings on\|off\|all` | The guide's remarks about biomes and animals (`all` includes the Nether, End and Deep Dark) |
 | `/guide chat on\|off` | Small talk with the guide through a local language model (saved per player) |
 | `/guide extend` | Let the guide stay 3 more days |
 | `/guide continue` | Start chapter 2 (after all 15 chapter-1 goals) |
@@ -170,6 +184,9 @@ llama-server -m Qwen3.5-4B-Q4_K_M.gguf -ngl 0 -c 2048 --port 8080   # CPU only, 
 | `pointAtResources` | `true` | Guide looks at nearby trees/stone when giving those tips |
 | `navigation` | `true` | Show the way back to your items after dying, and the way home |
 | `homeDistance` | `64` | Show the way home from this distance (24 at dusk/night) |
+| `musings` | `true` | Musings about biomes and animals (players can use `/guide musings`) |
+| `museIntervalSeconds` | `300` | Minimum time between two musings |
+| `musingsInDangerZones` | `false` | Also muse in the Nether, the End, the Deep Dark and unknown places |
 | `chatEnabled` | `false` | Small talk through a local language model (default; players can use `/guide chat on\|off`) |
 | `chatEndpoint` | `http://127.0.0.1:8080/v1/chat/completions` | OpenAI-compatible endpoint (llama-server's default) |
 | `chatModel` | `local` | Model name sent along (llama-server ignores it) |

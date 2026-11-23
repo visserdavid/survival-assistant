@@ -65,9 +65,11 @@ public final class GuideChat {
 		boolean blocked = state.waiting || offline() || now < progress.muteUntil || AdviceEngine.activeUrgent(ctx) != null;
 
 		state.detector.update(surroundings, now, blocked).ifPresent(change -> {
+			// the musings already greet a new biome with a building idea
+			if (change.kind() == ChangeDetector.Kind.NEW_BIOME && GuideMusings.enabled(progress)) return;
 			ChatPrompt.Scene scene = scene(player, surroundings, progress);
 			String note = ChatPrompt.changeNote(scene, change);
-			ask(player, state, ChatPrompt.forChange(scene, state.history, change), note, scene.guideName(), false);
+			ask(player, state, ChatPrompt.forChange(scene, state.history, change), note, scene.guideName(), false, null);
 		});
 	}
 
@@ -101,7 +103,7 @@ public final class GuideChat {
 		Surroundings surroundings = SurroundingsCollector.collect(player, ctx, cfg.chatSightRadius);
 		ChatPrompt.Scene scene = scene(player, surroundings, progress);
 		String said = text.strip();
-		ask(player, state, ChatPrompt.forPlayer(scene, state.history, said), said, guideName, true);
+		ask(player, state, ChatPrompt.forPlayer(scene, state.history, said), said, guideName, true, null);
 	}
 
 	/**
@@ -124,8 +126,39 @@ public final class GuideChat {
 
 	// ---------------------------------------------------------------- request and reply
 
+	// ---------------------------------------------------------------- musings
+
+	/** True while a request for this player is running. */
+	public static boolean busy(ServerPlayer player) {
+		State state = STATES.get(player.getUUID());
+		return state != null && state.waiting;
+	}
+
+	/**
+	 * Lets the language model put a musing in its own words (the English line of {@code key} is the idea).
+	 *
+	 * @return false when small talk is off or the model is offline: the caller then says the handwritten line
+	 */
+	public static boolean muse(ServerPlayer player, @Nullable GuideEntity guide, GuideProgress progress, String key) {
+		ModConfig cfg = ModConfig.get();
+		if (!progress.chatEnabled(cfg.chatEnabled) || offline()) return false;
+		String idea = LangFile.get("en_us", key);
+		if (idea == null) return false;
+		State state = state(player);
+		if (state.waiting) return false;
+		state.detector.conversationAt(player.level().getGameTime());
+
+		SurvivalContext ctx = ContextCollector.collect(player, progress);
+		Surroundings surroundings = SurroundingsCollector.collect(player, ctx, cfg.chatSightRadius);
+		ChatPrompt.Scene scene = scene(player, surroundings, progress);
+		String note = ChatPrompt.museNote(scene, idea);
+		ask(player, state, ChatPrompt.forPlayer(scene, state.history, note), note, scene.guideName(), false,
+				Component.translatable(key));
+		return true;
+	}
+
 	private static void ask(ServerPlayer player, State state, List<ChatPrompt.Turn> messages, String userLine,
-			String guideName, boolean direct) {
+			String guideName, boolean direct, @Nullable Component fallback) {
 		ModConfig cfg = ModConfig.get();
 		MinecraftServer server = player.level().getServer();
 		UUID id = player.getUUID();
@@ -133,11 +166,11 @@ public final class GuideChat {
 
 		state.waiting = true;
 		ChatClient.complete(cfg.chatEndpoint, body, cfg.chatTimeoutSeconds)
-				.whenComplete((raw, error) -> server.execute(() -> deliver(server, id, userLine, raw, error, guideName, direct)));
+				.whenComplete((raw, error) -> server.execute(() -> deliver(server, id, userLine, raw, error, guideName, direct, fallback)));
 	}
 
 	private static void deliver(MinecraftServer server, UUID id, String userLine, @Nullable String raw,
-			@Nullable Throwable error, String guideName, boolean direct) {
+			@Nullable Throwable error, String guideName, boolean direct, @Nullable Component fallback) {
 		State state = STATES.get(id);
 		if (state != null) state.waiting = false;
 		ServerPlayer player = server.getPlayerList().getPlayer(id);
@@ -148,12 +181,17 @@ public final class GuideChat {
 			failed(error);
 			if (direct) {
 				GuideManager.speak(player, guide, Component.translatable("survivalassistant.chat.unavailable").withStyle(ChatFormatting.GRAY));
+			} else if (fallback != null) {
+				GuideManager.speak(player, guide, fallback);
 			}
 			return;
 		}
 
 		String reply = ChatPrompt.cleanReply(raw, guideName);
-		if (reply.isEmpty()) return;
+		if (reply.isEmpty()) {
+			if (fallback != null) GuideManager.speak(player, guide, fallback);
+			return;
+		}
 		state.history.add(new ChatPrompt.Turn(ChatPrompt.Role.USER, userLine));
 		state.history.add(new ChatPrompt.Turn(ChatPrompt.Role.ASSISTANT, reply));
 		ChatPrompt.trimHistory(state.history, ModConfig.get().chatHistoryTurns);

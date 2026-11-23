@@ -42,6 +42,14 @@ public final class ModConfig {
 	/** Let the guide look at nearby trees/stone when giving those tips. */
 	public boolean pointAtResources = true;
 
+	// --- the guide's musings (building ideas, animals, scenes; work with or without a language model)
+	/** Let the guide muse about the biome and animals around you (players can switch it with /guide musings). */
+	public boolean musings = true;
+	/** Minimum time between two musings (a building idea for a new biome only waits for the 2-minute quiet time). */
+	public int museIntervalSeconds = 300;
+	/** Also muse in the Nether, the End, the Deep Dark and unknown places (players can opt in with /guide musings all). */
+	public boolean musingsInDangerZones = false;
+
 	// --- small talk through a local language model (llama.cpp llama-server or any OpenAI-compatible server)
 	/**
 	 * Default for small talk through a local language model (players can override it with /guide chat on|off).

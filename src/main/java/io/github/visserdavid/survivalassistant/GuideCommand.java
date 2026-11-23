@@ -8,8 +8,9 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import io.github.visserdavid.survivalassistant.chat.GuideMusings;
 
-/** /guide call | dismiss | extend | continue | chat on|off | tip | mute &lt;minutes&gt; | character on|off */
+/** /guide call | dismiss | extend | continue | chat on|off | musings on|off|all | tip | mute &lt;minutes&gt; | character on|off */
 public final class GuideCommand {
 	private GuideCommand() {}
 
@@ -29,12 +30,25 @@ public final class GuideCommand {
 									c.getSource().sendSuccess(() -> Component.translatable("survivalassistant.cmd.muted", m), false);
 									return 1;
 								})))
+				.then(Commands.literal("musings")
+						.then(Commands.literal("on").executes(c -> musings(c, null)))
+						.then(Commands.literal("off").executes(c -> musings(c, GuideMusings.OFF)))
+						.then(Commands.literal("all").executes(c -> musings(c, GuideMusings.ALL))))
 				.then(Commands.literal("chat")
 						.then(Commands.literal("on").executes(c -> chat(c, true)))
 						.then(Commands.literal("off").executes(c -> chat(c, false))))
 				.then(Commands.literal("character")
 						.then(Commands.literal("on").executes(c -> character(c, true)))
 						.then(Commands.literal("off").executes(c -> character(c, false)))));
+	}
+
+	/** /guide musings on|off|all: the guide's remarks about biomes and animals, stored per player. */
+	private static int musings(CommandContext<CommandSourceStack> c, String value) throws CommandSyntaxException {
+		ServerPlayer p = c.getSource().getPlayerOrException();
+		io.github.visserdavid.survivalassistant.state.GuideState.of(p).musings = value;
+		String key = value == null ? "on" : value;
+		c.getSource().sendSuccess(() -> Component.translatable("survivalassistant.cmd.musings_" + key), false);
+		return 1;
 	}
 
 	/** /guide chat on|off: small talk through a local language model, stored per player. */

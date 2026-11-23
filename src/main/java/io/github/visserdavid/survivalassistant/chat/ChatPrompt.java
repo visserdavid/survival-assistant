@@ -70,6 +70,12 @@ public final class ChatPrompt {
 		return "[" + what + " Make one short, spontaneous remark about it to " + scene.playerName() + ".]";
 	}
 
+	/** The user line for a musing: the idea comes from the handwritten (checked) English text. */
+	public static String museNote(Scene scene, String idea) {
+		return "[You feel like sharing a thought about this place. Idea: " + idea + " Put it in your own words in one or "
+				+ "two playful sentences, or turn it into a light question for " + scene.playerName() + ".]";
+	}
+
 	private static List<Turn> messages(Scene scene, List<Turn> history, String lastUserText) {
 		List<Turn> out = new ArrayList<>();
 		out.add(new Turn(Role.SYSTEM, systemPrompt(scene)));
