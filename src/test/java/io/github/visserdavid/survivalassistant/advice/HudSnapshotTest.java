@@ -91,4 +91,16 @@ class HudSnapshotTest {
 		SurvivalContext c = SurvivalContext.builder().logs(3).build();
 		assertEquals(snap(c, new GuideProgress()), snap(c, new GuideProgress()), "equality drives 'only sync when changed'");
 	}
+
+	@Test
+	void completedOnlyListsTheCurrentChapter() {
+		GuideProgress p = new GuideProgress();
+		for (Chapter c : Chapters.ALL) for (Tip t : c.goals()) p.completed.add(t.id());
+		for (Chapter c : Chapters.ALL) {
+			p.chapter = c.number();
+			HudSnapshot s = HudSnapshot.of(SurvivalContext.builder().build(), p, 0);
+			assertEquals(c.goals().stream().map(Tip::id).toList(), s.completed(), c.id());
+			assertTrue(s.completed().size() <= HudSnapshot.MAX_COMPLETED, "fits on the wire: " + c.id());
+		}
+	}
 }

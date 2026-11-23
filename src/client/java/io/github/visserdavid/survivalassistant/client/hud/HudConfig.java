@@ -1,14 +1,10 @@
 package io.github.visserdavid.survivalassistant.client.hud;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import net.fabricmc.loader.api.FabricLoader;
 import io.github.visserdavid.survivalassistant.SurvivalAssistant;
+import io.github.visserdavid.survivalassistant.config.JsonFiles;
+import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 /** Client-only settings for the task card: config/survivalassistant-client.json. */
@@ -23,7 +19,6 @@ public final class HudConfig {
 		}
 	}
 
-	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static HudConfig instance = new HudConfig();
 
 	/** Screen corner of the task card. */
@@ -55,30 +50,38 @@ public final class HudConfig {
 		return FabricLoader.getInstance().getConfigDir().resolve(SurvivalAssistant.MOD_ID + "-client.json");
 	}
 
+	/**
+	 * Loads the settings. A file that can't be read is left alone (defaults apply); it is only replaced once the
+	 * player changes a setting in the game.
+	 */
 	public static void load() {
 		Path path = path();
+		HudConfig loaded;
+		boolean broken = false;
 		try {
-			if (Files.exists(path)) {
-				try (Reader r = Files.newBufferedReader(path)) {
-					HudConfig loaded = GSON.fromJson(r, HudConfig.class);
-					if (loaded != null) instance = loaded;
-				}
-			}
-		} catch (IOException | RuntimeException e) {
-			SurvivalAssistant.LOGGER.error("Could not read {}, using defaults", path, e);
-			instance = new HudConfig();
+			loaded = JsonFiles.read(path, HudConfig.class);
+		} catch (JsonFiles.ReadFailure e) {
+			SurvivalAssistant.LOGGER.error("Could not read {}, using defaults", path, e.getCause());
+			loaded = null;
+			broken = true;
 		}
-		if (instance.corner == null) instance.corner = Corner.TOP_LEFT;
-		if (instance.mode == null) instance.mode = Mode.COMPACT;
-		if (instance.envLines == null) instance.envLines = EnvLines.FULL;
-		if (instance.guideSkin == null || instance.guideSkin.isBlank()) instance.guideSkin = "default";
-		instance.scale = Math.max(0.5f, Math.min(2.0f, instance.scale));
-		save();
+		HudConfig cfg = loaded == null ? new HudConfig() : loaded;
+		cfg.validate();
+		instance = cfg;
+		if (!broken) save();
+	}
+
+	private void validate() {
+		if (corner == null) corner = Corner.TOP_LEFT;
+		if (mode == null) mode = Mode.COMPACT;
+		if (envLines == null) envLines = EnvLines.FULL;
+		if (guideSkin == null || guideSkin.isBlank()) guideSkin = "default";
+		scale = Math.clamp(scale, 0.5f, 2.0f);
 	}
 
 	public static void save() {
-		try (Writer w = Files.newBufferedWriter(path())) {
-			GSON.toJson(instance, w);
+		try {
+			JsonFiles.write(path(), instance);
 		} catch (IOException e) {
 			SurvivalAssistant.LOGGER.error("Could not write {}", path(), e);
 		}

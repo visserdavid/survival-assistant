@@ -69,6 +69,9 @@ public final class TaskHud implements HudElement {
 
 	// --- completion animation state ---
 	private Set<String> knownCompleted = null;
+	/** Chapter and world of {@link #knownCompleted}: a switch starts a fresh comparison (no false flashes). */
+	private int knownChapter = -1;
+	private Object knownLevel = null;
 	private String flashId = null;
 	private long flashStart = 0;
 
@@ -91,7 +94,7 @@ public final class TaskHud implements HudElement {
 			return;
 		}
 		long now = System.currentTimeMillis();
-		trackCompletion(snap, now);
+		trackCompletion(snap, mc.level, now);
 
 		boolean full = cfg.mode == HudConfig.Mode.FULL;
 		width = HudText.clampWidth(Math.max(Math.max(wantedWidth(mc.font, snap, full, now), navWanted(mc.font, snap)),
@@ -177,8 +180,13 @@ public final class TaskHud implements HudElement {
 		return flashId != null && now - flashStart < FLASH_MS;
 	}
 
-	private void trackCompletion(HudSnapshot snap, long now) {
+	private void trackCompletion(HudSnapshot snap, Object level, long now) {
 		Set<String> completed = new HashSet<>(snap.completed());
+		if (snap.chapter() != knownChapter || level != knownLevel) {
+			knownCompleted = null;
+			knownChapter = snap.chapter();
+			knownLevel = level;
+		}
 		if (knownCompleted != null) {
 			for (Tip m : TipRegistry.milestones(snap.chapter())) {
 				if (completed.contains(m.id()) && !knownCompleted.contains(m.id())) {

@@ -50,6 +50,10 @@ public final class ContextCollector {
 	/** Lava within this many blocks (underground) triggers the lava warning. */
 	private static final int LAVA_SCAN_RADIUS = 3;
 
+	/** The armor slots plus the off hand (shield, totem, a held trident or mace). */
+	private static final EquipmentSlot[] WORN_SLOTS =
+			{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET, EquipmentSlot.OFFHAND};
+
 	private ContextCollector() {}
 
 	public static SurvivalContext collect(ServerPlayer player, GuideProgress progress) {
@@ -154,10 +158,10 @@ public final class ContextCollector {
 		}
 
 		boolean ironArmor = false;
-		for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET, EquipmentSlot.OFFHAND}) {
-			Item worn = player.getItemBySlot(slot).getItem();
-			markArmor(player.getItemBySlot(slot), armor);
-			if (player.getItemBySlot(slot).is(ItemTags.PIGLIN_SAFE_ARMOR)) goldWorn = true;
+		for (EquipmentSlot slot : WORN_SLOTS) {
+			ItemStack wornStack = player.getItemBySlot(slot);
+			Item worn = wornStack.getItem();
+			markArmor(wornStack, armor);
 			if (worn == Items.TURTLE_HELMET) turtleHelmet = true;
 			if (worn == Items.TRIDENT) trident = true;
 			if (worn == Items.ELYTRA) elytra = true;
@@ -168,11 +172,9 @@ public final class ContextCollector {
 				if (worn == Items.SHIELD) shield = true;
 				continue;
 			}
-			if (worn == Items.IRON_HELMET || worn == Items.IRON_CHESTPLATE || worn == Items.IRON_LEGGINGS || worn == Items.IRON_BOOTS
-					|| worn == Items.DIAMOND_HELMET || worn == Items.DIAMOND_CHESTPLATE || worn == Items.DIAMOND_LEGGINGS || worn == Items.DIAMOND_BOOTS
-					|| worn == Items.NETHERITE_HELMET || worn == Items.NETHERITE_CHESTPLATE || worn == Items.NETHERITE_LEGGINGS || worn == Items.NETHERITE_BOOTS) {
-				ironArmor = true;
-			}
+			// held in the off hand doesn't count as worn
+			if (wornStack.is(ItemTags.PIGLIN_SAFE_ARMOR)) goldWorn = true;
+			if (armorSlot(wornStack) >= 0) ironArmor = true;
 		}
 
 		// Placed blocks nearby (players usually place a crafting table/furnace/bed right after crafting it).
@@ -315,13 +317,20 @@ public final class ContextCollector {
 
 	/** Marks the armor slot of an iron, diamond or netherite armor piece. */
 	private static void markArmor(ItemStack s, boolean[] armor) {
-		if (s.isEmpty()) return;
+		int slot = armorSlot(s);
+		if (slot >= 0) armor[slot] = true;
+	}
+
+	/** 0 head, 1 chest, 2 legs, 3 feet for an iron, diamond or netherite armor piece; -1 for anything else. */
+	private static int armorSlot(ItemStack s) {
+		if (s.isEmpty()) return -1;
 		String path = BuiltInRegistries.ITEM.getKey(s.getItem()).getPath();
-		if (!(path.startsWith("iron_") || path.startsWith("diamond_") || path.startsWith("netherite_"))) return;
-		if (s.is(ItemTags.HEAD_ARMOR)) armor[0] = true;
-		else if (s.is(ItemTags.CHEST_ARMOR)) armor[1] = true;
-		else if (s.is(ItemTags.LEG_ARMOR)) armor[2] = true;
-		else if (s.is(ItemTags.FOOT_ARMOR)) armor[3] = true;
+		if (!(path.startsWith("iron_") || path.startsWith("diamond_") || path.startsWith("netherite_"))) return -1;
+		if (s.is(ItemTags.HEAD_ARMOR)) return 0;
+		if (s.is(ItemTags.CHEST_ARMOR)) return 1;
+		if (s.is(ItemTags.LEG_ARMOR)) return 2;
+		if (s.is(ItemTags.FOOT_ARMOR)) return 3;
+		return -1;
 	}
 
 	private static int toolTier(Item item) {

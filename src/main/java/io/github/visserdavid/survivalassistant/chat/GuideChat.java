@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -120,10 +119,9 @@ public final class GuideChat {
 	}
 
 	private static boolean named(String text, String guideName, String language) {
-		String lower = text.toLowerCase(Locale.ROOT);
 		String localized = LangFile.get(language, "entity.survivalassistant.guide");
-		return lower.contains(guideName.toLowerCase(Locale.ROOT)) || lower.contains("guide")
-				|| (localized != null && lower.contains(localized.toLowerCase(Locale.ROOT)));
+		return NameMatch.mentions(text, guideName) || NameMatch.mentions(text, "guide")
+				|| (localized != null && NameMatch.mentions(text, localized));
 	}
 
 	// ---------------------------------------------------------------- request and reply
@@ -167,16 +165,22 @@ public final class GuideChat {
 		String body = ChatPrompt.toRequestJson(messages, cfg.chatModel, cfg.chatMaxTokens, cfg.chatTemperature);
 
 		state.waiting = true;
-		ChatClient.complete(cfg.chatEndpoint, body, cfg.chatTimeoutSeconds)
-				.whenComplete((raw, error) -> server.execute(() -> deliver(server, id, userLine, raw, error, guideName, direct, fallback)));
+		try {
+			ChatClient.complete(cfg.chatEndpoint, body, cfg.chatTimeoutSeconds)
+					.whenComplete((raw, error) -> server.execute(() -> deliver(server, id, state, userLine, raw, error, guideName, direct, fallback)));
+		} catch (RuntimeException e) {
+			state.waiting = false;
+			throw e;
+		}
 	}
 
-	private static void deliver(MinecraftServer server, UUID id, String userLine, @Nullable String raw,
+	private static void deliver(MinecraftServer server, UUID id, State state, String userLine, @Nullable String raw,
 			@Nullable Throwable error, String guideName, boolean direct, @Nullable Component fallback) {
-		State state = STATES.get(id);
-		if (state != null) state.waiting = false;
+		state.waiting = false;
+		// The player left (or the server stopped) while the model was thinking: this answer belongs to nobody now.
+		if (STATES.get(id) != state) return;
 		ServerPlayer player = server.getPlayerList().getPlayer(id);
-		if (player == null || state == null) return;
+		if (player == null) return;
 		GuideEntity guide = GuideManager.guideOf(player);
 
 		if (error != null) {
@@ -207,7 +211,12 @@ public final class GuideChat {
 			if (t instanceof IOException e) io = e;
 		}
 		if (io != null) {
-			if (!offline()) {
+			if (offline()) {
+				// already reported
+			} else if (io instanceof ChatClient.BadResponseException bad) {
+				SurvivalAssistant.LOGGER.warn("Guide chat: unusable answer from {} ({}). Trying again in a minute.",
+						ModConfig.get().chatEndpoint, bad.getMessage());
+			} else {
 				SurvivalAssistant.LOGGER.warn("Guide chat: no answer from {} ({}). Is llama-server running? Trying again in a minute.",
 						ModConfig.get().chatEndpoint, io.getClass().getSimpleName());
 			}
@@ -240,7 +249,7 @@ public final class GuideChat {
 
 	private static State state(ServerPlayer player) {
 		return STATES.computeIfAbsent(player.getUUID(),
-				id -> new State(Math.max(10, ModConfig.get().chatCooldownSeconds) * 20L));
+				id -> new State(ModConfig.get().chatCooldownSeconds * 20L));
 	}
 
 	public static void forget(UUID playerId) {
@@ -249,5 +258,6 @@ public final class GuideChat {
 
 	public static void clear() {
 		STATES.clear();
+		offlineUntil = 0;
 	}
 }

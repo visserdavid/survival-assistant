@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ByIdMap;
 import io.github.visserdavid.survivalassistant.SurvivalAssistant;
 import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
 import io.github.visserdavid.survivalassistant.advice.Navigation;
@@ -30,8 +31,12 @@ public final class HudState {
 			ByteBufCodecs.VAR_INT, Navigation.Mark::z,
 			Navigation.Mark::new);
 
+	private static final StreamCodec<ByteBuf, Navigation.Kind> KIND_CODEC =
+			ByteBufCodecs.idMapper(ByIdMap.continuous(Navigation.Kind::ordinal, Navigation.Kind.values(), ByIdMap.OutOfBoundsStrategy.ZERO),
+					Navigation.Kind::ordinal);
+
 	private static final StreamCodec<ByteBuf, Navigation.Waypoint> WAYPOINT_CODEC = StreamCodec.composite(
-			ByteBufCodecs.VAR_INT.map(i -> Navigation.Kind.values()[i], Navigation.Kind::ordinal), Navigation.Waypoint::kind,
+			KIND_CODEC, Navigation.Waypoint::kind,
 			MARK_CODEC, Navigation.Waypoint::target,
 			ByteBufCodecs.VAR_INT, Navigation.Waypoint::ticksLeft,
 			Navigation.Waypoint::new);
@@ -41,7 +46,7 @@ public final class HudState {
 			ByteBufCodecs.VAR_INT, HudSnapshot::dayIndex,
 			ByteBufCodecs.VAR_INT, HudSnapshot::maxDays,
 			ByteBufCodecs.VAR_INT, HudSnapshot::chapter,
-			ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list(64)), HudSnapshot::completed,
+			ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list(HudSnapshot.MAX_COMPLETED)), HudSnapshot::completed,
 			ENTRY_CODEC.apply(ByteBufCodecs.list(HudSnapshot.SHOWN_TASKS)), HudSnapshot::next,
 			ByteBufCodecs.STRING_UTF8, HudSnapshot::urgentId,
 			ByteBufCodecs.optional(WAYPOINT_CODEC), HudSnapshot::waypoint,

@@ -147,7 +147,7 @@ public final class GuideManager {
 		checkDepthNotices(player, progress, guide);
 
 		long now = player.level().getGameTime();
-		long interval = Math.max(1, cfg.tipIntervalSeconds) * 20L;
+		long interval = cfg.tipIntervalSeconds * 20L;
 		Long last = LAST_EVAL.get(player.getUUID());
 		if (last != null && now - last < interval) return;
 		LAST_EVAL.put(player.getUUID(), now);

@@ -1,20 +1,15 @@
 package io.github.visserdavid.survivalassistant.config;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
-import net.fabricmc.loader.api.FabricLoader;
 import io.github.visserdavid.survivalassistant.SurvivalAssistant;
+import io.github.visserdavid.survivalassistant.advice.GuideNames;
+import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 /** Simple JSON config at config/survivalassistant.json. Missing fields fall back to defaults. */
 public final class ModConfig {
-	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
 	/** Number of in-game days the guide stays for chapter 1 (later chapters last as long as the player is busy). */
 	public int maxDays = 3;
@@ -38,7 +33,7 @@ public final class ModConfig {
 	/** Show the way home from this distance (blocks); at dusk/night already from 24 blocks. */
 	public int homeDistance = 64;
 	/** The guide's name (players can choose their own with /guide name). */
-	public String guideName = "Pim";
+	public String guideName = GuideNames.DEFAULT;
 	/** Spawn a guide automatically for new players. */
 	public boolean spawnOnJoin = true;
 	/** Let the guide look at nearby trees/stone when giving those tips. */
@@ -82,28 +77,54 @@ public final class ModConfig {
 	/** How many exchanges the guide remembers within a session. */
 	public int chatHistoryTurns = 6;
 
-	private static ModConfig instance = new ModConfig();
+	private static volatile ModConfig instance = new ModConfig();
 
 	public static ModConfig get() {
 		return instance;
 	}
 
+	/**
+	 * Loads the config and writes it back so new options appear in the file. A file that can't be read is left
+	 * untouched (the defaults apply until it is fixed), so a typo never wipes someone's settings.
+	 */
 	public static void load() {
 		Path path = FabricLoader.getInstance().getConfigDir().resolve(SurvivalAssistant.MOD_ID + ".json");
+		ModConfig loaded;
 		try {
-			if (Files.exists(path)) {
-				try (Reader r = Files.newBufferedReader(path)) {
-					ModConfig loaded = GSON.fromJson(r, ModConfig.class);
-					if (loaded != null) instance = loaded;
-				}
-			}
-			// Always write back so new options appear in the file.
-			try (Writer w = Files.newBufferedWriter(path)) {
-				GSON.toJson(instance, w);
-			}
-		} catch (IOException | RuntimeException e) {
-			SurvivalAssistant.LOGGER.error("Could not load config {}, using defaults", path, e);
+			loaded = JsonFiles.read(path, ModConfig.class);
+		} catch (JsonFiles.ReadFailure e) {
+			SurvivalAssistant.LOGGER.error("Could not read config {}, using defaults until it is fixed", path, e.getCause());
 			instance = new ModConfig();
+			return;
 		}
+		ModConfig cfg = loaded == null ? new ModConfig() : loaded;
+		cfg.validate();
+		instance = cfg;
+		try {
+			JsonFiles.write(path, cfg);
+		} catch (IOException e) {
+			SurvivalAssistant.LOGGER.error("Could not write config {}", path, e);
+		}
+	}
+
+	/** Brings every value into its valid range; empty or missing texts get their default. */
+	void validate() {
+		ModConfig d = new ModConfig();
+		maxDays = Math.max(0, maxDays);
+		extendDays = Math.max(0, extendDays);
+		tipIntervalSeconds = Math.max(1, tipIntervalSeconds);
+		milestoneCooldownSeconds = Math.max(0, milestoneCooldownSeconds);
+		urgentCooldownSeconds = Math.max(0, urgentCooldownSeconds);
+		homeDistance = Math.max(1, homeDistance);
+		museIntervalSeconds = Math.max(60, museIntervalSeconds);
+		chatCooldownSeconds = Math.max(10, chatCooldownSeconds);
+		chatHearingDistance = Math.max(1, chatHearingDistance);
+		chatSightRadius = Math.clamp(chatSightRadius, 1, 64);
+		chatMaxTokens = Math.max(1, chatMaxTokens);
+		chatTimeoutSeconds = Math.max(1, chatTimeoutSeconds);
+		chatHistoryTurns = Math.max(0, chatHistoryTurns);
+		if (!GuideNames.valid(guideName)) guideName = d.guideName;
+		if (chatEndpoint == null || chatEndpoint.isBlank()) chatEndpoint = d.chatEndpoint;
+		if (chatModel == null || chatModel.isBlank()) chatModel = d.chatModel;
 	}
 }

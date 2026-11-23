@@ -121,7 +121,7 @@ public class GuideEntity extends PathfinderMob {
 		// a block was placed where the guide stands: step out of it
 		if (!level().isClientSide() && tickCount % 10 == 0 && isInWall()) {
 			ServerPlayer owner = getOwner();
-			FollowOwnerGoal.teleportNear(this, owner != null ? owner.blockPosition() : blockPosition());
+			if (owner != null) FollowOwnerGoal.teleportNear(this, owner.blockPosition());
 		}
 	}
 

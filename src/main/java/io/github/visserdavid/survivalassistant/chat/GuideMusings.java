@@ -39,7 +39,7 @@ public final class GuideMusings {
 		ModConfig cfg = ModConfig.get();
 		long now = player.level().getGameTime();
 		MuseScheduler scheduler = SCHEDULERS.computeIfAbsent(player.getUUID(),
-				id -> new MuseScheduler(Math.max(60, cfg.museIntervalSeconds) * 20L));
+				id -> new MuseScheduler(cfg.museIntervalSeconds * 20L));
 
 		Surroundings s = SurroundingsCollector.collect(player, ctx, cfg.chatSightRadius);
 		// Without the character only urgent warnings go to chat, so no musings either.
