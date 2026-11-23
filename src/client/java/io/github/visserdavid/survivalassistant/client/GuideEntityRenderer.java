@@ -39,8 +39,10 @@ public class GuideEntityRenderer extends HumanoidMobRenderer<GuideEntity, Humano
 	@Override
 	public void extractRenderState(GuideEntity entity, HumanoidRenderState state, float partialTicks) {
 		super.extractRenderState(entity, state, partialTicks);
-		// all guides share the chosen skin, so switching the model here is safe
-		this.model = GuideSkins.current().slim() ? slim : wide;
+		// The renderer draws with its one model field. Every guide uses the same chosen skin, so the field only
+		// changes when the player picks a skin with other arms, never between two guides in one frame.
+		HumanoidModel<HumanoidRenderState> wanted = GuideSkins.current().slim() ? slim : wide;
+		if (this.model != wanted) this.model = wanted;
 	}
 
 	@Override

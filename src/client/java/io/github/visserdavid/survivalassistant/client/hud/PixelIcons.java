@@ -37,8 +37,10 @@ public final class PixelIcons {
 			"..###..",
 	};
 
-	public static final int CHECK_W = 7;
-	public static final int ARROW_SIZE = 7;
+	public static final int CHECK_W = CHECK[0].length();
+	public static final int PLAY_W = PLAY[0].length();
+	public static final int PLAY_H = PLAY.length;
+	public static final int ARROW_SIZE = ARROW.length;
 
 	/**
 	 * An arrow centred on (cx, cy), pointing up when {@code angle} is 0 and turning clockwise for positive angles
@@ -52,7 +54,6 @@ public final class PixelIcons {
 		draw(g, ARROW, 0, 0, color);
 		g.pose().popMatrix();
 	}
-	public static final int PLAY_W = 4;
 
 	/** A check mark, 7x5, top-left at (x, y). */
 	public static void check(GuiGraphicsExtractor g, int x, int y, int color) {

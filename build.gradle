@@ -10,6 +10,7 @@ if (localAppData != null) {
 
 loom {
 	splitEnvironmentSourceSets()
+	accessWidenerPath = file("src/main/resources/survivalassistant.accesswidener")
 
 	mods {
 		"survivalassistant" {

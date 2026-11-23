@@ -7,8 +7,8 @@ import net.fabricmc.loader.api.FabricLoader;
 import java.io.IOException;
 import java.nio.file.Path;
 
-/** Client-only settings for the task card: config/survivalassistant-client.json. */
-public final class HudConfig {
+/** Client-only settings (the cards, the recipe card, crosshair info, the guide skin): config/survivalassistant-client.json. */
+public final class ClientConfig {
 	public enum Corner { TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT }
 
 	public enum Mode {
@@ -19,7 +19,7 @@ public final class HudConfig {
 		}
 	}
 
-	private static HudConfig instance = new HudConfig();
+	private static volatile ClientConfig instance = new ClientConfig();
 
 	/** Screen corner of the task card. */
 	public Corner corner = Corner.TOP_LEFT;
@@ -42,7 +42,7 @@ public final class HudConfig {
 
 	public enum EnvLines { FULL, COMPACT }
 
-	public static HudConfig get() {
+	public static ClientConfig get() {
 		return instance;
 	}
 
@@ -56,16 +56,16 @@ public final class HudConfig {
 	 */
 	public static void load() {
 		Path path = path();
-		HudConfig loaded;
+		ClientConfig loaded;
 		boolean broken = false;
 		try {
-			loaded = JsonFiles.read(path, HudConfig.class);
+			loaded = JsonFiles.read(path, ClientConfig.class);
 		} catch (JsonFiles.ReadFailure e) {
 			SurvivalAssistant.LOGGER.error("Could not read {}, using defaults", path, e.getCause());
 			loaded = null;
 			broken = true;
 		}
-		HudConfig cfg = loaded == null ? new HudConfig() : loaded;
+		ClientConfig cfg = loaded == null ? new ClientConfig() : loaded;
 		cfg.validate();
 		instance = cfg;
 		if (!broken) save();

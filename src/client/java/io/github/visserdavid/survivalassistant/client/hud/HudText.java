@@ -17,13 +17,10 @@ public final class HudText {
 	private static final float SCROLL_PX_PER_SEC = 22f;
 	private static final long PAUSE_MS = 1400;
 
-	/** Width wanted by the environment card last frame; lets the task card pick a width that suits both. */
-	public static int environmentWanted = 0;
-
 	private HudText() {}
 
 	public static int clampWidth(int wanted) {
-		return Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, wanted));
+		return Math.clamp(wanted, MIN_WIDTH, MAX_WIDTH);
 	}
 
 	/**

@@ -10,6 +10,10 @@ import java.util.Map;
 
 /** Item icon per task / alert id. */
 public final class TaskIcons {
+	/** Ids of the navigation strip icons. */
+	static final String NAV_DEATH = "nav_death";
+	static final String NAV_HOME = "nav_home";
+
 	private static final Map<String, ItemStack> ICONS = new HashMap<>();
 
 	static {
@@ -162,14 +166,14 @@ public final class TaskIcons {
 		put("piglins", Items.GOLD_INGOT);
 		put("warden", Items.SCULK_SHRIEKER);
 		// navigation strip
-		put("nav_death", Items.SKELETON_SKULL);
-		put("nav_home", Items.COMPASS);
+		put(NAV_DEATH, Items.SKELETON_SKULL);
+		put(NAV_HOME, Items.COMPASS);
 	}
 
 	private TaskIcons() {}
 
 	private static void put(String id, Item item) {
-		ICONS.put(id, new ItemStack(item));
+		ICONS.put(id, ItemIcons.of(item));
 	}
 
 	public static ItemStack get(String id) {

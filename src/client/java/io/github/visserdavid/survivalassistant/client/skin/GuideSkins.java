@@ -2,7 +2,7 @@ package io.github.visserdavid.survivalassistant.client.skin;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import io.github.visserdavid.survivalassistant.SurvivalAssistant;
-import io.github.visserdavid.survivalassistant.client.hud.HudConfig;
+import io.github.visserdavid.survivalassistant.client.hud.ClientConfig;
 import io.github.visserdavid.survivalassistant.skin.SkinNames;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
@@ -21,22 +21,20 @@ import java.util.TreeMap;
 
 /**
  * Custom guide skins from {@code config/survivalassistant/skins/}. Client only: every player picks the look of
- * the guides they see. Textures are loaded on the render thread the first time they are needed.
+ * the guides they see. The folder is read once the client has started (see {@link #reload()}) and again with
+ * {@code /guideskin reload}.
  */
 public final class GuideSkins {
 	private GuideSkins() {}
 
 	public static final Identifier DEFAULT_TEXTURE = SurvivalAssistant.id("textures/entity/guide.png");
 
-	/** The skin to draw: texture and arm model. */
-	public record Active(Identifier texture, boolean slim) {}
+	/** A skin to draw: texture and arm model. */
+	public record Skin(Identifier texture, boolean slim) {}
 
-	private record Loaded(Identifier texture, boolean slim) {}
-
-	private static final Active DEFAULT = new Active(DEFAULT_TEXTURE, false);
-	private static final Map<String, Loaded> SKINS = new TreeMap<>();
+	private static final Skin DEFAULT = new Skin(DEFAULT_TEXTURE, false);
+	private static final Map<String, Skin> SKINS = new TreeMap<>();
 	private static final List<String> PROBLEMS = new ArrayList<>();
-	private static boolean loaded;
 
 	public static Path folder() {
 		return FabricLoader.getInstance().getConfigDir().resolve(SurvivalAssistant.MOD_ID).resolve("skins");
@@ -68,24 +66,20 @@ public final class GuideSkins {
 	}
 
 	/** The skin chosen in the client config, or the built-in one when it isn't available. */
-	public static Active current() {
-		if (!loaded) reload();
-		String chosen = HudConfig.get().guideSkin;
+	public static Skin current() {
+		String chosen = ClientConfig.get().guideSkin;
 		if (chosen == null || chosen.equals(SkinNames.DEFAULT)) return DEFAULT;
-		Loaded l = SKINS.get(chosen);
-		return l == null ? DEFAULT : new Active(l.texture(), l.slim());
+		return SKINS.getOrDefault(chosen, DEFAULT);
 	}
 
 	/** True when a custom skin is chosen but not found (the guide then falls back to the built-in skin). */
 	public static boolean chosenMissing() {
-		if (!loaded) reload();
-		String chosen = HudConfig.get().guideSkin;
+		String chosen = ClientConfig.get().guideSkin;
 		return chosen != null && !chosen.equals(SkinNames.DEFAULT) && !SKINS.containsKey(chosen);
 	}
 
 	/** Names of the usable skins, sorted. */
 	public static List<String> names() {
-		if (!loaded) reload();
 		return List.copyOf(SKINS.keySet());
 	}
 
@@ -97,10 +91,9 @@ public final class GuideSkins {
 	/** Reads the folder again. Must run on the render (client main) thread. */
 	public static void reload() {
 		Minecraft mc = Minecraft.getInstance();
-		for (Loaded l : SKINS.values()) mc.getTextureManager().release(l.texture());
+		for (Skin s : SKINS.values()) mc.getTextureManager().release(s.texture());
 		SKINS.clear();
 		PROBLEMS.clear();
-		loaded = true;
 
 		Path dir = folder();
 		if (!Files.isDirectory(dir)) return;
@@ -132,6 +125,6 @@ public final class GuideSkins {
 		}
 		Identifier id = SurvivalAssistant.id(skin.texturePath());
 		mc.getTextureManager().register(id, new DynamicTexture(() -> "guide skin " + skin.name(), image));
-		SKINS.put(skin.name(), new Loaded(id, skin.slim()));
+		SKINS.put(skin.name(), new Skin(id, skin.slim()));
 	}
 }

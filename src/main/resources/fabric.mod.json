@@ -13,6 +13,7 @@
 	"license": "MIT",
 	"icon": "assets/survivalassistant/icon.png",
 	"environment": "*",
+	"accessWidener": "survivalassistant.accesswidener",
 	"entrypoints": {
 		"main": ["io.github.visserdavid.survivalassistant.SurvivalAssistant"],
 		"client": ["io.github.visserdavid.survivalassistant.client.SurvivalAssistantClient"]

@@ -16,12 +16,14 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -32,17 +34,25 @@ import java.util.List;
 public final class CrosshairInfo implements HudElement {
 	private static final int MAX_TEXT_W = 220;
 	private static final int ICON = 10;
+	private static final int ICON_GAP = 2;
+	private static final int LINE_H = 10;
+	/** The box starts this far below the middle of the screen. */
+	private static final int BELOW_CROSSHAIR = 12;
+	private static final int SIDE_PAD = 3;
 
 	/** What was under the crosshair last tick, and for how many ticks in a row. */
-	private static Object target;
-	private static int dwell;
-	/** Ready-made content, rebuilt every tick while the target stays the same. */
-	private static Line line;
+	private @Nullable Object target;
+	private int dwell;
+	/** Ready-made content while the target stays the same, and its wrapped rows. */
+	private @Nullable Line line;
+	private List<FormattedCharSequence> rows = List.of();
+	private int textWidth;
+	private boolean rowsStale;
 
 	private record Line(Component text, int color, ItemStack icon) {}
 
 	/** Called every client tick. */
-	public static void tick(Minecraft mc) {
+	public void tick(Minecraft mc) {
 		Object now = currentTarget(mc);
 		if (now == null || !now.equals(target)) {
 			target = now;
@@ -51,10 +61,16 @@ public final class CrosshairInfo implements HudElement {
 			return;
 		}
 		dwell++;
-		if (dwell >= CrosshairAdvice.DWELL_TICKS) line = build(mc);
+		if (dwell < CrosshairAdvice.DWELL_TICKS) return;
+		// rebuilt every tick, so switching tools updates the colour at once
+		Line fresh = build(mc, now);
+		if (fresh == null ? line != null : !fresh.equals(line)) {
+			line = fresh;
+			rowsStale = true;
+		}
 	}
 
-	private static Object currentTarget(Minecraft mc) {
+	private static @Nullable Object currentTarget(Minecraft mc) {
 		if (mc.player == null || mc.level == null) return null;
 		HitResult hit = mc.hitResult;
 		if (hit instanceof EntityHitResult eh) return eh.getEntity();
@@ -64,14 +80,14 @@ public final class CrosshairInfo implements HudElement {
 		return null;
 	}
 
-	private static Line build(Minecraft mc) {
+	private static @Nullable Line build(Minecraft mc, Object target) {
 		if (target instanceof Entity entity) {
 			String path = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).getPath();
 			if (!CrosshairAdvice.hasMobTip(path)) return null;
 			MutableComponent text = entity.getType().getDescription().copy().withStyle(ChatFormatting.GOLD)
 					.append(Component.literal(": ").withStyle(ChatFormatting.GOLD))
 					.append(Component.translatable("survivalassistant.mob." + path));
-			return new Line(text, 0xFFFFFFFF, ItemStack.EMPTY);
+			return new Line(text, HudColors.WHITE, ItemStack.EMPTY);
 		}
 		if (target instanceof BlockPos pos) {
 			BlockState state = mc.level.getBlockState(pos);
@@ -84,12 +100,12 @@ public final class CrosshairInfo implements HudElement {
 			Component text = works
 					? Component.translatable("survivalassistant.cross.ok", name)
 					: Component.translatable("survivalassistant.cross.needs", name, Component.translatable(need.langKey()));
-			return new Line(text, works ? 0xFF6BD96B : 0xFFFF6B6B, new ItemStack(pickaxeItem(need)));
+			return new Line(text, works ? HudColors.GREEN : HudColors.RED, ItemIcons.of(pickaxeItem(need)));
 		}
 		return null;
 	}
 
-	private static net.minecraft.world.item.Item pickaxeItem(CrosshairAdvice.Pickaxe p) {
+	private static Item pickaxeItem(CrosshairAdvice.Pickaxe p) {
 		return switch (p) {
 			case WOODEN -> Items.WOODEN_PICKAXE;
 			case STONE -> Items.STONE_PICKAXE;
@@ -102,35 +118,34 @@ public final class CrosshairInfo implements HudElement {
 	public void extractRenderState(GuiGraphicsExtractor g, DeltaTracker delta) {
 		Minecraft mc = Minecraft.getInstance();
 		Line l = line;
-		if (l == null || mc.player == null || !HudConfig.get().crosshairInfo) return;
-		if (mc.gui.hud.isHidden() || mc.getDebugOverlay().showDebugScreen() || mc.gui.screen() != null) return;
+		if (l == null || mc.player == null || !ClientConfig.get().crosshairInfo) return;
+		if (HudDraw.hidden(mc) || mc.gui.screen() != null) return;
 		HudSnapshot snap = mc.player.getAttached(HudState.HUD);
 		if (snap == null || !snap.active()) return;
 
 		Font font = mc.font;
+		if (rowsStale) {
+			rows = font.split(l.text(), MAX_TEXT_W);
+			textWidth = 0;
+			for (FormattedCharSequence r : rows) textWidth = Math.max(textWidth, font.width(r));
+			rowsStale = false;
+		}
 		boolean icon = !l.icon().isEmpty();
-		List<FormattedCharSequence> rows = font.split(l.text(), MAX_TEXT_W);
-		int textW = 0;
-		for (FormattedCharSequence r : rows) textW = Math.max(textW, font.width(r));
-		int w = textW + (icon ? ICON + 2 : 0) + 6;
-		int h = rows.size() * 10 + 3;
+		int w = textWidth + (icon ? ICON + ICON_GAP : 0) + 2 * SIDE_PAD;
+		int h = rows.size() * LINE_H + 3;
 		int x = (g.guiWidth() - w) / 2;
-		int y = g.guiHeight() / 2 + 12;
+		int y = g.guiHeight() / 2 + BELOW_CROSSHAIR;
 
-		g.fill(x, y, x + w, y + h, 0x90000000);
-		int tx = x + 3;
+		g.fill(x, y, x + w, y + h, HudColors.CROSSHAIR_BG);
+		int tx = x + SIDE_PAD;
 		if (icon) {
-			g.pose().pushMatrix();
-			g.pose().translate(tx, y + 1);
-			g.pose().scale(ICON / 16f, ICON / 16f);
-			g.item(l.icon(), 0, 0);
-			g.pose().popMatrix();
-			tx += ICON + 2;
+			HudDraw.scaledIcon(g, l.icon(), tx, y + 1, ICON / 16f);
+			tx += ICON + ICON_GAP;
 		}
 		int ty = y + 2;
 		for (FormattedCharSequence r : rows) {
 			g.text(font, r, tx, ty, l.color(), true);
-			ty += 10;
+			ty += LINE_H;
 		}
 	}
 }

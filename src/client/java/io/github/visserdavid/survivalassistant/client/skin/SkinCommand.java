@@ -3,7 +3,7 @@ package io.github.visserdavid.survivalassistant.client.skin;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import io.github.visserdavid.survivalassistant.client.hud.HudConfig;
+import io.github.visserdavid.survivalassistant.client.hud.ClientConfig;
 import io.github.visserdavid.survivalassistant.skin.SkinNames;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -22,7 +22,7 @@ import java.util.Locale;
 public final class SkinCommand {
 	private SkinCommand() {}
 
-	private static final String P = "survivalassistant.skin.";
+	private static final String KEY_PREFIX = "survivalassistant.skin.";
 
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(ClientCommands.literal("guideskin")
@@ -42,11 +42,11 @@ public final class SkinCommand {
 
 	private static int list(CommandContext<FabricClientCommandSource> c) {
 		List<String> names = GuideSkins.names();
-		String active = HudConfig.get().guideSkin;
-		c.getSource().sendFeedback(Component.translatable(P + "list_header", names.size()).withStyle(ChatFormatting.GOLD));
+		String active = ClientConfig.get().guideSkin;
+		c.getSource().sendFeedback(Component.translatable(KEY_PREFIX + "list_header", names.size()).withStyle(ChatFormatting.GOLD));
 		c.getSource().sendFeedback(entry(SkinNames.DEFAULT, active));
 		for (String name : names) c.getSource().sendFeedback(entry(name, active));
-		if (names.isEmpty()) c.getSource().sendFeedback(Component.translatable(P + "empty").withStyle(ChatFormatting.GRAY));
+		if (names.isEmpty()) c.getSource().sendFeedback(Component.translatable(KEY_PREFIX + "empty").withStyle(ChatFormatting.GRAY));
 		reportProblems(c);
 		c.getSource().sendFeedback(folderLink());
 		return 1;
@@ -57,27 +57,27 @@ public final class SkinCommand {
 		return Component.literal((on ? " > " : "   ") + name)
 				.withStyle(Style.EMPTY.withColor(on ? ChatFormatting.GREEN : ChatFormatting.WHITE)
 						.withClickEvent(new ClickEvent.RunCommand("/guideskin set " + name))
-						.withHoverEvent(new HoverEvent.ShowText(Component.translatable(P + "click_to_use"))));
+						.withHoverEvent(new HoverEvent.ShowText(Component.translatable(KEY_PREFIX + "click_to_use"))));
 	}
 
 	private static int set(CommandContext<FabricClientCommandSource> c) {
 		String name = StringArgumentType.getString(c, "name").toLowerCase(Locale.ROOT);
 		if (!name.equals(SkinNames.DEFAULT) && !GuideSkins.names().contains(name)) {
-			c.getSource().sendError(Component.translatable(P + "not_found", name));
+			c.getSource().sendError(Component.translatable(KEY_PREFIX + "not_found", name));
 			return 0;
 		}
-		HudConfig.get().guideSkin = name;
-		HudConfig.save();
-		c.getSource().sendFeedback(Component.translatable(P + "set", name).withStyle(ChatFormatting.GREEN));
+		ClientConfig.get().guideSkin = name;
+		ClientConfig.save();
+		c.getSource().sendFeedback(Component.translatable(KEY_PREFIX + "set", name).withStyle(ChatFormatting.GREEN));
 		return 1;
 	}
 
 	private static int reload(CommandContext<FabricClientCommandSource> c) {
 		GuideSkins.reload();
-		c.getSource().sendFeedback(Component.translatable(P + "reloaded", GuideSkins.names().size()).withStyle(ChatFormatting.GREEN));
+		c.getSource().sendFeedback(Component.translatable(KEY_PREFIX + "reloaded", GuideSkins.names().size()).withStyle(ChatFormatting.GREEN));
 		reportProblems(c);
 		if (GuideSkins.chosenMissing()) {
-			c.getSource().sendError(Component.translatable(P + "fallback", HudConfig.get().guideSkin));
+			c.getSource().sendError(Component.translatable(KEY_PREFIX + "fallback", ClientConfig.get().guideSkin));
 		}
 		return 1;
 	}
@@ -89,16 +89,16 @@ public final class SkinCommand {
 
 	private static void reportProblems(CommandContext<FabricClientCommandSource> c) {
 		for (String p : GuideSkins.problems()) {
-			c.getSource().sendError(Component.translatable(P + "bad_file", p));
+			c.getSource().sendError(Component.translatable(KEY_PREFIX + "bad_file", p));
 		}
 	}
 
 	/** Clickable path that opens the skins folder. */
 	private static Component folderLink() {
 		String path = GuideSkins.folder().toAbsolutePath().toString();
-		return Component.translatable(P + "folder", Component.literal(path)
+		return Component.translatable(KEY_PREFIX + "folder", Component.literal(path)
 				.withStyle(Style.EMPTY.withColor(ChatFormatting.AQUA).withUnderlined(true)
 						.withClickEvent(new ClickEvent.OpenFile(GuideSkins.folder().toAbsolutePath()))
-						.withHoverEvent(new HoverEvent.ShowText(Component.translatable(P + "open_folder")))));
+						.withHoverEvent(new HoverEvent.ShowText(Component.translatable(KEY_PREFIX + "open_folder")))));
 	}
 }
