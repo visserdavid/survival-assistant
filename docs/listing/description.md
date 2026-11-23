@@ -2,7 +2,7 @@
 Project page for Modrinth and CurseForge (paste everything below the line).
 
 Project settings
-- Name: Survival Assistant          Slug: survival-assistant
+- Name: Survival Assistant          Modrinth slug: survival-assistant-ai-support (project id UAPgzbrg)
 - Summary: see docs/listing/summary.txt
 - License: MIT
 - Modrinth categories: adventure, game-mechanics, utility
