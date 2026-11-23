@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.core.Registry;
@@ -16,6 +17,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import io.github.visserdavid.survivalassistant.chat.GuideChat;
 import io.github.visserdavid.survivalassistant.config.ModConfig;
 import io.github.visserdavid.survivalassistant.entity.GuideEntity;
 import io.github.visserdavid.survivalassistant.state.GuideState;
@@ -58,6 +60,7 @@ public class SurvivalAssistant implements ModInitializer {
 		PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {
 			if (player instanceof net.minecraft.server.level.ServerPlayer sp) GuideManager.onBlockBroken(sp, pos);
 		});
+		ServerMessageEvents.CHAT_MESSAGE.register((message, sender, params) -> GuideChat.onChat(sender, message.signedContent()));
 		ServerLifecycleEvents.SERVER_STOPPING.register(server -> GuideManager.onServerStopping());
 		CommandRegistrationCallback.EVENT.register((dispatcher, context, selection) -> GuideCommand.register(dispatcher));
 

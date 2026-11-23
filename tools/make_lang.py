@@ -20,6 +20,8 @@ L = {
                       "Au! Geen paniek: je spullen blijven 5 minuten liggen waar je doodging. Haal ze op, maar voorzichtig!"),
     P + "comfort.2": ("That happens to everyone. Your items are still lying where you fell, for 5 minutes. Hurry, but stay safe.",
                       "Dat overkomt iedereen. Je spullen liggen nog 5 minuten op de plek waar je viel. Snel, maar veilig."),
+    P + "chat.unavailable": ("I seem to have lost my voice. Talk to me again in a minute!",
+                             "Ik ben even mijn stem kwijt. Praat over een minuutje nog eens met me!"),
     P + "all_done": ("You've done everything I can teach you. You're ready for the world!",
                      "Je hebt alles gedaan wat ik je kan leren. Je bent klaar voor de wereld!"),
     P + "progress": ("Goals reached: %s/%s. I'll stay with you for %s more day(s).",
@@ -384,6 +386,10 @@ L = {
     P + "nav.dim.the_end": ("End", "End"),
 
     # ---------------- guide character on/off ----------------
+    P + "cmd.chat_on": ("Small talk on. The guide needs a local language model for this (llama-server at %s); without one it stays quiet.",
+                        "Kletsen staat aan. De gids heeft hiervoor een lokaal taalmodel nodig (llama-server op %s); zonder blijft hij stil."),
+    P + "cmd.chat_off": ("Small talk off. Tips and warnings keep working as usual.",
+                         "Kletsen staat uit. Tips en waarschuwingen werken gewoon door."),
     P + "cmd.character_on": ("The guide character is back. Use /guide character off to hide it again.",
                              "Het gidskarakter is terug. Met /guide character off verberg je het weer."),
     P + "cmd.character_off": ("Guide character off. Your task list stays, and you'll only get urgent warnings in chat.",

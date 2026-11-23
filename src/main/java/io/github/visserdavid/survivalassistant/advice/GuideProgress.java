@@ -16,6 +16,8 @@ public final class GuideProgress {
 	public final Set<String> completed = new LinkedHashSet<>();
 	/** Player's own choice for the guide character; null = use the server default. */
 	public Boolean npcEnabled = null;
+	/** Player's own choice for small talk through a local language model; null = use the server default. */
+	public Boolean chatEnabled = null;
 	/** One-time depth/biome notices already shown (e.g. "deepslate", "lava"). */
 	public final Set<String> depthNotices = new LinkedHashSet<>();
 	/** Fallback home when the player has no bed/respawn point: the first workstation they placed. */
@@ -65,5 +67,9 @@ public final class GuideProgress {
 
 	public boolean npcEnabled(boolean serverDefault) {
 		return npcEnabled != null ? npcEnabled : serverDefault;
+	}
+
+	public boolean chatEnabled(boolean serverDefault) {
+		return chatEnabled != null ? chatEnabled : serverDefault;
 	}
 }

@@ -42,6 +42,33 @@ public final class ModConfig {
 	/** Let the guide look at nearby trees/stone when giving those tips. */
 	public boolean pointAtResources = true;
 
+	// --- small talk through a local language model (llama.cpp llama-server or any OpenAI-compatible server)
+	/**
+	 * Default for small talk through a local language model (players can override it with /guide chat on|off).
+	 * Off by default: it needs a running model server. Without one the guide simply stays quiet.
+	 */
+	public boolean chatEnabled = false;
+	/** Chat completions endpoint. llama-server listens on port 8080 by default. */
+	public String chatEndpoint = "http://127.0.0.1:8080/v1/chat/completions";
+	/** Model name sent along; llama-server ignores it, other servers may need it. */
+	public String chatModel = "local";
+	/** Let the guide remark on changes by itself (weather, time of day, a new biome, a mob it hasn't seen yet). */
+	public boolean chatSpontaneous = true;
+	/** Minimum time between two spontaneous remarks. */
+	public int chatCooldownSeconds = 120;
+	/** The guide reacts to chat from players within this distance (blocks). */
+	public int chatHearingDistance = 16;
+	/** Mobs within this distance (and in sight) count as "nearby" for the conversation. */
+	public int chatSightRadius = 16;
+	/** Maximum length of a reply in tokens. */
+	public int chatMaxTokens = 80;
+	/** Higher is more playful, lower is more predictable. */
+	public double chatTemperature = 0.8;
+	/** Give up on an answer after this many seconds. */
+	public int chatTimeoutSeconds = 20;
+	/** How many exchanges the guide remembers within a session. */
+	public int chatHistoryTurns = 6;
+
 	private static ModConfig instance = new ModConfig();
 
 	public static ModConfig get() {

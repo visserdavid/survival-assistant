@@ -101,6 +101,24 @@ sending you there. The research and checked game facts are in
 - One-time chat notes the first time you reach deepslate, the lava level, the deep dark or high mountains.
 - Press **K** to show or hide it.
 
+### Small talk with a local AI model (optional)
+- With a local language model running, the guide chats: it remarks on what changes around you (rain or a
+  thunderstorm, sunrise and nightfall, entering a cave, a new biome, a mob it hasn't talked about yet) and answers
+  when you talk to it in normal chat.
+- Alone near the guide, everything you say is meant for it. With other players nearby, mention the guide by name.
+- It speaks your game language, gets the checked biome facts from the language files and knows your current goal.
+  It does **not** give recipes, ore heights or instructions: a small model gets those wrong, so they stay with the
+  tips and the task card. It is quiet while a warning is active or the guide is muted, and waits at least 2 minutes
+  between spontaneous remarks.
+- Runs fully local with [llama.cpp](https://github.com/ggml-org/llama.cpp): start `llama-server` with a small
+  instruct model (about 4B parameters, Q4) before you play:
+  ```
+  llama-server -m model.gguf -ngl 99 -c 4096 --port 8080
+  ```
+  Without a server the guide simply stays quiet; nothing else changes.
+- Off by default. Turn it on for yourself with `/guide chat on` (and off again with `/guide chat off`), or for
+  everyone on the server with `chatEnabled` in the config.
+
 ## Commands
 
 | Command | What it does |
@@ -108,6 +126,7 @@ sending you there. The research and checked game facts are in
 | `/guide tip` | Get the most important tip right now |
 | `/guide call` | Bring the guide to you (or back after it said goodbye) |
 | `/guide dismiss` | Send the guide away |
+| `/guide chat on\|off` | Small talk with the guide through a local language model (saved per player) |
 | `/guide extend` | Let the guide stay 3 more days |
 | `/guide continue` | Start chapter 2 (after all 15 chapter-1 goals) |
 | `/guide mute <minutes>` | No unsolicited tips for a while (0–120) |
@@ -134,6 +153,17 @@ sending you there. The research and checked game facts are in
 | `pointAtResources` | `true` | Guide looks at nearby trees/stone when giving those tips |
 | `navigation` | `true` | Show the way back to your items after dying, and the way home |
 | `homeDistance` | `64` | Show the way home from this distance (24 at dusk/night) |
+| `chatEnabled` | `false` | Small talk through a local language model (default; players can use `/guide chat on\|off`) |
+| `chatEndpoint` | `http://127.0.0.1:8080/v1/chat/completions` | OpenAI-compatible endpoint (llama-server's default) |
+| `chatModel` | `local` | Model name sent along (llama-server ignores it) |
+| `chatSpontaneous` | `true` | Remark on changes in the surroundings without being asked |
+| `chatCooldownSeconds` | `120` | Minimum time between spontaneous remarks |
+| `chatHearingDistance` | `16` | The guide reacts to chat within this distance |
+| `chatSightRadius` | `16` | Mobs within this distance (and in sight) count as nearby |
+| `chatMaxTokens` | `80` | Maximum reply length |
+| `chatTemperature` | `0.8` | Higher is more playful |
+| `chatTimeoutSeconds` | `20` | Give up on an answer after this long |
+| `chatHistoryTurns` | `6` | Exchanges the guide remembers within a session |
 
 **Client**: `config/survivalassistant-client.json`
 

@@ -9,7 +9,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
-/** /guide call | dismiss | extend | continue | tip | mute &lt;minutes&gt; | character on|off */
+/** /guide call | dismiss | extend | continue | chat on|off | tip | mute &lt;minutes&gt; | character on|off */
 public final class GuideCommand {
 	private GuideCommand() {}
 
@@ -29,9 +29,23 @@ public final class GuideCommand {
 									c.getSource().sendSuccess(() -> Component.translatable("survivalassistant.cmd.muted", m), false);
 									return 1;
 								})))
+				.then(Commands.literal("chat")
+						.then(Commands.literal("on").executes(c -> chat(c, true)))
+						.then(Commands.literal("off").executes(c -> chat(c, false))))
 				.then(Commands.literal("character")
 						.then(Commands.literal("on").executes(c -> character(c, true)))
 						.then(Commands.literal("off").executes(c -> character(c, false)))));
+	}
+
+	/** /guide chat on|off: small talk through a local language model, stored per player. */
+	private static int chat(CommandContext<CommandSourceStack> c, boolean enabled) throws CommandSyntaxException {
+		ServerPlayer p = c.getSource().getPlayerOrException();
+		io.github.visserdavid.survivalassistant.state.GuideState.of(p).chatEnabled = enabled;
+		String endpoint = io.github.visserdavid.survivalassistant.config.ModConfig.get().chatEndpoint;
+		c.getSource().sendSuccess(() -> enabled
+				? Component.translatable("survivalassistant.cmd.chat_on", endpoint)
+				: Component.translatable("survivalassistant.cmd.chat_off"), false);
+		return 1;
 	}
 
 	private static int character(CommandContext<CommandSourceStack> c, boolean enabled) throws CommandSyntaxException {

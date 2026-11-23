@@ -32,6 +32,7 @@ import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
 import io.github.visserdavid.survivalassistant.advice.SurvivalContext;
 import io.github.visserdavid.survivalassistant.advice.Tip;
 import io.github.visserdavid.survivalassistant.advice.TipRegistry;
+import io.github.visserdavid.survivalassistant.chat.GuideChat;
 import io.github.visserdavid.survivalassistant.config.ModConfig;
 import io.github.visserdavid.survivalassistant.entity.GuideEntity;
 import io.github.visserdavid.survivalassistant.entity.ai.FollowOwnerGoal;
@@ -155,6 +156,7 @@ public final class GuideManager {
 		SurvivalContext ctx = ContextCollector.collect(player, progress, dig == null ? 0 : dig.current(now),
 				progress.homeFallback == null ? pos -> progress.homeFallback = mark(player, pos) : null);
 		respond(player, guide, ctx, progress, forced);
+		GuideChat.observe(player, guide, ctx, progress);
 		HudState.update(player, HudSnapshot.of(ctx, progress, dayLimit(progress), waypoint(player, progress, ctx, now)));
 	}
 
@@ -398,6 +400,17 @@ public final class GuideManager {
 		return Component.translatable(baseKey + "." + v);
 	}
 
+	/** The player's guide character, or null when it isn't around (character off, retired, not spawned yet). */
+	public static @Nullable GuideEntity guideOf(ServerPlayer player) {
+		GuideEntity guide = GUIDES.get(player.getUUID());
+		return guide == null || guide.isRemoved() ? null : guide;
+	}
+
+	/** A chat line from the guide (used by the small talk), with the usual name tag and a soft sound. */
+	public static void speak(ServerPlayer player, @Nullable GuideEntity guide, Component text) {
+		say(player, guide, text, false);
+	}
+
 	private static void say(ServerPlayer player, @Nullable GuideEntity guide, Component text, boolean important) {
 		MutableComponent line = Component.literal("[").withStyle(ChatFormatting.GOLD)
 				.append(Component.translatable("entity.survivalassistant.guide").withStyle(ChatFormatting.GOLD))
@@ -461,6 +474,7 @@ public final class GuideManager {
 		removeGuide(player.getUUID(), false);
 		LAST_EVAL.remove(player.getUUID());
 		DIGS.remove(player.getUUID());
+		GuideChat.forget(player.getUUID());
 	}
 
 	public static void onServerStopping() {
@@ -469,6 +483,7 @@ public final class GuideManager {
 		LAST_EVAL.clear();
 		DEATHS.clear();
 		DIGS.clear();
+		GuideChat.clear();
 	}
 
 	/** /guide tip */
