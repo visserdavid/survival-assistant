@@ -57,12 +57,12 @@ final class DisplayTab {
 						s -> s.equals(SkinNames.DEFAULT) ? Component.translatable(KEY + "skin.default") : Component.literal(s),
 						v -> c.guideSkin = v)
 				.button(Button.builder(label("skin_folder"), b -> Blaze3D.openPath(GuideSkins.folder()))
-						.width(150).tooltip(tip("skin_folder")).build());
+						.width(Rows.WIDGET_WIDTH).tooltip(tip("skin_folder")).build());
 
 		rows.header("keys")
 				.wideButton(Button.builder(label("keys"),
 								b -> Minecraft.getInstance().gui.setScreen(new KeyBindsScreen(screen, Minecraft.getInstance().options)))
-						.width(310).tooltip(tip("keys")).build());
+						.width(Rows.WIDE).tooltip(tip("keys")).build());
 		rows.flush();
 	}
 

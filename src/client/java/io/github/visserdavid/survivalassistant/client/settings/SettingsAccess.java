@@ -22,7 +22,7 @@ public final class SettingsAccess {
 
 	public static void registerReceiver() {
 		ClientPlayNetworking.registerGlobalReceiver(SettingsPayloads.Sync.TYPE, (payload, context) -> {
-			if (context.client().gui.screen() instanceof SettingsScreen screen) screen.receive(payload);
+			SettingsScreen.deliver(payload);
 		});
 	}
 

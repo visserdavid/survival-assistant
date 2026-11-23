@@ -842,7 +842,7 @@
 "~settings.tab.world": "दुनिया",
 "~settings.reset": "डिफ़ॉल्ट",
 "~settings.reset.tip": "इस टैब के विकल्पों को डिफ़ॉल्ट पर वापस लाता है।",
-"~settings.fix_first": "पहले लाल वाला फ़ील्ड ठीक करो।",
+"~settings.fix_first": "पहले लाल फ़ील्ड ठीक करो: %s",
 "~settings.loading": "सर्वर से सेटिंग्स लोड हो रही हैं…",
 "~settings.no_server_mod": "इस सर्वर पर Survival Assistant नहीं है।",
 "~settings.guide.no_world": "अपना गाइड सेट करने के लिए कोई दुनिया खोलो।",
@@ -975,5 +975,8 @@
 "~settings.chat_history.tip": "एक सत्र में गाइड कितनी बातचीत याद रखता है।",
 "~cmd.chat_not_allowed": "इस सर्वर पर गपशप बंद है।",
 "~settings.chat.not_allowed": "यह सर्वर गपशप की अनुमति नहीं देता। होस्ट या एडमिन इसे चालू कर सकता है (दुनिया टैब)।",
-"~settings.world.unavailable": "सर्वर की सेटिंग्स पढ़ी नहीं जा सकीं।"
+"~settings.world.unavailable": "सर्वर की सेटिंग्स पढ़ी नहीं जा सकीं।",
+"~settings.name.invalid": "1 से 16 अक्षर, अंक, स्पेस, - या _। डिफ़ॉल्ट के लिए खाली छोड़ो।",
+"~settings.default_name.invalid": "1 से 16 अक्षर, अंक, स्पेस, - या _। डिफ़ॉल्ट के लिए खाली छोड़ो।",
+"~settings.chat_endpoint.invalid": "http:// या https:// से शुरू होना चाहिए।"
 }

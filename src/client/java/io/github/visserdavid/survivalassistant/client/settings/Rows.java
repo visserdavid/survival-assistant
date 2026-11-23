@@ -12,7 +12,9 @@ import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +32,9 @@ import static io.github.visserdavid.survivalassistant.client.settings.SettingsSc
  * Options are collected per group and placed two per row.
  */
 final class Rows {
-	private static final int WIDGET_WIDTH = 150;
+	static final int WIDGET_WIDTH = 150;
+	/** A widget over the whole row (two widgets and the gap between them). */
+	static final int WIDE = 2 * WIDGET_WIDTH + 10;
 	private static final int TEXT = 0xFFE0E0E0, TEXT_INVALID = 0xFFFF5555;
 
 	private final SettingsScreen screen;
@@ -101,17 +105,18 @@ final class Rows {
 		label.setTooltip(tip(id));
 		EditBox box = new EditBox(font, WIDGET_WIDTH, 20, label(id));
 		box.setMaxLength(maxLength);
-		box.setValue(value);
 		box.setHint(Component.literal(hint).withStyle(ChatFormatting.DARK_GRAY));
-		box.setTooltip(tip(id));
 		box.setEditable(editable);
 		box.active = editable;
+		// the responder first, so the starting value is checked too (a rebuilt tab reports its own state)
 		box.setResponder(s -> {
 			boolean ok = valid.test(s);
 			box.setTextColor(ok ? TEXT : TEXT_INVALID);
+			box.setTooltip(ok ? tip(id) : Tooltip.create(Component.translatable(KEY + id + ".invalid")));
 			screen.setInvalid(id, !ok);
 			if (ok) set.accept(s);
 		});
+		box.setValue(value);
 		list.addSmall(label, box);
 		return this;
 	}
@@ -160,7 +165,9 @@ final class Rows {
 		@Override
 		protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
 			var font = Minecraft.getInstance().font;
-			graphics.text(font, getMessage(), getX(), getY() + (getHeight() - font.lineHeight) / 2 + 1, 0xFFFFFFFF, true);
+			// cut off a long translation instead of running into the field next to it
+			FormattedCharSequence text = Language.getInstance().getVisualOrder(font.substrByWidth(getMessage(), getWidth() - 4));
+			graphics.text(font, text, getX(), getY() + (getHeight() - font.lineHeight) / 2 + 1, 0xFFFFFFFF, true);
 		}
 
 		@Override

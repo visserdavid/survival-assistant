@@ -842,7 +842,7 @@
 "~settings.tab.world": "Dunia",
 "~settings.reset": "Bawaan",
 "~settings.reset.tip": "Mengembalikan opsi di tab ini ke nilai bawaan.",
-"~settings.fix_first": "Perbaiki dulu kolom yang merah.",
+"~settings.fix_first": "Perbaiki dulu kolom yang merah: %s",
 "~settings.loading": "Memuat pengaturan dari server…",
 "~settings.no_server_mod": "Server ini tidak punya Survival Assistant.",
 "~settings.guide.no_world": "Buka dunia untuk mengatur pemandumu.",
@@ -975,5 +975,8 @@
 "~settings.chat_history.tip": "Berapa banyak percakapan yang diingat pemandu dalam satu sesi.",
 "~cmd.chat_not_allowed": "Obrolan dimatikan di server ini.",
 "~settings.chat.not_allowed": "Server ini tidak mengizinkan obrolan. Host atau admin bisa menyalakannya (tab Dunia).",
-"~settings.world.unavailable": "Pengaturan server tidak bisa dibaca."
+"~settings.world.unavailable": "Pengaturan server tidak bisa dibaca.",
+"~settings.name.invalid": "1 sampai 16 huruf, angka, spasi, - atau _. Kosongkan untuk nilai bawaan.",
+"~settings.default_name.invalid": "1 sampai 16 huruf, angka, spasi, - atau _. Kosongkan untuk nilai bawaan.",
+"~settings.chat_endpoint.invalid": "Harus diawali http:// atau https://."
 }

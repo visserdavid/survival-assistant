@@ -842,7 +842,7 @@
 "~settings.tab.world": "Мир",
 "~settings.reset": "По умолчанию",
 "~settings.reset.tip": "Возвращает параметры этой вкладки к значениям по умолчанию.",
-"~settings.fix_first": "Сначала исправь красное поле.",
+"~settings.fix_first": "Сначала исправь красные поля: %s",
 "~settings.loading": "Загрузка настроек с сервера…",
 "~settings.no_server_mod": "На этом сервере нет Survival Assistant.",
 "~settings.guide.no_world": "Открой мир, чтобы настроить проводника.",
@@ -975,5 +975,8 @@
 "~settings.chat_history.tip": "Сколько обменов репликами проводник помнит за сессию.",
 "~cmd.chat_not_allowed": "Беседы на этом сервере выключены.",
 "~settings.chat.not_allowed": "Этот сервер не разрешает беседы. Хост или админ может их включить (вкладка Мир).",
-"~settings.world.unavailable": "Не удалось прочитать настройки сервера."
+"~settings.world.unavailable": "Не удалось прочитать настройки сервера.",
+"~settings.name.invalid": "От 1 до 16 букв, цифр, пробелов, - или _. Оставь пустым для значения по умолчанию.",
+"~settings.default_name.invalid": "От 1 до 16 букв, цифр, пробелов, - или _. Оставь пустым для значения по умолчанию.",
+"~settings.chat_endpoint.invalid": "Должно начинаться с http:// или https://."
 }

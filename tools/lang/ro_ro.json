@@ -842,7 +842,7 @@
 "~settings.tab.world": "Lume",
 "~settings.reset": "Implicit",
 "~settings.reset.tip": "Readuce opțiunile din această filă la valorile implicite.",
-"~settings.fix_first": "Corectează mai întâi câmpul roșu.",
+"~settings.fix_first": "Corectează mai întâi câmpurile roșii: %s",
 "~settings.loading": "Se încarcă setările de pe server…",
 "~settings.no_server_mod": "Acest server nu are Survival Assistant.",
 "~settings.guide.no_world": "Deschide o lume ca să-ți configurezi ghidul.",
@@ -975,5 +975,8 @@
 "~settings.chat_history.tip": "Câte schimburi își amintește ghidul într-o sesiune.",
 "~cmd.chat_not_allowed": "Discuțiile sunt oprite pe acest server.",
 "~settings.chat.not_allowed": "Acest server nu permite discuții. Gazda sau un admin le poate porni (fila Lume).",
-"~settings.world.unavailable": "Setările serverului nu au putut fi citite."
+"~settings.world.unavailable": "Setările serverului nu au putut fi citite.",
+"~settings.name.invalid": "Între 1 și 16 litere, cifre, spații, - sau _. Lasă gol pentru valoarea implicită.",
+"~settings.default_name.invalid": "Între 1 și 16 litere, cifre, spații, - sau _. Lasă gol pentru valoarea implicită.",
+"~settings.chat_endpoint.invalid": "Trebuie să înceapă cu http:// sau https://."
 }

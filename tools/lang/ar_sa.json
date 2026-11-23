@@ -842,7 +842,7 @@
 "~settings.tab.world": "العالم",
 "~settings.reset": "الافتراضي",
 "~settings.reset.tip": "يعيد خيارات هذا التبويب إلى قيمها الافتراضية.",
-"~settings.fix_first": "صحّح الحقل الأحمر أولًا.",
+"~settings.fix_first": "صحّح الحقول الحمراء أولًا: %s",
 "~settings.loading": "جارٍ تحميل الإعدادات من الخادم…",
 "~settings.no_server_mod": "هذا الخادم لا يحتوي على Survival Assistant.",
 "~settings.guide.no_world": "افتح عالمًا لضبط مرشدك.",
@@ -975,5 +975,8 @@
 "~settings.chat_history.tip": "كم تبادلًا يتذكره المرشد خلال الجلسة.",
 "~cmd.chat_not_allowed": "الدردشة متوقفة على هذا الخادم.",
 "~settings.chat.not_allowed": "هذا الخادم لا يسمح بالدردشة. يمكن للمضيف أو مشرف رئيسي تفعيلها (تبويب العالم).",
-"~settings.world.unavailable": "تعذّرت قراءة إعدادات الخادم."
+"~settings.world.unavailable": "تعذّرت قراءة إعدادات الخادم.",
+"~settings.name.invalid": "من 1 إلى 16 حرفًا أو رقمًا أو مسافة أو - أو _. اتركه فارغًا للقيمة الافتراضية.",
+"~settings.default_name.invalid": "من 1 إلى 16 حرفًا أو رقمًا أو مسافة أو - أو _. اتركه فارغًا للقيمة الافتراضية.",
+"~settings.chat_endpoint.invalid": "يجب أن يبدأ بـ http:// أو https://."
 }

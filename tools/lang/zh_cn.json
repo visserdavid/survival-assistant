@@ -842,7 +842,7 @@
 "~settings.tab.world": "世界",
 "~settings.reset": "默认",
 "~settings.reset.tip": "把此标签页的选项恢复为默认值。",
-"~settings.fix_first": "请先修正红色的输入框。",
+"~settings.fix_first": "请先修正红色的输入框：%s",
 "~settings.loading": "正在从服务器加载设置…",
 "~settings.no_server_mod": "此服务器没有安装 Survival Assistant。",
 "~settings.guide.no_world": "打开一个世界后才能设置你的向导。",
@@ -975,5 +975,8 @@
 "~settings.chat_history.tip": "向导在一次会话中记住多少轮对话。",
 "~cmd.chat_not_allowed": "此服务器已关闭闲聊。",
 "~settings.chat.not_allowed": "此服务器不允许闲聊。房主或管理员可以在世界标签页中开启。",
-"~settings.world.unavailable": "无法读取服务器的设置。"
+"~settings.world.unavailable": "无法读取服务器的设置。",
+"~settings.name.invalid": "1 到 16 个字母、数字、空格、- 或 _。留空则使用默认值。",
+"~settings.default_name.invalid": "1 到 16 个字母、数字、空格、- 或 _。留空则使用默认值。",
+"~settings.chat_endpoint.invalid": "必须以 http:// 或 https:// 开头。"
 }

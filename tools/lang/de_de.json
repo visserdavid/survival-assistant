@@ -842,7 +842,7 @@
 "~settings.tab.world": "Welt",
 "~settings.reset": "Standard",
 "~settings.reset.tip": "Setzt die Optionen auf diesem Tab auf ihre Standardwerte zurück.",
-"~settings.fix_first": "Korrigiere zuerst das rote Feld.",
+"~settings.fix_first": "Korrigiere zuerst die roten Felder: %s",
 "~settings.loading": "Einstellungen werden vom Server geladen…",
 "~settings.no_server_mod": "Dieser Server hat Survival Assistant nicht.",
 "~settings.guide.no_world": "Öffne eine Welt, um deinen Begleiter einzustellen.",
@@ -975,5 +975,8 @@
 "~settings.chat_history.tip": "Wie viele Wechsel sich der Begleiter in einer Sitzung merkt.",
 "~cmd.chat_not_allowed": "Plaudern ist auf diesem Server ausgeschaltet.",
 "~settings.chat.not_allowed": "Dieser Server erlaubt kein Plaudern. Der Host oder ein Admin kann es einschalten (Tab Welt).",
-"~settings.world.unavailable": "Die Einstellungen des Servers konnten nicht gelesen werden."
+"~settings.world.unavailable": "Die Einstellungen des Servers konnten nicht gelesen werden.",
+"~settings.name.invalid": "1 bis 16 Buchstaben, Ziffern, Leerzeichen, - oder _. Leer lassen für den Standard.",
+"~settings.default_name.invalid": "1 bis 16 Buchstaben, Ziffern, Leerzeichen, - oder _. Leer lassen für den Standard.",
+"~settings.chat_endpoint.invalid": "Muss mit http:// oder https:// beginnen."
 }

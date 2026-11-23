@@ -842,7 +842,7 @@
 "~settings.tab.world": "Mundo",
 "~settings.reset": "Padrão",
 "~settings.reset.tip": "Volta as opções desta aba aos valores padrão.",
-"~settings.fix_first": "Corrija primeiro o campo em vermelho.",
+"~settings.fix_first": "Corrija primeiro os campos em vermelho: %s",
 "~settings.loading": "Carregando as configurações do servidor…",
 "~settings.no_server_mod": "Este servidor não tem o Survival Assistant.",
 "~settings.guide.no_world": "Abra um mundo para configurar seu guia.",
@@ -975,5 +975,8 @@
 "~settings.chat_history.tip": "Quantas trocas o guia lembra em uma sessão.",
 "~cmd.chat_not_allowed": "A conversa está desativada neste servidor.",
 "~settings.chat.not_allowed": "Este servidor não permite conversa. O anfitrião ou um admin pode ativá-la (aba Mundo).",
-"~settings.world.unavailable": "Não foi possível ler as configurações do servidor."
+"~settings.world.unavailable": "Não foi possível ler as configurações do servidor.",
+"~settings.name.invalid": "De 1 a 16 letras, dígitos, espaços, - ou _. Deixe vazio para o padrão.",
+"~settings.default_name.invalid": "De 1 a 16 letras, dígitos, espaços, - ou _. Deixe vazio para o padrão.",
+"~settings.chat_endpoint.invalid": "Deve começar com http:// ou https://."
 }

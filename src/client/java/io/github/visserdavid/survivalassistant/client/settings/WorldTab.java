@@ -55,7 +55,7 @@ final class WorldTab {
 		boolean open = screen.advancedOpen();
 		rows.header("advanced")
 				.wideButton(Button.builder(Component.translatable(KEY + (open ? "advanced.hide" : "advanced.show")), b -> screen.toggleAdvanced())
-						.width(310).tooltip(tip("advanced")).build());
+						.width(Rows.WIDE).tooltip(tip("advanced")).build());
 		if (open) advanced(rows);
 		rows.flush();
 	}

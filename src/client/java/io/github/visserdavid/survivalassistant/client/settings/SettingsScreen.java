@@ -23,9 +23,12 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -40,6 +43,12 @@ import java.util.function.Consumer;
 public final class SettingsScreen extends OptionsSubScreen {
 	static final String KEY = "survivalassistant.settings.";
 	private static final int TAB_DISPLAY = 0, TAB_GUIDE = 1, TAB_WORLD = 2;
+
+	/**
+	 * The screen waiting for the server's answer. Kept here (not looked up as the open screen) so the answer also
+	 * arrives while a screen on top of it is open, such as the key bindings or the "discard changes?" question.
+	 */
+	private static @Nullable SettingsScreen waiting;
 
 	/** Where the guide and world settings come from. */
 	enum Source {
@@ -68,8 +77,10 @@ public final class SettingsScreen extends OptionsSubScreen {
 	/** The server sent a config this screen couldn't read. */
 	private boolean worldUnreadable;
 	private int tabIndex;
-	/** Text fields with an invalid value: "Done" waits until they are fixed. */
-	private final List<String> invalid = new ArrayList<>();
+	/** Text fields with an invalid value (field id -> its tab): "Done" waits until they are fixed. */
+	private final Map<String, Integer> invalid = new LinkedHashMap<>();
+	/** The tab whose rows are being built right now, or -1. */
+	private int building = -1;
 
 	private final List<SettingsTab> tabs = new ArrayList<>();
 	private final TabManager tabManager = new TabManager(this::addRenderableWidget, this::removeWidget,
@@ -88,6 +99,7 @@ public final class SettingsScreen extends OptionsSubScreen {
 			setWorld(ModConfig.get().copy(), true);
 		} else if (ClientPlayNetworking.canSend(SettingsPayloads.Request.TYPE)) {
 			source = Source.WAITING;
+			waiting = this;
 			ClientPlayNetworking.send(new SettingsPayloads.Request());
 		} else {
 			source = Source.MISSING;
@@ -102,8 +114,15 @@ public final class SettingsScreen extends OptionsSubScreen {
 		chatAllowed = cfg.chatEnabled;
 	}
 
+	/** The server's answer, for the screen that asked for it (if it is still open). */
+	public static void deliver(SettingsPayloads.Sync sync) {
+		SettingsScreen screen = waiting;
+		waiting = null;
+		if (screen != null) screen.receive(sync);
+	}
+
 	/** The server's answer: fills the My guide and World tabs. */
-	public void receive(SettingsPayloads.Sync sync) {
+	private void receive(SettingsPayloads.Sync sync) {
 		if (source != Source.WAITING) return;
 		world = null;
 		if (sync.canEdit()) {
@@ -118,14 +137,21 @@ public final class SettingsScreen extends OptionsSubScreen {
 		choices.set(sync.choices());
 		choicesBefore = sync.choices();
 		source = Source.READY;
-		rebuildWidgets();
+		// when another screen is on top, init() builds the tabs again on return
+		if (minecraft != null && minecraft.gui.screen() == this) {
+			for (SettingsTab tab : tabs) tab.rebuild();
+			updateButtons();
+		}
 	}
 
 	// ---------------------------------------------------------------- layout
 
 	@Override
 	protected void init() {
+		// init() runs again after a screen on top closes (key bindings, the discard question): start from scratch
+		layout.removeChildren();
 		tabs.clear();
+		invalid.clear();
 		tabs.add(new SettingsTab(KEY + "tab.display", l -> new DisplayTab(this, display).build(l)));
 		tabs.add(new SettingsTab(KEY + "tab.guide", this::buildGuide));
 		tabs.add(new SettingsTab(KEY + "tab.world", this::buildWorld));
@@ -174,8 +200,18 @@ public final class SettingsScreen extends OptionsSubScreen {
 		if (resetButton != null) resetButton.active = tabEditable(tabIndex);
 		if (doneButton != null) {
 			doneButton.active = invalid.isEmpty();
-			doneButton.setTooltip(invalid.isEmpty() ? null : Tooltip.create(Component.translatable(KEY + "fix_first")));
+			doneButton.setTooltip(invalid.isEmpty() ? null : Tooltip.create(Component.translatable(KEY + "fix_first", fieldNames())));
 		}
+	}
+
+	/** The labels of the fields that still need fixing, for the tooltip of "Done". */
+	private Component fieldNames() {
+		MutableComponent names = Component.empty();
+		for (String id : invalid.keySet()) {
+			if (!names.getSiblings().isEmpty()) names.append(", ");
+			names.append(Rows.label(id));
+		}
+		return names;
 	}
 
 	private boolean tabEditable(int tab) {
@@ -189,7 +225,7 @@ public final class SettingsScreen extends OptionsSubScreen {
 	/** Marks a text field as valid or invalid; "Done" is only possible when all are valid. */
 	void setInvalid(String field, boolean isInvalid) {
 		invalid.remove(field);
-		if (isInvalid) invalid.add(field);
+		if (isInvalid) invalid.put(field, building >= 0 ? building : tabIndex);
 		updateButtons();
 	}
 
@@ -248,8 +284,7 @@ public final class SettingsScreen extends OptionsSubScreen {
 			case TAB_WORLD -> world = new ModConfig();
 			default -> {}
 		}
-		invalid.clear();
-		refreshTab();
+		refreshTab(); // also forgets the invalid fields of this tab only
 	}
 
 	// ---------------------------------------------------------------- closing
@@ -298,6 +333,7 @@ public final class SettingsScreen extends OptionsSubScreen {
 	}
 
 	private void close() {
+		if (waiting == this) waiting = null;
 		minecraft.gui.setScreen(lastScreen);
 	}
 
@@ -305,6 +341,7 @@ public final class SettingsScreen extends OptionsSubScreen {
 
 	/** One tab: a scrolling list of options, built again when needed. */
 	private final class SettingsTab implements Tab {
+		private final int index;
 		private final Component title;
 		private final Consumer<OptionsList> builder;
 		private final FrameLayout layout = new FrameLayout();
@@ -312,14 +349,22 @@ public final class SettingsScreen extends OptionsSubScreen {
 		private @Nullable ScreenRectangle area;
 
 		SettingsTab(String titleKey, Consumer<OptionsList> builder) {
+			this.index = tabs.size();
 			this.title = Component.translatable(titleKey);
 			this.builder = builder;
 			this.list = newList();
 		}
 
+		/** Builds the rows; the fields report whether they are valid as they are made. */
 		private OptionsList newList() {
+			invalid.values().removeIf(tab -> tab == index);
 			OptionsList l = new OptionsList(Minecraft.getInstance(), width, SettingsScreen.this);
-			builder.accept(l);
+			building = index;
+			try {
+				builder.accept(l);
+			} finally {
+				building = -1;
+			}
 			return l;
 		}
 

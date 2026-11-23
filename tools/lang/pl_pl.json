@@ -842,7 +842,7 @@
 "~settings.tab.world": "Świat",
 "~settings.reset": "Domyślne",
 "~settings.reset.tip": "Przywraca domyślne wartości opcji na tej karcie.",
-"~settings.fix_first": "Najpierw popraw czerwone pole.",
+"~settings.fix_first": "Najpierw popraw czerwone pola: %s",
 "~settings.loading": "Wczytywanie ustawień z serwera…",
 "~settings.no_server_mod": "Ten serwer nie ma Survival Assistant.",
 "~settings.guide.no_world": "Otwórz świat, aby ustawić przewodnika.",
@@ -975,5 +975,8 @@
 "~settings.chat_history.tip": "Ile wymian przewodnik pamięta w trakcie sesji.",
 "~cmd.chat_not_allowed": "Pogawędki są wyłączone na tym serwerze.",
 "~settings.chat.not_allowed": "Ten serwer nie pozwala na pogawędki. Gospodarz lub admin może je włączyć (karta Świat).",
-"~settings.world.unavailable": "Nie udało się odczytać ustawień serwera."
+"~settings.world.unavailable": "Nie udało się odczytać ustawień serwera.",
+"~settings.name.invalid": "Od 1 do 16 liter, cyfr, spacji, - lub _. Zostaw puste dla wartości domyślnej.",
+"~settings.default_name.invalid": "Od 1 do 16 liter, cyfr, spacji, - lub _. Zostaw puste dla wartości domyślnej.",
+"~settings.chat_endpoint.invalid": "Musi zaczynać się od http:// lub https://."
 }

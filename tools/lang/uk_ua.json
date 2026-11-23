@@ -842,7 +842,7 @@
 "~settings.tab.world": "Світ",
 "~settings.reset": "Типові",
 "~settings.reset.tip": "Повертає параметри цієї вкладки до типових значень.",
-"~settings.fix_first": "Спочатку виправ червоне поле.",
+"~settings.fix_first": "Спочатку виправ червоні поля: %s",
 "~settings.loading": "Завантаження налаштувань із сервера…",
 "~settings.no_server_mod": "На цьому сервері немає Survival Assistant.",
 "~settings.guide.no_world": "Відкрий світ, щоб налаштувати провідника.",
@@ -975,5 +975,8 @@
 "~settings.chat_history.tip": "Скільки обмінів репліками провідник пам’ятає за сесію.",
 "~cmd.chat_not_allowed": "Розмови на цьому сервері вимкнено.",
 "~settings.chat.not_allowed": "Цей сервер не дозволяє розмов. Хост або адмін може їх увімкнути (вкладка Світ).",
-"~settings.world.unavailable": "Не вдалося прочитати налаштування сервера."
+"~settings.world.unavailable": "Не вдалося прочитати налаштування сервера.",
+"~settings.name.invalid": "Від 1 до 16 літер, цифр, пробілів, - або _. Залиш порожнім для типового значення.",
+"~settings.default_name.invalid": "Від 1 до 16 літер, цифр, пробілів, - або _. Залиш порожнім для типового значення.",
+"~settings.chat_endpoint.invalid": "Має починатися з http:// або https://."
 }

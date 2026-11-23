@@ -842,7 +842,7 @@
 "~settings.tab.world": "Mondo",
 "~settings.reset": "Predefiniti",
 "~settings.reset.tip": "Riporta le opzioni di questa scheda ai valori predefiniti.",
-"~settings.fix_first": "Correggi prima il campo in rosso.",
+"~settings.fix_first": "Correggi prima i campi in rosso: %s",
 "~settings.loading": "Caricamento delle impostazioni dal server…",
 "~settings.no_server_mod": "Questo server non ha Survival Assistant.",
 "~settings.guide.no_world": "Apri un mondo per impostare la tua guida.",
@@ -975,5 +975,8 @@
 "~settings.chat_history.tip": "Quanti scambi la guida ricorda in una sessione.",
 "~cmd.chat_not_allowed": "Le chiacchiere sono disattivate su questo server.",
 "~settings.chat.not_allowed": "Questo server non consente le chiacchiere. L'host o un admin può attivarle (scheda Mondo).",
-"~settings.world.unavailable": "Non è stato possibile leggere le impostazioni del server."
+"~settings.world.unavailable": "Non è stato possibile leggere le impostazioni del server.",
+"~settings.name.invalid": "Da 1 a 16 lettere, cifre, spazi, - o _. Lascia vuoto per il valore predefinito.",
+"~settings.default_name.invalid": "Da 1 a 16 lettere, cifre, spazi, - o _. Lascia vuoto per il valore predefinito.",
+"~settings.chat_endpoint.invalid": "Deve iniziare con http:// o https://."
 }

@@ -85,6 +85,7 @@ public final class ClientConfig {
 		if (crosshairPlace == null) crosshairPlace = Place.CROSSHAIR;
 		scale = Math.clamp(scale, 0.5f, 2.0f);
 		crosshairRange = Math.clamp(crosshairRange, 3, 32);
+		margin = Math.clamp(margin, 0, 32);
 	}
 
 	/** A separate copy to edit in the settings screen. */
