@@ -76,6 +76,10 @@ public final class Recipes {
 			Map.of('I', IRON, 'F', "minecraft:flint"));
 	private static final Recipe HOPPER = new Recipe("minecraft:hopper", 1, List.of("I I", "ICI", " I "),
 			Map.of('I', IRON, 'C', "minecraft:chest"));
+	/** Paper and books: for the bookshelves and for the enchanting table's book. A book is shapeless. */
+	private static final Recipe PAPER = new Recipe("minecraft:paper", 3, List.of("###"), Map.of('#', "minecraft:sugar_cane"));
+	private static final Recipe BOOK = new Recipe("minecraft:book", 1, List.of("PP", "PL"),
+			Map.of('P', "minecraft:paper", 'L', "minecraft:leather"));
 	/** One blaze rod gives 2 powder (shapeless): fuel for the brewing stand, and half of an eye of ender. */
 	private static final Recipe BLAZE_POWDER = new Recipe("minecraft:blaze_powder", 2, List.of("B"), Map.of('B', "minecraft:blaze_rod"));
 
@@ -184,10 +188,10 @@ public final class Recipes {
 			Map.entry("brew_potion.bottles", new Recipe("minecraft:glass_bottle", 3, List.of("# #", " # "),
 					Map.of('#', "minecraft:glass"))),
 			Map.entry("brew_potion.fuel", BLAZE_POWDER),
-			Map.entry("bookshelves.paper", new Recipe("minecraft:paper", 3, List.of("###"), Map.of('#', "minecraft:sugar_cane"))),
-			// a book is 3 paper and 1 leather (shapeless)
-			Map.entry("bookshelves.books", new Recipe("minecraft:book", 1, List.of("PP", "PL"),
-					Map.of('P', "minecraft:paper", 'L', "minecraft:leather"))),
+			Map.entry("enchanting_table.paper", PAPER),
+			Map.entry("enchanting_table.book", BOOK),
+			Map.entry("bookshelves.paper", PAPER),
+			Map.entry("bookshelves.books", BOOK),
 			Map.entry("eyes_of_ender.powder", BLAZE_POWDER),
 			Map.entry("auto_smelter.hoppers", HOPPER)
 	);

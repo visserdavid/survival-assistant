@@ -98,9 +98,9 @@ archaeology, the trial challenges, the happy ghast and automation.
   check-mark animation when a goal is done.
 - **Steps**: big goals are split into small steps, shown under the current task with their own counter, and the
   guide tells you each step as soon as you reach it. Brewing a potion, for example, goes: glass bottles (3/3), fill
-  them with water, blaze powder as fuel, brew. Steps exist for the iron golem, the Nether portal, brewing,
-  bookshelves, eyes of ender, finding the stronghold, the dragon, the netherite ingot, the beacon (and its full
-  pyramid) and the automatic furnace. The recipe card follows the step (for example glass bottles, then blaze powder).
+  them with water, blaze powder as fuel, brew. Steps exist for the enchanting table, the iron golem, the Nether
+  portal, brewing, bookshelves, buried treasure (map, red X, dig), eyes of ender, finding the stronghold, the
+  dragon, the netherite ingot, the beacon (and its full pyramid), the happy ghast's harness and the automatic furnace. The recipe card follows the step (for example glass bottles, then blaze powder).
 - The title shows the chapter you are in (for example Ch. 6 · Farming and animals).
 - A clock (the in-game clock item) with a bar that counts down to sunset, turning orange at dusk and red at night.
 - **Urgent mode**: the border pulses red, and the current-task line becomes a warning (a warden or creeper

@@ -86,6 +86,8 @@ public final class Steps {
 	public static final int MAX_BEACON_LEVEL = 4;
 	/** The central island of the End has 10 obsidian pillars, each with a crystal. */
 	public static final int END_CRYSTALS = 10;
+	/** Within this many blocks (horizontally) of a treasure map's red X the player is "there". */
+	public static final int TREASURE_NEAR = 8;
 	/** One bookshelf takes 3 books; one book takes 3 paper and 1 leather. */
 	private static final int BOOKS_PER_SHELF = 3, PAPER_PER_BOOK = 3;
 
@@ -108,6 +110,14 @@ public final class Steps {
 	// ---------------------------------------------------------------- the steps per goal
 
 	public static final Map<String, List<Step>> BY_GOAL = Map.ofEntries(
+			// chapter 2: a book, 2 diamonds and 4 obsidian (the diamond pickaxe often used up the diamonds)
+			Map.entry("enchanting_table", List.of(
+					count("enchanting_table.diamonds", c -> c.inv().diamonds(), 2, c -> false),
+					count("enchanting_table.obsidian", c -> c.inv().obsidian(), 4, c -> false),
+					count("enchanting_table.paper", c -> item(c, "paper") + PAPER_PER_BOOK * item(c, "book"), PAPER_PER_BOOK, c -> false),
+					count("enchanting_table.leather", c -> item(c, "leather") + item(c, "book"), 1, c -> false),
+					count("enchanting_table.book", c -> item(c, "book"), 1, c -> false),
+					finish("enchanting_table.craft"))),
 			// chapter 3: 4 iron blocks in a T, a carved pumpkin on top
 			Map.entry("iron_golem", List.of(
 					count("iron_golem.iron_blocks",
@@ -134,6 +144,11 @@ public final class Steps {
 					count("bookshelves.books", c -> item(c, "book"), BOOKS_PER_SHELF, Steps::carriesShelves),
 					step("bookshelves.craft", Steps::carriesShelves),
 					finish("bookshelves.place"))),
+			// chapter 7: a treasure map from a shipwreck or ruin, its red X, then dig
+			Map.entry("treasure", List.of(
+					step("treasure.map", c -> c.inv().treasureDistance() >= 0),
+					step("treasure.follow", c -> c.inv().treasureDistance() >= 0 && c.inv().treasureDistance() <= TREASURE_NEAR),
+					finish("treasure.dig"))),
 			// chapter 10: blaze powder for every eye still to make
 			Map.entry("eyes_of_ender", List.of(
 					count("eyes_of_ender.powder", c -> item(c, "blaze_powder") + c.inv().eyesOfEnder(), 12, c -> false),
@@ -162,6 +177,12 @@ public final class Steps {
 					step("full_beacon.level2", c -> c.nearby().beaconLevel() >= 2),
 					step("full_beacon.level3", c -> c.nearby().beaconLevel() >= 3),
 					finish("full_beacon.level4"))),
+			// chapter 17: 3 leather, 2 glass and 1 wool (its color is the harness's color)
+			Map.entry("harness", List.of(
+					count("harness.leather", c -> item(c, "leather"), 3, c -> false),
+					count("harness.glass", c -> item(c, "glass"), 2, c -> false),
+					count("harness.wool", c -> c.inv().wool(), 1, c -> false),
+					finish("harness.craft"))),
 			// chapter 18: a hopper on top feeds the furnace, one below takes the result out
 			Map.entry("auto_smelter", List.of(
 					count("auto_smelter.hoppers", c -> item(c, "hopper") + c.nearby().placed("hopper"), 2, c -> false),

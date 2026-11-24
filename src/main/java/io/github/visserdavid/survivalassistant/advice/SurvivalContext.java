@@ -130,6 +130,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 	 * @param bedInInventory  a bed carried (not a placed one)
 	 * @param hasNetheriteGear a netherite tool, weapon or armor piece (not the ingot, scrap or template)
 	 * @param waterBottles    water bottles carried (potions with the water contents)
+	 * @param treasureDistance blocks (horizontally) to the red X of the nearest treasure map carried; -1 without one
 	 * @param items           counts of the items the goal steps look at ({@link Steps#TRACKED_ITEMS}), by item id path
 	 */
 	public record Inventory(
@@ -146,7 +147,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 			boolean hasNetheriteIngot, boolean hasUpgradeTemplate, boolean hasNetheriteGear, boolean hasNetherStar,
 			boolean hasRecoveryCompass, boolean hasOminousBottle, boolean hasTotem,
 			boolean hasBrush, boolean hasDecoratedPot, boolean hasWindCharge, boolean hasHeavyCore, boolean hasMace,
-			boolean hasDriedGhast, boolean hasHarness, int waterBottles, Map<String, Integer> items) {
+			boolean hasDriedGhast, boolean hasHarness, int waterBottles, int treasureDistance, Map<String, Integer> items) {
 		public Inventory {
 			items = Map.copyOf(items);
 		}
@@ -244,7 +245,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 				hasElytra, hasNetheriteIngot, hasUpgradeTemplate, hasNetheriteGear, hasNetherStar, hasRecoveryCompass,
 				hasOminousBottle, hasTotem, hasBrush, hasDecoratedPot, hasWindCharge, hasHeavyCore, hasMace, hasDriedGhast,
 				hasHarness;
-		private int waterBottles;
+		private int waterBottles, treasureDistance = -1;
 		private final Map<String, Integer> items = new HashMap<>();
 		// nearby
 		private int crops, bookshelves;
@@ -343,6 +344,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public Builder hasHarness(boolean v) { hasHarness = v; return this; }
 		// inventory: step items
 		public Builder waterBottles(int v) { waterBottles = v; return this; }
+		public Builder treasureDistance(int v) { treasureDistance = v; return this; }
 		/** Sets the count of a tracked item (id path); 0 removes it. */
 		public Builder item(String id, int count) { if (count > 0) items.put(id, count); else items.remove(id); return this; }
 		// nearby
@@ -389,7 +391,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 							hasBrewingStand, hasAnvil, hasBoat, hasMilk, hasHeartOfTheSea, hasTurtleHelmet, hasTrident,
 							hasFilledMap, hasSpyglass, hasElytra, hasNetheriteIngot, hasUpgradeTemplate, hasNetheriteGear,
 							hasNetherStar, hasRecoveryCompass, hasOminousBottle, hasTotem, hasBrush, hasDecoratedPot,
-							hasWindCharge, hasHeavyCore, hasMace, hasDriedGhast, hasHarness, waterBottles, items),
+							hasWindCharge, hasHeavyCore, hasMace, hasDriedGhast, hasHarness, waterBottles, treasureDistance, items),
 					new Nearby(crops, bookshelves, lava, fallingBlockAbove, litArea, ironDoorOpen, pistonExtended,
 							repeater, hopper, observer, crafter, autoSmelter, copperBulbLit, hopperOnFurnace, standBottles,
 							standFuel, beaconLevel, blocks),

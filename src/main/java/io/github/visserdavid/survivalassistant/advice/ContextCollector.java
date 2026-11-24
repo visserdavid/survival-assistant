@@ -31,6 +31,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.component.MapDecorations;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.Blocks;
@@ -42,6 +43,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
+import net.minecraft.world.level.saveddata.maps.MapDecorationTypes;
 import net.minecraft.world.phys.AABB;
 import org.jspecify.annotations.Nullable;
 
@@ -143,7 +145,7 @@ public final class ContextCollector {
 		int logs = 0, planks = 0, cobble = 0, foodItems = 0, wool = 0, torches = 0, iron = 0, bread = 0, arrows = 0;
 		int diamonds = 0, obsidian = 0, emeralds = 0, blazeRods = 0, netherWart = 0, sugarCane = 0, redstone = 0;
 		int pearls = 0, eyes = 0, skulls = 0, soulSand = 0, echoShards = 0, breezeRods = 0, pickaxe = 0, weapon = 0;
-		int waterBottles = 0;
+		int waterBottles = 0, treasureDistance = -1;
 		Map<String, Integer> tracked = new HashMap<>();
 		boolean[] armor = new boolean[ARMOR_SLOTS];
 
@@ -207,6 +209,8 @@ public final class ContextCollector {
 			if (item == Items.POTION && s.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).is(Potions.WATER)) {
 				waterBottles += n;
 			}
+			int toX = treasureDistance(s, player);
+			if (toX >= 0 && (treasureDistance < 0 || toX < treasureDistance)) treasureDistance = toX;
 			String id = path(item);
 			if (Steps.TRACKED_ITEMS.contains(id)) tracked.merge(id, n, Integer::sum);
 			markArmor(s, armor);
@@ -237,8 +241,22 @@ public final class ContextCollector {
 				.bread(bread).arrows(arrows).diamonds(diamonds).obsidian(obsidian).emeralds(emeralds).blazeRods(blazeRods)
 				.netherWart(netherWart).sugarCane(sugarCane).redstone(redstone).enderPearls(pearls).eyesOfEnder(eyes)
 				.witherSkulls(skulls).soulSand(soulSand).echoShards(echoShards).breezeRods(breezeRods)
-				.pickaxeTier(pickaxe).swordTier(weapon).armorPieces(armorPieces).waterBottles(waterBottles);
+				.pickaxeTier(pickaxe).swordTier(weapon).armorPieces(armorPieces).waterBottles(waterBottles)
+				.treasureDistance(treasureDistance);
 		tracked.forEach(b::item);
+	}
+
+	/** Blocks (horizontally) from the player to the red X on this map, or -1 when it isn't a treasure map. */
+	private static int treasureDistance(ItemStack s, ServerPlayer player) {
+		MapDecorations decorations = s.get(DataComponents.MAP_DECORATIONS);
+		if (decorations == null) return -1;
+		int best = -1;
+		for (MapDecorations.Entry e : decorations.decorations().values()) {
+			if (e.type().value() != MapDecorationTypes.RED_X.value()) continue;
+			int d = (int) Math.round(Math.hypot(e.x() - player.getX(), e.z() - player.getZ()));
+			if (best < 0 || d < best) best = d;
+		}
+		return best;
 	}
 
 	/** Items that count whether they are carried, worn or held in the off hand. */

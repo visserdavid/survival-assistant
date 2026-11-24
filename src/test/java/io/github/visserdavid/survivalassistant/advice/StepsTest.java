@@ -112,6 +112,36 @@ class StepsTest {
 	}
 
 	@Test
+	void enchantingTable() {
+		Tip g = TipRegistry.ENCHANTING_TABLE;
+		assertEquals("enchanting_table.diamonds", current(g, b -> b.diamonds(1).obsidian(10)), "the pickaxe used the diamonds");
+		assertEquals("enchanting_table.obsidian", current(g, b -> b.diamonds(2).obsidian(3)));
+		assertEquals("enchanting_table.paper", current(g, b -> b.diamonds(2).obsidian(4).item("paper", 2)));
+		assertEquals("enchanting_table.leather", current(g, b -> b.diamonds(2).obsidian(4).item("paper", 3)));
+		assertEquals("enchanting_table.book", current(g, b -> b.diamonds(2).obsidian(4).item("paper", 3).item("leather", 1)));
+		assertEquals("enchanting_table.craft", current(g, b -> b.diamonds(2).obsidian(4).item("book", 1)),
+				"a book counts as its paper and leather");
+	}
+
+	@Test
+	void treasure() {
+		Tip g = TipRegistry.TREASURE;
+		assertEquals("treasure.map", current(g, b -> b));
+		assertEquals("treasure.follow", current(g, b -> b.treasureDistance(300)));
+		assertEquals("treasure.dig", current(g, b -> b.treasureDistance(Steps.TREASURE_NEAR)));
+		assertEquals("treasure.dig", current(g, b -> b.treasureDistance(0)), "standing on the X");
+	}
+
+	@Test
+	void harness() {
+		Tip g = TipRegistry.HARNESS;
+		assertEquals("harness.leather", current(g, b -> b.item("leather", 2).item("glass", 2).wool(1)));
+		assertEquals("harness.glass", current(g, b -> b.item("leather", 3).item("glass", 1)));
+		assertEquals("harness.wool", current(g, b -> b.item("leather", 3).item("glass", 2)));
+		assertEquals("harness.craft", current(g, b -> b.item("leather", 3).item("glass", 2).wool(1)));
+	}
+
+	@Test
 	void countersAreClamped() {
 		Steps.Step bottles = Steps.BY_GOAL.get("brew_potion").getFirst();
 		assertEquals(3, bottles.target());
