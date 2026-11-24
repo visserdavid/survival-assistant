@@ -85,10 +85,31 @@ class DataConsistencyTest {
 	}
 
 	@Test
-	void everyRecipeBelongsToAGoal() {
+	void everyRecipeBelongsToAGoalOrStep() {
+		Set<String> tasks = new HashSet<>();
+		for (Chapter c : Chapters.ALL) for (Tip t : c.goals()) tasks.add(t.id());
+		for (Steps.Step s : Steps.all()) tasks.add(s.id());
+		for (String task : Recipes.BY_TASK.keySet()) assertTrue(tasks.contains(task), "recipe for unknown task " + task);
+	}
+
+	@Test
+	void everyStepBelongsToAGoalAndHasItsTexts() {
 		Set<String> goals = new HashSet<>();
 		for (Chapter c : Chapters.ALL) for (Tip t : c.goals()) goals.add(t.id());
-		for (String task : Recipes.BY_TASK.keySet()) assertTrue(goals.contains(task), "recipe for unknown task " + task);
+		Set<String> seen = new HashSet<>();
+		Steps.BY_GOAL.forEach((goal, steps) -> {
+			assertTrue(goals.contains(goal), "steps for unknown goal " + goal);
+			assertTrue(steps.size() >= 2, "a single step adds nothing: " + goal);
+			for (Steps.Step s : steps) {
+				assertTrue(s.id().startsWith(goal + "."), "step id must start with its goal: " + s.id());
+				assertEquals(goal, s.goal());
+				assertTrue(seen.add(s.id()), "duplicate step id " + s.id());
+				hasKey(s.labelKey());
+				hasKey(s.tipKey());
+			}
+		});
+		hasKey(P + "settings.show_steps");
+		hasKey(P + "settings.show_steps.tip");
 	}
 
 	@Test

@@ -55,6 +55,8 @@ public final class GuideProgress {
 	// --- transient (not saved) ---
 	public final Map<String, Long> lastShown = new HashMap<>();
 	public boolean comfortPending = false;
+	/** Id of the goal step at the last evaluation ("" = none), to notice when the player moves on to the next step. */
+	public String lastStep = "";
 
 	/** The guide has met this player. */
 	public boolean met() {

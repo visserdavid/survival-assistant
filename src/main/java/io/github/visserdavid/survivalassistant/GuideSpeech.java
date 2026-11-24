@@ -1,6 +1,7 @@
 package io.github.visserdavid.survivalassistant;
 
 import io.github.visserdavid.survivalassistant.advice.GuideNames;
+import io.github.visserdavid.survivalassistant.advice.Steps;
 import io.github.visserdavid.survivalassistant.advice.Tip;
 import io.github.visserdavid.survivalassistant.advice.TipRegistry;
 import io.github.visserdavid.survivalassistant.chat.GuideMusings;
@@ -64,9 +65,13 @@ final class GuideSpeech {
 		player.connection.send(new ClientboundSoundPacket(sound, source, x, y, z, volume, pitch, player.getRandom().nextLong()));
 	}
 
-	/** A tip in one of its text variants; urgent tips are yellow and also show above the hotbar. */
-	static void sayTip(ServerPlayer player, @Nullable GuideEntity guide, Tip tip, boolean urgent) {
-		MutableComponent text = randomVariant(tip.baseKey(), tip.variants(), player.getRandom());
+	/**
+	 * A tip in one of its text variants; urgent tips are yellow and also show above the hotbar. A goal with a current
+	 * step says the step's own line instead.
+	 */
+	static void sayTip(ServerPlayer player, @Nullable GuideEntity guide, Tip tip, boolean urgent, Steps.@Nullable Step step) {
+		MutableComponent text = step != null ? Component.translatable(step.tipKey())
+				: randomVariant(tip.baseKey(), tip.variants(), player.getRandom());
 		say(player, guide, urgent ? text.withStyle(ChatFormatting.YELLOW) : text, urgent);
 		if (urgent) player.sendOverlayMessage(text.copy().withStyle(ChatFormatting.GOLD));
 		if (guide != null && ModConfig.get().pointAtResources) {

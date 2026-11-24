@@ -39,6 +39,7 @@ public final class HudCodec {
 			ByteBufCodecs.VAR_INT, HudSnapshot::chapter,
 			ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list(HudSnapshot.MAX_COMPLETED)), HudSnapshot::completed,
 			ENTRY_CODEC.apply(ByteBufCodecs.list(HudSnapshot.SHOWN_TASKS)), HudSnapshot::next,
+			ENTRY_CODEC, HudSnapshot::step,
 			ByteBufCodecs.STRING_UTF8, HudSnapshot::urgentId,
 			ByteBufCodecs.optional(WAYPOINT_CODEC), HudSnapshot::waypoint,
 			ByteBufCodecs.BOOL, HudSnapshot::safe,

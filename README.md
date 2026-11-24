@@ -96,6 +96,11 @@ archaeology, the trial challenges, the happy ghast and automation.
 
 - The current task and the next two, with live counters (for example logs 6/10 or blaze rods 2/3) and a
   check-mark animation when a goal is done.
+- **Steps**: big goals are split into small steps, shown under the current task with their own counter, and the
+  guide tells you each step as soon as you reach it. Brewing a potion, for example, goes: glass bottles (3/3), fill
+  them with water, blaze powder as fuel, brew. Steps exist for the iron golem, the Nether portal, brewing,
+  bookshelves, eyes of ender, finding the stronghold, the dragon, the netherite ingot, the beacon (and its full
+  pyramid) and the automatic furnace. The recipe card follows the step (for example glass bottles, then blaze powder).
 - The title shows the chapter you are in (for example Ch. 6 · Farming and animals).
 - A clock (the in-game clock item) with a bar that counts down to sunset, turning orange at dusk and red at night.
 - **Urgent mode**: the border pulses red, and the current-task line becomes a warning (a warden or creeper
@@ -285,7 +290,7 @@ by default (Options → Controls → Key Binds → Survival Assistant).
 All options can be changed in the game, in the settings screen. Open it with the **Configure** button in
 [Mod Menu](https://modrinth.com/mod/modmenu) (optional), with `/guidesettings`, or with its key. It has three tabs:
 
-- **Display**: the task card (mode, corner, size), the environment card, the recipe card, mob and ore info (distance, crosshair or card), the
+- **Display**: the task card (mode, corner, size, steps), the environment card, the recipe card, mob and ore info (distance, crosshair or card), the
   guide's skin, and a button for the keys. Stored on your computer.
 - **My guide**: the guide character, your own name for the guide, musings and small talk. Stored with your player
   on the server, so this works on multiplayer servers too.
@@ -337,6 +342,7 @@ The settings screen writes these files; you can also edit them by hand (server o
 |---|---|---|
 | `corner` | `TOP_LEFT` | `TOP_LEFT`, `TOP_RIGHT`, `BOTTOM_LEFT` or `BOTTOM_RIGHT` |
 | `mode` | `COMPACT` | Task card mode: `COMPACT`, `FULL` or `HIDDEN` (J) |
+| `showSteps` | `true` | Show the current step under a big task (for example "Fill them with water 1/3") |
 | `showEnvironment` | `true` | Show the environment card (K) |
 | `envLines` | `FULL` | `COMPACT` shows only the biome header and ore line |
 | `recipeCard` | `true` | Recipe card next to the inventory / crafting table |

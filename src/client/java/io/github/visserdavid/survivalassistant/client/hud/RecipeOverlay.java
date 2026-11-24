@@ -44,7 +44,7 @@ public final class RecipeOverlay {
 		if (mc.player == null || !ClientConfig.get().recipeCard) return;
 		HudSnapshot snap = mc.player.getAttached(HudState.HUD);
 		if (snap == null || !snap.active() || snap.next().isEmpty()) return;
-		Optional<Recipes.Recipe> found = Recipes.forTask(snap.next().getFirst().id());
+		Optional<Recipes.Recipe> found = Recipes.forTask(snap.next().getFirst().id(), snap.step().id());
 		if (found.isEmpty()) return;
 		Recipes.Recipe recipe = found.get();
 

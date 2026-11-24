@@ -29,6 +29,8 @@ public final class ClientConfig {
 	public float scale = 1.0f;
 	/** Distance from the screen edge in GUI pixels. */
 	public int margin = 4;
+	/** Show the current step under a task that has steps (see advice/Steps). */
+	public boolean showSteps = true;
 	/** Show the environment card (biome + height advice); toggled with K. */
 	public boolean showEnvironment = true;
 	/** FULL = biome pros/cons, ores, pointer and hazard; COMPACT = header and ores only. */

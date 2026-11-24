@@ -32,8 +32,8 @@ import static io.github.visserdavid.survivalassistant.client.hud.HudDraw.SMALL_I
 import static io.github.visserdavid.survivalassistant.client.hud.HudDraw.smallIcon;
 
 /**
- * The "quest card": current task with icon, counter and bar, plus the next two tasks (compact),
- * or all milestones (full). Shows a day/sun clock and turns red when something urgent is going on.
+ * The "quest card": current task with icon, counter and bar, its current step (when the goal has steps), plus the
+ * next two tasks (compact), or all milestones (full). Shows a day/sun clock and turns red when something urgent is going on.
  *
  * <p>The card is as wide as its content needs (see {@link HudText}); text that still doesn't fit scrolls
  * inside its own slot so it never overlaps the counter or the clock.
@@ -46,6 +46,8 @@ public final class TaskHud implements HudElement {
 	private static final int ICON_X = PAD + 20;   // text start next to a full-size icon
 	private static final int SMALL_X = PAD + 17;  // text start next to a small icon (compact rows)
 	private static final int FULL_X = PAD + 19;   // text start in the full list
+	private static final int STEP_X = ICON_X + PixelIcons.PLAY_W + 3;  // step text after its small triangle (compact)
+	private static final int FULL_STEP_X = FULL_X + PixelIcons.PLAY_W + 3; // the same in the full list
 	private static final int GAP = 6;             // minimum space between text and right-aligned info
 	private static final int NAV_H = 13;          // navigation strip (death spot / home) at the bottom
 	private static final int NAV_TEXT_X = PAD + 21;
@@ -140,7 +142,7 @@ public final class TaskHud implements HudElement {
 		if (snap == cachedSnap) return;
 		cachedSnap = snap;
 		completed = Set.copyOf(snap.completed());
-		recipe = snap.next().isEmpty() ? Optional.empty() : Recipes.forTask(snap.next().getFirst().id());
+		recipe = snap.next().isEmpty() ? Optional.empty() : Recipes.forTask(snap.next().getFirst().id(), snap.step().id());
 		title = title(snap);
 		linesFlash = null;
 		lines = List.of();
@@ -210,6 +212,7 @@ public final class TaskHud implements HudElement {
 			for (Tip m : Chapters.get(snap.chapter()).goals()) {
 				wanted = Math.max(wanted, FULL_X + font.width(taskName(m.id())) + GAP + font.width(WIDEST_COUNTER) + PAD);
 			}
+			if (showStep(snap)) wanted = Math.max(wanted, FULL_STEP_X + stepWidth(font, snap.step()) + PAD);
 			if (recipe.isPresent()) {
 				wanted = Math.max(wanted, FULL_X + RecipeView.width(RECIPE_SLOT) + RecipeView.countLabelWidth(font, recipe.get(), RECIPE_SLOT) + PAD);
 			}
@@ -223,6 +226,7 @@ public final class TaskHud implements HudElement {
 					? ICON_X + text + GAP + Math.max(PixelIcons.CHECK_W, font.width(counter(e))) + PAD
 					: SMALL_X + text + PAD);
 		}
+		if (showStep(snap)) wanted = Math.max(wanted, STEP_X + stepWidth(font, snap.step()) + PAD);
 		if (!snap.urgentId().isEmpty()) {
 			wanted = Math.max(wanted, ICON_X + font.width(alertName(snap.urgentId())) + PAD);
 		}
@@ -237,12 +241,24 @@ public final class TaskHud implements HudElement {
 	}
 
 	private int compactHeight(HudSnapshot snap) {
-		int rows = Math.max(0, lines.size() - 1) + (showSafe(snap) ? 1 : 0);
+		int rows = Math.max(0, lines.size() - 1) + (showSafe(snap) ? 1 : 0) + (showStep(snap) ? 1 : 0);
 		return PAD + HEADER_H + CURRENT_H + rows * ROW_H + PAD;
 	}
 
 	private int fullHeight(HudSnapshot snap) {
-		return PAD + HEADER_H + Chapters.get(snap.chapter()).goals().size() * ROW_H + PAD + (recipe.isPresent() ? RECIPE_H : 0);
+		int rows = Chapters.get(snap.chapter()).goals().size() + (showStep(snap) ? 1 : 0);
+		return PAD + HEADER_H + rows * ROW_H + PAD + (recipe.isPresent() ? RECIPE_H : 0);
+	}
+
+	/** The current task has a step and the player wants to see steps. */
+	private static boolean showStep(HudSnapshot snap) {
+		return ClientConfig.get().showSteps && !snap.step().id().isEmpty() && !snap.next().isEmpty();
+	}
+
+	/** Step text, space and counter. */
+	private int stepWidth(Font font, HudSnapshot.Entry step) {
+		String count = counter(step);
+		return font.width(stepName(step.id())) + (count.isEmpty() ? 0 : GAP + font.width(count));
 	}
 
 	/** The green "well lit, safe here" row under the tasks (compact card only); a warning always wins. */
@@ -257,6 +273,10 @@ public final class TaskHud implements HudElement {
 
 	private Component taskName(String id) {
 		return names.computeIfAbsent("survivalassistant.task." + id, Component::translatable);
+	}
+
+	private Component stepName(String id) {
+		return names.computeIfAbsent("survivalassistant.step." + id, Component::translatable);
 	}
 
 	private Component alertName(String id) {
@@ -307,11 +327,28 @@ public final class TaskHud implements HudElement {
 		}
 
 		int rowY = y + CURRENT_H + slide;
+		if (showStep(snap)) {
+			// while a finished task flashes in the top slot, the space stays empty (the step belongs to the next task)
+			if (!firstIsFlash) drawStepRow(g, font, snap.step(), STEP_X, rowY, now);
+			rowY += ROW_H;
+		}
 		for (int i = 1; i < lines.size(); i++) {
 			drawSmallRow(g, font, lines.get(i), rowY, now);
 			rowY += ROW_H;
 		}
 		if (showSafe(snap)) drawSafeRow(g, font, rowY, now);
+	}
+
+	/** The current step: a small gold triangle, the step and its counter. */
+	private void drawStepRow(GuiGraphicsExtractor g, Font font, HudSnapshot.Entry step, int textX, int y, long now) {
+		PixelIcons.play(g, textX - PixelIcons.PLAY_W - 3, y + 1, GOLD);
+		String count = counter(step);
+		int rightX = width - PAD + GAP;
+		if (!count.isEmpty()) {
+			rightX = width - PAD - font.width(count);
+			g.text(font, count, rightX, y + 1, GOLD, true);
+		}
+		HudText.fit(g, font, stepName(step.id()), textX, y + 1, rightX - GAP - textX, WHITE, true, now);
 	}
 
 	private void drawSafeRow(GuiGraphicsExtractor g, Font font, int y, long now) {
@@ -399,6 +436,10 @@ public final class TaskHud implements HudElement {
 			}
 			HudText.fit(g, font, taskName(m.id()), FULL_X, y + 1, textMax, color, true, now);
 			y += ROW_H;
+			if (isCurrent && showStep(snap)) {
+				drawStepRow(g, font, snap.step(), FULL_STEP_X, y, now);
+				y += ROW_H;
+			}
 		}
 		if (recipe.isPresent()) {
 			g.fill(PAD, y + 1, width - PAD, y + 2, SEPARATOR);

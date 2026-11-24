@@ -16,8 +16,10 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.entity.animal.happyghast.HappyGhast;
+import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Ghast;
@@ -27,12 +29,15 @@ import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CopperBulbBlock;
 import net.minecraft.world.level.block.EnchantingTableBlock;
 import net.minecraft.world.level.block.FallingBlock;
+import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -40,7 +45,9 @@ import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.phys.AABB;
 import org.jspecify.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /** Builds a {@link SurvivalContext} from the live game state. */
@@ -60,6 +67,11 @@ public final class ContextCollector {
 	private static final int WARDEN_RADIUS = 24;
 	/** Ghasts are big and shoot from afar. Also the size of the one entity query. */
 	private static final int GHAST_RADIUS = 32;
+	/** The obsidian pillars of the End stand within this distance of 0,0 (their crystals are what the dragon step counts). */
+	private static final int END_PILLAR_RADIUS = 64;
+	private static final int END_PILLAR_TOP = 256;
+	/** Brewing stand slots: 0 - 2 hold the bottles, 4 the blaze powder. */
+	private static final int STAND_BOTTLE_SLOTS = 3, STAND_FUEL_SLOT = 4;
 
 	/** The armor slots plus the off hand (shield, totem, a held trident or mace). */
 	private static final EquipmentSlot[] WORN_SLOTS =
@@ -82,6 +94,7 @@ public final class ContextCollector {
 		scanBlocks(player.level(), player.blockPosition(), b);
 		scanDanger(player, env, b);
 		scanCreatures(player, env.overworld(), b);
+		if (player.level().dimension() == Level.END) b.endCrystals(endCrystals(player.level()));
 		return b.build();
 	}
 
@@ -120,6 +133,7 @@ public final class ContextCollector {
 				.ticksSinceRest(stats.getValue(Stats.CUSTOM.get(Stats.TIME_SINCE_REST)))
 				.animalsBred(stats.getValue(Stats.CUSTOM.get(Stats.ANIMALS_BRED)))
 				.trades(stats.getValue(Stats.CUSTOM.get(Stats.TRADED_WITH_VILLAGER)))
+				.eyesThrown(stats.getValue(Stats.ITEM_USED.get(Items.ENDER_EYE)))
 				.digDownStreak(digDownStreak)
 				.advancements(advancements(player));
 	}
@@ -129,6 +143,8 @@ public final class ContextCollector {
 		int logs = 0, planks = 0, cobble = 0, foodItems = 0, wool = 0, torches = 0, iron = 0, bread = 0, arrows = 0;
 		int diamonds = 0, obsidian = 0, emeralds = 0, blazeRods = 0, netherWart = 0, sugarCane = 0, redstone = 0;
 		int pearls = 0, eyes = 0, skulls = 0, soulSand = 0, echoShards = 0, breezeRods = 0, pickaxe = 0, weapon = 0;
+		int waterBottles = 0;
+		Map<String, Integer> tracked = new HashMap<>();
 		boolean[] armor = new boolean[ARMOR_SLOTS];
 
 		var inv = player.getInventory();
@@ -188,6 +204,11 @@ public final class ContextCollector {
 			else if (s.is(ItemTags.HARNESSES)) b.hasHarness(true);
 			markGear(item, b);
 			if (s.is(ItemTags.ARROWS)) arrows += n;
+			if (item == Items.POTION && s.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).is(Potions.WATER)) {
+				waterBottles += n;
+			}
+			String id = path(item);
+			if (Steps.TRACKED_ITEMS.contains(id)) tracked.merge(id, n, Integer::sum);
 			markArmor(s, armor);
 
 			if (s.has(DataComponents.FOOD)) foodItems += n;
@@ -216,7 +237,8 @@ public final class ContextCollector {
 				.bread(bread).arrows(arrows).diamonds(diamonds).obsidian(obsidian).emeralds(emeralds).blazeRods(blazeRods)
 				.netherWart(netherWart).sugarCane(sugarCane).redstone(redstone).enderPearls(pearls).eyesOfEnder(eyes)
 				.witherSkulls(skulls).soulSand(soulSand).echoShards(echoShards).breezeRods(breezeRods)
-				.pickaxeTier(pickaxe).swordTier(weapon).armorPieces(armorPieces);
+				.pickaxeTier(pickaxe).swordTier(weapon).armorPieces(armorPieces).waterBottles(waterBottles);
+		tracked.forEach(b::item);
 	}
 
 	/** Items that count whether they are carried, worn or held in the off hand. */
@@ -233,10 +255,14 @@ public final class ContextCollector {
 	private static void scanBlocks(ServerLevel level, BlockPos origin, SurvivalContext.Builder b) {
 		int r = BLOCK_SCAN_RADIUS, h = BLOCK_SCAN_HEIGHT;
 		int crops = 0, bookshelves = 0;
-		boolean autoSmelter = false;
+		boolean autoSmelter = false, hopperOnFurnace = false, standFuel = false;
+		int standBottles = 0, beaconLevel = 0;
+		Map<String, Integer> tracked = new HashMap<>();
 		for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-r, -h, -r), origin.offset(r, h, r))) {
 			BlockState st = level.getBlockState(pos);
 			if (st.isAir()) continue;
+			String id = BuiltInRegistries.BLOCK.getKey(st.getBlock()).getPath();
+			if (Steps.TRACKED_BLOCKS.contains(id)) tracked.merge(id, 1, Integer::sum);
 			if (st.is(Blocks.CRAFTING_TABLE)) b.hasCraftingTable(true);
 			else if (st.is(Blocks.FURNACE)) b.hasFurnace(true);
 			else if (st.is(Blocks.CHEST)) b.hasChest(true);
@@ -246,7 +272,14 @@ public final class ContextCollector {
 				b.hasEnchantingTable(true);
 				bookshelves = Math.max(bookshelves, bookshelvesAround(level, pos));
 			}
-			else if (st.is(Blocks.BREWING_STAND)) b.hasBrewingStand(true);
+			else if (st.is(Blocks.BREWING_STAND)) {
+				b.hasBrewingStand(true);
+				if (level.getBlockEntity(pos) instanceof BrewingStandBlockEntity stand) {
+					standBottles = Math.max(standBottles, standBottles(stand));
+					if (stand.fuel > 0 || stand.getItem(STAND_FUEL_SLOT).is(Items.BLAZE_POWDER)) standFuel = true;
+				}
+			}
+			else if (st.is(Blocks.BEACON)) beaconLevel = Math.max(beaconLevel, beaconLevel(level, pos));
 			else if (st.is(BlockTags.ANVIL)) b.hasAnvil(true);
 			else if (st.is(Blocks.IRON_DOOR)) { if (st.getValue(BlockStateProperties.OPEN)) b.ironDoorOpen(true); }
 			else if (st.is(Blocks.PISTON) || st.is(Blocks.STICKY_PISTON)) {
@@ -258,16 +291,56 @@ public final class ContextCollector {
 			else if (st.is(Blocks.OBSERVER)) b.observer(true);
 			else if (st.is(Blocks.CRAFTER)) b.crafter(true);
 			else if (st.getBlock() instanceof CopperBulbBlock) { if (st.getValue(BlockStateProperties.LIT)) b.copperBulbLit(true); }
-			if (!autoSmelter && st.getBlock() instanceof AbstractFurnaceBlock) autoSmelter = fedByHoppers(level, pos);
+			if (st.getBlock() instanceof AbstractFurnaceBlock) {
+				if (!hopperOnFurnace) hopperOnFurnace = hopperAbove(level, pos);
+				if (!autoSmelter) autoSmelter = fedByHoppers(level, pos);
+			}
 		}
-		b.crops(crops).bookshelves(bookshelves).autoSmelter(autoSmelter);
+		b.crops(crops).bookshelves(bookshelves).autoSmelter(autoSmelter).hopperOnFurnace(hopperOnFurnace)
+				.standBottles(standBottles).standFuel(standFuel).beaconLevel(beaconLevel);
+		tracked.forEach(b::block);
+	}
+
+	/** Bottles (water or potions) in the bottom slots of a brewing stand. */
+	private static int standBottles(BrewingStandBlockEntity stand) {
+		int n = 0;
+		for (int slot = 0; slot < STAND_BOTTLE_SLOTS; slot++) if (!stand.getItem(slot).isEmpty()) n++;
+		return n;
+	}
+
+	/** Pyramid levels under a beacon, counted the way the game does: every level a full square of base blocks. */
+	private static int beaconLevel(ServerLevel level, BlockPos beacon) {
+		int levels = 0;
+		for (int i = 1; i <= Steps.MAX_BEACON_LEVEL; i++) {
+			int y = beacon.getY() - i;
+			if (y < level.getMinY()) break;
+			for (int x = -i; x <= i; x++) {
+				for (int z = -i; z <= i; z++) {
+					if (!level.getBlockState(new BlockPos(beacon.getX() + x, y, beacon.getZ() + z)).is(BlockTags.BEACON_BASE_BLOCKS)) {
+						return levels;
+					}
+				}
+			}
+			levels = i;
+		}
+		return levels;
+	}
+
+	/** End crystals still standing on the central island (only loaded ones count: the player is usually close). */
+	private static int endCrystals(ServerLevel level) {
+		int r = END_PILLAR_RADIUS;
+		return level.getEntitiesOfClass(EndCrystal.class, new AABB(-r, 0, -r, r, END_PILLAR_TOP, r), Entity::isAlive).size();
 	}
 
 	/** A hopper above that feeds into the furnace and a hopper below that takes the result out. */
 	private static boolean fedByHoppers(ServerLevel level, BlockPos furnace) {
-		BlockState above = level.getBlockState(furnace.above()), below = level.getBlockState(furnace.below());
-		return above.is(Blocks.HOPPER) && above.getValue(BlockStateProperties.FACING_HOPPER) == Direction.DOWN
-				&& below.is(Blocks.HOPPER);
+		return hopperAbove(level, furnace) && level.getBlockState(furnace.below()).is(Blocks.HOPPER);
+	}
+
+	/** A hopper on top of the furnace that points down into it. */
+	private static boolean hopperAbove(ServerLevel level, BlockPos furnace) {
+		BlockState above = level.getBlockState(furnace.above());
+		return above.is(Blocks.HOPPER) && above.getValue(BlockStateProperties.FACING_HOPPER) == Direction.DOWN;
 	}
 
 	/** Lava and falling blocks (underground or in the Nether) and whether the spot is well lit. */

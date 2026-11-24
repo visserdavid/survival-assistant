@@ -11,8 +11,15 @@ import java.util.List;
  * Decides what the guide says. Pure logic: no Minecraft, no randomness, no I/O.
  */
 public final class AdviceEngine {
-	/** One line the guide wants to say. {@code praise} marks a "well done" message for a just-completed milestone. */
-	public record Message(Tip tip, boolean urgent, boolean praise) {}
+	/**
+	 * One line the guide wants to say. {@code praise} marks a "well done" message for a just-completed milestone;
+	 * {@code step} is the goal's current step (see {@link Steps}), said instead of the goal's own tip, or null.
+	 */
+	public record Message(Tip tip, boolean urgent, boolean praise, Steps.@Nullable Step step) {
+		public Message(Tip tip, boolean urgent, boolean praise) {
+			this(tip, urgent, praise, null);
+		}
+	}
 
 	/** How long the guide waits before repeating a warning or a goal tip (game ticks). */
 	public record Settings(long urgentCooldownTicks, long milestoneCooldownTicks) {
@@ -54,11 +61,15 @@ public final class AdviceEngine {
 			}
 		}
 
-		// 3. Next milestone.
+		// 3. Next milestone, or its current step. Moving on to the next step is news, like a completed goal.
 		Tip next = nextMilestone(progress);
-		if (next != null && (forced || (!muted && (cooledDown(progress, next, now, settings.milestoneCooldownTicks()) || justPraised(out))))) {
+		Steps.Step step = next == null ? null : Steps.current(next, ctx);
+		boolean stepAdvanced = Steps.advanced(progress.lastStep, step);
+		progress.lastStep = step == null ? "" : step.id();
+		if (next != null && (forced || (!muted && (cooledDown(progress, next, now, settings.milestoneCooldownTicks())
+				|| justPraised(out) || stepAdvanced)))) {
 			progress.lastShown.put(next.id(), now);
-			out.add(new Message(next, false, false));
+			out.add(new Message(next, false, false, step));
 		}
 		return out;
 	}

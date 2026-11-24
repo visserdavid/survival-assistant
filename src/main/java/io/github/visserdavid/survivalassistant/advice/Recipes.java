@@ -71,12 +71,23 @@ public final class Recipes {
 	/** A bucket: for water (chapter 1) and for milk (chapter 6). */
 	private static final Recipe BUCKET = new Recipe("minecraft:bucket", 1, List.of("# #", " # "), Map.of('#', IRON));
 
+	/** Used by a goal and by a step of another goal. */
+	private static final Recipe FLINT_AND_STEEL = new Recipe("minecraft:flint_and_steel", 1, List.of("IF"),
+			Map.of('I', IRON, 'F', "minecraft:flint"));
+	private static final Recipe HOPPER = new Recipe("minecraft:hopper", 1, List.of("I I", "ICI", " I "),
+			Map.of('I', IRON, 'C', "minecraft:chest"));
+	/** One blaze rod gives 2 powder (shapeless): fuel for the brewing stand, and half of an eye of ender. */
+	private static final Recipe BLAZE_POWDER = new Recipe("minecraft:blaze_powder", 2, List.of("B"), Map.of('B', "minecraft:blaze_rod"));
+
 	/** Every pickaxe has the same shape: three of the material over two sticks. */
 	private static Recipe pickaxe(String resultId, String material) {
 		return new Recipe(resultId, 1, List.of("XXX", " # ", " # "), Map.of('X', material, '#', STICK));
 	}
 
-	/** Task id to recipe. Tasks without a crafting step (food, shelter, iron, breeding, mining) have none. */
+	/**
+	 * Task id to recipe. Tasks without a crafting step (food, shelter, iron, breeding, mining) have none. A goal step
+	 * (see {@link Steps}) can have its own recipe under its step id; otherwise the goal's recipe is shown.
+	 */
 	public static final Map<String, Recipe> BY_TASK = Map.ofEntries(
 			Map.entry("wood", new Recipe("minecraft:oak_planks", 4, List.of("L"), Map.of('L', "minecraft:oak_log"))),
 			Map.entry("crafting_table", new Recipe("minecraft:crafting_table", 1, List.of("##", "##"), Map.of('#', PLANKS))),
@@ -96,8 +107,7 @@ public final class Recipes {
 			Map.entry("bread", new Recipe("minecraft:bread", 1, List.of("###"), Map.of('#', "minecraft:wheat"))),
 			Map.entry("bow", new Recipe("minecraft:bow", 1, List.of(" #X", "# X", " #X"), Map.of('#', STICK, 'X', STRING))),
 			Map.entry("diamond_pickaxe", pickaxe("minecraft:diamond_pickaxe", "minecraft:diamond")),
-			Map.entry("flint_and_steel", new Recipe("minecraft:flint_and_steel", 1, List.of("IF"),
-					Map.of('I', IRON, 'F', "minecraft:flint"))),
+			Map.entry("flint_and_steel", FLINT_AND_STEEL),
 			Map.entry("enchanting_table", new Recipe("minecraft:enchanting_table", 1, List.of(" B ", "D#D", "###"),
 					Map.of('B', "minecraft:book", 'D', "minecraft:diamond", '#', "minecraft:obsidian"))),
 			// chapter 3: an iron block for the golem (4 of them in a T, carved pumpkin on top)
@@ -134,8 +144,7 @@ public final class Recipes {
 					Map.of('T', PLANKS, '#', COBBLE, 'X', IRON, 'R', REDSTONE))),
 			Map.entry("repeater", new Recipe("minecraft:repeater", 1, List.of("#X#", "III"),
 					Map.of('#', "minecraft:redstone_torch", 'X', REDSTONE, 'I', "minecraft:stone"))),
-			Map.entry("hopper", new Recipe("minecraft:hopper", 1, List.of("I I", "ICI", " I "),
-					Map.of('I', IRON, 'C', "minecraft:chest"))),
+			Map.entry("hopper", HOPPER),
 			// chapter 10: an eye of ender is a pearl with blaze powder (shapeless)
 			Map.entry("eyes_of_ender", new Recipe("minecraft:ender_eye", 1, List.of("PB"),
 					Map.of('P', "minecraft:ender_pearl", 'B', "minecraft:blaze_powder"))),
@@ -168,10 +177,28 @@ public final class Recipes {
 			Map.entry("copper_bulb", new Recipe("minecraft:copper_bulb", 4, List.of(" C ", "CBC", " R "),
 					Map.of('C', "minecraft:copper_block", 'B', "minecraft:blaze_rod", 'R', REDSTONE))),
 			Map.entry("crafter", new Recipe("minecraft:crafter", 1, List.of("###", "#C#", "RDR"),
-					Map.of('#', IRON, 'C', "minecraft:crafting_table", 'R', REDSTONE, 'D', "minecraft:dropper")))
+					Map.of('#', IRON, 'C', "minecraft:crafting_table", 'R', REDSTONE, 'D', "minecraft:dropper"))),
+
+			// ---- goal steps
+			Map.entry("enter_nether.light", FLINT_AND_STEEL),
+			Map.entry("brew_potion.bottles", new Recipe("minecraft:glass_bottle", 3, List.of("# #", " # "),
+					Map.of('#', "minecraft:glass"))),
+			Map.entry("brew_potion.fuel", BLAZE_POWDER),
+			Map.entry("bookshelves.paper", new Recipe("minecraft:paper", 3, List.of("###"), Map.of('#', "minecraft:sugar_cane"))),
+			// a book is 3 paper and 1 leather (shapeless)
+			Map.entry("bookshelves.books", new Recipe("minecraft:book", 1, List.of("PP", "PL"),
+					Map.of('P', "minecraft:paper", 'L', "minecraft:leather"))),
+			Map.entry("eyes_of_ender.powder", BLAZE_POWDER),
+			Map.entry("auto_smelter.hoppers", HOPPER)
 	);
 
 	public static Optional<Recipe> forTask(String taskId) {
 		return Optional.ofNullable(BY_TASK.get(taskId));
+	}
+
+	/** The recipe for the current step of a task when it has its own, else the task's recipe. */
+	public static Optional<Recipe> forTask(String taskId, String stepId) {
+		Recipe step = stepId.isEmpty() ? null : BY_TASK.get(stepId);
+		return step != null ? Optional.of(step) : forTask(taskId);
 	}
 }

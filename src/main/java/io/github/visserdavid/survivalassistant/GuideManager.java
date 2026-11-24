@@ -170,7 +170,7 @@ public final class GuideManager {
 					player.level().sendParticles(ParticleTypes.HAPPY_VILLAGER, guide.getX(), guide.getY() + 2.1, guide.getZ(), 6, 0.3, 0.2, 0.3, 0);
 				}
 			} else {
-				GuideSpeech.sayTip(player, guide, m.tip(), m.urgent());
+				GuideSpeech.sayTip(player, guide, m.tip(), m.urgent(), m.step());
 			}
 		}
 		if (forced && messages.isEmpty()) {

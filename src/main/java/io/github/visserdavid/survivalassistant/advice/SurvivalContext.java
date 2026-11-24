@@ -1,6 +1,8 @@
 package io.github.visserdavid.survivalassistant.advice;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -100,8 +102,9 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 	 * @param digDownStreak  recent breaks of the block directly under the player's feet
 	 * @param advancements   the vanilla advancements the chapters track that this player has completed
 	 */
+	/** @param eyesThrown how often the player used an eye of ender (thrown, or put in a portal frame) */
 	public record Player(float health, int food, int xpLevel, int ticksSinceRest, int animalsBred, int trades,
-			int digDownStreak, Set<String> advancements) {
+			int digDownStreak, int eyesThrown, Set<String> advancements) {
 		public Player {
 			advancements = Set.copyOf(advancements);
 		}
@@ -126,6 +129,8 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 	 * @param goldArmorWorn   wearing at least one piece of piglin-safe (golden) armor
 	 * @param bedInInventory  a bed carried (not a placed one)
 	 * @param hasNetheriteGear a netherite tool, weapon or armor piece (not the ingot, scrap or template)
+	 * @param waterBottles    water bottles carried (potions with the water contents)
+	 * @param items           counts of the items the goal steps look at ({@link Steps#TRACKED_ITEMS}), by item id path
 	 */
 	public record Inventory(
 			int logs, int planks, int cobblestone, int foodItems, int wool, int torches, int iron, int bread, int arrows,
@@ -141,7 +146,16 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 			boolean hasNetheriteIngot, boolean hasUpgradeTemplate, boolean hasNetheriteGear, boolean hasNetherStar,
 			boolean hasRecoveryCompass, boolean hasOminousBottle, boolean hasTotem,
 			boolean hasBrush, boolean hasDecoratedPot, boolean hasWindCharge, boolean hasHeavyCore, boolean hasMace,
-			boolean hasDriedGhast, boolean hasHarness) {}
+			boolean hasDriedGhast, boolean hasHarness, int waterBottles, Map<String, Integer> items) {
+		public Inventory {
+			items = Map.copyOf(items);
+		}
+
+		/** How many of this tracked item (id path, e.g. "glass_bottle") are carried. */
+		public int count(String item) {
+			return items.getOrDefault(item, 0);
+		}
+	}
 
 	/**
 	 * @param crops             planted crops (block tag crops) within a few blocks
@@ -154,10 +168,25 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 	 * @param pistonExtended    a piston nearby is pushed out (so it is powered)
 	 * @param autoSmelter       a furnace nearby with a hopper above it (feeding in) and a hopper below it (taking out)
 	 * @param copperBulbLit     a lit copper bulb nearby (any oxidation stage)
+	 * @param hopperOnFurnace   a furnace nearby with a hopper above it that feeds into it
+	 * @param standBottles      bottles (water or potions) in the bottom slots of a brewing stand nearby
+	 * @param standFuel         a brewing stand nearby has fuel (blaze powder in its slot, or fuel left)
+	 * @param beaconLevel       pyramid levels (0 - 4) under the best beacon nearby; 0 when there is none
+	 * @param blocks            counts of the placed blocks the goal steps look at ({@link Steps#TRACKED_BLOCKS}), by id path
 	 */
 	public record Nearby(int crops, int bookshelves, boolean lava, boolean fallingBlockAbove, boolean litArea,
 			boolean ironDoorOpen, boolean pistonExtended, boolean repeater, boolean hopper, boolean observer,
-			boolean crafter, boolean autoSmelter, boolean copperBulbLit) {}
+			boolean crafter, boolean autoSmelter, boolean copperBulbLit, boolean hopperOnFurnace, int standBottles,
+			boolean standFuel, int beaconLevel, Map<String, Integer> blocks) {
+		public Nearby {
+			blocks = Map.copyOf(blocks);
+		}
+
+		/** How many of this tracked block (id path, e.g. "obsidian") are placed nearby. */
+		public int placed(String block) {
+			return blocks.getOrDefault(block, 0);
+		}
+	}
 
 	/**
 	 * @param hostiles  number of hostile mobs within ~16 blocks
@@ -167,9 +196,10 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 	 * @param piglin    a piglin within 16 blocks (outside the overworld)
 	 * @param ghastling a baby happy ghast within 16 blocks
 	 * @param ridingTamedHorse riding a tamed horse, donkey, mule or camel
+	 * @param endCrystals      end crystals left on the central island (in the End only; 0 elsewhere)
 	 */
 	public record Creatures(int hostiles, boolean creeper, boolean warden, boolean ghast, boolean piglin,
-			boolean ghastling, boolean ridingTamedHorse, boolean ridingHappyGhast) {}
+			boolean ghastling, boolean ridingTamedHorse, boolean ridingHappyGhast, int endCrystals) {}
 
 	/** Monsters could spawn around the player: underground, or outside without a roof at dusk, at night or in a thunderstorm. */
 	public boolean darkMatters() {
@@ -202,7 +232,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		private boolean thundering, sheltered, underground;
 		// player
 		private float health = 20f;
-		private int food = 20, xpLevel, ticksSinceRest, animalsBred, trades, digDownStreak;
+		private int food = 20, xpLevel, ticksSinceRest, animalsBred, trades, digDownStreak, eyesThrown;
 		private final Set<String> advancements = new HashSet<>();
 		// inventory
 		private int logs, planks, cobblestone, foodItems, wool, torches, iron, bread, arrows, diamonds, obsidian, emeralds,
@@ -214,12 +244,16 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 				hasElytra, hasNetheriteIngot, hasUpgradeTemplate, hasNetheriteGear, hasNetherStar, hasRecoveryCompass,
 				hasOminousBottle, hasTotem, hasBrush, hasDecoratedPot, hasWindCharge, hasHeavyCore, hasMace, hasDriedGhast,
 				hasHarness;
+		private int waterBottles;
+		private final Map<String, Integer> items = new HashMap<>();
 		// nearby
 		private int crops, bookshelves;
 		private boolean lava, fallingBlockAbove, litArea, ironDoorOpen, pistonExtended, repeater, hopper, observer,
-				crafter, autoSmelter, copperBulbLit;
+				crafter, autoSmelter, copperBulbLit, hopperOnFurnace, standFuel;
+		private int standBottles, beaconLevel;
+		private final Map<String, Integer> blocks = new HashMap<>();
 		// creatures
-		private int hostiles;
+		private int hostiles, endCrystals;
 		private boolean creeper, warden, ghast, piglin, ghastling, ridingTamedHorse, ridingHappyGhast;
 
 		private Builder() {}
@@ -240,6 +274,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public Builder animalsBred(int v) { animalsBred = v; return this; }
 		public Builder trades(int v) { trades = v; return this; }
 		public Builder digDownStreak(int v) { digDownStreak = v; return this; }
+		public Builder eyesThrown(int v) { eyesThrown = v; return this; }
 		public Builder advancement(String v) { advancements.add(v); return this; }
 		public Builder advancements(Set<String> v) { advancements.addAll(v); return this; }
 		// inventory: counts
@@ -306,6 +341,10 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public Builder hasMace(boolean v) { hasMace = v; return this; }
 		public Builder hasDriedGhast(boolean v) { hasDriedGhast = v; return this; }
 		public Builder hasHarness(boolean v) { hasHarness = v; return this; }
+		// inventory: step items
+		public Builder waterBottles(int v) { waterBottles = v; return this; }
+		/** Sets the count of a tracked item (id path); 0 removes it. */
+		public Builder item(String id, int count) { if (count > 0) items.put(id, count); else items.remove(id); return this; }
 		// nearby
 		public Builder crops(int v) { crops = v; return this; }
 		public Builder bookshelves(int v) { bookshelves = v; return this; }
@@ -320,6 +359,12 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public Builder crafter(boolean v) { crafter = v; return this; }
 		public Builder autoSmelter(boolean v) { autoSmelter = v; return this; }
 		public Builder copperBulbLit(boolean v) { copperBulbLit = v; return this; }
+		public Builder hopperOnFurnace(boolean v) { hopperOnFurnace = v; return this; }
+		public Builder standBottles(int v) { standBottles = v; return this; }
+		public Builder standFuel(boolean v) { standFuel = v; return this; }
+		public Builder beaconLevel(int v) { beaconLevel = v; return this; }
+		/** Sets the count of a tracked placed block (id path); 0 removes it. */
+		public Builder block(String id, int count) { if (count > 0) blocks.put(id, count); else blocks.remove(id); return this; }
 		// creatures
 		public Builder hostiles(int v) { hostiles = v; return this; }
 		public Builder creeper(boolean v) { creeper = v; return this; }
@@ -329,11 +374,13 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public Builder ghastling(boolean v) { ghastling = v; return this; }
 		public Builder ridingTamedHorse(boolean v) { ridingTamedHorse = v; return this; }
 		public Builder ridingHappyGhast(boolean v) { ridingHappyGhast = v; return this; }
+		public Builder endCrystals(int v) { endCrystals = v; return this; }
 
 		public SurvivalContext build() {
 			return new SurvivalContext(
 					new World(dayIndex, timeOfDay, dimension, structure, thundering, sheltered, underground),
-					new Player(health, food, xpLevel, ticksSinceRest, animalsBred, trades, digDownStreak, advancements),
+					new Player(health, food, xpLevel, ticksSinceRest, animalsBred, trades, digDownStreak, eyesThrown,
+							advancements),
 					new Inventory(logs, planks, cobblestone, foodItems, wool, torches, iron, bread, arrows, diamonds,
 							obsidian, emeralds, blazeRods, netherWart, sugarCane, redstone, enderPearls, eyesOfEnder,
 							witherSkulls, soulSand, echoShards, breezeRods, pickaxeTier, swordTier, armorPieces,
@@ -342,10 +389,12 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 							hasBrewingStand, hasAnvil, hasBoat, hasMilk, hasHeartOfTheSea, hasTurtleHelmet, hasTrident,
 							hasFilledMap, hasSpyglass, hasElytra, hasNetheriteIngot, hasUpgradeTemplate, hasNetheriteGear,
 							hasNetherStar, hasRecoveryCompass, hasOminousBottle, hasTotem, hasBrush, hasDecoratedPot,
-							hasWindCharge, hasHeavyCore, hasMace, hasDriedGhast, hasHarness),
+							hasWindCharge, hasHeavyCore, hasMace, hasDriedGhast, hasHarness, waterBottles, items),
 					new Nearby(crops, bookshelves, lava, fallingBlockAbove, litArea, ironDoorOpen, pistonExtended,
-							repeater, hopper, observer, crafter, autoSmelter, copperBulbLit),
-					new Creatures(hostiles, creeper, warden, ghast, piglin, ghastling, ridingTamedHorse, ridingHappyGhast));
+							repeater, hopper, observer, crafter, autoSmelter, copperBulbLit, hopperOnFurnace, standBottles,
+							standFuel, beaconLevel, blocks),
+					new Creatures(hostiles, creeper, warden, ghast, piglin, ghastling, ridingTamedHorse, ridingHappyGhast,
+							endCrystals));
 		}
 	}
 }

@@ -35,7 +35,8 @@ final class DisplayTab {
 				.cycle("corner", List.of(ClientConfig.Corner.values()), c.corner, m -> name("corner", m), v -> c.corner = v)
 				// 50 to 200 % in steps of 5
 				.slider("scale", 10, 40, Math.round(c.scale * 20), v -> Component.literal(v * 5 + "%"), v -> c.scale = v / 20f)
-				.slider("margin", 0, 32, c.margin, v -> Component.literal(Integer.toString(v)), v -> c.margin = v);
+				.slider("margin", 0, 32, c.margin, v -> Component.literal(Integer.toString(v)), v -> c.margin = v)
+				.toggle("show_steps", c.showSteps, v -> c.showSteps = v);
 
 		rows.header("environment")
 				.toggle("show_environment", c.showEnvironment, v -> c.showEnvironment = v)

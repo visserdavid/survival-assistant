@@ -3,3 +3,5 @@ accessWidener v2 official
 accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen leftPos I
 accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen topPos I
 accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen imageWidth I
+# The brewing step needs to know whether a brewing stand still has fuel after its blaze powder was used up.
+accessible field net/minecraft/world/level/block/entity/BrewingStandBlockEntity fuel I
