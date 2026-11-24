@@ -77,7 +77,7 @@ public final class Steps {
 	/** Items whose carried count the collector reports ({@link SurvivalContext.Inventory#count}). */
 	public static final Set<String> TRACKED_ITEMS = Set.of("glass_bottle", "blaze_powder", "paper", "leather", "book",
 			"bookshelf", "iron_block", "iron_ingot", "carved_pumpkin", "ancient_debris", "netherite_scrap", "gold_ingot",
-			"glass", "beacon", "hopper");
+			"glass", "beacon", "hopper", "saddle");
 	/** Blocks whose placed count nearby the collector reports ({@link SurvivalContext.Nearby#placed}). */
 	public static final Set<String> TRACKED_BLOCKS = Set.of("obsidian", "nether_portal", "iron_block", "carved_pumpkin",
 			"beacon", "hopper");
@@ -144,6 +144,19 @@ public final class Steps {
 					count("bookshelves.books", c -> item(c, "book"), BOOKS_PER_SHELF, Steps::carriesShelves),
 					step("bookshelves.craft", Steps::carriesShelves),
 					finish("bookshelves.place"))),
+			// chapter 6: a bottle, a hive, a campfire under it (calm bees), wait until it's full, then the bottle
+			Map.entry("honey", List.of(
+					count("honey.bottle", c -> item(c, "glass_bottle"), 1, c -> false),
+					step("honey.hive", c -> c.nearby().hive()),
+					step("honey.campfire", c -> c.nearby().hiveSmoked()),
+					step("honey.wait", c -> c.nearby().hiveFull()),
+					finish("honey.collect"))),
+			// chapter 6: find a horse, tame it, a saddle, ride
+			Map.entry("horse", List.of(
+					step("horse.find", c -> c.creatures().horseNearby()),
+					step("horse.tame", c -> c.creatures().tamedHorseNearby()),
+					step("horse.saddle", c -> item(c, "saddle") > 0 || c.creatures().saddledHorseNearby()),
+					finish("horse.ride"))),
 			// chapter 7: a treasure map from a shipwreck or ruin, its red X, then dig
 			Map.entry("treasure", List.of(
 					step("treasure.map", c -> c.inv().treasureDistance() >= 0),

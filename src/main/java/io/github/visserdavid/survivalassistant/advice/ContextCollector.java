@@ -17,7 +17,9 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.animal.camel.Camel;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
+import net.minecraft.world.entity.animal.equine.Llama;
 import net.minecraft.world.entity.animal.happyghast.HappyGhast;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.monster.Creeper;
@@ -34,6 +36,8 @@ import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.component.MapDecorations;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.BeehiveBlock;
+import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CopperBulbBlock;
 import net.minecraft.world.level.block.EnchantingTableBlock;
@@ -72,6 +76,8 @@ public final class ContextCollector {
 	/** The obsidian pillars of the End stand within this distance of 0,0 (their crystals are what the dragon step counts). */
 	private static final int END_PILLAR_RADIUS = 64;
 	private static final int END_PILLAR_TOP = 256;
+	/** Bee nests hang in trees: hives are also looked for this many blocks above the normal block scan. */
+	private static final int HIVE_EXTRA_HEIGHT = 4;
 	/** Brewing stand slots: 0 - 2 hold the bottles, 4 the blaze powder. */
 	private static final int STAND_BOTTLE_SLOTS = 3, STAND_FUEL_SLOT = 4;
 
@@ -314,9 +320,22 @@ public final class ContextCollector {
 				if (!autoSmelter) autoSmelter = fedByHoppers(level, pos);
 			}
 		}
+		scanHives(level, origin, b);
 		b.crops(crops).bookshelves(bookshelves).autoSmelter(autoSmelter).hopperOnFurnace(hopperOnFurnace)
 				.standBottles(standBottles).standFuel(standFuel).beaconLevel(beaconLevel);
 		tracked.forEach(b::block);
+	}
+
+	/** Beehives and bee nests from the feet up to the treetops: whether one is there, smoked and full of honey. */
+	private static void scanHives(ServerLevel level, BlockPos origin, SurvivalContext.Builder b) {
+		int r = BLOCK_SCAN_RADIUS, h = BLOCK_SCAN_HEIGHT;
+		for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-r, -h, -r), origin.offset(r, h + HIVE_EXTRA_HEIGHT, r))) {
+			BlockState st = level.getBlockState(pos);
+			if (!st.is(BlockTags.BEEHIVES)) continue;
+			b.hive(true);
+			if (CampfireBlock.isSmokeyPos(level, pos)) b.hiveSmoked(true);
+			if (st.getValue(BeehiveBlock.HONEY_LEVEL) >= BeehiveBlock.MAX_HONEY_LEVELS) b.hiveFull(true);
+		}
 	}
 
 	/** Bottles (water or potions) in the bottom slots of a brewing stand. */
@@ -394,6 +413,11 @@ public final class ContextCollector {
 			if (close && e instanceof HappyGhast ghast && ghast.isBaby()) b.ghastling(true);
 			if (!overworld && alive && e instanceof Ghast) b.ghast(true);
 			if (!overworld && alive && close && e instanceof Piglin) b.piglin(true);
+			if (alive && close && e instanceof AbstractHorse horse && !(e instanceof Llama) && !(e instanceof Camel)) {
+				b.horseNearby(true);
+				if (horse.isTamed()) b.tamedHorseNearby(true);
+				if (horse.isSaddled()) b.saddledHorseNearby(true);
+			}
 		}
 		b.hostiles(hostiles)
 				.ridingTamedHorse(player.getVehicle() instanceof AbstractHorse horse && horse.isTamed())

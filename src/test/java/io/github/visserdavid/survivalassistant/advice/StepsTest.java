@@ -142,6 +142,28 @@ class StepsTest {
 	}
 
 	@Test
+	void honey() {
+		Tip g = TipRegistry.HONEY;
+		assertEquals("honey.bottle", current(g, b -> b.hive(true)));
+		assertEquals("honey.hive", current(g, b -> b.item("glass_bottle", 1)));
+		assertEquals("honey.campfire", current(g, b -> b.item("glass_bottle", 1).hive(true).hiveFull(true)),
+				"a full hive without smoke: the bees would attack");
+		assertEquals("honey.wait", current(g, b -> b.item("glass_bottle", 1).hive(true).hiveSmoked(true)));
+		assertEquals("honey.collect", current(g, b -> b.item("glass_bottle", 1).hive(true).hiveSmoked(true).hiveFull(true)));
+	}
+
+	@Test
+	void horse() {
+		Tip g = TipRegistry.HORSE;
+		assertEquals("horse.find", current(g, b -> b.item("saddle", 1)));
+		assertEquals("horse.tame", current(g, b -> b.horseNearby(true)));
+		assertEquals("horse.saddle", current(g, b -> b.horseNearby(true).tamedHorseNearby(true)));
+		assertEquals("horse.ride", current(g, b -> b.horseNearby(true).tamedHorseNearby(true).item("saddle", 1)));
+		assertEquals("horse.ride", current(g, b -> b.horseNearby(true).tamedHorseNearby(true).saddledHorseNearby(true)),
+				"the saddle is already on the horse");
+	}
+
+	@Test
 	void countersAreClamped() {
 		Steps.Step bottles = Steps.BY_GOAL.get("brew_potion").getFirst();
 		assertEquals(3, bottles.target());

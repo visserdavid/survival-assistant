@@ -80,6 +80,9 @@ public final class Recipes {
 	private static final Recipe PAPER = new Recipe("minecraft:paper", 3, List.of("###"), Map.of('#', "minecraft:sugar_cane"));
 	private static final Recipe BOOK = new Recipe("minecraft:book", 1, List.of("PP", "PL"),
 			Map.of('P', "minecraft:paper", 'L', "minecraft:leather"));
+	/** Glass bottles: for brewing and for honey. */
+	private static final Recipe GLASS_BOTTLE = new Recipe("minecraft:glass_bottle", 3, List.of("# #", " # "),
+			Map.of('#', "minecraft:glass"));
 	/** One blaze rod gives 2 powder (shapeless): fuel for the brewing stand, and half of an eye of ender. */
 	private static final Recipe BLAZE_POWDER = new Recipe("minecraft:blaze_powder", 2, List.of("B"), Map.of('B', "minecraft:blaze_rod"));
 
@@ -185,8 +188,8 @@ public final class Recipes {
 
 			// ---- goal steps
 			Map.entry("enter_nether.light", FLINT_AND_STEEL),
-			Map.entry("brew_potion.bottles", new Recipe("minecraft:glass_bottle", 3, List.of("# #", " # "),
-					Map.of('#', "minecraft:glass"))),
+			Map.entry("brew_potion.bottles", GLASS_BOTTLE),
+			Map.entry("honey.bottle", GLASS_BOTTLE),
 			Map.entry("brew_potion.fuel", BLAZE_POWDER),
 			Map.entry("enchanting_table.paper", PAPER),
 			Map.entry("enchanting_table.book", BOOK),
