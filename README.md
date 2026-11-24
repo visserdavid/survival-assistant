@@ -71,7 +71,7 @@ archaeology, the trial challenges, the happy ghast and automation.
   locked ones in grey with what they need. Hover over a button to see what the chapter is about; click it to start.
 
 <p>
-  <img src="docs/images/chapters-menu.png" alt="Chapter menu in chat: chapters 1 and 2 done, 6 Farming and animals current, 3, 4, 7, 8 and 9 as buttons, 5 and 10 locked with what they need" width="600">
+  <img src="docs/images/chapters-menu.png" alt="Chapter menu in chat with all 18 chapters: 1 First days done, 2 Settling in current, the others locked with the chapters they need first" width="654">
 </p>
 <p>
   <img src="docs/images/chapters-tooltip.png" alt="Chapter menu with the tooltip of Villages and trading: find a village, trade with villagers, earn emeralds and build an iron golem" width="958">

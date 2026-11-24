@@ -7,7 +7,7 @@ The first one is the featured image on Modrinth.
 
 2. chapters-menu.png
    Title: Chapter menu
-   Description: Pick what to learn next: finished chapters in green, the current one in gold, open ones as buttons.
+   Description: All 18 chapters at a glance: finished ones in green, the current one in gold, and what each locked chapter needs first.
 
 3. task-card-chapter.png
    Title: Themed chapters
