@@ -27,6 +27,8 @@ public final class RecipeOverlay {
 	/** Space between the container window and the card, and the minimum distance to the screen edge. */
 	private static final int SPACING = 4;
 	private static final int EDGE = 2;
+	/** Vanilla's status effect list in the inventory (see {@link #effectsHeight}). */
+	private static final int EFFECT_SIZE = 32, EFFECT_STEP = 33, EFFECTS_SQUEEZED = 132;
 
 	private RecipeOverlay() {}
 
@@ -37,6 +39,19 @@ public final class RecipeOverlay {
 				ScreenEvents.afterExtract(screen).register((s, g, mouseX, mouseY, delta) -> draw(container, g));
 			}
 		});
+	}
+
+	/**
+	 * Height the inventory's status effects take right of the window, plus spacing (0 without effects). Mirrors
+	 * vanilla's {@code EffectsInInventory}: from the window's top, 32 high each, 33 apart, squeezed into 132 with more
+	 * than five, and only shown when at least 32 pixels are free on the right.
+	 */
+	private static int effectsHeight(AbstractContainerScreen<?> screen, Minecraft mc) {
+		if (!(screen instanceof InventoryScreen) || mc.player == null) return 0;
+		int n = mc.player.getActiveEffects().size();
+		if (n == 0 || screen.width - (screen.leftPos + screen.imageWidth + 2) < EFFECT_SIZE) return 0;
+		int step = n > 5 ? EFFECTS_SQUEEZED / (n - 1) : EFFECT_STEP;
+		return (n - 1) * step + EFFECT_SIZE + SPACING;
 	}
 
 	private static void draw(AbstractContainerScreen<?> screen, GuiGraphicsExtractor g) {
@@ -55,13 +70,18 @@ public final class RecipeOverlay {
 		int w = Math.max(RecipeView.width(SLOT), Math.max(font.width(title), noteTable ? font.width(note) : 0)) + 2 * PAD;
 		int h = PAD + TITLE_H + RecipeView.height(SLOT) + (noteTable ? NOTE_H : 0) + PAD;
 
-		// right of the container window, or left of it when there is no room, or the top-left corner as a last resort
-		int y = Math.max(EDGE, Math.min(screen.topPos, screen.height - h - EDGE));
+		// right of the container window (under the status effects there), or left of it when there is no room, or the
+		// top-left corner as a last resort
+		int top = screen.topPos + effectsHeight(screen, mc);
+		int y = Math.max(EDGE, Math.min(top, screen.height - h - EDGE));
 		int right = screen.leftPos + screen.imageWidth + SPACING, left = screen.leftPos - SPACING - w;
 		int x;
-		if (right + w <= screen.width - EDGE) {
+		// under the effects only when it fits there; without effects it may move up as before
+		boolean fitsRight = right + w <= screen.width - EDGE && (top == screen.topPos || top + h <= screen.height - EDGE);
+		if (fitsRight) {
 			x = right;
 		} else if (left >= EDGE) {
+			y = Math.max(EDGE, Math.min(screen.topPos, screen.height - h - EDGE));
 			x = left;
 		} else {
 			x = EDGE;
