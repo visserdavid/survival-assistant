@@ -1053,7 +1053,7 @@
 	"survivalassistant.step.iron_armor.iron": "8 سبائك حديد",
 	"survivalassistant.step.iron_armor.iron.tip": "صهر الحديد الخام في الفرن. الصدرية تكلف 8 سبائك وهي الأكثر حماية.",
 	"survivalassistant.step.iron_armor.craft": "اصنع الصدرية",
-	"survivalassistant.step.iron_armor.craft.tip": "املأ شبكة الصنع بالحديد ما عدا الخانة الوسطى في الأعلى.",
+	"survivalassistant.step.iron_armor.craft.tip": "املأ شبكة الصنع بالحديد ما عدا الخانة الوسطى في الأعلى. ثم ارتدها.",
 	"survivalassistant.step.piston.redstone": "ريدستون",
 	"survivalassistant.step.piston.redstone.tip": "خام الريدستون في أعماق الأرض. المكبس يحتاج ريدستون واحدًا وسبيكة حديد و4 أحجار مرصوفة و3 ألواح.",
 	"survivalassistant.step.piston.craft": "اصنع مكبسًا",

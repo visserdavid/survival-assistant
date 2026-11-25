@@ -1053,7 +1053,7 @@
 	"survivalassistant.step.iron_armor.iron": "8 залізних злитків",
 	"survivalassistant.step.iron_armor.iron.tip": "Переплав сире залізо в печі. Нагрудник коштує 8 злитків і захищає найкраще.",
 	"survivalassistant.step.iron_armor.craft": "Створи нагрудник",
-	"survivalassistant.step.iron_armor.craft.tip": "Заповни сітку залізом, крім середньої верхньої клітинки.",
+	"survivalassistant.step.iron_armor.craft.tip": "Заповни сітку залізом, крім середньої верхньої клітинки. Потім надягни його.",
 	"survivalassistant.step.piston.redstone": "Редстоун",
 	"survivalassistant.step.piston.redstone.tip": "Редстоунова руда лежить глибоко. Поршень: 1 редстоун, 1 залізний злиток, 4 кругляки й 3 дошки.",
 	"survivalassistant.step.piston.craft": "Створи поршень",

@@ -1053,7 +1053,7 @@
 	"survivalassistant.step.iron_armor.iron": "8 iron ingots",
 	"survivalassistant.step.iron_armor.iron.tip": "Smelt raw iron in a furnace. A chestplate takes 8 ingots and protects you the most.",
 	"survivalassistant.step.iron_armor.craft": "Craft the chestplate",
-	"survivalassistant.step.iron_armor.craft.tip": "Fill the crafting grid with iron, except the top middle square.",
+	"survivalassistant.step.iron_armor.craft.tip": "Fill the crafting grid with iron, except the top middle square. Then put it on.",
 	"survivalassistant.step.piston.redstone": "Redstone",
 	"survivalassistant.step.piston.redstone.tip": "Redstone ore lies deep underground. A piston takes 1 redstone, 1 iron ingot, 4 cobblestone and 3 planks.",
 	"survivalassistant.step.piston.craft": "Craft a piston",

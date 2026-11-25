@@ -1369,7 +1369,7 @@
 "~step.iron_armor.iron": "8 sztabek żelaza",
 "~step.iron_armor.iron.tip": "Przetop surowe żelazo w piecu. Napierśnik kosztuje 8 sztabek i chroni najbardziej.",
 "~step.iron_armor.craft": "Wytwórz napierśnik",
-"~step.iron_armor.craft.tip": "Wypełnij siatkę żelazem, oprócz środkowego pola na górze.",
+"~step.iron_armor.craft.tip": "Wypełnij siatkę żelazem, oprócz środkowego pola na górze. Potem go załóż.",
 "~step.piston.redstone": "Redstone",
 "~step.piston.redstone.tip": "Ruda redstone leży głęboko pod ziemią. Tłok to 1 czerwony proszek, 1 sztabka żelaza, 4 bruku i 3 deski.",
 "~step.piston.craft": "Wytwórz tłok",

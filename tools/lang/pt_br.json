@@ -1369,7 +1369,7 @@
 "~step.iron_armor.iron": "8 barras de ferro",
 "~step.iron_armor.iron.tip": "Funda ferro bruto numa fornalha. Um peitoral custa 8 barras e é o que mais protege.",
 "~step.iron_armor.craft": "Faça o peitoral",
-"~step.iron_armor.craft.tip": "Encha a grade com ferro, menos o espaço do meio em cima.",
+"~step.iron_armor.craft.tip": "Encha a grade com ferro, menos o espaço do meio em cima. Depois vista.",
 "~step.piston.redstone": "Redstone",
 "~step.piston.redstone.tip": "O minério de redstone fica bem fundo. Um pistão leva 1 redstone, 1 barra de ferro, 4 pedregulhos e 3 tábuas.",
 "~step.piston.craft": "Faça um pistão",

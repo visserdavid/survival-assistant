@@ -1369,7 +1369,7 @@
 "~step.iron_armor.iron": "8 batangan besi",
 "~step.iron_armor.iron.tip": "Lebur besi mentah di tungku. Pelindung dada butuh 8 batangan dan paling melindungi.",
 "~step.iron_armor.craft": "Buat pelindung dada",
-"~step.iron_armor.craft.tip": "Isi petak kerajinan dengan besi, kecuali kotak tengah atas.",
+"~step.iron_armor.craft.tip": "Isi petak kerajinan dengan besi, kecuali kotak tengah atas. Lalu pakai.",
 "~step.piston.redstone": "Redstone",
 "~step.piston.redstone.tip": "Bijih redstone ada jauh di bawah tanah. Piston butuh 1 redstone, 1 batangan besi, 4 batu belah, dan 3 papan.",
 "~step.piston.craft": "Buat piston",

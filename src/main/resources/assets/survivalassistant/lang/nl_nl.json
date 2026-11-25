@@ -1053,7 +1053,7 @@
 	"survivalassistant.step.iron_armor.iron": "8 ijzerstaven",
 	"survivalassistant.step.iron_armor.iron.tip": "Smelt ruw ijzer in een oven. Een borstplaat kost 8 staven en beschermt het meest.",
 	"survivalassistant.step.iron_armor.craft": "Maak de borstplaat",
-	"survivalassistant.step.iron_armor.craft.tip": "Vul het werkveld met ijzer, behalve het middelste vakje bovenaan.",
+	"survivalassistant.step.iron_armor.craft.tip": "Vul het werkveld met ijzer, behalve het middelste vakje bovenaan. Trek hem daarna aan.",
 	"survivalassistant.step.piston.redstone": "Redstone",
 	"survivalassistant.step.piston.redstone.tip": "Redstone-erts zit diep onder de grond. Een zuiger kost 1 redstone, 1 ijzerstaaf, 4 keien en 3 planken.",
 	"survivalassistant.step.piston.craft": "Maak een zuiger",

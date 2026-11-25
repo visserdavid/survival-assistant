@@ -1369,7 +1369,7 @@
 "~step.iron_armor.iron": "8 lingotti di ferro",
 "~step.iron_armor.iron.tip": "Fondi il ferro grezzo in una fornace. Una corazza costa 8 lingotti e protegge più di tutto.",
 "~step.iron_armor.craft": "Crea la corazza",
-"~step.iron_armor.craft.tip": "Riempi la griglia di ferro, tranne la casella in alto al centro.",
+"~step.iron_armor.craft.tip": "Riempi la griglia di ferro, tranne la casella in alto al centro. Poi indossala.",
 "~step.piston.redstone": "Redstone",
 "~step.piston.redstone.tip": "Il minerale di redstone è in profondità. Un pistone richiede 1 redstone, 1 lingotto di ferro, 4 pietrisco e 3 assi.",
 "~step.piston.craft": "Crea un pistone",

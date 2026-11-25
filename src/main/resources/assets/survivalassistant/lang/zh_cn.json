@@ -1053,7 +1053,7 @@
 	"survivalassistant.step.iron_armor.iron": "8个铁锭",
 	"survivalassistant.step.iron_armor.iron.tip": "在熔炉里烧炼粗铁。胸甲需要8个铁锭，防护效果最好。",
 	"survivalassistant.step.iron_armor.craft": "合成胸甲",
-	"survivalassistant.step.iron_armor.craft.tip": "用铁锭填满合成格，只空出最上面中间那格。",
+	"survivalassistant.step.iron_armor.craft.tip": "用铁锭填满合成格，只空出最上面中间那格。然后穿上它。",
 	"survivalassistant.step.piston.redstone": "红石",
 	"survivalassistant.step.piston.redstone.tip": "红石矿石在地下深处。活塞需要1个红石粉、1个铁锭、4块圆石和3块木板。",
 	"survivalassistant.step.piston.craft": "合成活塞",

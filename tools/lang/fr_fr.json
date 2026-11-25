@@ -1369,7 +1369,7 @@
 "~step.iron_armor.iron": "8 lingots de fer",
 "~step.iron_armor.iron.tip": "Fais fondre du fer brut au four. Un plastron coûte 8 lingots et protège le plus.",
 "~step.iron_armor.craft": "Fabrique le plastron",
-"~step.iron_armor.craft.tip": "Remplis la grille de fer, sauf la case du haut au milieu.",
+"~step.iron_armor.craft.tip": "Remplis la grille de fer, sauf la case du haut au milieu. Puis enfile-le.",
 "~step.piston.redstone": "Redstone",
 "~step.piston.redstone.tip": "Le minerai de redstone est loin sous terre. Un piston demande 1 redstone, 1 lingot de fer, 4 pierres taillées et 3 planches.",
 "~step.piston.craft": "Fabrique un piston",

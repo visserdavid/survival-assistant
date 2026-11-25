@@ -1053,7 +1053,7 @@
 	"survivalassistant.step.iron_armor.iron": "8 железных слитков",
 	"survivalassistant.step.iron_armor.iron.tip": "Переплавь сырое железо в печи. Нагрудник стоит 8 слитков и защищает лучше всего.",
 	"survivalassistant.step.iron_armor.craft": "Создай нагрудник",
-	"survivalassistant.step.iron_armor.craft.tip": "Заполни сетку железом, кроме средней верхней клетки.",
+	"survivalassistant.step.iron_armor.craft.tip": "Заполни сетку железом, кроме средней верхней клетки. Потом надень его.",
 	"survivalassistant.step.piston.redstone": "Редстоун",
 	"survivalassistant.step.piston.redstone.tip": "Редстоуновая руда лежит глубоко. Поршень: 1 редстоун, 1 железный слиток, 4 булыжника и 3 доски.",
 	"survivalassistant.step.piston.craft": "Создай поршень",

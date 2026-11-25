@@ -1053,7 +1053,7 @@
 	"survivalassistant.step.iron_armor.iron": "8 lingotes de hierro",
 	"survivalassistant.step.iron_armor.iron.tip": "Funde hierro en bruto en un horno. Una pechera cuesta 8 lingotes y es lo que más protege.",
 	"survivalassistant.step.iron_armor.craft": "Fabrica la pechera",
-	"survivalassistant.step.iron_armor.craft.tip": "Llena la cuadrícula con hierro, menos la casilla de arriba en el centro.",
+	"survivalassistant.step.iron_armor.craft.tip": "Llena la cuadrícula con hierro, menos la casilla de arriba en el centro. Después póntela.",
 	"survivalassistant.step.piston.redstone": "Redstone",
 	"survivalassistant.step.piston.redstone.tip": "La mena de redstone está en lo profundo. Un pistón lleva 1 de redstone, 1 lingote de hierro, 4 de roca y 3 tablones.",
 	"survivalassistant.step.piston.craft": "Fabrica un pistón",

@@ -1053,7 +1053,7 @@
 	"survivalassistant.step.iron_armor.iron": "8 Eisenbarren",
 	"survivalassistant.step.iron_armor.iron.tip": "Schmilz Roheisen im Ofen. Ein Brustpanzer kostet 8 Barren und schützt am meisten.",
 	"survivalassistant.step.iron_armor.craft": "Stell den Brustpanzer her",
-	"survivalassistant.step.iron_armor.craft.tip": "Füll das Handwerksfeld mit Eisen, außer dem Feld oben in der Mitte.",
+	"survivalassistant.step.iron_armor.craft.tip": "Füll das Handwerksfeld mit Eisen, außer dem Feld oben in der Mitte. Zieh ihn dann an.",
 	"survivalassistant.step.piston.redstone": "Redstone",
 	"survivalassistant.step.piston.redstone.tip": "Redstone-Erz liegt tief unter der Erde. Ein Kolben braucht 1 Redstone, 1 Eisenbarren, 4 Bruchstein und 3 Bretter.",
 	"survivalassistant.step.piston.craft": "Stell einen Kolben her",
