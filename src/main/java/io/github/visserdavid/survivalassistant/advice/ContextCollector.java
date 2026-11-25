@@ -254,6 +254,10 @@ public final class ContextCollector {
 			if (toX >= 0 && (treasureDistance < 0 || toX < treasureDistance)) treasureDistance = toX;
 			String id = path(item);
 			if (Steps.TRACKED_ITEMS.contains(id)) tracked.merge(id, n, Integer::sum);
+			if (s.is(ItemTags.DECORATED_POT_INGREDIENTS)) tracked.merge(Steps.POT_PARTS, n, Integer::sum);
+			if (s.is(ItemTags.TRIM_MATERIALS)) tracked.merge(Steps.TRIM_MATERIALS, n, Integer::sum);
+			if (s.is(ItemTags.TRIMMABLE_ARMOR)) tracked.merge(Steps.TRIMMABLE_ARMOR, n, Integer::sum);
+			if (id.endsWith("_armor_trim_smithing_template")) tracked.merge(Steps.TRIM_TEMPLATES, n, Integer::sum);
 			markArmor(s, armor);
 
 			if (s.has(DataComponents.FOOD)) foodItems += n;
@@ -272,6 +276,7 @@ public final class ContextCollector {
 			// held in the off hand doesn't count as worn
 			if (worn.is(ItemTags.PIGLIN_SAFE_ARMOR)) b.goldArmorWorn(true);
 			if (armorSlot(worn) >= 0) b.hasIronArmor(true);
+			if (worn.is(ItemTags.TRIMMABLE_ARMOR)) tracked.merge(Steps.TRIMMABLE_ARMOR, 1, Integer::sum);
 		}
 		if (player.getVehicle() instanceof AbstractBoat) b.hasBoat(true);
 

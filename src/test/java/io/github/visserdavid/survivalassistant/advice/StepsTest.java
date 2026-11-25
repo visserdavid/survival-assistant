@@ -306,6 +306,34 @@ class StepsTest {
 	}
 
 	@Test
+	void decoratedPot() {
+		Tip g = TipRegistry.DECORATED_POT;
+		assertEquals("decorated_pot.parts", current(g, b -> b.item(Steps.POT_PARTS, 3)));
+		assertEquals("decorated_pot.craft", current(g, b -> b.item(Steps.POT_PARTS, 4)));
+	}
+
+	@Test
+	void armorTrim() {
+		Tip g = TipRegistry.ARMOR_TRIM;
+		assertEquals("armor_trim.template", current(g, b -> b.item(Steps.TRIM_MATERIALS, 5).item(Steps.TRIMMABLE_ARMOR, 1)));
+		assertEquals("armor_trim.material", current(g, b -> b.item(Steps.TRIM_TEMPLATES, 1)));
+		assertEquals("armor_trim.armor", current(g, b -> b.item(Steps.TRIM_TEMPLATES, 1).item(Steps.TRIM_MATERIALS, 1)));
+		assertEquals("armor_trim.table", current(g, b -> b.item(Steps.TRIM_TEMPLATES, 1).item(Steps.TRIM_MATERIALS, 1)
+				.item(Steps.TRIMMABLE_ARMOR, 1)));
+		assertEquals("armor_trim.trim", current(g, b -> b.item(Steps.TRIM_TEMPLATES, 1).item(Steps.TRIM_MATERIALS, 1)
+				.item(Steps.TRIMMABLE_ARMOR, 1).block("smithing_table", 1)));
+	}
+
+	@Test
+	void snifferEgg() {
+		Tip g = TipRegistry.SNIFFER_EGG;
+		assertEquals("sniffer_egg.brush", current(g, b -> b.structure(Structures.OCEAN_RUIN_WARM)));
+		assertEquals("sniffer_egg.ruin", current(g, b -> b.hasBrush(true).structure(Structures.OCEAN_RUIN_COLD)),
+				"only warm ocean ruins hide sniffer eggs");
+		assertEquals("sniffer_egg.dig", current(g, b -> b.hasBrush(true).structure(Structures.OCEAN_RUIN_WARM)));
+	}
+
+	@Test
 	void ironGolem() {
 		Tip g = TipRegistry.IRON_GOLEM;
 		assertEquals("iron_golem.iron_blocks", current(g, b -> b.item("iron_block", 3).item("iron_ingot", 8)));

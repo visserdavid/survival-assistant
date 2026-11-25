@@ -108,6 +108,14 @@ KITS = {
     # raid: strong gear for the waves; no ominous bottle
     "win_raid": ([SWORD, item("crossbow", ench={"quick_charge": 3, "multishot": 1}), item("arrow", 64), FOOD, GOLDEN,
                   item("totem_of_undying"), BLOCKS, TORCHES], armor(), SHIELD),
+    # archaeology: no sherds or bricks; a furnace for baking clay
+    "decorated_pot": ([item("iron_sword"), item("iron_shovel"), FOOD, TORCHES, item("furnace"), TABLE], armor("iron"), SHIELD),
+    # trims: no armor at all (worn armor counts as the piece), no trim materials (iron, gold, ...) or template
+    "armor_trim": ([item("stone_sword"), FOOD, TORCHES, TABLE], {}, None),
+    # warm ocean: water breathing and a boat; no brush
+    "sniffer_egg": ([SWORD, item("oak_boat"), FOOD, TORCHES, BLOCKS,
+                     item("potion", 3, **{"minecraft:potion_contents": Compound({"potion": String("minecraft:long_water_breathing")})})],
+                    armor(feet_extra={"depth_strider": 3}), SHIELD),
     # farm life, chapters 2 and 6: simple gear; never the wheat, bread, bones, fish, iron, bucket, string or rod tested
     "bread": ([item("stone_sword"), item("stone_hoe"), FOOD, TORCHES, TABLE], armor("iron"), None),
     "tame_animal": ([item("stone_sword"), FOOD, TORCHES, BLOCKS, item("lead", 2)], armor("iron"), SHIELD),

@@ -100,6 +100,9 @@ def check(jar):
     for result, count, pattern, key in recipes:
         name = result.split(":")[1]
         data = jar.json(f"data/minecraft/recipe/{name}.json")
+        if data["type"] not in ("minecraft:crafting_shaped", "minecraft:crafting_shapeless"):
+            # a special recipe (like the decorated pot's sherd sides): check its plain variant instead
+            data = jar.json(f"data/minecraft/recipe/{name}_simple.json")
         problems = []
         if data["result"].get("count", 1) != count:
             problems.append(f"count {count} != {data['result'].get('count', 1)}")

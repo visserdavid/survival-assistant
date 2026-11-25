@@ -96,6 +96,12 @@ public final class Recipes {
 	private static final Recipe IRON_LEGGINGS = new Recipe("minecraft:iron_leggings", 1, List.of("XXX", "X X", "X X"),
 			Map.of('X', IRON));
 	private static final Recipe IRON_BOOTS = new Recipe("minecraft:iron_boots", 1, List.of("X X", "X X"), Map.of('X', IRON));
+	/** 4 bricks or sherds in a diamond; the card shows bricks (the game's plain variant), sherds go in the same spots. */
+	private static final Recipe DECORATED_POT = new Recipe("minecraft:decorated_pot", 1, List.of(" # ", "# #", " # "),
+			Map.of('#', "minecraft:brick"));
+	/** A feather, a copper ingot and a stick: for suspicious sand and gravel. */
+	private static final Recipe BRUSH = new Recipe("minecraft:brush", 1, List.of("X", "#", "I"),
+			Map.of('X', "minecraft:feather", '#', "minecraft:copper_ingot", 'I', STICK));
 	/** 2 iron and 4 planks: where diamond gear becomes netherite. */
 	private static final Recipe SMITHING_TABLE = new Recipe("minecraft:smithing_table", 1, List.of("@@", "##", "##"),
 			Map.of('@', IRON, '#', PLANKS));
@@ -194,8 +200,7 @@ public final class Recipes {
 			Map.entry("recovery_compass", new Recipe("minecraft:recovery_compass", 1, List.of("SSS", "SCS", "SSS"),
 					Map.of('S', "minecraft:echo_shard", 'C', "minecraft:compass"))),
 			// chapter 15
-			Map.entry("brush", new Recipe("minecraft:brush", 1, List.of("X", "#", "I"),
-					Map.of('X', "minecraft:feather", '#', "minecraft:copper_ingot", 'I', STICK))),
+			Map.entry("brush", BRUSH),
 			// chapter 16: a breeze rod gives 4 wind charges (shapeless); the mace
 			Map.entry("wind_charge", new Recipe("minecraft:wind_charge", 4, List.of("B"), Map.of('B', "minecraft:breeze_rod"))),
 			Map.entry("mace", new Recipe("minecraft:mace", 1, List.of(" # ", " I "),
@@ -227,6 +232,9 @@ public final class Recipes {
 			Map.entry("full_iron_armor.leggings", IRON_LEGGINGS),
 			Map.entry("full_iron_armor.boots", IRON_BOOTS),
 			Map.entry("netherite_gear.table", SMITHING_TABLE),
+			Map.entry("armor_trim.table", SMITHING_TABLE),
+			Map.entry("sniffer_egg.brush", BRUSH),
+			Map.entry("decorated_pot.craft", DECORATED_POT),
 			Map.entry("bow.flint", ARROW),
 			Map.entry("bow.feathers", ARROW),
 			Map.entry("bow.arrows", ARROW),

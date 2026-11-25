@@ -90,6 +90,13 @@ public final class Steps {
 	/** What a farm can be planted with. */
 	private static final List<String> SEEDS = List.of("wheat_seeds", "carrot", "potato", "beetroot_seeds");
 
+	/**
+	 * Groups of items the collector counts under these keys in {@link SurvivalContext.Inventory#count}: sherds and
+	 * bricks for a pot, trim materials, armor that takes a trim (worn counts too), and armor trim templates.
+	 */
+	public static final String POT_PARTS = "#pot_parts", TRIM_MATERIALS = "#trim_materials",
+			TRIMMABLE_ARMOR = "#trimmable_armor", TRIM_TEMPLATES = "#trim_templates";
+
 	/** Items whose carried count the collector reports ({@link SurvivalContext.Inventory#count}). */
 	public static final Set<String> TRACKED_ITEMS = Stream.concat(Stream.of(HOES, SEEDS, DIAMOND_GEAR).flatMap(List::stream), Stream.of(
 			"glass_bottle", "blaze_powder", "paper", "leather", "book", "bookshelf", "iron_block", "iron_ingot",
@@ -417,6 +424,22 @@ public final class Steps {
 					step("win_raid.omen", c -> c.player().omen() || c.nearby().raidActive()),
 					step("win_raid.village", c -> c.nearby().raidActive()),
 					finish("win_raid.fight"))),
+			// chapter 15: 4 sherds or bricks in a diamond shape
+			Map.entry("decorated_pot", List.of(
+					count("decorated_pot.parts", c -> item(c, POT_PARTS), 4, c -> false),
+					finish("decorated_pot.craft"))),
+			// chapter 15: a trim template, a material and an armor piece on a smithing table
+			Map.entry("armor_trim", List.of(
+					step("armor_trim.template", c -> item(c, TRIM_TEMPLATES) > 0),
+					step("armor_trim.material", c -> item(c, TRIM_MATERIALS) > 0),
+					step("armor_trim.armor", c -> item(c, TRIMMABLE_ARMOR) > 0),
+					step("armor_trim.table", c -> item(c, "smithing_table") > 0 || c.nearby().placed("smithing_table") > 0),
+					finish("armor_trim.trim"))),
+			// chapter 15: a brush, a warm ocean ruin, brush its suspicious sand
+			Map.entry("sniffer_egg", List.of(
+					step("sniffer_egg.brush", c -> c.inv().hasBrush()),
+					step("sniffer_egg.ruin", c -> c.world().in(Structures.OCEAN_RUIN_WARM)),
+					finish("sniffer_egg.dig"))),
 			// chapter 17: ghast tears from the Nether around soul sand (a dried ghast from a fossil completes it too)
 			Map.entry("dried_ghast", List.of(
 					step("dried_ghast.nether", c -> inNether(c) || item(c, "ghast_tear") >= GHAST_TEARS),
