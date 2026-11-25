@@ -176,12 +176,16 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 	 * @param hiveSmoked        such a hive has a lit campfire under it, so the bees stay calm
 	 * @param hiveFull          such a hive is full of honey (it drips)
 	 * @param beaconLevel       pyramid levels (0 - 4) under the best beacon nearby; 0 when there is none
+	 * @param fortressNear      a Nether fortress reaches into the chunks around the player (about 4 chunks)
+	 * @param anchorCharge      charges (0 - 4) of the fullest respawn anchor nearby; 0 when there is none
+	 * @param witherBase        a T of soul sand or soul soil nearby, free on top for the skulls
 	 * @param blocks            counts of the placed blocks the goal steps look at ({@link Steps#TRACKED_BLOCKS}), by id path
 	 */
 	public record Nearby(int crops, int bookshelves, boolean lava, boolean fallingBlockAbove, boolean litArea,
 			boolean ironDoorOpen, boolean pistonExtended, boolean repeater, boolean hopper, boolean observer,
 			boolean crafter, boolean autoSmelter, boolean copperBulbLit, boolean hopperOnFurnace, int standBottles,
-			boolean standFuel, boolean hive, boolean hiveSmoked, boolean hiveFull, int beaconLevel, Map<String, Integer> blocks) {
+			boolean standFuel, boolean hive, boolean hiveSmoked, boolean hiveFull, int beaconLevel, boolean fortressNear, int anchorCharge, boolean witherBase,
+			Map<String, Integer> blocks) {
 		public Nearby {
 			blocks = Map.copyOf(blocks);
 		}
@@ -204,10 +208,11 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 	 * @param tamedHorseNearby such an animal nearby is tamed
 	 * @param saddledHorseNearby such an animal nearby wears a saddle
 	 * @param endCrystals      end crystals left on the central island (in the End only; 0 elsewhere)
+	 * @param blazeNearby      a blaze within 32 blocks (outside the overworld)
 	 */
 	public record Creatures(int hostiles, boolean creeper, boolean warden, boolean ghast, boolean piglin,
 			boolean ghastling, boolean ridingTamedHorse, boolean ridingHappyGhast, boolean horseNearby,
-			boolean tamedHorseNearby, boolean saddledHorseNearby, int endCrystals) {}
+			boolean tamedHorseNearby, boolean saddledHorseNearby, int endCrystals, boolean blazeNearby) {}
 
 	/** Monsters could spawn around the player: underground, or outside without a roof at dusk, at night or in a thunderstorm. */
 	public boolean darkMatters() {
@@ -257,13 +262,14 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		// nearby
 		private int crops, bookshelves;
 		private boolean lava, fallingBlockAbove, litArea, ironDoorOpen, pistonExtended, repeater, hopper, observer,
-				crafter, autoSmelter, copperBulbLit, hopperOnFurnace, standFuel, hive, hiveSmoked, hiveFull;
-		private int standBottles, beaconLevel;
+				crafter, autoSmelter, copperBulbLit, hopperOnFurnace, standFuel, hive, hiveSmoked, hiveFull,
+				fortressNear, witherBase;
+		private int standBottles, beaconLevel, anchorCharge;
 		private final Map<String, Integer> blocks = new HashMap<>();
 		// creatures
 		private int hostiles, endCrystals;
 		private boolean creeper, warden, ghast, piglin, ghastling, ridingTamedHorse, ridingHappyGhast, horseNearby,
-				tamedHorseNearby, saddledHorseNearby;
+				tamedHorseNearby, saddledHorseNearby, blazeNearby;
 
 		private Builder() {}
 
@@ -376,6 +382,9 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public Builder hiveSmoked(boolean v) { hiveSmoked = v; return this; }
 		public Builder hiveFull(boolean v) { hiveFull = v; return this; }
 		public Builder beaconLevel(int v) { beaconLevel = v; return this; }
+		public Builder fortressNear(boolean v) { fortressNear = v; return this; }
+		public Builder anchorCharge(int v) { anchorCharge = v; return this; }
+		public Builder witherBase(boolean v) { witherBase = v; return this; }
 		/** Sets the count of a tracked placed block (id path); 0 removes it. */
 		public Builder block(String id, int count) { if (count > 0) blocks.put(id, count); else blocks.remove(id); return this; }
 		// creatures
@@ -391,6 +400,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public Builder tamedHorseNearby(boolean v) { tamedHorseNearby = v; return this; }
 		public Builder saddledHorseNearby(boolean v) { saddledHorseNearby = v; return this; }
 		public Builder endCrystals(int v) { endCrystals = v; return this; }
+		public Builder blazeNearby(boolean v) { blazeNearby = v; return this; }
 
 		public SurvivalContext build() {
 			return new SurvivalContext(
@@ -408,9 +418,9 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 							hasWindCharge, hasHeavyCore, hasMace, hasDriedGhast, hasHarness, waterBottles, treasureDistance, items),
 					new Nearby(crops, bookshelves, lava, fallingBlockAbove, litArea, ironDoorOpen, pistonExtended,
 							repeater, hopper, observer, crafter, autoSmelter, copperBulbLit, hopperOnFurnace, standBottles,
-							standFuel, hive, hiveSmoked, hiveFull, beaconLevel, blocks),
+							standFuel, hive, hiveSmoked, hiveFull, beaconLevel, fortressNear, anchorCharge, witherBase, blocks),
 					new Creatures(hostiles, creeper, warden, ghast, piglin, ghastling, ridingTamedHorse, ridingHappyGhast,
-							horseNearby, tamedHorseNearby, saddledHorseNearby, endCrystals));
+							horseNearby, tamedHorseNearby, saddledHorseNearby, endCrystals, blazeNearby));
 		}
 	}
 }

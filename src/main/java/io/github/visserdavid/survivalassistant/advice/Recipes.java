@@ -84,6 +84,9 @@ public final class Recipes {
 	private static final Recipe GLASS_BOTTLE = new Recipe("minecraft:glass_bottle", 3, List.of("# #", " # "),
 			Map.of('#', "minecraft:glass"));
 	/** One blaze rod gives 2 powder (shapeless): fuel for the brewing stand, and half of an eye of ender. */
+	/** 4 glowstone dust make a block: for the respawn anchor and its charges. */
+	private static final Recipe GLOWSTONE = new Recipe("minecraft:glowstone", 1, List.of("##", "##"),
+			Map.of('#', "minecraft:glowstone_dust"));
 	private static final Recipe BLAZE_POWDER = new Recipe("minecraft:blaze_powder", 2, List.of("B"), Map.of('B', "minecraft:blaze_rod"));
 
 	/** Every pickaxe has the same shape: three of the material over two sticks. */
@@ -191,6 +194,8 @@ public final class Recipes {
 			Map.entry("brew_potion.bottles", GLASS_BOTTLE),
 			Map.entry("honey.bottle", GLASS_BOTTLE),
 			Map.entry("brew_potion.fuel", BLAZE_POWDER),
+			Map.entry("respawn_anchor.glowstone", GLOWSTONE),
+			Map.entry("respawn_anchor.charge", GLOWSTONE),
 			Map.entry("enchanting_table.paper", PAPER),
 			Map.entry("enchanting_table.book", BOOK),
 			Map.entry("bookshelves.paper", PAPER),

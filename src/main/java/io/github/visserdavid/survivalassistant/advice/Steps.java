@@ -72,15 +72,20 @@ public final class Steps {
 		return step(id, c -> false);
 	}
 
+	/** The finishing action, with a counter on the card. */
+	private static Step finish(String id, ToIntFunction<SurvivalContext> counter, int target) {
+		return new Step(id, c -> false, counter, target);
+	}
+
 	// ---------------------------------------------------------------- what the steps look at
 
 	/** Items whose carried count the collector reports ({@link SurvivalContext.Inventory#count}). */
 	public static final Set<String> TRACKED_ITEMS = Set.of("glass_bottle", "blaze_powder", "paper", "leather", "book",
 			"bookshelf", "iron_block", "iron_ingot", "carved_pumpkin", "ancient_debris", "netherite_scrap", "gold_ingot",
-			"glass", "beacon", "hopper", "saddle");
+			"glass", "beacon", "hopper", "saddle", "crying_obsidian", "glowstone", "glowstone_dust", "respawn_anchor");
 	/** Blocks whose placed count nearby the collector reports ({@link SurvivalContext.Nearby#placed}). */
 	public static final Set<String> TRACKED_BLOCKS = Set.of("obsidian", "nether_portal", "iron_block", "carved_pumpkin",
-			"beacon", "hopper");
+			"beacon", "hopper", "nether_wart", "respawn_anchor");
 
 	/** The pyramid has at most 4 levels: 9 + 25 + 49 + 81 = 164 blocks. */
 	public static final int MAX_BEACON_LEVEL = 4;
@@ -88,6 +93,10 @@ public final class Steps {
 	public static final int END_CRYSTALS = 10;
 	/** Within this many blocks (horizontally) of a treasure map's red X the player is "there". */
 	public static final int TREASURE_NEAR = 8;
+	/** A respawn anchor holds 4 charges; the advancement wants it full. */
+	public static final int ANCHOR_CHARGES = 4;
+	/** One glowstone block is 4 glowstone dust. */
+	private static final int DUST_PER_GLOWSTONE = 4;
 	/** One bookshelf takes 3 books; one book takes 3 paper and 1 leather. */
 	private static final int BOOKS_PER_SHELF = 3, PAPER_PER_BOOK = 3;
 
@@ -105,6 +114,18 @@ public final class Steps {
 
 	private static boolean portalLit(SurvivalContext c) {
 		return c.nearby().placed("nether_portal") > 0;
+	}
+
+	private static boolean inNether(SurvivalContext c) {
+		return c.world().inNether();
+	}
+
+	private static boolean hasAnchor(SurvivalContext c) {
+		return item(c, "respawn_anchor") > 0 || c.nearby().placed("respawn_anchor") > 0;
+	}
+
+	private static boolean wartGrowing(SurvivalContext c) {
+		return c.nearby().placed("nether_wart") > 0;
 	}
 
 	// ---------------------------------------------------------------- the steps per goal
@@ -129,6 +150,21 @@ public final class Steps {
 					count("enter_nether.obsidian", c -> c.inv().obsidian() + c.nearby().placed("obsidian"), 10, Steps::portalLit),
 					step("enter_nether.light", Steps::portalLit),
 					finish("enter_nether.step_in"))),
+			// chapter 4: back into the Nether, search until a fortress is close, then walk into it
+			Map.entry("find_fortress", List.of(
+					step("find_fortress.nether", Steps::inNether),
+					step("find_fortress.search", c -> c.nearby().fortressNear()),
+					finish("find_fortress.enter"))),
+			// chapter 4: blazes live only in fortresses, around their cage
+			Map.entry("blaze_rods", List.of(
+					step("blaze_rods.nether", Steps::inNether),
+					step("blaze_rods.find", c -> c.creatures().blazeNearby()),
+					finish("blaze_rods.fight"))),
+			// chapter 4: wart grows on soul sand in fortresses; a wart farm at home counts too
+			Map.entry("nether_wart", List.of(
+					step("nether_wart.nether", c -> inNether(c) || wartGrowing(c)),
+					step("nether_wart.find", c -> wartGrowing(c) || c.inv().netherWart() > 0),
+					finish("nether_wart.pick"))),
 			// chapter 5: bottles, water, fuel, then brew (bottles in the stand still count)
 			Map.entry("brew_potion", List.of(
 					count("brew_potion.bottles",
@@ -180,6 +216,19 @@ public final class Steps {
 					count("netherite_ingot.smelt", c -> item(c, "netherite_scrap"), 4, c -> false),
 					count("netherite_ingot.gold", c -> item(c, "gold_ingot"), 4, c -> false),
 					finish("netherite_ingot.craft"))),
+			// chapter 11: 6 crying obsidian and 3 glowstone make the anchor; in the Nether, 4 glowstone fill it up
+			Map.entry("respawn_anchor", List.of(
+					count("respawn_anchor.crying", c -> item(c, "crying_obsidian"), 6, Steps::hasAnchor),
+					count("respawn_anchor.glowstone", c -> item(c, "glowstone") + item(c, "glowstone_dust") / DUST_PER_GLOWSTONE, 3,
+							Steps::hasAnchor),
+					step("respawn_anchor.craft", Steps::hasAnchor),
+					step("respawn_anchor.place", c -> inNether(c) && c.nearby().placed("respawn_anchor") > 0),
+					finish("respawn_anchor.charge", c -> c.nearby().anchorCharge(), ANCHOR_CHARGES))),
+			// chapter 12: a safe spot far from home, the T of soul sand, then the skulls (the last one wakes it)
+			Map.entry("summon_wither", List.of(
+					step("summon_wither.spot", c -> c.world().underground() || inNether(c) || c.nearby().witherBase()),
+					step("summon_wither.base", c -> c.nearby().witherBase()),
+					finish("summon_wither.skulls"))),
 			// chapter 12: 5 glass, 3 obsidian and the nether star make a beacon; it needs a 3x3 base to work
 			Map.entry("beacon", List.of(
 					count("beacon.glass", c -> item(c, "glass"), 5, Steps::hasBeacon),

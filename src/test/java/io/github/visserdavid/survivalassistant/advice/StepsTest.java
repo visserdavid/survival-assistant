@@ -56,6 +56,57 @@ class StepsTest {
 	}
 
 	@Test
+	void fortress() {
+		Tip g = TipRegistry.FIND_FORTRESS;
+		assertEquals("find_fortress.nether", current(g, b -> b.fortressNear(true)), "first back into the Nether");
+		assertEquals("find_fortress.search", current(g, b -> b.dimension(SurvivalContext.NETHER)));
+		assertEquals("find_fortress.enter", current(g, b -> b.dimension(SurvivalContext.NETHER).fortressNear(true)));
+	}
+
+	@Test
+	void blazeRods() {
+		Tip g = TipRegistry.BLAZE_RODS;
+		assertEquals("blaze_rods.nether", current(g, b -> b.blazeRods(1)));
+		assertEquals("blaze_rods.find", current(g, b -> b.dimension(SurvivalContext.NETHER)));
+		assertEquals("blaze_rods.fight", current(g, b -> b.dimension(SurvivalContext.NETHER).blazeNearby(true)));
+	}
+
+	@Test
+	void netherWart() {
+		Tip g = TipRegistry.NETHER_WART;
+		assertEquals("nether_wart.nether", current(g, b -> b.netherWart(2)));
+		assertEquals("nether_wart.find", current(g, b -> b.dimension(SurvivalContext.NETHER)));
+		assertEquals("nether_wart.pick", current(g, b -> b.dimension(SurvivalContext.NETHER).netherWart(1)));
+		assertEquals("nether_wart.pick", current(g, b -> b.block("nether_wart", 5)), "a wart farm at home counts too");
+	}
+
+	@Test
+	void respawnAnchor() {
+		Tip g = TipRegistry.RESPAWN_ANCHOR;
+		assertEquals("respawn_anchor.crying", current(g, b -> b.item("crying_obsidian", 5).item("glowstone", 3)));
+		assertEquals("respawn_anchor.glowstone", current(g, b -> b.item("crying_obsidian", 6).item("glowstone_dust", 11)),
+				"11 dust is only 2 blocks");
+		assertEquals("respawn_anchor.craft", current(g, b -> b.item("crying_obsidian", 6).item("glowstone", 2).item("glowstone_dust", 4)));
+		assertEquals("respawn_anchor.place", current(g, b -> b.item("respawn_anchor", 1)), "crafting doesn't go back");
+		assertEquals("respawn_anchor.place", current(g, b -> b.block("respawn_anchor", 1)), "placed in the overworld");
+		Steps.Step charge = Steps.current(g, SurvivalContext.builder().dimension(SurvivalContext.NETHER)
+				.block("respawn_anchor", 1).anchorCharge(2).build());
+		assertNotNull(charge);
+		assertEquals("respawn_anchor.charge", charge.id());
+		assertEquals(Steps.ANCHOR_CHARGES, charge.target());
+		assertEquals(2, charge.value(SurvivalContext.builder().anchorCharge(2).build()));
+	}
+
+	@Test
+	void summonWither() {
+		Tip g = TipRegistry.SUMMON_WITHER;
+		assertEquals("summon_wither.spot", current(g, b -> b));
+		assertEquals("summon_wither.base", current(g, b -> b.underground(true)));
+		assertEquals("summon_wither.base", current(g, b -> b.dimension(SurvivalContext.NETHER)));
+		assertEquals("summon_wither.skulls", current(g, b -> b.witherBase(true)), "a base built on the surface still counts");
+	}
+
+	@Test
 	void ironGolem() {
 		Tip g = TipRegistry.IRON_GOLEM;
 		assertEquals("iron_golem.iron_blocks", current(g, b -> b.item("iron_block", 3).item("iron_ingot", 8)));
