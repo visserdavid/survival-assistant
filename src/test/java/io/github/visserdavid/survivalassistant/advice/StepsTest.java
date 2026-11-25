@@ -175,8 +175,11 @@ class StepsTest {
 		Tip g = TipRegistry.CRAFTER_CRAFTS;
 		assertEquals("crafter_crafts.crafter", current(g, b -> b.item("iron_ingot", 5)));
 		assertEquals("crafter_crafts.iron", current(g, b -> b.crafter(true).item("iron_ingot", 4)));
-		assertEquals("crafter_crafts.parts", current(g, b -> b.crafter(true).item("iron_ingot", 5).item("dropper", 1).redstone(2)),
+		assertEquals("crafter_crafts.dropper", current(g, b -> b.crafter(true).item("iron_ingot", 5).redstone(2)));
+		assertEquals("crafter_crafts.table", current(g, b -> b.crafter(true).item("iron_ingot", 5).item("dropper", 1).redstone(2)),
 				"the crafting table is missing");
+		assertEquals("crafter_crafts.redstone", current(g, b -> b.crafter(true).item("iron_ingot", 5).item("dropper", 1)
+				.item("crafting_table", 1).redstone(1)));
 		assertEquals("crafter_crafts.fill", current(g, b -> b.crafter(true).item("iron_ingot", 5).item("dropper", 1)
 				.item("crafting_table", 1).redstone(2)));
 		assertEquals("crafter_crafts.fill", current(g, b -> b.crafter(true).item("iron_ingot", 2).crafterSlots(4)),
@@ -419,8 +422,11 @@ class StepsTest {
 	@Test
 	void piston() {
 		Tip g = TipRegistry.PISTON;
-		assertEquals("piston.redstone", current(g, b -> b));
-		assertEquals("piston.craft", current(g, b -> b.redstone(1)));
+		assertEquals("piston.planks", current(g, b -> b.planks(2)));
+		assertEquals("piston.cobblestone", current(g, b -> b.planks(3).item("cobblestone", 3)));
+		assertEquals("piston.iron", current(g, b -> b.planks(3).item("cobblestone", 4)));
+		assertEquals("piston.redstone", current(g, b -> b.planks(3).item("cobblestone", 4).item("iron_ingot", 1)));
+		assertEquals("piston.craft", current(g, b -> b.planks(3).item("cobblestone", 4).item("iron_ingot", 1).redstone(1)));
 		assertEquals("piston.place", current(g, b -> b.item("sticky_piston", 1)), "a sticky piston works too");
 		assertEquals("piston.power", current(g, b -> b.block("piston", 1)), "the redstone went into the piston");
 	}

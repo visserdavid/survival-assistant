@@ -105,7 +105,7 @@ public final class Steps {
 			"saddle", "crying_obsidian", "glowstone", "glowstone_dust", "respawn_anchor", "compass", "seagrass",
 			"turtle_scute", "ghast_tear", "copper_block", "copper_ingot", "copper_bulb", "crafting_table", "dropper",
 			"string", "flint", "feather", "wheat", "bone", "cod", "salmon", "bucket", "fishing_rod", "lapis_lazuli",
-			"smithing_table", "trial_key", "ominous_trial_key", "piston", "sticky_piston"))
+			"smithing_table", "trial_key", "ominous_trial_key", "piston", "sticky_piston", "cobblestone"))
 			.collect(Collectors.toUnmodifiableSet());
 	/** Blocks whose placed count nearby the collector reports ({@link SurvivalContext.Nearby#placed}). */
 	public static final Set<String> TRACKED_BLOCKS = Set.of(
@@ -222,6 +222,10 @@ public final class Steps {
 
 	private static int sensors(SurvivalContext c) {
 		return c.nearby().placed("sculk_sensor") + c.nearby().placed("calibrated_sculk_sensor");
+	}
+
+	private static boolean hasPiston(SurvivalContext c) {
+		return item(c, "piston") + item(c, "sticky_piston") + placedPistons(c) > 0;
 	}
 
 	private static int placedPistons(SurvivalContext c) {
@@ -405,11 +409,13 @@ public final class Steps {
 					step("end_city.gateway", c -> c.nearby().outerEnd()),
 					step("end_city.search", c -> c.nearby().endCityNear()),
 					finish("end_city.enter"))),
-			// chapter 9: redstone (with iron, cobblestone and planks) makes a piston; place it, then power it
+			// chapter 9: every part of the recipe (top row down), craft, place, then power it
 			Map.entry("piston", List.of(
-					count("piston.redstone", c -> c.inv().redstone(), 1,
-							c -> item(c, "piston") + item(c, "sticky_piston") + placedPistons(c) > 0),
-					step("piston.craft", c -> item(c, "piston") + item(c, "sticky_piston") + placedPistons(c) > 0),
+					count("piston.planks", c -> c.inv().planks(), 3, Steps::hasPiston),
+					count("piston.cobblestone", c -> item(c, "cobblestone"), 4, Steps::hasPiston),
+					count("piston.iron", c -> item(c, "iron_ingot"), 1, Steps::hasPiston),
+					count("piston.redstone", c -> c.inv().redstone(), 1, Steps::hasPiston),
+					step("piston.craft", Steps::hasPiston),
 					step("piston.place", c -> placedPistons(c) > 0),
 					finish("piston.power"))),
 			// chapter 13: the deep dark, a sculk sensor, sneak past it
@@ -547,8 +553,9 @@ public final class Steps {
 			Map.entry("crafter_crafts", List.of(
 					step("crafter_crafts.crafter", c -> c.nearby().crafter()),
 					count("crafter_crafts.iron", c -> item(c, "iron_ingot"), 5, Steps::fillingCrafter),
-					step("crafter_crafts.parts", c -> fillingCrafter(c) || item(c, "dropper") > 0
-							&& item(c, "crafting_table") > 0 && c.inv().redstone() >= 2),
+					count("crafter_crafts.dropper", c -> item(c, "dropper"), 1, Steps::fillingCrafter),
+					count("crafter_crafts.table", c -> item(c, "crafting_table"), 1, Steps::fillingCrafter),
+					count("crafter_crafts.redstone", c -> c.inv().redstone(), 2, Steps::fillingCrafter),
 					count("crafter_crafts.fill", c -> c.nearby().crafterSlots(), CRAFTER_SLOTS, c -> false),
 					finish("crafter_crafts.pulse"))),
 			// chapter 18: a hopper on top feeds the furnace, one below takes the result out

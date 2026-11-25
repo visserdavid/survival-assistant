@@ -239,7 +239,7 @@ public final class Recipes {
 			Map.entry("bow.feathers", ARROW),
 			Map.entry("bow.arrows", ARROW),
 			Map.entry("crafter_crafts.crafter", CRAFTER),
-			Map.entry("crafter_crafts.parts", DROPPER),
+			Map.entry("crafter_crafts.dropper", DROPPER),
 			Map.entry("crafter_crafts.fill", CRAFTER),
 			Map.entry("enchanting_table.paper", PAPER),
 			Map.entry("enchanting_table.book", BOOK),

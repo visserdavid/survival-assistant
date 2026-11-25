@@ -112,14 +112,14 @@ archaeology, the trial challenges, the happy ghast and automation.
   every wave), the upgrade template (find a bastion, search its chests), the respawn anchor (crying obsidian, glowstone, craft, place in the Nether, charge 4/4),
   summoning the Wither (a safe spot, the T of soul sand, the skulls), the nether star (find the Wither, defeat it,
   pick up the star), the ominous bottle (an outpost, its captain, the bottle), the recovery compass (echo shards, a compass,
-  craft), the mace (breeze rod, heavy core, craft), the piston (redstone, craft, place, power), sneaking past a sculk sensor (the deep dark, a
+  craft), the mace (breeze rod, heavy core, craft), the piston (planks, cobblestone, iron, redstone, craft, place, power), sneaking past a sculk sensor (the deep dark, a
   sensor, sneak), opening a vault (the trial chambers, a trial key) and an ominous vault
   (an ominous bottle, drink it, the chambers, an ominous key), the beacon (and its full pyramid), the dried ghast (8 ghast tears around soul sand), putting it in water, letting it swell (0/3), the happy ghast's
   harness and riding it (a grown ghast, a harness, put it on, climb on), the automatic furnace and the
   decorated pot (4 sherds or bricks, craft), the armor trim (template, material, armor piece, smithing table,
   trim), the sniffer egg (a brush, a warm ocean ruin, brush the sand), the
   copper bulb (copper blocks, blaze rod, redstone, craft, place, a pulse) and a crafter that crafts a crafter (place
-  one, the materials, fill it, a pulse). The recipe card follows the step (for example glass bottles, then blaze powder).
+  one, 5 iron, a dropper, a crafting table, 2 redstone, fill it, a pulse). Every ingredient is a step of its own. The recipe card follows the step (for example glass bottles, then blaze powder).
 - The title shows the chapter you are in (for example Ch. 6 · Farming and animals).
 - A clock (the in-game clock item) with a bar that counts down to sunset, turning orange at dusk and red at night.
 - **Urgent mode**: the border pulses red, and the current-task line becomes a warning (a warden or creeper
