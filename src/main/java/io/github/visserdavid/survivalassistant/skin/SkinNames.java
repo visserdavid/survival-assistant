@@ -13,10 +13,8 @@ public final class SkinNames {
 
 	/** The built-in guide skin: the Keeper of the Ancients. */
 	public static final String DEFAULT = "default";
-	/** The built-in traveller that was the default before 0.42. */
-	public static final String CLASSIC = "classic";
 	/** The built-in skins, in the order they are offered. */
-	public static final List<String> BUILT_IN = List.of(DEFAULT, CLASSIC);
+	public static final List<String> BUILT_IN = List.of(DEFAULT);
 	private static final String SLIM_SUFFIX = "_slim";
 
 	/**

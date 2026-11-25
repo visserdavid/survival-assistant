@@ -9,9 +9,9 @@ import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.resources.Identifier;
 
 /**
- * Renders the guide with the player model geometry: the built-in keeper (dressed for the owner's route), the
- * classic traveller, or the player's own pick from the skins folder (see {@link GuideSkins}). Skins whose name ends
- * with "_slim" use the slim (Alex) arms.
+ * Renders the guide with the player model geometry: the built-in keeper (dressed for the owner's route) or the
+ * player's own pick from the skins folder (see {@link GuideSkins}). Skins whose name ends with "_slim" use the slim
+ * (Alex) arms.
  *
  * <p>Uses a {@code HumanoidRenderState} on purpose: in 26.3 every {@code AvatarRenderState} is sent to the vanilla
  * player renderer, which draws the default player skin instead of ours. The second skin layer (jacket, sleeves,

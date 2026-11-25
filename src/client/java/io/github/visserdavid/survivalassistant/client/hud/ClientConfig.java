@@ -83,7 +83,8 @@ public final class ClientConfig {
 		if (corner == null) corner = Corner.TOP_LEFT;
 		if (mode == null) mode = Mode.COMPACT;
 		if (envLines == null) envLines = EnvLines.FULL;
-		if (guideSkin == null || guideSkin.isBlank()) guideSkin = "default";
+		// "classic" was the built-in traveller in 0.42; he is gone, so the keeper takes his place
+		if (guideSkin == null || guideSkin.isBlank() || guideSkin.equals("classic")) guideSkin = "default";
 		if (crosshairPlace == null) crosshairPlace = Place.CROSSHAIR;
 		scale = Math.clamp(scale, 0.5f, 2.0f);
 		crosshairRange = Math.clamp(crosshairRange, 3, 32);

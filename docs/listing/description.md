@@ -88,12 +88,12 @@ chapter is on [GitHub](https://github.com/visserdavid/survival-assistant/tree/ma
 No speedrun tricks: the path is made for an average player.
 
 ## Meet Pim
-![The guide in his six looks: the keeper, the fighter, farmer, explorer and researcher outfits, and the classic traveller](https://raw.githubusercontent.com/visserdavid/survival-assistant/main/docs/images/guides.png)
+![The guide in his five looks: the keeper, and his fighter, farmer, explorer and researcher outfits](https://raw.githubusercontent.com/visserdavid/survival-assistant/main/docs/images/guides.png)
 
 The guide has a name and a story: an old explorer whose own first night went badly. He walks in a deep hood
 with a long grey beard, and his eyes glow softly in the dark. On a route he dresses for it, from chainmail for
 the fighter to a straw hat for the farmer. Ask him about himself with `/guide about`, give him
-another name with `/guide name`, or another look with `/guideskin` (the classic traveller, or your own skin). Now and
+another name with `/guide name`, or your own skin with `/guideskin`. Now and
 then he shares a building idea for the biome you're in, or a remark about the animals around you.
 
 ## Optional: small talk with a local AI
@@ -129,8 +129,8 @@ This mod was made with a lot of help from AI. To be open about it:
 
 - **Made with AI:** the code (written with Claude by Anthropic, at the developer's direction), all texts
   including the guide's lines and story, all translations, the research (looked up with AI, then checked
-  against Minecraft 26.3's own data files) and the guide's classic skin. The default skin, its route outfits
-  and the mod icon were drawn pixel by pixel by scripts written with Claude, following skin-design guidelines.
+  against Minecraft 26.3's own data files). The guide's skin, its route outfits and the mod icon were drawn
+  pixel by pixel by scripts written with Claude, following skin-design guidelines; no image is AI-generated.
 - **Not made with AI:** the idea, the choices about what the mod does and how it feels, the play testing, and
   the screenshots (real in-game screenshots). The game facts come from Minecraft's data, not from the AI's memory.
 - **AI while you play:** none by default. Every tip and warning is a fixed, checked text. Only the optional

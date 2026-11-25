@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 
 /**
  * The softly glowing eyes of the keeper (the default skin and its route outfits), drawn full-bright like a spider's
- * eyes. The classic skin and the player's own skins are drawn as they are.
+ * eyes. The player's own skins are drawn as they are.
  */
 public class GuideEyesLayer extends EyesLayer<GuideRenderState, HumanoidModel<GuideRenderState>> {
 	private static final RenderType EYES = RenderTypes.eyes(GuideSkins.EYES_TEXTURE);

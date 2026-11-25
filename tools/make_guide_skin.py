@@ -20,7 +20,7 @@ Outputs:
     src/main/resources/assets/survivalassistant/textures/entity/guide_<route>.png  per route: fighter, farmer, ...
     src/main/resources/assets/survivalassistant/textures/entity/guide_eyes.png    only the eyes, for the glow layer
     with --preview: DIR/guide_preview.png, front, back and night views and the flat texture per skin
-    with --docs: docs/images/guide-<name>.png per guide (also the classic one) and guides.png with all of them
+    with --docs: docs/images/guide-<name>.png per guide and guides.png with all of them
 """
 import argparse
 import math
@@ -484,10 +484,8 @@ DOCS = ROOT / "docs/images"
 
 def docs_images(skins):
 	"""A picture of every guide for the documentation (3/4 front view, transparent), and all of them in a row."""
-	classic = Image.open(OUT / "guide_classic.png").convert("RGBA")
-	pictures = {**skins, "classic": classic}
 	renders = {}
-	for name, img in pictures.items():
+	for name, img in skins.items():
 		r = render(img, -0.35, scale=8)
 		r = r.crop(r.getbbox())
 		r.save(DOCS / f"guide-{name}.png", optimize=True)

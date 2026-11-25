@@ -25,7 +25,6 @@ class SkinNamesTest {
 		assertTrue(SkinNames.parse("README.txt").isEmpty());
 		assertTrue(SkinNames.parse("!!!.png").isEmpty());
 		assertTrue(SkinNames.parse("Default.png").isEmpty(), "'default' is a built-in skin");
-		assertTrue(SkinNames.parse("classic.png").isEmpty(), "'classic' is a built-in skin");
 	}
 
 	@Test

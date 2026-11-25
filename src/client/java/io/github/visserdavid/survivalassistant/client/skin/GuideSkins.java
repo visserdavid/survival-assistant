@@ -31,7 +31,6 @@ public final class GuideSkins {
 	private GuideSkins() {}
 
 	public static final Identifier DEFAULT_TEXTURE = SurvivalAssistant.id("textures/entity/guide.png");
-	public static final Identifier CLASSIC_TEXTURE = SurvivalAssistant.id("textures/entity/guide_classic.png");
 	/** Only the eyes of the keeper skins (default and route outfits), drawn full-bright by {@code GuideEyesLayer}. */
 	public static final Identifier EYES_TEXTURE = SurvivalAssistant.id("textures/entity/guide_eyes.png");
 
@@ -39,7 +38,6 @@ public final class GuideSkins {
 	public record Skin(Identifier texture, boolean slim) {}
 
 	private static final Skin DEFAULT = new Skin(DEFAULT_TEXTURE, false);
-	private static final Skin CLASSIC = new Skin(CLASSIC_TEXTURE, false);
 	/** The keeper's outfit per route: textures/entity/guide_&lt;route&gt;.png (drawn by tools/make_guide_skin.py). */
 	private static final Map<String, Skin> ROUTE_SKINS = Routes.ALL.stream().collect(Collectors.toUnmodifiableMap(Route::id,
 			r -> new Skin(SurvivalAssistant.id("textures/entity/guide_" + r.id() + ".png"), false)));
@@ -81,7 +79,6 @@ public final class GuideSkins {
 	 */
 	public static Skin current(String route) {
 		String chosen = ClientConfig.get().guideSkin;
-		if (SkinNames.CLASSIC.equals(chosen)) return CLASSIC;
 		Skin own = chosen == null ? null : SKINS.get(chosen);
 		if (own != null) return own;
 		return ROUTE_SKINS.getOrDefault(route, DEFAULT);
