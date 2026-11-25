@@ -83,7 +83,8 @@ off right away.
 
 ## Checked against the game
 Every recipe, ore height, mob spawn and game fact the guide mentions was checked against Minecraft 26.3's own data
-files. The research behind each chapter is on [GitHub](https://github.com/visserdavid/survival-assistant/tree/main/docs).
+files; 26.2 has the same recipes, ores and spawns, only the dappled forest is missing. The research behind each
+chapter is on [GitHub](https://github.com/visserdavid/survival-assistant/tree/main/docs).
 No speedrun tricks: the path is made for an average player.
 
 ## Meet Pim
@@ -101,7 +102,7 @@ If you like, the guide can chat with you through a language model that runs **on
 ## What it doesn't do (yet)
 We'd rather you know before you download:
 
-- **Minecraft 26.3 with Fabric only.** No older versions, Forge, NeoForge or Quilt.
+- **Minecraft 26.3 and 26.2 with Fabric only.** No 26.1 or older, Forge, NeoForge or Quilt.
 - **Needed on both sides**: on the server (or in singleplayer) and on every player's client.
 - **One path, not a wiki.** It teaches the 113 goals of its chapters for an average player, not every block, mob or
   trick in the game.
@@ -132,7 +133,7 @@ This mod was made with a lot of help from AI. To be open about it:
   never gives recipes, ore heights or instructions.
 
 ## Requirements
-- Minecraft 26.3, Fabric Loader 0.20.1 or newer, [Fabric API](https://modrinth.com/mod/fabric-api), Java 25
+- Minecraft 26.3 or 26.2 (pick the version that matches your game), Fabric Loader 0.20.1 or newer, [Fabric API](https://modrinth.com/mod/fabric-api), Java 25
 - Install the mod on the server (or in singleplayer) and on the client.
 
 Commands, configuration and everything else: see the [README on GitHub](https://github.com/visserdavid/survival-assistant).

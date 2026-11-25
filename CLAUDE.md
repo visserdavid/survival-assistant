@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-Survival Assistant is a Fabric mod for Minecraft **26.3** (unobfuscated, Java 25, Fabric Loom 1.19). A guide NPC takes the player through 18 tutorial chapters. Around it: a task card, an environment card, mob/ore info, a recipe card, a light check, safety warnings and an optional small-talk feature that uses a local language model. The README is the user-facing documentation, including all config options and commands.
+Survival Assistant is a Fabric mod for Minecraft **26.3** (unobfuscated, Java 25, Fabric Loom 1.19), with a 26.2 build on a side branch. A guide NPC takes the player through 18 tutorial chapters. Around it: a task card, an environment card, mob/ore info, a recipe card, a light check, safety warnings and an optional small-talk feature that uses a local language model. The README is the user-facing documentation, including all config options and commands.
 
 ## Commands
 
@@ -96,6 +96,7 @@ For bulk text changes, use a small Python script in the scratchpad that edits `m
 ## Releases
 
 - The version is in `gradle.properties`. A published GitHub release (tag `vX.Y.Z`, jar attached) triggers `.github/workflows/publish.yml`, which publishes to Modrinth through `mc-publish`, with Mod Menu as an optional dependency. It fails when the tag differs from `version` in `gradle.properties`, and it would also publish to CurseForge once `CURSEFORGE_ID`/`CURSEFORGE_TOKEN` are set.
+- **26.2 build:** branch `mc-26.2` is `main` plus one commit: 26.2 versions in `gradle.properties` (`version=X+26.2`), `setInvulnerable` instead of `setPermanentlyInvulnerable` in `GuideEntity`, and `Util.getPlatform().openPath` instead of `Blaze3D.openPath` in `DisplayTab` (no method exists in both versions, so there is no shared jar). For a release, rebase it onto `main`, build, test in the Modrinth instance "ModTesting 26.2" (`-PmodrinthInstance`), and publish as tag `vX+26.2` with `--target mc-26.2 --latest=false`; `publish.yml` needs no change.
 - The project body on Modrinth is `docs/listing/description.md` without its leading HTML comment.
 - Modrinth tokens last at most a week. Refresh the `MODRINTH_TOKEN` secret before each release, and never print or commit the token.
 

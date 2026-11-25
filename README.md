@@ -1,6 +1,6 @@
 # <img src="docs/images/icon-512.png" alt="" width="40" align="top"> Survival Assistant
 
-A Fabric mod for **Minecraft 26.3** that teaches survival, from your very first night to the ender dragon and
+A Fabric mod for **Minecraft 26.3 and 26.2** that teaches survival, from your very first night to the ender dragon and
 beyond. A friendly guide called Pim walks with you through **18 chapters**: he tells you what to do next, warns you
 when you're in danger and celebrates every goal you reach. A compact task card shows your progress and breaks big
 goals into small steps, and an environment card explains your current biome and which ores are worth digging for at
@@ -296,7 +296,8 @@ Minecraft's font can't show.
 ## What it does and doesn't do (yet)
 Honest about the limits:
 
-- **Minecraft 26.3 with Fabric only.** There is no version for older Minecraft, Forge, NeoForge or Quilt.
+- **Minecraft 26.3 and 26.2 with Fabric only.** There is no version for 26.1, 1.21 or older, Forge, NeoForge or
+  Quilt.
 - **The mod is needed on both sides**: on the server (or in singleplayer) for the guide and the advice, and on the
   client for the cards. On a server, every player needs it too.
 - **It teaches one path for an average player.** It is not a wiki: it covers the 113 goals of the chapters, not
@@ -431,7 +432,8 @@ The settings screen writes these files; you can also edit them by hand (server o
   game font does not join Devanagari letter combinations.
 
 ## Requirements and installation
-- Minecraft **26.3**
+- Minecraft **26.3** or **26.2**: each has its own jar. The 26.2 jar has `+26.2` in its version, for example
+  `0.41.1+26.2`.
 - [Fabric Loader](https://fabricmc.net/) **0.20.1** or newer
 - [Fabric API](https://modrinth.com/mod/fabric-api)
 - Java **25**
