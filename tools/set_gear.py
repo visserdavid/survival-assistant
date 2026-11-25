@@ -120,6 +120,11 @@ KITS = {
     "hydrate_ghast": ([item("iron_sword"), item("iron_shovel"), FOOD, TORCHES, BLOCKS], armor("iron"), SHIELD),
     "ghastling": ([item("iron_sword"), item("snowball", 16), FOOD, TORCHES, BLOCKS], armor("iron"), SHIELD),
     "ride_happy_ghast": ([item("iron_sword"), item("snowball", 16), FOOD, TORCHES, BLOCKS], armor("iron"), SHIELD),
+    # vaults: strong gear for the trial waves; no trial keys, no ominous bottle
+    "open_vault": ([SWORD, PICK, item("bow", ench={"power": 5, "infinity": 1}), item("arrow"), FOOD, GOLDEN, BLOCKS,
+                    TORCHES], armor(), SHIELD),
+    "ominous_vault": ([SWORD, PICK, item("bow", ench={"power": 5, "infinity": 1}), item("arrow"), FOOD, GOLDEN,
+                       item("totem_of_undying"), BLOCKS], armor(), SHIELD),
     # farm life, chapters 2 and 6: simple gear; never the wheat, bread, bones, fish, iron, bucket, string or rod tested
     "bread": ([item("stone_sword"), item("stone_hoe"), FOOD, TORCHES, TABLE], armor("iron"), None),
     "tame_animal": ([item("stone_sword"), FOOD, TORCHES, BLOCKS, item("lead", 2)], armor("iron"), SHIELD),

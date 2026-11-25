@@ -178,6 +178,7 @@ public final class ContextCollector {
 				.eyesThrown(stats.getValue(Stats.ITEM_USED.get(Items.ENDER_EYE)))
 				.y(player.blockPosition().getY())
 				.omen(player.hasEffect(MobEffects.BAD_OMEN) || player.hasEffect(MobEffects.RAID_OMEN))
+				.trialOmen(player.hasEffect(MobEffects.TRIAL_OMEN))
 				.digDownStreak(digDownStreak)
 				.advancements(advancements(player));
 	}

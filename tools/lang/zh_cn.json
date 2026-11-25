@@ -1329,5 +1329,21 @@
 "~step.ride_happy_ghast.equip": "套上挽具",
 "~step.ride_happy_ghast.equip.tip": "拿着挽具右击快乐恶魂。",
 "~step.ride_happy_ghast.ride": "骑上去",
-"~step.ride_happy_ghast.ride.tip": "空手右击快乐恶魂。它会往你看的方向飞。"
+"~step.ride_happy_ghast.ride.tip": "空手右击快乐恶魂。它会往你看的方向飞。",
+"~step.open_vault.chambers": "前往试炼密室",
+"~step.open_vault.chambers.tip": "试炼密室是用铜和凝灰岩建成的大型地下大厅。挖矿或探洞时留意它们。",
+"~step.open_vault.key": "一把试炼钥匙",
+"~step.open_vault.key.tip": "打败试炼刷怪笼：它的怪物全被打败后，会掉落一把试炼钥匙。",
+"~step.open_vault.open": "打开宝库",
+"~step.open_vault.open.tip": "对宝库使用试炼钥匙（不是不祥宝库）。每个宝库每位玩家只能开一次。",
+"~step.ominous_vault.bottle": "不祥之瓶",
+"~step.ominous_vault.bottle.tip": "灾厄队长会掉落不祥之瓶。不祥宝库要从它开始。",
+"~step.ominous_vault.omen": "喝下瓶子",
+"~step.ominous_vault.omen.tip": "喝下它获得不祥之兆。现在别进村庄：那会引发袭击。",
+"~step.ominous_vault.chambers": "进入试炼密室",
+"~step.ominous_vault.chambers.tip": "带着不祥之兆走进试炼密室：试炼刷怪笼会变成不祥的。",
+"~step.ominous_vault.key": "一把不祥钥匙",
+"~step.ominous_vault.key.tip": "打败不祥的试炼刷怪笼：怪物更多也更强。它会掉落一把不祥试炼钥匙。",
+"~step.ominous_vault.open": "打开不祥宝库",
+"~step.ominous_vault.open.tip": "不祥宝库颜色更暗，是黑红色的。对它使用不祥钥匙。"
 }

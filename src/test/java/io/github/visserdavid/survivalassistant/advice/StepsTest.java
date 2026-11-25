@@ -364,6 +364,24 @@ class StepsTest {
 	}
 
 	@Test
+	void openVault() {
+		Tip g = TipRegistry.OPEN_VAULT;
+		assertEquals("open_vault.chambers", current(g, b -> b));
+		assertEquals("open_vault.key", current(g, b -> b.structure(Structures.TRIAL_CHAMBERS)));
+		assertEquals("open_vault.open", current(g, b -> b.item("trial_key", 1)));
+	}
+
+	@Test
+	void ominousVault() {
+		Tip g = TipRegistry.OMINOUS_VAULT;
+		assertEquals("ominous_vault.bottle", current(g, b -> b.item("trial_key", 2)), "a plain key doesn't count");
+		assertEquals("ominous_vault.omen", current(g, b -> b.hasOminousBottle(true)));
+		assertEquals("ominous_vault.chambers", current(g, b -> b.omen(true)));
+		assertEquals("ominous_vault.key", current(g, b -> b.trialOmen(true)));
+		assertEquals("ominous_vault.open", current(g, b -> b.item("ominous_trial_key", 1)), "the omen may be gone by now");
+	}
+
+	@Test
 	void ironGolem() {
 		Tip g = TipRegistry.IRON_GOLEM;
 		assertEquals("iron_golem.iron_blocks", current(g, b -> b.item("iron_block", 3).item("iron_ingot", 8)));

@@ -1329,5 +1329,21 @@
 "~step.ride_happy_ghast.equip": "Mettigli l'imbracatura",
 "~step.ride_happy_ghast.equip.tip": "Tieni l'imbracatura e fai clic destro sul ghast felice.",
 "~step.ride_happy_ghast.ride": "Salici sopra",
-"~step.ride_happy_ghast.ride.tip": "Fai clic destro sul ghast felice a mani vuote. Vola dove guardi."
+"~step.ride_happy_ghast.ride.tip": "Fai clic destro sul ghast felice a mani vuote. Vola dove guardi.",
+"~step.open_vault.chambers": "Alle camere della sfida",
+"~step.open_vault.chambers.tip": "Le camere della sfida sono grandi sale sotterranee di rame e tufo. Cercale mentre scavi o esplori le grotte.",
+"~step.open_vault.key": "Una chiave della sfida",
+"~step.open_vault.key.tip": "Sconfiggi uno spawner della sfida: quando tutte le sue creature sono sconfitte, lascia una chiave della sfida.",
+"~step.open_vault.open": "Apri una cassaforte",
+"~step.open_vault.open.tip": "Usa la chiave della sfida su una cassaforte (non infausta). Ogni cassaforte si apre una volta per giocatore.",
+"~step.ominous_vault.bottle": "Bottiglia infausta",
+"~step.ominous_vault.bottle.tip": "I capitani lasciano cadere bottiglie infauste. Una cassaforte infausta comincia da lì.",
+"~step.ominous_vault.omen": "Bevi la bottiglia",
+"~step.ominous_vault.omen.tip": "Bevila per ottenere Cattivo presagio. Non entrare ora in un villaggio: partirebbe un'incursione.",
+"~step.ominous_vault.chambers": "Entra nelle camere",
+"~step.ominous_vault.chambers.tip": "Entra nelle camere della sfida con il presagio: gli spawner diventano infausti.",
+"~step.ominous_vault.key": "Una chiave infausta",
+"~step.ominous_vault.key.tip": "Sconfiggi uno spawner della sfida infausto: più creature e più forti. Lascia una chiave della sfida infausta.",
+"~step.ominous_vault.open": "Apri cassaforte infausta",
+"~step.ominous_vault.open.tip": "Le casseforti infauste sono più scure, nere e rosse. Usa la chiave infausta su una di esse."
 }

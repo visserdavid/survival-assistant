@@ -103,10 +103,12 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 	 * @param eyesThrown     how often the player used an eye of ender (thrown, or put in a portal frame)
 	 * @param y              the block height of the player's feet
 	 * @param omen           Bad Omen or Raid Omen: a village the player enters starts a raid
+	 * @param trialOmen      Trial Omen: the trial spawners around the player are ominous
 	 * @param advancements   the vanilla advancements the chapters track that this player has completed
 	 */
 	public record Player(float health, int food, int xpLevel, int ticksSinceRest, int animalsBred, int trades,
-			int digDownStreak, int eyesThrown, int y, boolean omen, Set<String> advancements) {
+			int digDownStreak, int eyesThrown, int y, boolean omen, boolean trialOmen,
+			Set<String> advancements) {
 		public Player {
 			advancements = Set.copyOf(advancements);
 		}
@@ -271,7 +273,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		// player
 		private float health = 20f;
 		private int food = 20, xpLevel, ticksSinceRest, animalsBred, trades, digDownStreak, eyesThrown, y = 64;
-		private boolean omen;
+		private boolean omen, trialOmen;
 		private final Set<String> advancements = new HashSet<>();
 		// inventory
 		private int logs, planks, cobblestone, foodItems, wool, torches, iron, bread, arrows, diamonds, obsidian, emeralds,
@@ -320,6 +322,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public Builder eyesThrown(int v) { eyesThrown = v; return this; }
 		public Builder y(int v) { y = v; return this; }
 		public Builder omen(boolean v) { omen = v; return this; }
+		public Builder trialOmen(boolean v) { trialOmen = v; return this; }
 		public Builder advancement(String v) { advancements.add(v); return this; }
 		public Builder advancements(Set<String> v) { advancements.addAll(v); return this; }
 		// inventory: counts
@@ -452,7 +455,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public SurvivalContext build() {
 			return new SurvivalContext(
 					new World(dayIndex, timeOfDay, dimension, structure, thundering, sheltered, underground),
-					new Player(health, food, xpLevel, ticksSinceRest, animalsBred, trades, digDownStreak, eyesThrown, y, omen,
+					new Player(health, food, xpLevel, ticksSinceRest, animalsBred, trades, digDownStreak, eyesThrown, y, omen, trialOmen,
 							advancements),
 					new Inventory(logs, planks, cobblestone, foodItems, wool, torches, iron, bread, arrows, diamonds,
 							obsidian, emeralds, blazeRods, netherWart, sugarCane, redstone, enderPearls, eyesOfEnder,

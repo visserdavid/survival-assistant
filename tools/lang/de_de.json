@@ -1329,5 +1329,21 @@
 "~step.ride_happy_ghast.equip": "Leg das Geschirr an",
 "~step.ride_happy_ghast.equip.tip": "Halt das Geschirr und klick mit rechts auf den Glücksghast.",
 "~step.ride_happy_ghast.ride": "Steig auf",
-"~step.ride_happy_ghast.ride.tip": "Klick mit leerer Hand rechts auf den Glücksghast. Er fliegt, wohin du schaust."
+"~step.ride_happy_ghast.ride.tip": "Klick mit leerer Hand rechts auf den Glücksghast. Er fliegt, wohin du schaust.",
+"~step.open_vault.chambers": "In die Prüfungskammern",
+"~step.open_vault.chambers.tip": "Prüfungskammern sind große unterirdische Hallen aus Kupfer und Tuffstein. Such sie beim Abbauen oder in Höhlen.",
+"~step.open_vault.key": "Ein Prüfungsschlüssel",
+"~step.open_vault.key.tip": "Besiege einen Prüfungsspawner: Sind alle seine Monster besiegt, lässt er einen Prüfungsschlüssel fallen.",
+"~step.open_vault.open": "Öffne einen Tresor",
+"~step.open_vault.open.tip": "Benutz den Prüfungsschlüssel an einem Tresor (keinem unheilvollen). Jeder Tresor öffnet sich einmal pro Spieler.",
+"~step.ominous_vault.bottle": "Unheilvolle Flasche",
+"~step.ominous_vault.bottle.tip": "Hauptmänner lassen unheilvolle Flaschen fallen. Ein unheilvoller Tresor beginnt damit.",
+"~step.ominous_vault.omen": "Trink die Flasche",
+"~step.ominous_vault.omen.tip": "Trink sie für Böses Omen. Geh jetzt in kein Dorf: Das startet einen Überfall.",
+"~step.ominous_vault.chambers": "Betritt die Kammern",
+"~step.ominous_vault.chambers.tip": "Geh mit dem Omen in die Prüfungskammern: Die Prüfungsspawner werden unheilvoll.",
+"~step.ominous_vault.key": "Unheilvoller Schlüssel",
+"~step.ominous_vault.key.tip": "Besiege einen unheilvollen Prüfungsspawner: mehr und stärkere Monster. Er lässt einen unheilvollen Prüfungsschlüssel fallen.",
+"~step.ominous_vault.open": "Öffne unheilvollen Tresor",
+"~step.ominous_vault.open.tip": "Unheilvolle Tresore sehen dunkler aus, schwarz und rot. Benutz den unheilvollen Schlüssel an einem davon."
 }

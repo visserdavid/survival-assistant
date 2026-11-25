@@ -1329,5 +1329,21 @@
 "~step.ride_happy_ghast.equip": "Pune-i hamul",
 "~step.ride_happy_ghast.equip.tip": "Ține hamul și dă clic dreapta pe ghast-ul fericit.",
 "~step.ride_happy_ghast.ride": "Urcă pe el",
-"~step.ride_happy_ghast.ride.tip": "Dă clic dreapta pe ghast-ul fericit cu mâna goală. Zboară încotro te uiți."
+"~step.ride_happy_ghast.ride.tip": "Dă clic dreapta pe ghast-ul fericit cu mâna goală. Zboară încotro te uiți.",
+"~step.open_vault.chambers": "Spre camere de încercare",
+"~step.open_vault.chambers.tip": "Camerele de încercare sunt săli mari sub pământ, din cupru și tuf. Caută-le când sapi sau explorezi peșteri.",
+"~step.open_vault.key": "O cheie de încercare",
+"~step.open_vault.key.tip": "Învinge un generator de încercare: când toți monștrii lui sunt învinși, scapă o cheie de încercare.",
+"~step.open_vault.open": "Deschide un seif",
+"~step.open_vault.open.tip": "Folosește cheia de încercare pe un seif (nu pe unul de rău augur). Fiecare seif se deschide o dată per jucător.",
+"~step.ominous_vault.bottle": "Sticlă de rău augur",
+"~step.ominous_vault.bottle.tip": "Căpitanii scapă sticle de rău augur. Un seif de rău augur începe cu una.",
+"~step.ominous_vault.omen": "Bea sticla",
+"~step.ominous_vault.omen.tip": "Bea-o ca să primești Semn rău. Nu intra acum într-un sat: ar începe un raid.",
+"~step.ominous_vault.chambers": "Intră în camere",
+"~step.ominous_vault.chambers.tip": "Intră cu semnul în camerele de încercare: generatoarele devin de rău augur.",
+"~step.ominous_vault.key": "O cheie de rău augur",
+"~step.ominous_vault.key.tip": "Învinge un generator de încercare de rău augur: monștri mai mulți și mai puternici. Scapă o cheie de încercare de rău augur.",
+"~step.ominous_vault.open": "Deschide seiful",
+"~step.ominous_vault.open.tip": "Seifurile de rău augur sunt mai întunecate, negre cu roșu. Folosește cheia de rău augur pe unul."
 }

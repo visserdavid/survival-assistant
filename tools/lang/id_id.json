@@ -1329,5 +1329,21 @@
 "~step.ride_happy_ghast.equip": "Pasang tali kekang",
 "~step.ride_happy_ghast.equip.tip": "Pegang tali kekang dan klik kanan ghast bahagia.",
 "~step.ride_happy_ghast.ride": "Naiki",
-"~step.ride_happy_ghast.ride.tip": "Klik kanan ghast bahagia dengan tangan kosong. Ia terbang ke arah pandanganmu."
+"~step.ride_happy_ghast.ride.tip": "Klik kanan ghast bahagia dengan tangan kosong. Ia terbang ke arah pandanganmu.",
+"~step.open_vault.chambers": "Ke ruang uji coba",
+"~step.open_vault.chambers.tip": "Ruang uji coba adalah aula bawah tanah besar dari tembaga dan tufa. Cari saat menambang atau menjelajah gua.",
+"~step.open_vault.key": "Kunci uji coba",
+"~step.open_vault.key.tip": "Kalahkan spawner uji coba: setelah semua makhluknya kalah, ia menjatuhkan kunci uji coba.",
+"~step.open_vault.open": "Buka brankas",
+"~step.open_vault.open.tip": "Gunakan kunci uji coba pada brankas (bukan yang firasat buruk). Tiap brankas terbuka sekali per pemain.",
+"~step.ominous_vault.bottle": "Botol firasat buruk",
+"~step.ominous_vault.bottle.tip": "Kapten menjatuhkan botol firasat buruk. Brankas firasat buruk dimulai dari situ.",
+"~step.ominous_vault.omen": "Minum botolnya",
+"~step.ominous_vault.omen.tip": "Minum untuk mendapat Firasat Buruk. Jangan masuk desa sekarang: itu memulai serangan.",
+"~step.ominous_vault.chambers": "Masuk ruang uji coba",
+"~step.ominous_vault.chambers.tip": "Masuk ke ruang uji coba dengan firasat itu: spawner uji coba berubah menjadi firasat buruk.",
+"~step.ominous_vault.key": "Kunci firasat buruk",
+"~step.ominous_vault.key.tip": "Kalahkan spawner uji coba firasat buruk: makhluk lebih banyak dan kuat. Ia menjatuhkan kunci uji coba firasat buruk.",
+"~step.ominous_vault.open": "Buka brankas firasat",
+"~step.ominous_vault.open.tip": "Brankas firasat buruk lebih gelap, hitam dan merah. Gunakan kunci firasat buruk pada salah satunya."
 }

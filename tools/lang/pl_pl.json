@@ -1329,5 +1329,21 @@
 "~step.ride_happy_ghast.equip": "Załóż uprząż",
 "~step.ride_happy_ghast.equip.tip": "Trzymaj uprząż i kliknij prawym na radosnego ghasta.",
 "~step.ride_happy_ghast.ride": "Wsiądź",
-"~step.ride_happy_ghast.ride.tip": "Kliknij prawym na radosnego ghasta pustą ręką. Leci tam, gdzie patrzysz."
+"~step.ride_happy_ghast.ride.tip": "Kliknij prawym na radosnego ghasta pustą ręką. Leci tam, gdzie patrzysz.",
+"~step.open_vault.chambers": "Do komnat prób",
+"~step.open_vault.chambers.tip": "Komnaty prób to duże podziemne sale z miedzi i tufu. Szukaj ich podczas kopania lub w jaskiniach.",
+"~step.open_vault.key": "Klucz prób",
+"~step.open_vault.key.tip": "Pokonaj spawner prób: gdy wszystkie jego potwory padną, upuści klucz prób.",
+"~step.open_vault.open": "Otwórz skarbiec",
+"~step.open_vault.open.tip": "Użyj klucza prób na skarbcu (nie złowieszczym). Każdy skarbiec otwiera się raz na gracza.",
+"~step.ominous_vault.bottle": "Złowieszcza butelka",
+"~step.ominous_vault.bottle.tip": "Kapitanowie upuszczają złowieszcze butelki. Złowieszczy skarbiec zaczyna się od niej.",
+"~step.ominous_vault.omen": "Wypij butelkę",
+"~step.ominous_vault.omen.tip": "Wypij ją, by dostać Zły omen. Nie wchodź teraz do wioski: zacznie się najazd.",
+"~step.ominous_vault.chambers": "Wejdź do komnat",
+"~step.ominous_vault.chambers.tip": "Wejdź z omenem do komnat prób: spawnery prób staną się złowieszcze.",
+"~step.ominous_vault.key": "Złowieszczy klucz",
+"~step.ominous_vault.key.tip": "Pokonaj złowieszczy spawner prób: więcej i silniejszych potworów. Upuści złowieszczy klucz prób.",
+"~step.ominous_vault.open": "Złowieszczy skarbiec",
+"~step.ominous_vault.open.tip": "Złowieszcze skarbce są ciemniejsze, czarno-czerwone. Użyj na jednym złowieszczego klucza."
 }

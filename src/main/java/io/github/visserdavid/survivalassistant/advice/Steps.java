@@ -105,7 +105,7 @@ public final class Steps {
 			"saddle", "crying_obsidian", "glowstone", "glowstone_dust", "respawn_anchor", "compass", "seagrass",
 			"turtle_scute", "ghast_tear", "copper_block", "copper_ingot", "copper_bulb", "crafting_table", "dropper",
 			"string", "flint", "feather", "wheat", "bone", "cod", "salmon", "bucket", "fishing_rod", "lapis_lazuli",
-			"smithing_table"))
+			"smithing_table", "trial_key", "ominous_trial_key"))
 			.collect(Collectors.toUnmodifiableSet());
 	/** Blocks whose placed count nearby the collector reports ({@link SurvivalContext.Nearby#placed}). */
 	public static final Set<String> TRACKED_BLOCKS = Set.of("obsidian", "nether_portal", "iron_block", "carved_pumpkin",
@@ -208,6 +208,14 @@ public final class Steps {
 	/** Wheat carried, plus the wheat already baked into bread. */
 	private static int wheat(SurvivalContext c) {
 		return item(c, "wheat") + WHEAT_PER_BREAD * c.inv().bread();
+	}
+
+	private static boolean inTrials(SurvivalContext c) {
+		return c.world().in(Structures.TRIAL_CHAMBERS);
+	}
+
+	private static boolean ominousKey(SurvivalContext c) {
+		return item(c, "ominous_trial_key") > 0;
 	}
 
 	private static boolean hasBulb(SurvivalContext c) {
@@ -358,11 +366,24 @@ public final class Steps {
 					count("recovery_compass.shards", c -> c.inv().echoShards(), 8, c -> false),
 					count("recovery_compass.compass", c -> item(c, "compass"), 1, c -> false),
 					finish("recovery_compass.craft"))),
+			// chapter 16: an ominous bottle, Bad Omen turns into Trial Omen in the chambers, an ominous key, an ominous vault
+			Map.entry("ominous_vault", List.of(
+					step("ominous_vault.bottle", c -> c.inv().hasOminousBottle() || c.player().omen() || c.player().trialOmen()
+							|| ominousKey(c)),
+					step("ominous_vault.omen", c -> c.player().omen() || c.player().trialOmen() || ominousKey(c)),
+					step("ominous_vault.chambers", c -> c.player().trialOmen() || ominousKey(c)),
+					step("ominous_vault.key", Steps::ominousKey),
+					finish("ominous_vault.open"))),
 			// chapter 16: the heavy core on top of a breeze rod
 			Map.entry("mace", List.of(
 					count("mace.rod", c -> c.inv().breezeRods(), 1, c -> false),
 					step("mace.core", c -> c.inv().hasHeavyCore()),
 					finish("mace.craft"))),
+			// chapter 8: the trial chambers, a trial key from a beaten trial spawner, then a vault
+			Map.entry("open_vault", List.of(
+					step("open_vault.chambers", c -> inTrials(c) || item(c, "trial_key") > 0),
+					step("open_vault.key", c -> item(c, "trial_key") > 0),
+					finish("open_vault.open"))),
 			// chapter 10: in the End, an end city, its ship, the elytra in the item frame
 			Map.entry("elytra", List.of(
 					step("elytra.end", c -> c.world().inEnd()),

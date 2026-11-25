@@ -111,7 +111,8 @@ archaeology, the trial challenges, the happy ghast and automation.
   (template, diamond gear, ingot, smithing table, upgrade), winning a raid (the ominous bottle, drink it, a village,
   every wave), the upgrade template (find a bastion, search its chests), the respawn anchor (crying obsidian, glowstone, craft, place in the Nether, charge 4/4),
   summoning the Wither (a safe spot, the T of soul sand, the skulls), the recovery compass (echo shards, a compass,
-  craft), the mace (breeze rod, heavy core, craft), the beacon (and its full pyramid), the dried ghast (8 ghast tears around soul sand), putting it in water, letting it swell (0/3), the happy ghast's
+  craft), the mace (breeze rod, heavy core, craft), opening a vault (the trial chambers, a trial key) and an ominous vault
+  (an ominous bottle, drink it, the chambers, an ominous key), the beacon (and its full pyramid), the dried ghast (8 ghast tears around soul sand), putting it in water, letting it swell (0/3), the happy ghast's
   harness and riding it (a grown ghast, a harness, put it on, climb on), the automatic furnace and the
   decorated pot (4 sherds or bricks, craft), the armor trim (template, material, armor piece, smithing table,
   trim), the sniffer egg (a brush, a warm ocean ruin, brush the sand), the

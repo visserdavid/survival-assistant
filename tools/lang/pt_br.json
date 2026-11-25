@@ -1329,5 +1329,21 @@
 "~step.ride_happy_ghast.equip": "Coloque o arreio",
 "~step.ride_happy_ghast.equip.tip": "Segure o arreio e clique com o botão direito no ghast feliz.",
 "~step.ride_happy_ghast.ride": "Suba nele",
-"~step.ride_happy_ghast.ride.tip": "Clique com o botão direito no ghast feliz de mão vazia. Ele voa para onde você olha."
+"~step.ride_happy_ghast.ride.tip": "Clique com o botão direito no ghast feliz de mão vazia. Ele voa para onde você olha.",
+"~step.open_vault.chambers": "Às câmaras de desafio",
+"~step.open_vault.chambers.tip": "As câmaras de desafio são grandes salões subterrâneos de cobre e tufo. Procure enquanto minera ou explora cavernas.",
+"~step.open_vault.key": "Uma chave de desafio",
+"~step.open_vault.key.tip": "Vença um gerador de desafio: quando todas as criaturas caírem, ele solta uma chave de desafio.",
+"~step.open_vault.open": "Abra um cofre",
+"~step.open_vault.open.tip": "Use a chave de desafio num cofre (não num sinistro). Cada cofre abre uma vez por jogador.",
+"~step.ominous_vault.bottle": "Garrafa sinistra",
+"~step.ominous_vault.bottle.tip": "Capitães derrubam garrafas sinistras. Um cofre sinistro começa com uma.",
+"~step.ominous_vault.omen": "Beba a garrafa",
+"~step.ominous_vault.omen.tip": "Beba para ganhar Mau Presságio. Não entre numa vila agora: isso começa um ataque.",
+"~step.ominous_vault.chambers": "Entre nas câmaras",
+"~step.ominous_vault.chambers.tip": "Entre nas câmaras de desafio com o presságio: os geradores ficam sinistros.",
+"~step.ominous_vault.key": "Uma chave sinistra",
+"~step.ominous_vault.key.tip": "Vença um gerador de desafio sinistro: mais criaturas e mais fortes. Ele solta uma chave de desafio sinistra.",
+"~step.ominous_vault.open": "Abra um cofre sinistro",
+"~step.ominous_vault.open.tip": "Cofres sinistros são mais escuros, pretos e vermelhos. Use a chave sinistra num deles."
 }

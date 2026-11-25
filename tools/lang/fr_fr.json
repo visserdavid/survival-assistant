@@ -1329,5 +1329,21 @@
 "~step.ride_happy_ghast.equip": "Mets-lui le harnais",
 "~step.ride_happy_ghast.equip.tip": "Tiens le harnais et fais un clic droit sur le ghast joyeux.",
 "~step.ride_happy_ghast.ride": "Monte dessus",
-"~step.ride_happy_ghast.ride.tip": "Fais un clic droit sur le ghast joyeux la main vide. Il vole là où tu regardes."
+"~step.ride_happy_ghast.ride.tip": "Fais un clic droit sur le ghast joyeux la main vide. Il vole là où tu regardes.",
+"~step.open_vault.chambers": "Aux salles des épreuves",
+"~step.open_vault.chambers.tip": "Les salles des épreuves sont de grandes salles souterraines en cuivre et en tuf. Cherche-les en minant ou en explorant des grottes.",
+"~step.open_vault.key": "Une clé d'épreuve",
+"~step.open_vault.key.tip": "Bats un générateur d'épreuves : une fois tous ses monstres vaincus, il lâche une clé d'épreuve.",
+"~step.open_vault.open": "Ouvre un coffre-fort",
+"~step.open_vault.open.tip": "Utilise la clé d'épreuve sur un coffre-fort (pas un sinistre). Chaque coffre-fort s'ouvre une fois par joueur.",
+"~step.ominous_vault.bottle": "Une fiole sinistre",
+"~step.ominous_vault.bottle.tip": "Les capitaines lâchent des fioles sinistres. Un coffre-fort sinistre commence par là.",
+"~step.ominous_vault.omen": "Bois la fiole",
+"~step.ominous_vault.omen.tip": "Bois-la pour avoir Mauvais présage. N'entre pas dans un village maintenant : ça lance un raid.",
+"~step.ominous_vault.chambers": "Entre dans les salles",
+"~step.ominous_vault.chambers.tip": "Entre dans les salles des épreuves avec le présage : les générateurs deviennent sinistres.",
+"~step.ominous_vault.key": "Une clé sinistre",
+"~step.ominous_vault.key.tip": "Bats un générateur d'épreuves sinistre : plus de monstres, et plus forts. Il lâche une clé d'épreuve sinistre.",
+"~step.ominous_vault.open": "Ouvre un coffre sinistre",
+"~step.ominous_vault.open.tip": "Les coffres-forts sinistres sont plus sombres, noirs et rouges. Utilise la clé sinistre sur l'un d'eux."
 }
