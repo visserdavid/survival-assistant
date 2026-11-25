@@ -413,6 +413,7 @@ class StepsTest {
 		Tip g = TipRegistry.IRON_ARMOR;
 		assertEquals("iron_armor.iron", current(g, b -> b.item("iron_ingot", 7)));
 		assertEquals("iron_armor.craft", current(g, b -> b.item("iron_ingot", 8)));
+		assertEquals("iron_armor.wear", current(g, b -> b.armorPieces(1)), "crafted and carried, not worn yet");
 	}
 
 	@Test

@@ -1964,6 +1964,10 @@ L = {
     P + "step.sneak_past.sneak.tip": ("Hold sneak and walk past the sensor: sneaking makes no vibrations. Stay away from the shriekers.",
         "Houd sluipen ingedrukt en loop langs de sensor: sluipen maakt geen trillingen. Blijf weg bij de shriekers."),
 
+    P + "step.iron_armor.wear": ("Put it on", "Trek hem aan"),
+    P + "step.iron_armor.wear.tip": ("Open your inventory and drag the chestplate onto your body, or right-click with it in your hand.",
+        "Open je inventaris en sleep de borstplaat naar je lichaam, of klik met rechts terwijl je hem vasthoudt."),
+
     # ---------------- recipe card ----------------
     P + "recipe.title": ("Recipe: %s", "Recept: %s"),
     P + "recipe.needs_table": ("Needs a crafting table (3x3)", "Werkbank nodig (3x3)"),

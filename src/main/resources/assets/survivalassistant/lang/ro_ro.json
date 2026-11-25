@@ -1068,6 +1068,8 @@
 	"survivalassistant.step.sneak_past.sensor.tip": "Senzorii de sculk sunt blocuri albastru-verzui închis cu antene mici deasupra. Simt pașii.",
 	"survivalassistant.step.sneak_past.sneak": "Treci furișat",
 	"survivalassistant.step.sneak_past.sneak.tip": "Ține apăsat pe furișat și treci pe lângă senzor: furișatul nu face vibrații. Stai departe de țipători.",
+	"survivalassistant.step.iron_armor.wear": "Pune-o pe tine",
+	"survivalassistant.step.iron_armor.wear.tip": "Deschide inventarul și trage platoșa pe corp sau dă clic dreapta ținând-o în mână.",
 	"survivalassistant.recipe.title": "Rețetă: %s",
 	"survivalassistant.recipe.needs_table": "Necesită o masă de lucru (3x3)",
 	"survivalassistant.cross.needs": "%s: necesită %s",

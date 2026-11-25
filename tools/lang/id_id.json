@@ -1383,5 +1383,7 @@
 "~step.sneak_past.sensor": "Temukan sensor sculk",
 "~step.sneak_past.sensor.tip": "Sensor sculk adalah balok biru kehijauan gelap dengan antena kecil di atasnya. Ia menangkap langkah kaki.",
 "~step.sneak_past.sneak": "Mengendap lewat",
-"~step.sneak_past.sneak.tip": "Tahan mengendap dan lewati sensornya: mengendap tidak menimbulkan getaran. Jauhi pemekik."
+"~step.sneak_past.sneak.tip": "Tahan mengendap dan lewati sensornya: mengendap tidak menimbulkan getaran. Jauhi pemekik.",
+"~step.iron_armor.wear": "Pakai",
+"~step.iron_armor.wear.tip": "Buka inventaris dan seret pelindung dada ke tubuhmu, atau klik kanan sambil memegangnya."
 }

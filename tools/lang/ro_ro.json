@@ -1383,5 +1383,7 @@
 "~step.sneak_past.sensor": "Găsește un senzor",
 "~step.sneak_past.sensor.tip": "Senzorii de sculk sunt blocuri albastru-verzui închis cu antene mici deasupra. Simt pașii.",
 "~step.sneak_past.sneak": "Treci furișat",
-"~step.sneak_past.sneak.tip": "Ține apăsat pe furișat și treci pe lângă senzor: furișatul nu face vibrații. Stai departe de țipători."
+"~step.sneak_past.sneak.tip": "Ține apăsat pe furișat și treci pe lângă senzor: furișatul nu face vibrații. Stai departe de țipători.",
+"~step.iron_armor.wear": "Pune-o pe tine",
+"~step.iron_armor.wear.tip": "Deschide inventarul și trage platoșa pe corp sau dă clic dreapta ținând-o în mână."
 }

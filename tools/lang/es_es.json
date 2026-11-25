@@ -1383,5 +1383,7 @@
 "~step.sneak_past.sensor": "Busca un sensor de sculk",
 "~step.sneak_past.sensor.tip": "Los sensores de sculk son bloques azul verdoso oscuro con antenitas arriba. Notan los pasos.",
 "~step.sneak_past.sneak": "Pasa agachado",
-"~step.sneak_past.sneak.tip": "Mantén agacharse y pasa junto al sensor: ir agachado no hace vibraciones. Aléjate de los chilladores."
+"~step.sneak_past.sneak.tip": "Mantén agacharse y pasa junto al sensor: ir agachado no hace vibraciones. Aléjate de los chilladores.",
+"~step.iron_armor.wear": "Póntela",
+"~step.iron_armor.wear.tip": "Abre el inventario y arrastra la pechera a tu cuerpo, o haz clic derecho con ella en la mano."
 }

@@ -1383,5 +1383,7 @@
 "~step.sneak_past.sensor": "Znajdź czujnik sculku",
 "~step.sneak_past.sensor.tip": "Czujniki sculku to ciemne niebieskozielone bloki z czułkami na górze. Wyczuwają kroki.",
 "~step.sneak_past.sneak": "Przekradnij się",
-"~step.sneak_past.sneak.tip": "Trzymaj skradanie i przejdź obok czujnika: skradanie nie wywołuje drgań. Trzymaj się z dala od wyjców."
+"~step.sneak_past.sneak.tip": "Trzymaj skradanie i przejdź obok czujnika: skradanie nie wywołuje drgań. Trzymaj się z dala od wyjców.",
+"~step.iron_armor.wear": "Załóż go",
+"~step.iron_armor.wear.tip": "Otwórz ekwipunek i przeciągnij napierśnik na postać albo kliknij prawym, trzymając go w ręce."
 }

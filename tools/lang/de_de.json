@@ -1383,5 +1383,7 @@
 "~step.sneak_past.sensor": "Finde einen Sculk-Sensor",
 "~step.sneak_past.sensor.tip": "Sculk-Sensoren sind dunkle blaugrüne Blöcke mit kleinen Fühlern oben. Sie bemerken Schritte.",
 "~step.sneak_past.sneak": "Schleich vorbei",
-"~step.sneak_past.sneak.tip": "Halt Schleichen gedrückt und geh am Sensor vorbei: Schleichen erzeugt keine Vibrationen. Bleib weg von den Kreischern."
+"~step.sneak_past.sneak.tip": "Halt Schleichen gedrückt und geh am Sensor vorbei: Schleichen erzeugt keine Vibrationen. Bleib weg von den Kreischern.",
+"~step.iron_armor.wear": "Zieh ihn an",
+"~step.iron_armor.wear.tip": "Öffne dein Inventar und zieh den Brustpanzer auf deinen Körper, oder klick mit ihm in der Hand rechts."
 }

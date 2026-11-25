@@ -1068,6 +1068,8 @@
 	"survivalassistant.step.sneak_past.sensor.tip": "مستشعرات السكالك كتل زرقاء مخضرة داكنة فوقها قرون صغيرة. تلتقط الخطوات.",
 	"survivalassistant.step.sneak_past.sneak": "تسلّل بجانبه",
 	"survivalassistant.step.sneak_past.sneak.tip": "اضغط مطولًا على التسلل ومرّ بجانب المستشعر: التسلل لا يصدر اهتزازات. ابتعد عن صرّاخات السكالك.",
+	"survivalassistant.step.iron_armor.wear": "ارتدها",
+	"survivalassistant.step.iron_armor.wear.tip": "افتح المخزون واسحب الصدرية إلى جسمك، أو انقر بالزر الأيمن وهي في يدك.",
 	"survivalassistant.recipe.title": "الوصفة: %s",
 	"survivalassistant.recipe.needs_table": "تحتاج طاولة صناعة (3x3)",
 	"survivalassistant.cross.needs": "%s: يحتاج %s",

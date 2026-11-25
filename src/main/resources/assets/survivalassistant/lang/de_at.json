@@ -1068,6 +1068,8 @@
 	"survivalassistant.step.sneak_past.sensor.tip": "Sculk-Sensoren sind dunkle blaugrüne Blöcke mit kleinen Fühlern oben. Sie bemerken Schritte.",
 	"survivalassistant.step.sneak_past.sneak": "Schleich vorbei",
 	"survivalassistant.step.sneak_past.sneak.tip": "Halt Schleichen gedrückt und geh am Sensor vorbei: Schleichen erzeugt keine Vibrationen. Bleib weg von den Kreischern.",
+	"survivalassistant.step.iron_armor.wear": "Zieh ihn an",
+	"survivalassistant.step.iron_armor.wear.tip": "Öffne dein Inventar und zieh den Brustpanzer auf deinen Körper, oder klick mit ihm in der Hand rechts.",
 	"survivalassistant.recipe.title": "Rezept: %s",
 	"survivalassistant.recipe.needs_table": "Braucht eine Werkbank (3x3)",
 	"survivalassistant.cross.needs": "%s: braucht %s",

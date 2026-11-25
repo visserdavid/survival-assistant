@@ -1383,5 +1383,7 @@
 "~step.sneak_past.sensor": "Trouve un capteur",
 "~step.sneak_past.sensor.tip": "Les capteurs de sculk sont des blocs bleu-vert sombre avec de petites antennes dessus. Ils perçoivent les pas.",
 "~step.sneak_past.sneak": "Passe accroupi",
-"~step.sneak_past.sneak.tip": "Reste accroupi et passe devant le capteur : être accroupi ne fait aucune vibration. Évite les hurleurs."
+"~step.sneak_past.sneak.tip": "Reste accroupi et passe devant le capteur : être accroupi ne fait aucune vibration. Évite les hurleurs.",
+"~step.iron_armor.wear": "Enfile-le",
+"~step.iron_armor.wear.tip": "Ouvre ton inventaire et fais glisser le plastron sur ton corps, ou fais un clic droit en le tenant en main."
 }

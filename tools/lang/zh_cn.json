@@ -1383,5 +1383,7 @@
 "~step.sneak_past.sensor": "找到幽匿感测体",
 "~step.sneak_past.sensor.tip": "幽匿感测体是顶上有小触须的深蓝绿色方块。它们能察觉脚步声。",
 "~step.sneak_past.sneak": "潜行经过它",
-"~step.sneak_past.sneak.tip": "按住潜行走过感测体：潜行不会产生振动。远离幽匿尖啸体。"
+"~step.sneak_past.sneak.tip": "按住潜行走过感测体：潜行不会产生振动。远离幽匿尖啸体。",
+"~step.iron_armor.wear": "穿上它",
+"~step.iron_armor.wear.tip": "打开物品栏，把胸甲拖到身上，或者手持胸甲右击。"
 }

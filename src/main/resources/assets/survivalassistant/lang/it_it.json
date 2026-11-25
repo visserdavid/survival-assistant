@@ -1068,6 +1068,8 @@
 	"survivalassistant.step.sneak_past.sensor.tip": "I sensori di sculk sono blocchi blu-verde scuro con piccole antenne sopra. Percepiscono i passi.",
 	"survivalassistant.step.sneak_past.sneak": "Passa accovacciato",
 	"survivalassistant.step.sneak_past.sneak.tip": "Tieni premuto accovacciati e passa vicino al sensore: non crea vibrazioni. Stai lontano dagli urlatori.",
+	"survivalassistant.step.iron_armor.wear": "Indossala",
+	"survivalassistant.step.iron_armor.wear.tip": "Apri l'inventario e trascina la corazza sul tuo corpo, oppure fai clic destro tenendola in mano.",
 	"survivalassistant.recipe.title": "Ricetta: %s",
 	"survivalassistant.recipe.needs_table": "Serve un banco da lavoro (3x3)",
 	"survivalassistant.cross.needs": "%s: serve %s",

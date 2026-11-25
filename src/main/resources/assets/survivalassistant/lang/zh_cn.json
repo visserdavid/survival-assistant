@@ -1068,6 +1068,8 @@
 	"survivalassistant.step.sneak_past.sensor.tip": "幽匿感测体是顶上有小触须的深蓝绿色方块。它们能察觉脚步声。",
 	"survivalassistant.step.sneak_past.sneak": "潜行经过它",
 	"survivalassistant.step.sneak_past.sneak.tip": "按住潜行走过感测体：潜行不会产生振动。远离幽匿尖啸体。",
+	"survivalassistant.step.iron_armor.wear": "穿上它",
+	"survivalassistant.step.iron_armor.wear.tip": "打开物品栏，把胸甲拖到身上，或者手持胸甲右击。",
 	"survivalassistant.recipe.title": "配方：%s",
 	"survivalassistant.recipe.needs_table": "需要工作台（3x3）",
 	"survivalassistant.cross.needs": "%s：需要%s",

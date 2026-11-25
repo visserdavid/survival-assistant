@@ -1068,6 +1068,8 @@
 	"survivalassistant.step.sneak_past.sensor.tip": "Les capteurs de sculk sont des blocs bleu-vert sombre avec de petites antennes dessus. Ils perçoivent les pas.",
 	"survivalassistant.step.sneak_past.sneak": "Passe accroupi",
 	"survivalassistant.step.sneak_past.sneak.tip": "Reste accroupi et passe devant le capteur : être accroupi ne fait aucune vibration. Évite les hurleurs.",
+	"survivalassistant.step.iron_armor.wear": "Enfile-le",
+	"survivalassistant.step.iron_armor.wear.tip": "Ouvre ton inventaire et fais glisser le plastron sur ton corps, ou fais un clic droit en le tenant en main.",
 	"survivalassistant.recipe.title": "Recette : %s",
 	"survivalassistant.recipe.needs_table": "Nécessite un établi (3x3)",
 	"survivalassistant.cross.needs": "%s : nécessite %s",

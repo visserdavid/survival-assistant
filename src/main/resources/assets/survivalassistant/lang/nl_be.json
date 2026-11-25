@@ -1068,6 +1068,8 @@
 	"survivalassistant.step.sneak_past.sensor.tip": "Sculksensoren zijn donkere blauwgroene blokken met voelsprietjes erop. Ze merken voetstappen op.",
 	"survivalassistant.step.sneak_past.sneak": "Sluip erlangs",
 	"survivalassistant.step.sneak_past.sneak.tip": "Houd sluipen ingedrukt en loop langs de sensor: sluipen maakt geen trillingen. Blijf weg bij de shriekers.",
+	"survivalassistant.step.iron_armor.wear": "Trek hem aan",
+	"survivalassistant.step.iron_armor.wear.tip": "Open je inventaris en sleep de borstplaat naar je lichaam, of klik met rechts terwijl je hem vasthoudt.",
 	"survivalassistant.recipe.title": "Recept: %s",
 	"survivalassistant.recipe.needs_table": "Werkbank nodig (3x3)",
 	"survivalassistant.cross.needs": "%s: %s nodig",

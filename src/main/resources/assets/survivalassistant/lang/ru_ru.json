@@ -1068,6 +1068,8 @@
 	"survivalassistant.step.sneak_past.sensor.tip": "Скалк-сенсоры: тёмные сине-зелёные блоки с усиками сверху. Они замечают шаги.",
 	"survivalassistant.step.sneak_past.sneak": "Прокрадись мимо",
 	"survivalassistant.step.sneak_past.sneak.tip": "Зажми красться и пройди мимо сенсора: крадучись ты не создаёшь вибраций. Держись подальше от крикунов.",
+	"survivalassistant.step.iron_armor.wear": "Надень его",
+	"survivalassistant.step.iron_armor.wear.tip": "Открой инвентарь и перетащи нагрудник на персонажа или нажми правой кнопкой, держа его в руке.",
 	"survivalassistant.recipe.title": "Рецепт: %s",
 	"survivalassistant.recipe.needs_table": "Нужен верстак (3x3)",
 	"survivalassistant.cross.needs": "%s: нужна %s",

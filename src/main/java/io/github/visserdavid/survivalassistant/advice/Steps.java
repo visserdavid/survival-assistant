@@ -239,10 +239,11 @@ public final class Steps {
 	// ---------------------------------------------------------------- the steps per goal
 
 	public static final Map<String, List<Step>> BY_GOAL = Map.ofEntries(
-			// chapter 1: iron for the chestplate (it protects most), then craft it
+			// chapter 1: iron for the chestplate (it protects most), craft it, put it on (the goal counts worn armor)
 			Map.entry("iron_armor", List.of(
-					count("iron_armor.iron", c -> item(c, "iron_ingot"), CHESTPLATE_IRON, c -> false),
-					finish("iron_armor.craft"))),
+					count("iron_armor.iron", c -> item(c, "iron_ingot"), CHESTPLATE_IRON, c -> c.inv().armorPieces() > 0),
+					step("iron_armor.craft", c -> c.inv().armorPieces() > 0),
+					finish("iron_armor.wear"))),
 			// chapter 2: every piece still missing, with the iron it takes (pieces the player has are skipped)
 			Map.entry("full_iron_armor", List.of(
 					piece("full_iron_armor.helmet", HEAD, HELMET_IRON),
