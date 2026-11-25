@@ -161,6 +161,7 @@ def main():
         nbt["equipment"] = eq
         nbt["SelectedItemSlot"] = Int(0)
         nbt["XpLevel"], nbt["XpP"], nbt["XpTotal"] = Int(0), Float(0), Int(0)  # tests give levels with /xp
+        nbt["playerGameType"] = Int(0)  # every test starts in survival
         nbt.save()
         print(f"{f.name}: inventory emptied, gear for {goal}: " + ", ".join(str(i["id"])[10:] for i in hotbar)
               + " + " + ", ".join(str(v["id"])[10:] for v in worn.values()))
