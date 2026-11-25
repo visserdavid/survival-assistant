@@ -1,6 +1,6 @@
 package io.github.visserdavid.survivalassistant.client.settings;
 
-import com.mojang.blaze3d.Blaze3D;
+import net.minecraft.util.Util;
 import io.github.visserdavid.survivalassistant.client.hud.ClientConfig;
 import io.github.visserdavid.survivalassistant.client.skin.GuideSkins;
 import io.github.visserdavid.survivalassistant.skin.SkinNames;
@@ -55,7 +55,7 @@ final class DisplayTab {
 				.cycle("skin", skins, c.guideSkin,
 						s -> SkinNames.BUILT_IN.contains(s) ? Component.translatable(KEY + "skin." + s) : Component.literal(shortName(s)),
 						v -> c.guideSkin = v)
-				.button(Button.builder(label("skin_folder"), b -> Blaze3D.openPath(GuideSkins.folder()))
+				.button(Button.builder(label("skin_folder"), b -> Util.getPlatform().openPath(GuideSkins.folder()))
 						.width(Rows.WIDGET_WIDTH).tooltip(tip("skin_folder")).build());
 
 		rows.header("keys")
