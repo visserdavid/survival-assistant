@@ -105,6 +105,15 @@ public final class Recipes {
 	/** 2 iron and 4 planks: where diamond gear becomes netherite. */
 	private static final Recipe SMITHING_TABLE = new Recipe("minecraft:smithing_table", 1, List.of("@@", "##", "##"),
 			Map.of('@', IRON, '#', PLANKS));
+	/** 2 planks on top of each other make 4 sticks. */
+	private static final Recipe STICKS = new Recipe("minecraft:stick", 4, List.of("#", "#"), Map.of('#', PLANKS));
+	/** 2 iron ingots on a diagonal: for carving a pumpkin. */
+	private static final Recipe SHEARS = new Recipe("minecraft:shears", 1, List.of(" #", "# "), Map.of('#', IRON));
+	/** 8 planks around an empty middle. */
+	private static final Recipe CHEST = new Recipe("minecraft:chest", 1, List.of("###", "# #", "###"), Map.of('#', PLANKS));
+	/** 3 sticks, a coal and 3 logs: smoke that calms the bees. */
+	private static final Recipe CAMPFIRE = new Recipe("minecraft:campfire", 1, List.of(" S ", "SCS", "LLL"),
+			Map.of('S', STICK, 'C', "minecraft:coal", 'L', "minecraft:oak_log"));
 	/** Flint, a stick and a feather make 4 arrows. */
 	private static final Recipe ARROW = new Recipe("minecraft:arrow", 4, List.of("X", "#", "Y"),
 			Map.of('X', "minecraft:flint", '#', STICK, 'Y', "minecraft:feather"));
@@ -235,6 +244,24 @@ public final class Recipes {
 			Map.entry("armor_trim.table", SMITHING_TABLE),
 			Map.entry("sniffer_egg.brush", BRUSH),
 			Map.entry("decorated_pot.craft", DECORATED_POT),
+			Map.entry("bow.sticks", STICKS),
+			Map.entry("bow.arrow_sticks", STICKS),
+			Map.entry("fishing.sticks", STICKS),
+			Map.entry("diamond_pickaxe.sticks", STICKS),
+			Map.entry("farm.sticks", STICKS),
+			Map.entry("sniffer_egg.stick", STICKS),
+			Map.entry("sniffer_egg.feather", BRUSH),
+			Map.entry("sniffer_egg.copper", BRUSH),
+			Map.entry("iron_golem.shears", SHEARS),
+			Map.entry("honey.campfire_item", CAMPFIRE),
+			Map.entry("recovery_compass.iron", COMPASS),
+			Map.entry("recovery_compass.redstone", COMPASS),
+			Map.entry("netherite_gear.table_iron", SMITHING_TABLE),
+			Map.entry("netherite_gear.planks", SMITHING_TABLE),
+			Map.entry("armor_trim.table_iron", SMITHING_TABLE),
+			Map.entry("armor_trim.planks", SMITHING_TABLE),
+			Map.entry("auto_smelter.iron", HOPPER),
+			Map.entry("auto_smelter.chests", CHEST),
 			Map.entry("bow.flint", ARROW),
 			Map.entry("bow.feathers", ARROW),
 			Map.entry("bow.arrows", ARROW),

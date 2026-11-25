@@ -110,6 +110,8 @@ public final class ContextCollector {
 	private static final int DROP_RADIUS = 32;
 	/** Brewing stand slots: 0 - 2 hold the bottles, 4 the blaze powder. */
 	private static final int STAND_BOTTLE_SLOTS = 3, STAND_FUEL_SLOT = 4;
+	/** The brewing stand's ingredient slot (on top), where the Nether wart goes. */
+	private static final int STAND_INGREDIENT_SLOT = 3;
 
 	/** The armor slots plus the off hand (shield, totem, a held trident or mace). */
 	private static final EquipmentSlot[] WORN_SLOTS =
@@ -338,7 +340,7 @@ public final class ContextCollector {
 	private static void scanBlocks(ServerLevel level, BlockPos origin, SurvivalContext.Builder b) {
 		int r = BLOCK_SCAN_RADIUS, h = BLOCK_SCAN_HEIGHT;
 		int crops = 0, bookshelves = 0;
-		boolean autoSmelter = false, hopperOnFurnace = false, standFuel = false;
+		boolean autoSmelter = false, hopperOnFurnace = false, standFuel = false, standIngredient = false;
 		int standBottles = 0, beaconLevel = 0, anchorCharge = 0, crafterSlots = 0, ripeWheat = 0, ghastHydration = -1;
 		boolean witherBase = false;
 		Map<String, Integer> tracked = new HashMap<>();
@@ -364,6 +366,7 @@ public final class ContextCollector {
 				if (level.getBlockEntity(pos) instanceof BrewingStandBlockEntity stand) {
 					standBottles = Math.max(standBottles, standBottles(stand));
 					if (stand.fuel > 0 || stand.getItem(STAND_FUEL_SLOT).is(Items.BLAZE_POWDER)) standFuel = true;
+					if (!stand.getItem(STAND_INGREDIENT_SLOT).isEmpty()) standIngredient = true;
 				}
 			}
 			else if (st.is(Blocks.BEACON)) beaconLevel = Math.max(beaconLevel, beaconLevel(level, pos));
@@ -398,7 +401,7 @@ public final class ContextCollector {
 		}
 		scanHives(level, origin, b);
 		b.crops(crops).bookshelves(bookshelves).autoSmelter(autoSmelter).hopperOnFurnace(hopperOnFurnace)
-				.standBottles(standBottles).standFuel(standFuel).beaconLevel(beaconLevel)
+				.standBottles(standBottles).standFuel(standFuel).standIngredient(standIngredient).beaconLevel(beaconLevel)
 				.anchorCharge(anchorCharge).witherBase(witherBase).crafterSlots(crafterSlots).ripeWheat(ripeWheat)
 				.ghastHydration(ghastHydration);
 		tracked.forEach(b::block);

@@ -35,14 +35,17 @@ class StepsTest {
 		assertEquals("brew_potion.water", current(g, b -> b.item("glass_bottle", 3)));
 		assertEquals("brew_potion.water", current(g, b -> b.item("glass_bottle", 1).waterBottles(2)));
 		assertEquals("brew_potion.fuel", current(g, b -> b.waterBottles(3)));
-		assertEquals("brew_potion.brew", current(g, b -> b.waterBottles(3).item("blaze_powder", 1)));
+		assertEquals("brew_potion.wart", current(g, b -> b.waterBottles(3).item("blaze_powder", 1)));
+		assertEquals("brew_potion.brew", current(g, b -> b.waterBottles(3).item("blaze_powder", 1).netherWart(1)));
+		assertEquals("brew_potion.brew", current(g, b -> b.standBottles(3).standFuel(true).standIngredient(true)),
+				"the wart is in the stand now");
 	}
 
 	@Test
 	void bottlesInTheStandStillCount() {
 		Tip g = TipRegistry.BREW_POTION;
 		assertEquals("brew_potion.fuel", current(g, b -> b.standBottles(3)));
-		assertEquals("brew_potion.brew", current(g, b -> b.standBottles(3).standFuel(true)),
+		assertEquals("brew_potion.wart", current(g, b -> b.standBottles(3).standFuel(true)),
 				"the powder is used up, but the stand still has fuel");
 	}
 
@@ -118,7 +121,9 @@ class StepsTest {
 	void recoveryCompass() {
 		Tip g = TipRegistry.RECOVERY_COMPASS;
 		assertEquals("recovery_compass.shards", current(g, b -> b.echoShards(7).item("compass", 1)));
-		assertEquals("recovery_compass.compass", current(g, b -> b.echoShards(8)));
+		assertEquals("recovery_compass.iron", current(g, b -> b.echoShards(8)));
+		assertEquals("recovery_compass.redstone", current(g, b -> b.echoShards(8).item("iron_ingot", 4)));
+		assertEquals("recovery_compass.compass", current(g, b -> b.echoShards(8).item("iron_ingot", 4).redstone(1)));
 		assertEquals("recovery_compass.craft", current(g, b -> b.echoShards(8).item("compass", 1)));
 	}
 
@@ -191,7 +196,9 @@ class StepsTest {
 	@Test
 	void farm() {
 		Tip g = TipRegistry.FARM;
-		assertEquals("farm.hoe", current(g, b -> b.item("wheat_seeds", 6)));
+		assertEquals("farm.planks", current(g, b -> b.item("wheat_seeds", 6)));
+		assertEquals("farm.sticks", current(g, b -> b.planks(2)));
+		assertEquals("farm.hoe", current(g, b -> b.planks(2).item("stick", 2)));
 		assertEquals("farm.seeds", current(g, b -> b.item("stone_hoe", 1).item("wheat_seeds", 3).item("carrot", 2)));
 		assertEquals("farm.till", current(g, b -> b.item("wooden_hoe", 1).item("wheat_seeds", 4).item("potato", 2)));
 		assertEquals("farm.plant", current(g, b -> b.item("wheat_seeds", 6).block("farmland", 2)), "the hoe may stay at home");
@@ -203,11 +210,13 @@ class StepsTest {
 	void bow() {
 		Tip g = TipRegistry.BOW;
 		assertEquals("bow.string", current(g, b -> b.item("string", 2)));
-		assertEquals("bow.craft", current(g, b -> b.item("string", 3)));
+		assertEquals("bow.sticks", current(g, b -> b.item("string", 3)));
+		assertEquals("bow.craft", current(g, b -> b.item("string", 3).item("stick", 3)));
 		assertEquals("bow.flint", current(g, b -> b.hasBow(true).item("flint", 2).arrows(4)), "4 arrows count as one flint");
 		assertEquals("bow.feathers", current(g, b -> b.hasBow(true).item("flint", 3).arrows(4)));
-		assertEquals("bow.arrows", current(g, b -> b.hasBow(true).item("flint", 4).item("feather", 4)));
-		assertEquals("bow.arrows", current(g, b -> b.hasBow(true).item("flint", 1).item("feather", 1).arrows(12)),
+		assertEquals("bow.arrow_sticks", current(g, b -> b.hasBow(true).item("flint", 4).item("feather", 4)));
+		assertEquals("bow.arrows", current(g, b -> b.hasBow(true).item("flint", 4).item("feather", 4).item("stick", 4)));
+		assertEquals("bow.arrows", current(g, b -> b.hasBow(true).item("flint", 1).item("feather", 1).item("stick", 1).arrows(12)),
 				"crafting arrows doesn't send the player back");
 	}
 
@@ -241,7 +250,8 @@ class StepsTest {
 	void fishing() {
 		Tip g = TipRegistry.FISHING;
 		assertEquals("fishing.string", current(g, b -> b.item("string", 1).block("water", 20)));
-		assertEquals("fishing.rod", current(g, b -> b.item("string", 2)));
+		assertEquals("fishing.sticks", current(g, b -> b.item("string", 2).item("stick", 2)));
+		assertEquals("fishing.rod", current(g, b -> b.item("string", 2).item("stick", 3)));
 		assertEquals("fishing.water", current(g, b -> b.item("fishing_rod", 1)));
 		assertEquals("fishing.cast", current(g, b -> b.item("fishing_rod", 1).block("water", 20)));
 	}
@@ -265,7 +275,8 @@ class StepsTest {
 		assertEquals("diamond_pickaxe.iron_pickaxe", current(g, b -> b.pickaxeTier(2).y(-50)));
 		assertEquals("diamond_pickaxe.deep", current(g, b -> b.pickaxeTier(3).y(40)));
 		assertEquals("diamond_pickaxe.diamonds", current(g, b -> b.pickaxeTier(3).y(-50).diamonds(1)));
-		assertEquals("diamond_pickaxe.craft", current(g, b -> b.pickaxeTier(3).y(70).diamonds(3)), "back home with the diamonds");
+		assertEquals("diamond_pickaxe.sticks", current(g, b -> b.pickaxeTier(3).y(70).diamonds(3)), "back home with the diamonds");
+		assertEquals("diamond_pickaxe.craft", current(g, b -> b.pickaxeTier(3).diamonds(3).item("stick", 2)));
 	}
 
 	@Test
@@ -293,8 +304,10 @@ class StepsTest {
 		assertEquals("netherite_gear.template", current(g, b -> b.item("diamond_sword", 1).hasNetheriteIngot(true)));
 		assertEquals("netherite_gear.diamond", current(g, b -> b.hasUpgradeTemplate(true)));
 		assertEquals("netherite_gear.ingot", current(g, b -> b.hasUpgradeTemplate(true).item("diamond_chestplate", 1)));
-		assertEquals("netherite_gear.table", current(g, b -> b.hasUpgradeTemplate(true).item("diamond_pickaxe", 1)
+		assertEquals("netherite_gear.table_iron", current(g, b -> b.hasUpgradeTemplate(true).item("diamond_pickaxe", 1)
 				.hasNetheriteIngot(true)));
+		assertEquals("netherite_gear.table", current(g, b -> b.hasUpgradeTemplate(true).item("diamond_pickaxe", 1)
+				.hasNetheriteIngot(true).item("iron_ingot", 2).planks(4)));
 		assertEquals("netherite_gear.upgrade", current(g, b -> b.hasUpgradeTemplate(true).item("diamond_pickaxe", 1)
 				.hasNetheriteIngot(true).block("smithing_table", 1)));
 	}
@@ -321,8 +334,12 @@ class StepsTest {
 		assertEquals("armor_trim.template", current(g, b -> b.item(Steps.TRIM_MATERIALS, 5).item(Steps.TRIMMABLE_ARMOR, 1)));
 		assertEquals("armor_trim.material", current(g, b -> b.item(Steps.TRIM_TEMPLATES, 1)));
 		assertEquals("armor_trim.armor", current(g, b -> b.item(Steps.TRIM_TEMPLATES, 1).item(Steps.TRIM_MATERIALS, 1)));
-		assertEquals("armor_trim.table", current(g, b -> b.item(Steps.TRIM_TEMPLATES, 1).item(Steps.TRIM_MATERIALS, 1)
+		assertEquals("armor_trim.table_iron", current(g, b -> b.item(Steps.TRIM_TEMPLATES, 1).item(Steps.TRIM_MATERIALS, 1)
 				.item(Steps.TRIMMABLE_ARMOR, 1)));
+		assertEquals("armor_trim.planks", current(g, b -> b.item(Steps.TRIM_TEMPLATES, 1).item(Steps.TRIM_MATERIALS, 1)
+				.item(Steps.TRIMMABLE_ARMOR, 1).item("iron_ingot", 2)));
+		assertEquals("armor_trim.table", current(g, b -> b.item(Steps.TRIM_TEMPLATES, 1).item(Steps.TRIM_MATERIALS, 1)
+				.item(Steps.TRIMMABLE_ARMOR, 1).item("iron_ingot", 2).planks(4)));
 		assertEquals("armor_trim.trim", current(g, b -> b.item(Steps.TRIM_TEMPLATES, 1).item(Steps.TRIM_MATERIALS, 1)
 				.item(Steps.TRIMMABLE_ARMOR, 1).block("smithing_table", 1)));
 	}
@@ -330,7 +347,10 @@ class StepsTest {
 	@Test
 	void snifferEgg() {
 		Tip g = TipRegistry.SNIFFER_EGG;
-		assertEquals("sniffer_egg.brush", current(g, b -> b.structure(Structures.OCEAN_RUIN_WARM)));
+		assertEquals("sniffer_egg.feather", current(g, b -> b.structure(Structures.OCEAN_RUIN_WARM)));
+		assertEquals("sniffer_egg.copper", current(g, b -> b.item("feather", 1)));
+		assertEquals("sniffer_egg.stick", current(g, b -> b.item("feather", 1).item("copper_ingot", 1)));
+		assertEquals("sniffer_egg.brush", current(g, b -> b.item("feather", 1).item("copper_ingot", 1).item("stick", 1)));
 		assertEquals("sniffer_egg.ruin", current(g, b -> b.hasBrush(true).structure(Structures.OCEAN_RUIN_COLD)),
 				"only warm ocean ruins hide sniffer eggs");
 		assertEquals("sniffer_egg.dig", current(g, b -> b.hasBrush(true).structure(Structures.OCEAN_RUIN_WARM)));
@@ -444,8 +464,12 @@ class StepsTest {
 	void ironGolem() {
 		Tip g = TipRegistry.IRON_GOLEM;
 		assertEquals("iron_golem.iron_blocks", current(g, b -> b.item("iron_block", 3).item("iron_ingot", 8)));
-		assertEquals("iron_golem.pumpkin", current(g, b -> b.item("iron_block", 3).item("iron_ingot", 9)), "9 ingots are a block");
-		assertEquals("iron_golem.pumpkin", current(g, b -> b.block("iron_block", 4)), "placed blocks count");
+		assertEquals("iron_golem.find_pumpkin", current(g, b -> b.item("iron_block", 3).item("iron_ingot", 9)),
+				"9 ingots are a block");
+		assertEquals("iron_golem.find_pumpkin", current(g, b -> b.block("iron_block", 4)), "placed blocks count");
+		assertEquals("iron_golem.shears", current(g, b -> b.block("iron_block", 4).block("pumpkin", 1)),
+				"a placed pumpkin counts: it is carved where it stands");
+		assertEquals("iron_golem.pumpkin", current(g, b -> b.block("iron_block", 4).item("pumpkin", 1).item("shears", 1)));
 		assertEquals("iron_golem.build", current(g, b -> b.block("iron_block", 4).item("carved_pumpkin", 1)));
 	}
 
@@ -457,14 +481,18 @@ class StepsTest {
 		assertEquals("bookshelves.books", current(g, b -> b.item("paper", 9).item("leather", 3)));
 		// after crafting one book: 6 paper, 2 leather, 1 book is still enough for 3 books
 		assertEquals("bookshelves.books", current(g, b -> b.item("paper", 6).item("leather", 2).item("book", 1)));
-		assertEquals("bookshelves.craft", current(g, b -> b.item("book", 3)));
+		assertEquals("bookshelves.planks", current(g, b -> b.item("book", 3).planks(5)));
+		assertEquals("bookshelves.craft", current(g, b -> b.item("book", 3).planks(6)));
 		assertEquals("bookshelves.place", current(g, b -> b.item("bookshelf", 1)));
 	}
 
 	@Test
 	void eyesAndStronghold() {
-		assertEquals("eyes_of_ender.powder", current(TipRegistry.EYES_OF_ENDER, b -> b.item("blaze_powder", 6).eyesOfEnder(5)));
-		assertEquals("eyes_of_ender.craft", current(TipRegistry.EYES_OF_ENDER, b -> b.item("blaze_powder", 7).eyesOfEnder(5)));
+		assertEquals("eyes_of_ender.pearls", current(TipRegistry.EYES_OF_ENDER, b -> b.enderPearls(11).item("blaze_powder", 12)));
+		assertEquals("eyes_of_ender.powder", current(TipRegistry.EYES_OF_ENDER, b -> b.enderPearls(12).item("blaze_powder", 6)
+				.eyesOfEnder(5)));
+		assertEquals("eyes_of_ender.craft", current(TipRegistry.EYES_OF_ENDER, b -> b.enderPearls(12).item("blaze_powder", 7)
+				.eyesOfEnder(5)));
 		assertEquals("find_stronghold.throw", current(TipRegistry.FIND_STRONGHOLD, b -> b));
 		assertEquals("find_stronghold.follow", current(TipRegistry.FIND_STRONGHOLD, b -> b.eyesThrown(1)));
 	}
@@ -529,10 +557,12 @@ class StepsTest {
 	@Test
 	void honey() {
 		Tip g = TipRegistry.HONEY;
-		assertEquals("honey.bottle", current(g, b -> b.hive(true)));
+		assertEquals("honey.glass", current(g, b -> b.hive(true)));
+		assertEquals("honey.bottle", current(g, b -> b.hive(true).item("glass", 3)));
 		assertEquals("honey.hive", current(g, b -> b.item("glass_bottle", 1)));
-		assertEquals("honey.campfire", current(g, b -> b.item("glass_bottle", 1).hive(true).hiveFull(true)),
+		assertEquals("honey.campfire_item", current(g, b -> b.item("glass_bottle", 1).hive(true).hiveFull(true)),
 				"a full hive without smoke: the bees would attack");
+		assertEquals("honey.campfire", current(g, b -> b.item("glass_bottle", 1).hive(true).item("campfire", 1)));
 		assertEquals("honey.wait", current(g, b -> b.item("glass_bottle", 1).hive(true).hiveSmoked(true)));
 		assertEquals("honey.collect", current(g, b -> b.item("glass_bottle", 1).hive(true).hiveSmoked(true).hiveFull(true)));
 	}
@@ -542,7 +572,10 @@ class StepsTest {
 		Tip g = TipRegistry.HORSE;
 		assertEquals("horse.find", current(g, b -> b.item("saddle", 1)));
 		assertEquals("horse.tame", current(g, b -> b.horseNearby(true)));
-		assertEquals("horse.saddle", current(g, b -> b.horseNearby(true).tamedHorseNearby(true)));
+		assertEquals("horse.leather", current(g, b -> b.horseNearby(true).tamedHorseNearby(true)));
+		assertEquals("horse.iron", current(g, b -> b.horseNearby(true).tamedHorseNearby(true).item("leather", 3)));
+		assertEquals("horse.saddle", current(g, b -> b.horseNearby(true).tamedHorseNearby(true).item("leather", 3)
+				.item("iron_ingot", 1)));
 		assertEquals("horse.ride", current(g, b -> b.horseNearby(true).tamedHorseNearby(true).item("saddle", 1)));
 		assertEquals("horse.ride", current(g, b -> b.horseNearby(true).tamedHorseNearby(true).saddledHorseNearby(true)),
 				"the saddle is already on the horse");

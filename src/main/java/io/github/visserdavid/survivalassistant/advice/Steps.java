@@ -105,13 +105,14 @@ public final class Steps {
 			"saddle", "crying_obsidian", "glowstone", "glowstone_dust", "respawn_anchor", "compass", "seagrass",
 			"turtle_scute", "ghast_tear", "copper_block", "copper_ingot", "copper_bulb", "crafting_table", "dropper",
 			"string", "flint", "feather", "wheat", "bone", "cod", "salmon", "bucket", "fishing_rod", "lapis_lazuli",
-			"smithing_table", "trial_key", "ominous_trial_key", "piston", "sticky_piston", "cobblestone"))
+			"smithing_table", "trial_key", "ominous_trial_key", "piston", "sticky_piston", "cobblestone", "stick", "chest",
+			"shears", "pumpkin", "campfire"))
 			.collect(Collectors.toUnmodifiableSet());
 	/** Blocks whose placed count nearby the collector reports ({@link SurvivalContext.Nearby#placed}). */
 	public static final Set<String> TRACKED_BLOCKS = Set.of(
 			"obsidian", "nether_portal", "iron_block", "carved_pumpkin", "beacon", "hopper", "nether_wart",
 			"respawn_anchor", "turtle_egg", "copper_bulb", "farmland", "water", "smithing_table", "piston",
-			"sticky_piston", "sculk_sensor", "calibrated_sculk_sensor", "sculk", "sculk_shrieker");
+			"sticky_piston", "sculk_sensor", "calibrated_sculk_sensor", "sculk", "sculk_shrieker", "pumpkin");
 
 	/** The pyramid has at most 4 levels: 9 + 25 + 49 + 81 = 164 blocks. */
 	public static final int MAX_BEACON_LEVEL = 4;
@@ -224,6 +225,27 @@ public final class Steps {
 		return c.nearby().placed("sculk_sensor") + c.nearby().placed("calibrated_sculk_sensor");
 	}
 
+	private static boolean hasHoe(SurvivalContext c) {
+		return sum(c, HOES) > 0 || planting(c);
+	}
+
+	private static boolean hasSmithingTable(SurvivalContext c) {
+		return item(c, "smithing_table") > 0 || c.nearby().placed("smithing_table") > 0;
+	}
+
+	private static boolean carvedPumpkin(SurvivalContext c) {
+		return item(c, "carved_pumpkin") > 0 || c.nearby().placed("carved_pumpkin") > 0;
+	}
+
+	private static boolean hasSaddle(SurvivalContext c) {
+		return item(c, "saddle") > 0 || c.creatures().saddledHorseNearby();
+	}
+
+	/** Hoppers carried or placed; each holds 5 iron and a chest. */
+	private static int hoppers(SurvivalContext c) {
+		return item(c, "hopper") + c.nearby().placed("hopper");
+	}
+
 	private static boolean hasPiston(SurvivalContext c) {
 		return item(c, "piston") + item(c, "sticky_piston") + placedPistons(c) > 0;
 	}
@@ -259,6 +281,7 @@ public final class Steps {
 					step("diamond_pickaxe.iron_pickaxe", c -> c.inv().pickaxeTier() >= 3),
 					step("diamond_pickaxe.deep", c -> c.player().y() <= DIAMOND_DEPTH || c.inv().diamonds() >= 3),
 					count("diamond_pickaxe.diamonds", c -> c.inv().diamonds(), 3, c -> false),
+					count("diamond_pickaxe.sticks", c -> item(c, "stick"), 2, c -> false),
 					finish("diamond_pickaxe.craft"))),
 			// chapter 2: ripe wheat, 9 of it (baked bread counts), then 3 in a row
 			Map.entry("bread", List.of(
@@ -267,16 +290,20 @@ public final class Steps {
 					finish("bread.bake"))),
 			// chapter 2: a hoe, seeds (planted ones count), tilled soil by the water, then plant
 			Map.entry("farm", List.of(
-					step("farm.hoe", c -> sum(c, HOES) > 0 || planting(c)),
+					count("farm.planks", c -> c.inv().planks(), 2, Steps::hasHoe),
+					count("farm.sticks", c -> item(c, "stick"), 2, Steps::hasHoe),
+					step("farm.hoe", Steps::hasHoe),
 					count("farm.seeds", c -> sum(c, SEEDS) + c.nearby().crops(), FARM_CROPS, c -> false),
 					step("farm.till", Steps::planting),
 					finish("farm.plant"))),
 			// chapter 2: string from spiders makes the bow; flint, a stick and a feather make 4 arrows
 			Map.entry("bow", List.of(
 					count("bow.string", c -> item(c, "string"), 3, c -> c.inv().hasBow()),
+					count("bow.sticks", c -> item(c, "stick"), 3, c -> c.inv().hasBow()),
 					step("bow.craft", c -> c.inv().hasBow()),
 					count("bow.flint", c -> item(c, "flint") + arrowSets(c), ARROW_CRAFTS, c -> false),
 					count("bow.feathers", c -> item(c, "feather") + arrowSets(c), ARROW_CRAFTS, c -> false),
+					count("bow.arrow_sticks", c -> item(c, "stick") + arrowSets(c), ARROW_CRAFTS, c -> false),
 					finish("bow.arrows"))),
 			// chapter 2: a book, 2 diamonds and 4 obsidian (the diamond pickaxe often used up the diamonds)
 			Map.entry("enchanting_table", List.of(
@@ -290,7 +317,9 @@ public final class Steps {
 			Map.entry("iron_golem", List.of(
 					count("iron_golem.iron_blocks",
 							c -> item(c, "iron_block") + c.nearby().placed("iron_block") + item(c, "iron_ingot") / 9, 4, c -> false),
-					step("iron_golem.pumpkin", c -> item(c, "carved_pumpkin") > 0 || c.nearby().placed("carved_pumpkin") > 0),
+					count("iron_golem.find_pumpkin", c -> item(c, "pumpkin") + c.nearby().placed("pumpkin"), 1, Steps::carvedPumpkin),
+					count("iron_golem.shears", c -> item(c, "shears"), 1, Steps::carvedPumpkin),
+					step("iron_golem.pumpkin", Steps::carvedPumpkin),
 					finish("iron_golem.build"))),
 			// chapter 4: obsidian (carried or already in a frame), light the portal, step through
 			Map.entry("enter_nether", List.of(
@@ -318,6 +347,7 @@ public final class Steps {
 							c -> item(c, "glass_bottle") + c.inv().waterBottles() + c.nearby().standBottles(), 3, c -> false),
 					count("brew_potion.water", c -> c.inv().waterBottles() + c.nearby().standBottles(), 3, c -> false),
 					step("brew_potion.fuel", c -> item(c, "blaze_powder") > 0 || c.nearby().standFuel()),
+					count("brew_potion.wart", c -> c.inv().netherWart(), 1, c -> c.nearby().standIngredient()),
 					finish("brew_potion.brew"))),
 			// chapter 5: an enchanting table, lapis and levels, then enchant
 			Map.entry("enchant", List.of(
@@ -331,6 +361,7 @@ public final class Steps {
 							BOOKS_PER_SHELF * PAPER_PER_BOOK, Steps::carriesShelves),
 					count("bookshelves.leather", c -> item(c, "leather") + item(c, "book"), BOOKS_PER_SHELF, Steps::carriesShelves),
 					count("bookshelves.books", c -> item(c, "book"), BOOKS_PER_SHELF, Steps::carriesShelves),
+					count("bookshelves.planks", c -> c.inv().planks(), 6, Steps::carriesShelves),
 					step("bookshelves.craft", Steps::carriesShelves),
 					finish("bookshelves.place"))),
 			// chapter 6: an untamed wolf or cat, bones or raw fish, then feed it until hearts appear
@@ -347,13 +378,16 @@ public final class Steps {
 			// chapter 6: 3 sticks and 2 string make a rod; any water will do
 			Map.entry("fishing", List.of(
 					count("fishing.string", c -> item(c, "string"), 2, c -> item(c, "fishing_rod") > 0),
+					count("fishing.sticks", c -> item(c, "stick"), 3, c -> item(c, "fishing_rod") > 0),
 					step("fishing.rod", c -> item(c, "fishing_rod") > 0),
 					step("fishing.water", c -> c.nearby().placed("water") > 0),
 					finish("fishing.cast"))),
 			// chapter 6: a bottle, a hive, a campfire under it (calm bees), wait until it's full, then the bottle
 			Map.entry("honey", List.of(
+					count("honey.glass", c -> item(c, "glass"), 3, c -> item(c, "glass_bottle") > 0),
 					count("honey.bottle", c -> item(c, "glass_bottle"), 1, c -> false),
 					step("honey.hive", c -> c.nearby().hive()),
+					count("honey.campfire_item", c -> item(c, "campfire"), 1, c -> c.nearby().hiveSmoked()),
 					step("honey.campfire", c -> c.nearby().hiveSmoked()),
 					step("honey.wait", c -> c.nearby().hiveFull()),
 					finish("honey.collect"))),
@@ -361,7 +395,9 @@ public final class Steps {
 			Map.entry("horse", List.of(
 					step("horse.find", c -> c.creatures().horseNearby()),
 					step("horse.tame", c -> c.creatures().tamedHorseNearby()),
-					step("horse.saddle", c -> item(c, "saddle") > 0 || c.creatures().saddledHorseNearby()),
+					count("horse.leather", c -> item(c, "leather"), 3, Steps::hasSaddle),
+					count("horse.iron", c -> item(c, "iron_ingot"), 1, Steps::hasSaddle),
+					step("horse.saddle", Steps::hasSaddle),
 					finish("horse.ride"))),
 			// chapter 7: a treasure map from a shipwreck or ruin, its red X, then dig
 			Map.entry("treasure", List.of(
@@ -383,6 +419,8 @@ public final class Steps {
 			// chapter 13: 8 echo shards around a compass
 			Map.entry("recovery_compass", List.of(
 					count("recovery_compass.shards", c -> c.inv().echoShards(), 8, c -> false),
+					count("recovery_compass.iron", c -> item(c, "iron_ingot"), 4, c -> item(c, "compass") > 0),
+					count("recovery_compass.redstone", c -> c.inv().redstone(), 1, c -> item(c, "compass") > 0),
 					count("recovery_compass.compass", c -> item(c, "compass"), 1, c -> false),
 					finish("recovery_compass.craft"))),
 			// chapter 16: an ominous bottle, Bad Omen turns into Trial Omen in the chambers, an ominous key, an ominous vault
@@ -432,6 +470,7 @@ public final class Steps {
 					finish("elytra.take"))),
 			// chapter 10: blaze powder for every eye still to make
 			Map.entry("eyes_of_ender", List.of(
+					count("eyes_of_ender.pearls", c -> c.inv().enderPearls(), 12, c -> false),
 					count("eyes_of_ender.powder", c -> item(c, "blaze_powder") + c.inv().eyesOfEnder(), 12, c -> false),
 					finish("eyes_of_ender.craft"))),
 			Map.entry("find_stronghold", List.of(
@@ -458,7 +497,9 @@ public final class Steps {
 					step("netherite_gear.template", c -> c.inv().hasUpgradeTemplate()),
 					step("netherite_gear.diamond", c -> sum(c, DIAMOND_GEAR) > 0),
 					step("netherite_gear.ingot", c -> c.inv().hasNetheriteIngot()),
-					step("netherite_gear.table", c -> item(c, "smithing_table") > 0 || c.nearby().placed("smithing_table") > 0),
+					count("netherite_gear.table_iron", c -> item(c, "iron_ingot"), 2, Steps::hasSmithingTable),
+					count("netherite_gear.planks", c -> c.inv().planks(), 4, Steps::hasSmithingTable),
+					step("netherite_gear.table", Steps::hasSmithingTable),
 					finish("netherite_gear.upgrade"))),
 			// chapter 11: 6 crying obsidian and 3 glowstone make the anchor; in the Nether, 4 glowstone fill it up
 			Map.entry("respawn_anchor", List.of(
@@ -482,6 +523,7 @@ public final class Steps {
 			Map.entry("beacon", List.of(
 					count("beacon.glass", c -> item(c, "glass"), 5, Steps::hasBeacon),
 					count("beacon.obsidian", c -> c.inv().obsidian(), 3, Steps::hasBeacon),
+					step("beacon.star", c -> c.inv().hasNetherStar() || hasBeacon(c)),
 					step("beacon.craft", Steps::hasBeacon),
 					finish("beacon.base"))),
 			Map.entry("full_beacon", List.of(
@@ -509,10 +551,15 @@ public final class Steps {
 					step("armor_trim.template", c -> item(c, TRIM_TEMPLATES) > 0),
 					step("armor_trim.material", c -> item(c, TRIM_MATERIALS) > 0),
 					step("armor_trim.armor", c -> item(c, TRIMMABLE_ARMOR) > 0),
-					step("armor_trim.table", c -> item(c, "smithing_table") > 0 || c.nearby().placed("smithing_table") > 0),
+					count("armor_trim.table_iron", c -> item(c, "iron_ingot"), 2, Steps::hasSmithingTable),
+					count("armor_trim.planks", c -> c.inv().planks(), 4, Steps::hasSmithingTable),
+					step("armor_trim.table", Steps::hasSmithingTable),
 					finish("armor_trim.trim"))),
 			// chapter 15: a brush, a warm ocean ruin, brush its suspicious sand
 			Map.entry("sniffer_egg", List.of(
+					count("sniffer_egg.feather", c -> item(c, "feather"), 1, c -> c.inv().hasBrush()),
+					count("sniffer_egg.copper", c -> item(c, "copper_ingot"), 1, c -> c.inv().hasBrush()),
+					count("sniffer_egg.stick", c -> item(c, "stick"), 1, c -> c.inv().hasBrush()),
 					step("sniffer_egg.brush", c -> c.inv().hasBrush()),
 					step("sniffer_egg.ruin", c -> c.world().in(Structures.OCEAN_RUIN_WARM)),
 					finish("sniffer_egg.dig"))),
@@ -560,7 +607,9 @@ public final class Steps {
 					finish("crafter_crafts.pulse"))),
 			// chapter 18: a hopper on top feeds the furnace, one below takes the result out
 			Map.entry("auto_smelter", List.of(
-					count("auto_smelter.hoppers", c -> item(c, "hopper") + c.nearby().placed("hopper"), 2, c -> false),
+					count("auto_smelter.iron", c -> item(c, "iron_ingot") + 5 * hoppers(c), 10, c -> hoppers(c) >= 2),
+					count("auto_smelter.chests", c -> item(c, "chest") + hoppers(c), 2, c -> hoppers(c) >= 2),
+					count("auto_smelter.hoppers", Steps::hoppers, 2, c -> false),
 					step("auto_smelter.top", c -> c.nearby().hopperOnFurnace()),
 					finish("auto_smelter.bottom")))
 	);

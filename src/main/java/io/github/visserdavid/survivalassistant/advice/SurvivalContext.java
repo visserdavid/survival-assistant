@@ -177,6 +177,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 	 * @param hopperOnFurnace   a furnace nearby with a hopper above it that feeds into it
 	 * @param standBottles      bottles (water or potions) in the bottom slots of a brewing stand nearby
 	 * @param standFuel         a brewing stand nearby has fuel (blaze powder in its slot, or fuel left)
+	 * @param standIngredient   a brewing stand nearby has something in its ingredient slot (on top)
 	 * @param hive              a beehive or bee nest nearby (also up in the trees)
 	 * @param hiveSmoked        such a hive has a lit campfire under it, so the bees stay calm
 	 * @param hiveFull          such a hive is full of honey (it drips)
@@ -200,7 +201,8 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 	public record Nearby(int crops, int bookshelves, boolean lava, boolean fallingBlockAbove, boolean litArea,
 			boolean ironDoorOpen, boolean pistonExtended, boolean repeater, boolean hopper, boolean observer,
 			boolean crafter, boolean autoSmelter, boolean copperBulbLit, boolean hopperOnFurnace, int standBottles,
-			boolean standFuel, boolean hive, boolean hiveSmoked, boolean hiveFull, int beaconLevel, boolean fortressNear,
+			boolean standFuel, boolean standIngredient, boolean hive, boolean hiveSmoked, boolean hiveFull, int beaconLevel,
+			boolean fortressNear,
 			boolean bastionNear, int crafterSlots, int ripeWheat, boolean endCityNear,
 			boolean elytraFrame, boolean raidActive, boolean driedGhast, int ghastHydration, boolean outerEnd,
 			boolean droppedStar, boolean droppedBottle,
@@ -296,7 +298,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		// nearby
 		private int crops, bookshelves;
 		private boolean lava, fallingBlockAbove, litArea, ironDoorOpen, pistonExtended, repeater, hopper, observer,
-				crafter, autoSmelter, copperBulbLit, hopperOnFurnace, standFuel, hive, hiveSmoked, hiveFull,
+				crafter, autoSmelter, copperBulbLit, hopperOnFurnace, standFuel, standIngredient, hive, hiveSmoked, hiveFull,
 				fortressNear, bastionNear, witherBase, endCityNear, elytraFrame, raidActive, driedGhast,
 				outerEnd, droppedStar, droppedBottle;
 		private int standBottles, beaconLevel, anchorCharge, crafterSlots, ripeWheat, ghastHydration = -1;
@@ -419,6 +421,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public Builder hopperOnFurnace(boolean v) { hopperOnFurnace = v; return this; }
 		public Builder standBottles(int v) { standBottles = v; return this; }
 		public Builder standFuel(boolean v) { standFuel = v; return this; }
+		public Builder standIngredient(boolean v) { standIngredient = v; return this; }
 		public Builder hive(boolean v) { hive = v; return this; }
 		public Builder hiveSmoked(boolean v) { hiveSmoked = v; return this; }
 		public Builder hiveFull(boolean v) { hiveFull = v; return this; }
@@ -480,7 +483,8 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 							hasWindCharge, hasHeavyCore, hasMace, hasDriedGhast, hasHarness, waterBottles, treasureDistance, items),
 					new Nearby(crops, bookshelves, lava, fallingBlockAbove, litArea, ironDoorOpen, pistonExtended,
 							repeater, hopper, observer, crafter, autoSmelter, copperBulbLit, hopperOnFurnace, standBottles,
-							standFuel, hive, hiveSmoked, hiveFull, beaconLevel, fortressNear, bastionNear, crafterSlots,
+							standFuel, standIngredient, hive, hiveSmoked, hiveFull, beaconLevel, fortressNear, bastionNear,
+							crafterSlots,
 							ripeWheat, endCityNear, elytraFrame, raidActive, driedGhast, ghastHydration, outerEnd,
 							droppedStar, droppedBottle,
 							anchorCharge, witherBase, blocks),

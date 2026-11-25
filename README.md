@@ -119,7 +119,7 @@ archaeology, the trial challenges, the happy ghast and automation.
   decorated pot (4 sherds or bricks, craft), the armor trim (template, material, armor piece, smithing table,
   trim), the sniffer egg (a brush, a warm ocean ruin, brush the sand), the
   copper bulb (copper blocks, blaze rod, redstone, craft, place, a pulse) and a crafter that crafts a crafter (place
-  one, 5 iron, a dropper, a crafting table, 2 redstone, fill it, a pulse). Every ingredient is a step of its own. The recipe card follows the step (for example glass bottles, then blaze powder).
+  one, 5 iron, a dropper, a crafting table, 2 redstone, fill it, a pulse). Every ingredient of a recipe is a step of its own, with its own counter. The recipe card follows the step (for example glass bottles, then blaze powder).
 - The title shows the chapter you are in (for example Ch. 6 · Farming and animals).
 - A clock (the in-game clock item) with a bar that counts down to sunset, turning orange at dusk and red at night.
 - **Urgent mode**: the border pulses red, and the current-task line becomes a warning (a warden or creeper
