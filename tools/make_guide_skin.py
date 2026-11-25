@@ -20,6 +20,7 @@ Outputs:
     src/main/resources/assets/survivalassistant/textures/entity/guide_<route>.png  per route: fighter, farmer, ...
     src/main/resources/assets/survivalassistant/textures/entity/guide_eyes.png    only the eyes, for the glow layer
     with --preview: DIR/guide_preview.png, front, back and night views and the flat texture per skin
+    with --docs: docs/images/guide-<name>.png per guide (also the classic one) and guides.png with all of them
 """
 import argparse
 import math
@@ -478,9 +479,35 @@ def preview(skins, eyes, out_dir):
 	return path
 
 
+DOCS = ROOT / "docs/images"
+
+
+def docs_images(skins):
+	"""A picture of every guide for the documentation (3/4 front view, transparent), and all of them in a row."""
+	classic = Image.open(OUT / "guide_classic.png").convert("RGBA")
+	pictures = {**skins, "classic": classic}
+	renders = {}
+	for name, img in pictures.items():
+		r = render(img, -0.35, scale=8)
+		r = r.crop(r.getbbox())
+		r.save(DOCS / f"guide-{name}.png", optimize=True)
+		renders[name] = r
+	gap = 24
+	w = sum(r.width for r in renders.values()) + gap * (len(renders) - 1)
+	h = max(r.height for r in renders.values())
+	row = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+	x = 0
+	for r in renders.values():
+		row.alpha_composite(r, (x, h - r.height))
+		x += r.width + gap
+	row.save(DOCS / "guides.png", optimize=True)
+	return [f"guide-{n}.png" for n in renders] + ["guides.png"]
+
+
 def main():
 	parser = argparse.ArgumentParser(description="Draw the guide's built-in skins and their glowing eyes.")
 	parser.add_argument("--preview", type=Path, help="also write guide_preview.png into this folder")
+	parser.add_argument("--docs", action="store_true", help="also write the pictures of every guide in docs/images")
 	args = parser.parse_args()
 	OUT.mkdir(parents=True, exist_ok=True)
 	skins = {}
@@ -501,6 +528,8 @@ def main():
 	print("wrote guide_eyes.png")
 	if args.preview:
 		print(f"preview: {preview(skins, eyes, args.preview)}")
+	if args.docs:
+		print("wrote docs/images/" + ", ".join(docs_images(skins)))
 
 
 if __name__ == "__main__":

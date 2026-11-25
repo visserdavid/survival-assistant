@@ -207,7 +207,11 @@ chapter menu, and `/guide continue` starts it. A route adds no goals and locks n
 - The Nether, the End, the Deep Dark and unknown places stay quiet unless you choose `/guide musings all`
   (then only careful remarks, no building ideas there). `/guide musings off` turns them off.
 
-### Your own guide skin
+### The guide's look and your own skin
+| <img src="docs/images/guide-default.png" alt="The keeper: a deep midnight-blue hood, grey beard and glowing eyes" height="200"> | <img src="docs/images/guide-fighter.png" alt="Fighter: chainmail hood and a crimson tabard with a gold sword" height="200"> | <img src="docs/images/guide-farmer.png" alt="Farmer: a straw hat, moss-green hood and linen smock" height="200"> | <img src="docs/images/guide-explorer.png" alt="Explorer: a weathered ochre cloak, red scarf and compass" height="200"> | <img src="docs/images/guide-researcher.png" alt="Researcher: an amethyst cloak, goggles and redstone lines" height="200"> | <img src="docs/images/guide-classic.png" alt="Classic: the earlier traveller in a brown coat" height="200"> |
+|:-:|:-:|:-:|:-:|:-:|:-:|
+| Keeper (no route) | Fighter | Farmer | Explorer | Researcher | Classic |
+
 - The built-in guide is an old keeper in a deep hood whose eyes glow softly in the dark. On a route he dresses for
   it: chainmail and a crimson tabard for the fighter, a straw hat for the farmer, an ochre cloak with a map for the
   explorer, an amethyst cloak with goggles for the researcher. Other players see your guide in your route's outfit.

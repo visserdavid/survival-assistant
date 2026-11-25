@@ -88,6 +88,8 @@ chapter is on [GitHub](https://github.com/visserdavid/survival-assistant/tree/ma
 No speedrun tricks: the path is made for an average player.
 
 ## Meet Pim
+![The guide in his six looks: the keeper, the fighter, farmer, explorer and researcher outfits, and the classic traveller](https://raw.githubusercontent.com/visserdavid/survival-assistant/main/docs/images/guides.png)
+
 The guide has a name and a story: an old explorer whose own first night went badly. He walks in a deep hood
 with a long grey beard, and his eyes glow softly in the dark. On a route he dresses for it, from chainmail for
 the fighter to a straw hat for the farmer. Ask him about himself with `/guide about`, give him
