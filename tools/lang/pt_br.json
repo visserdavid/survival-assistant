@@ -1179,5 +1179,21 @@
 "~step.copper_bulb.place": "Coloque uma lâmpada",
 "~step.copper_bulb.place.tip": "Coloque uma lâmpada de cobre onde quer luz, por exemplo junto a uma parede.",
 "~step.copper_bulb.pulse": "Dê um pulso",
-"~step.copper_bulb.pulse.tip": "Coloque um botão ou uma alavanca ao lado da lâmpada e use. Cada pulso alterna a lâmpada: acesa, depois apagada."
+"~step.copper_bulb.pulse.tip": "Coloque um botão ou uma alavanca ao lado da lâmpada e use. Cada pulso alterna a lâmpada: acesa, depois apagada.",
+"~step.upgrade_template.nether": "Volte ao Nether",
+"~step.upgrade_template.nether.tip": "Bastiões só existem no Nether. Volte pelo seu portal.",
+"~step.upgrade_template.bastion": "Encontre um bastião",
+"~step.upgrade_template.bastion.tip": "Explore e procure construções enormes e escuras de pedra-negra. Observe primeiro de um lugar seguro.",
+"~step.upgrade_template.loot": "Revire os baús",
+"~step.upgrade_template.loot.tip": "Tem um bastião aqui perto! O molde fica num baú, quase sempre na sala do tesouro. Abrir baús irrita os piglins, então esteja pronto.",
+"~step.crafter_crafts.crafter": "Coloque um fabricador",
+"~step.crafter_crafts.crafter.tip": "Primeiro coloque um fabricador: 5 barras de ferro, uma bancada, 2 redstones e um liberador.",
+"~step.crafter_crafts.iron": "5 barras de ferro",
+"~step.crafter_crafts.iron.tip": "O novo fabricador precisa de 5 barras de ferro. Funda minério de ferro numa fornalha.",
+"~step.crafter_crafts.parts": "As outras peças",
+"~step.crafter_crafts.parts.tip": "Também precisa: um liberador (7 pedregulhos em volta de um redstone), uma bancada e 2 redstones.",
+"~step.crafter_crafts.fill": "Encha o fabricador",
+"~step.crafter_crafts.fill.tip": "Abra o fabricador e monte a receita: ferro em cima e nos lados, a bancada no meio e embaixo redstone, liberador, redstone.",
+"~step.crafter_crafts.pulse": "Dê um pulso",
+"~step.crafter_crafts.pulse.tip": "Aperte um botão ao lado do fabricador. Ele solta o novo fabricador pela frente."
 }

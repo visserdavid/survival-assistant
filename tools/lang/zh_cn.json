@@ -1179,5 +1179,21 @@
 "~step.copper_bulb.place": "放下一个铜灯",
 "~step.copper_bulb.place.tip": "把铜灯放在你想要光亮的地方，比如墙边。",
 "~step.copper_bulb.pulse": "给它一个脉冲",
-"~step.copper_bulb.pulse.tip": "在铜灯旁放一个按钮或拉杆并使用它。每个脉冲都会切换铜灯：先开，再关。"
+"~step.copper_bulb.pulse.tip": "在铜灯旁放一个按钮或拉杆并使用它。每个脉冲都会切换铜灯：先开，再关。",
+"~step.upgrade_template.nether": "回到下界",
+"~step.upgrade_template.nether.tip": "堡垒遗迹只存在于下界。穿过你的传送门回去吧。",
+"~step.upgrade_template.bastion": "找到堡垒遗迹",
+"~step.upgrade_template.bastion.tip": "四处探索，寻找用黑石建成的巨大深色建筑。先从安全的地方观察。",
+"~step.upgrade_template.loot": "搜查箱子",
+"~step.upgrade_template.loot.tip": "附近就有一座堡垒遗迹！模板在箱子里，几乎总在宝藏室。打开箱子会激怒猪灵，所以要做好准备。",
+"~step.crafter_crafts.crafter": "放下一个合成器",
+"~step.crafter_crafts.crafter.tip": "先放下一个合成器：5个铁锭、1张工作台、2个红石粉和1个投掷器。",
+"~step.crafter_crafts.iron": "5个铁锭",
+"~step.crafter_crafts.iron.tip": "新的合成器需要5个铁锭。在熔炉里烧炼铁矿石。",
+"~step.crafter_crafts.parts": "其他零件",
+"~step.crafter_crafts.parts.tip": "还需要：1个投掷器（7块圆石围着1个红石粉）、1张工作台和2个红石粉。",
+"~step.crafter_crafts.fill": "装满合成器",
+"~step.crafter_crafts.fill.tip": "打开合成器摆好配方：铁锭放在顶上和两侧，工作台放中间，底排放红石、投掷器、红石。",
+"~step.crafter_crafts.pulse": "给它一个脉冲",
+"~step.crafter_crafts.pulse.tip": "按下合成器旁边的按钮。它会从正面吐出新的合成器。"
 }

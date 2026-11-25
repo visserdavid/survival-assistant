@@ -1179,5 +1179,21 @@
 "~step.copper_bulb.place": "Coloca una bombilla",
 "~step.copper_bulb.place.tip": "Pon una bombilla de cobre donde quieras luz, por ejemplo junto a una pared.",
 "~step.copper_bulb.pulse": "Dale un pulso",
-"~step.copper_bulb.pulse.tip": "Pon un botón o una palanca junto a la bombilla y úsalo. Cada pulso la cambia: encendida y luego apagada."
+"~step.copper_bulb.pulse.tip": "Pon un botón o una palanca junto a la bombilla y úsalo. Cada pulso la cambia: encendida y luego apagada.",
+"~step.upgrade_template.nether": "Vuelve al Nether",
+"~step.upgrade_template.nether.tip": "Los bastiones solo están en el Nether. Vuelve a cruzar tu portal.",
+"~step.upgrade_template.bastion": "Encuentra un bastión",
+"~step.upgrade_template.bastion.tip": "Explora y busca enormes construcciones oscuras de piedra negra. Obsérvalas primero desde un sitio seguro.",
+"~step.upgrade_template.loot": "Registra los cofres",
+"~step.upgrade_template.loot.tip": "¡Hay un bastión cerca! La plantilla está en un cofre, casi siempre en la sala del tesoro. Abrir cofres enfada a los piglins, así que prepárate.",
+"~step.crafter_crafts.crafter": "Pon un autocrafter",
+"~step.crafter_crafts.crafter.tip": "Primero coloca un autocrafter: 5 lingotes de hierro, una mesa de crafteo, 2 de redstone y un soltador.",
+"~step.crafter_crafts.iron": "5 lingotes de hierro",
+"~step.crafter_crafts.iron.tip": "El nuevo autocrafter necesita 5 lingotes de hierro. Funde mena de hierro en un horno.",
+"~step.crafter_crafts.parts": "Las demás piezas",
+"~step.crafter_crafts.parts.tip": "También necesitas: un soltador (7 de roca alrededor de un redstone), una mesa de crafteo y 2 de redstone.",
+"~step.crafter_crafts.fill": "Llena el autocrafter",
+"~step.crafter_crafts.fill.tip": "Abre el autocrafter y coloca la receta: hierro arriba y a los lados, la mesa de crafteo en el centro y abajo redstone, soltador, redstone.",
+"~step.crafter_crafts.pulse": "Dale un pulso",
+"~step.crafter_crafts.pulse.tip": "Pulsa un botón junto al autocrafter. Suelta el nuevo autocrafter por delante."
 }

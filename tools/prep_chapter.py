@@ -1,7 +1,9 @@
 """Puts a test world's guide at a chosen goal: earlier chapters finished, earlier goals of that chapter done.
 
 Usage: python tools/prep_chapter.py <world folder or ModTesting world name> <goal id>     (Minecraft must be closed)
-Example: python tools/prep_chapter.py Stappentest brew_potion
+Example: python tools/prep_chapter.py Stappentest brew_potion [--spawn]
+
+With --spawn the player is also moved to the world spawn (useful when a test starts in the overworld).
 
 Then give gear for the test with tools/set_gear.py.
 
@@ -16,7 +18,7 @@ import sys
 from pathlib import Path
 
 import nbtlib
-from nbtlib.tag import Byte, Compound, Int, List, Long, String
+from nbtlib.tag import Byte, Compound, Double, Int, List, Long, String
 
 from mcjar import ROOT
 
@@ -77,8 +79,20 @@ def player_tags(root):
         yield f, nbt, nbt
 
 
+def spawn(root):
+    """(dimension, x, y, z) of the world spawn from level.dat."""
+    data = nbtlib.load(root / "level.dat")["Data"]
+    s = data["spawn"]
+    x, y, z = (int(v) for v in s["pos"])
+    return str(s.get("dimension", "minecraft:overworld")), x + 0.5, float(y), z + 0.5
+
+
 def main():
-    root, goal = world_folder(sys.argv[1]), sys.argv[2]
+    args = [a for a in sys.argv[1:] if a != "--spawn"]
+    if len(args) != 2:
+        sys.exit(__doc__)
+    root, goal = world_folder(args[0]), args[1]
+    to_spawn = spawn(root) if "--spawn" in sys.argv else None
     (num, cid, goals, _), done = plan(goal)
     changed = 0
     for f, file_nbt, player in player_tags(root):
@@ -95,10 +109,16 @@ def main():
         p["chapter_started"] = Long(played)
         p["asked_played"] = Long(-1)
         attachments[KEY] = p
+        if to_spawn:
+            dim, x, y, z = to_spawn
+            player["Dimension"] = String(dim)
+            player["Pos"] = List[Double]([Double(x), Double(y), Double(z)])
+            player["Motion"] = List[Double]([Double(0), Double(0), Double(0)])
         shutil.copy2(f, f.with_name(f.name + ".before-prep"))
         file_nbt.save()
         changed += 1
-        print(f"{f.name}: chapter {num} ({cid}), next goal {goal}, {len(done)} goals marked done")
+        where = f", moved to the spawn ({to_spawn[0]})" if to_spawn else ""
+        print(f"{f.name}: chapter {num} ({cid}), next goal {goal}, {len(done)} goals marked done{where}")
     if not changed:
         sys.exit("no player data found: open the world once, walk around a few seconds, then quit to the title screen")
 

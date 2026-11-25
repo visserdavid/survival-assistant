@@ -1179,5 +1179,21 @@
 "~step.copper_bulb.place": "Pasang bohlam",
 "~step.copper_bulb.place.tip": "Letakkan bohlam tembaga di tempat yang butuh cahaya, misalnya di samping dinding.",
 "~step.copper_bulb.pulse": "Beri pulsa",
-"~step.copper_bulb.pulse.tip": "Pasang tombol atau tuas di samping bohlam lalu gunakan. Tiap pulsa mengubah bohlam: nyala, lalu mati."
+"~step.copper_bulb.pulse.tip": "Pasang tombol atau tuas di samping bohlam lalu gunakan. Tiap pulsa mengubah bohlam: nyala, lalu mati.",
+"~step.upgrade_template.nether": "Kembali ke Nether",
+"~step.upgrade_template.nether.tip": "Benteng piglin hanya ada di Nether. Kembali lewat portalmu.",
+"~step.upgrade_template.bastion": "Temukan benteng piglin",
+"~step.upgrade_template.bastion.tip": "Jelajahi dan cari bangunan raksasa gelap dari batu hitam. Amati dulu dari tempat aman.",
+"~step.upgrade_template.loot": "Geledah peti",
+"~step.upgrade_template.loot.tip": "Ada benteng piglin di dekat sini! Templatnya ada di peti, hampir selalu di ruang harta. Membuka peti membuat piglin marah, jadi bersiaplah.",
+"~step.crafter_crafts.crafter": "Pasang perakit",
+"~step.crafter_crafts.crafter.tip": "Pasang perakit dulu: 5 batangan besi, meja kerajinan, 2 redstone, dan penjatuh.",
+"~step.crafter_crafts.iron": "5 batangan besi",
+"~step.crafter_crafts.iron.tip": "Perakit baru butuh 5 batangan besi. Lebur bijih besi di tungku.",
+"~step.crafter_crafts.parts": "Bagian lainnya",
+"~step.crafter_crafts.parts.tip": "Juga dibutuhkan: penjatuh (7 batu belah di sekitar redstone), meja kerajinan, dan 2 redstone.",
+"~step.crafter_crafts.fill": "Isi perakitnya",
+"~step.crafter_crafts.fill.tip": "Buka perakit dan susun resepnya: besi di atas dan di sisi, meja kerajinan di tengah, di bawah redstone, penjatuh, redstone.",
+"~step.crafter_crafts.pulse": "Beri pulsa",
+"~step.crafter_crafts.pulse.tip": "Tekan tombol di samping perakit. Perakit baru akan keluar dari bagian depannya."
 }

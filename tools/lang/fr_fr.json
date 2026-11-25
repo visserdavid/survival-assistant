@@ -1179,5 +1179,21 @@
 "~step.copper_bulb.place": "Pose une ampoule",
 "~step.copper_bulb.place.tip": "Pose une ampoule en cuivre là où tu veux de la lumière, par exemple contre un mur.",
 "~step.copper_bulb.pulse": "Donne une impulsion",
-"~step.copper_bulb.pulse.tip": "Place un bouton ou un levier à côté de l'ampoule et utilise-le. Chaque impulsion la bascule : allumée, puis éteinte."
+"~step.copper_bulb.pulse.tip": "Place un bouton ou un levier à côté de l'ampoule et utilise-le. Chaque impulsion la bascule : allumée, puis éteinte.",
+"~step.upgrade_template.nether": "Retourne dans le Nether",
+"~step.upgrade_template.nether.tip": "Les bastions n'existent que dans le Nether. Repasse par ton portail.",
+"~step.upgrade_template.bastion": "Trouve un bastion",
+"~step.upgrade_template.bastion.tip": "Explore et cherche d'énormes bâtiments sombres en pierre noire. Observe-les d'abord depuis un endroit sûr.",
+"~step.upgrade_template.loot": "Fouille les coffres",
+"~step.upgrade_template.loot.tip": "Un bastion est tout proche ! Le modèle est dans un coffre, presque toujours dans la salle au trésor. Ouvrir les coffres met les piglins en colère, alors sois prêt.",
+"~step.crafter_crafts.crafter": "Pose un fabricant",
+"~step.crafter_crafts.crafter.tip": "Pose d'abord un fabricant : 5 lingots de fer, un établi, 2 redstone et un dropper.",
+"~step.crafter_crafts.iron": "5 lingots de fer",
+"~step.crafter_crafts.iron.tip": "Le nouveau fabricant a besoin de 5 lingots de fer. Fais fondre du minerai de fer dans un four.",
+"~step.crafter_crafts.parts": "Les autres pièces",
+"~step.crafter_crafts.parts.tip": "Il faut aussi : un dropper (7 pierres taillées autour d'une redstone), un établi et 2 redstone.",
+"~step.crafter_crafts.fill": "Remplis le fabricant",
+"~step.crafter_crafts.fill.tip": "Ouvre le fabricant et dispose la recette : du fer en haut et sur les côtés, l'établi au centre, en bas redstone, dropper, redstone.",
+"~step.crafter_crafts.pulse": "Donne une impulsion",
+"~step.crafter_crafts.pulse.tip": "Appuie sur un bouton à côté du fabricant. Il éjecte le nouveau fabricant par l'avant."
 }

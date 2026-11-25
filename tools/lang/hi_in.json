@@ -1179,5 +1179,21 @@
 "~step.copper_bulb.place": "एक बल्ब रखो",
 "~step.copper_bulb.place.tip": "ताँबे का बल्ब वहाँ रखो जहाँ रोशनी चाहिए, जैसे किसी दीवार के पास।",
 "~step.copper_bulb.pulse": "उसे पल्स दो",
-"~step.copper_bulb.pulse.tip": "बल्ब के पास एक बटन या लीवर लगाओ और इस्तेमाल करो। हर पल्स बल्ब को बदलती है: चालू, फिर बंद।"
+"~step.copper_bulb.pulse.tip": "बल्ब के पास एक बटन या लीवर लगाओ और इस्तेमाल करो। हर पल्स बल्ब को बदलती है: चालू, फिर बंद।",
+"~step.upgrade_template.nether": "वापस नेदर में",
+"~step.upgrade_template.nether.tip": "गढ़ सिर्फ़ नेदर में होते हैं। अपने पोर्टल से वापस जाओ।",
+"~step.upgrade_template.bastion": "एक गढ़ ढूँढो",
+"~step.upgrade_template.bastion.tip": "खोजो और काले पत्थर की विशाल, गहरी इमारतें देखो। पहले किसी सुरक्षित जगह से उन्हें देखो।",
+"~step.upgrade_template.loot": "संदूक खोजो",
+"~step.upgrade_template.loot.tip": "पास में एक गढ़ है! साँचा एक संदूक में है, लगभग हमेशा खज़ाने वाले कमरे में। संदूक खोलने से पिग्लिन नाराज़ होते हैं, तो तैयार रहो।",
+"~step.crafter_crafts.crafter": "एक क्राफ़्टर रखो",
+"~step.crafter_crafts.crafter.tip": "पहले एक क्राफ़्टर रखो: 5 लोहे की सिल्लियाँ, एक क्राफ़्टिंग टेबल, 2 रेडस्टोन और एक ड्रॉपर।",
+"~step.crafter_crafts.iron": "5 लोहे की सिल्लियाँ",
+"~step.crafter_crafts.iron.tip": "नए क्राफ़्टर को 5 लोहे की सिल्लियाँ चाहिए। भट्ठी में लौह अयस्क पिघलाओ।",
+"~step.crafter_crafts.parts": "बाकी हिस्से",
+"~step.crafter_crafts.parts.tip": "और चाहिए: एक ड्रॉपर (एक रेडस्टोन के चारों ओर 7 कोबलस्टोन), एक क्राफ़्टिंग टेबल और 2 रेडस्टोन।",
+"~step.crafter_crafts.fill": "क्राफ़्टर भरो",
+"~step.crafter_crafts.fill.tip": "क्राफ़्टर खोलो और विधि रखो: लोहा ऊपर और दोनों ओर, क्राफ़्टिंग टेबल बीच में, नीचे रेडस्टोन, ड्रॉपर, रेडस्टोन।",
+"~step.crafter_crafts.pulse": "उसे पल्स दो",
+"~step.crafter_crafts.pulse.tip": "क्राफ़्टर के पास का बटन दबाओ। वह नया क्राफ़्टर सामने से बाहर गिरा देगा।"
 }

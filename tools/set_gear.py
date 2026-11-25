@@ -48,6 +48,8 @@ def armor(material="netherite", legs_extra=None, feet_extra=None):
     }
 
 
+DIAMOND_SWORD = item("diamond_sword", ench={"sharpness": 5, "unbreaking": 3, "mending": 1, "looting": 3})
+DIAMOND_PICK = item("diamond_pickaxe", ench={"efficiency": 5, "unbreaking": 3, "mending": 1, "fortune": 3})
 SWORD = item("netherite_sword", ench={"sharpness": 5, "unbreaking": 3, "mending": 1, "looting": 3})
 PICK = item("netherite_pickaxe", ench={"efficiency": 5, "unbreaking": 3, "mending": 1, "fortune": 3})
 FOOD = item("cooked_beef", 32)
@@ -75,6 +77,14 @@ KITS = {
     "dried_ghast": ([item("bow", ench={"power": 5, "punch": 2, "flame": 1, "infinity": 1, "unbreaking": 3}), item("arrow"),
                      SWORD, PICK, FOOD, GOLDEN, BLOCKS, item("potion", 3, **{"minecraft:potion_contents": Compound({"potion": String("minecraft:long_fire_resistance")})}),
                      TABLE], armor(), SHIELD),
+    # bastion: piglin brutes always attack; gold keeps the other piglins calm. No upgrade template, and no netherite
+    # at all: netherite gear completes the goal too
+    "upgrade_template": ([DIAMOND_SWORD, DIAMOND_PICK, item("bow", ench={"power": 5, "infinity": 1}), item("arrow"), FOOD, GOLDEN, BLOCKS,
+                          item("potion", 3, **{"minecraft:potion_contents": Compound({"potion": String("minecraft:long_fire_resistance")})})],
+                         armor("diamond") | {"head": item("golden_helmet", ench={"protection": 4, "unbreaking": 3})}, SHIELD),
+    # crafter: buttons for the pulse, a table to place first; no crafter, iron, dropper or redstone
+    "crafter_crafts": ([PICK, item("stone_button", 4), item("hopper", 2), item("chest"), BLOCKS, TORCHES, FOOD, TABLE],
+                       armor(), SHIELD),
     # redstone: a lever and buttons for the pulse; no copper, blaze rod, redstone or bulbs
     "copper_bulb": ([PICK, item("lever", 4), item("stone_button", 4), BLOCKS, TORCHES, FOOD, TABLE], armor(), SHIELD),
 }

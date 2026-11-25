@@ -8,6 +8,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
@@ -47,6 +48,7 @@ import net.minecraft.world.level.block.EnchantingTableBlock;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.RespawnAnchorBlock;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
+import net.minecraft.world.level.block.entity.CrafterBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -85,8 +87,8 @@ public final class ContextCollector {
 	private static final int END_PILLAR_TOP = 256;
 	/** Bee nests hang in trees: hives are also looked for this many blocks above the normal block scan. */
 	private static final int HIVE_EXTRA_HEIGHT = 4;
-	/** Chunks around the player in which a Nether fortress counts as "near" (4 chunks = about 64 blocks). */
-	private static final int FORTRESS_CHUNKS = 4;
+	/** Chunks around the player in which a fortress or bastion counts as "near" (4 chunks = about 64 blocks). */
+	private static final int STRUCTURE_CHUNKS = 4;
 	/** Brewing stand slots: 0 - 2 hold the bottles, 4 the blaze powder. */
 	private static final int STAND_BOTTLE_SLOTS = 3, STAND_FUEL_SLOT = 4;
 
@@ -112,7 +114,10 @@ public final class ContextCollector {
 		scanDanger(player, env, b);
 		scanCreatures(player, env.overworld(), b);
 		if (player.level().dimension() == Level.END) b.endCrystals(endCrystals(player.level()));
-		if (player.level().dimension() == Level.NETHER) b.fortressNear(fortressNear(player.level(), player.blockPosition()));
+		if (player.level().dimension() == Level.NETHER) {
+			b.fortressNear(structureNear(player.level(), player.blockPosition(), BuiltinStructures.FORTRESS));
+			b.bastionNear(structureNear(player.level(), player.blockPosition(), BuiltinStructures.BASTION_REMNANT));
+		}
 		return b.build();
 	}
 
@@ -290,7 +295,7 @@ public final class ContextCollector {
 		int r = BLOCK_SCAN_RADIUS, h = BLOCK_SCAN_HEIGHT;
 		int crops = 0, bookshelves = 0;
 		boolean autoSmelter = false, hopperOnFurnace = false, standFuel = false;
-		int standBottles = 0, beaconLevel = 0, anchorCharge = 0;
+		int standBottles = 0, beaconLevel = 0, anchorCharge = 0, crafterSlots = 0;
 		boolean witherBase = false;
 		Map<String, Integer> tracked = new HashMap<>();
 		for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-r, -h, -r), origin.offset(r, h, r))) {
@@ -326,7 +331,10 @@ public final class ContextCollector {
 			else if (st.is(Blocks.HOPPER)) b.hopper(true);
 			else if (st.is(Blocks.DECORATED_POT)) b.hasDecoratedPot(true);
 			else if (st.is(Blocks.OBSERVER)) b.observer(true);
-			else if (st.is(Blocks.CRAFTER)) b.crafter(true);
+			else if (st.is(Blocks.CRAFTER)) {
+				b.crafter(true);
+				if (level.getBlockEntity(pos) instanceof CrafterBlockEntity crafter) crafterSlots = Math.max(crafterSlots, filled(crafter));
+			}
 			else if (st.getBlock() instanceof CopperBulbBlock) { if (st.getValue(BlockStateProperties.LIT)) b.copperBulbLit(true); }
 			if (st.getBlock() instanceof AbstractFurnaceBlock) {
 				if (!hopperOnFurnace) hopperOnFurnace = hopperAbove(level, pos);
@@ -336,7 +344,7 @@ public final class ContextCollector {
 		scanHives(level, origin, b);
 		b.crops(crops).bookshelves(bookshelves).autoSmelter(autoSmelter).hopperOnFurnace(hopperOnFurnace)
 				.standBottles(standBottles).standFuel(standFuel).beaconLevel(beaconLevel)
-				.anchorCharge(anchorCharge).witherBase(witherBase);
+				.anchorCharge(anchorCharge).witherBase(witherBase).crafterSlots(crafterSlots);
 		tracked.forEach(b::block);
 	}
 
@@ -378,17 +386,17 @@ public final class ContextCollector {
 	}
 
 	/**
-	 * A Nether fortress reaches into a loaded chunk around the player. Every chunk that a structure's outline overlaps
+	 * The structure reaches into a loaded chunk around the player. Every chunk that a structure's outline overlaps
 	 * holds a reference to it, so this needs no search: one look per chunk.
 	 */
-	private static boolean fortressNear(ServerLevel level, BlockPos pos) {
-		Structure fortress = level.registryAccess().lookupOrThrow(Registries.STRUCTURE).getValue(BuiltinStructures.FORTRESS);
-		if (fortress == null) return false;
-		int cx = pos.getX() >> 4, cz = pos.getZ() >> 4, r = FORTRESS_CHUNKS;
+	private static boolean structureNear(ServerLevel level, BlockPos pos, ResourceKey<Structure> key) {
+		Structure structure = level.registryAccess().lookupOrThrow(Registries.STRUCTURE).getValue(key);
+		if (structure == null) return false;
+		int cx = pos.getX() >> 4, cz = pos.getZ() >> 4, r = STRUCTURE_CHUNKS;
 		for (int x = cx - r; x <= cx + r; x++) {
 			for (int z = cz - r; z <= cz + r; z++) {
 				LevelChunk chunk = level.getChunkSource().getChunkNow(x, z);
-				if (chunk != null && !chunk.getReferencesForStructure(fortress).isEmpty()) return true;
+				if (chunk != null && !chunk.getReferencesForStructure(structure).isEmpty()) return true;
 			}
 		}
 		return false;
@@ -416,6 +424,13 @@ public final class ContextCollector {
 	private static boolean skullSpot(ServerLevel level, BlockPos base) {
 		BlockState above = level.getBlockState(base.above());
 		return above.isAir() || above.is(Blocks.WITHER_SKELETON_SKULL);
+	}
+
+	/** Slots of the crafter that hold an item (the crafter's own recipe fills all 9). */
+	private static int filled(CrafterBlockEntity crafter) {
+		int n = 0;
+		for (int i = 0; i < crafter.getContainerSize(); i++) if (!crafter.getItem(i).isEmpty()) n++;
+		return n;
 	}
 
 	/** End crystals still standing on the central island (only loaded ones count: the player is usually close). */

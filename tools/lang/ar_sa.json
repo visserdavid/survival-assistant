@@ -1179,5 +1179,21 @@
 "~step.copper_bulb.place": "ضع مصباحًا",
 "~step.copper_bulb.place.tip": "ضع مصباحًا نحاسيًا حيث تريد الضوء، مثلًا بجانب جدار.",
 "~step.copper_bulb.pulse": "أعطه نبضة",
-"~step.copper_bulb.pulse.tip": "ضع زرًا أو رافعة بجانب المصباح واستخدمه. كل نبضة تبدّل حالته: يضيء ثم ينطفئ."
+"~step.copper_bulb.pulse.tip": "ضع زرًا أو رافعة بجانب المصباح واستخدمه. كل نبضة تبدّل حالته: يضيء ثم ينطفئ.",
+"~step.upgrade_template.nether": "عد إلى النذر",
+"~step.upgrade_template.nether.tip": "الحصون موجودة في النذر فقط. عد عبر بوابتك.",
+"~step.upgrade_template.bastion": "جد حصنًا",
+"~step.upgrade_template.bastion.tip": "استكشف وابحث عن مبانٍ ضخمة داكنة من الحجر الأسود. راقبها أولًا من مكان آمن.",
+"~step.upgrade_template.loot": "فتّش الصناديق",
+"~step.upgrade_template.loot.tip": "هناك حصن قريب! القالب في صندوق، وغالبًا في غرفة الكنز. فتح الصناديق يُغضب البيغلين، فكن مستعدًا.",
+"~step.crafter_crafts.crafter": "ضع صانعًا آليًا",
+"~step.crafter_crafts.crafter.tip": "ضع أولًا صانعًا آليًا: 5 سبائك حديد وطاولة صناعة و2 ريدستون وقاذف.",
+"~step.crafter_crafts.iron": "5 سبائك حديد",
+"~step.crafter_crafts.iron.tip": "يحتاج الصانع الجديد إلى 5 سبائك حديد. صهر خام الحديد في الفرن.",
+"~step.crafter_crafts.parts": "بقية القطع",
+"~step.crafter_crafts.parts.tip": "تحتاج أيضًا إلى: قاذف (7 أحجار مرصوفة حول ريدستون) وطاولة صناعة و2 ريدستون.",
+"~step.crafter_crafts.fill": "املأ الصانع",
+"~step.crafter_crafts.fill.tip": "افتح الصانع ورتّب الوصفة: الحديد في الأعلى وعلى الجانبين، وطاولة الصناعة في الوسط، وفي الأسفل ريدستون ثم قاذف ثم ريدستون.",
+"~step.crafter_crafts.pulse": "أعطه نبضة",
+"~step.crafter_crafts.pulse.tip": "اضغط زرًا بجانب الصانع. سيُخرج الصانع الجديد من واجهته."
 }

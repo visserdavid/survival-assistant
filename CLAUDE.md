@@ -16,11 +16,11 @@ export JAVA_HOME="C:/Program Files/Microsoft/jdk-25.0.5.102-hotspot"
 python tools/make_lang.py src/main/resources/assets/survivalassistant/lang   # regenerate + check all language files
 python tools/recipe_check.py         # check every recipe card against the game data in the Minecraft jar
 python tools/add_step_texts.py <texts.py>        # add the texts of new goal steps to all 15 languages (then make_lang)
-python tools/prep_chapter.py Stappentest <goal>  # put a test world's guide at a goal (Minecraft closed; backup .before-prep)
+python tools/prep_chapter.py Stappentest <goal> [--spawn]  # put a test world's guide at a goal (Minecraft closed; backup .before-prep)
 python tools/set_gear.py Stappentest <goal>      # empty the inventory and give gear for that goal's test
 ```
 
-The world scripts take a world folder or the name of a world in the ModTesting instance, and need `nbtlib`. `set_gear.py` never gives the items a test is about; add a kit to its `KITS` for every new goal with steps.
+The world scripts take a world folder or the name of a world in the ModTesting instance, and need `nbtlib`. `set_gear.py` never gives the items a test is about, nor gear that completes the goal by itself (no netherite for `upgrade_template`); add a kit to its `KITS` for every new goal with steps.
 
 - **Build output** lives in `%LOCALAPPDATA%/gradle-builds/survivalassistant`, not in `build/`, because OneDrive locks files there. Test results are in `test-results/test/*.xml` under that folder. The jars are also copied to the project root, where git ignores them.
 - **CI** (`.github/workflows/build.yml`) runs the build. It also fails when `make_lang.py` changes any generated language file, and when `recipe_check.py` reports a mismatch.

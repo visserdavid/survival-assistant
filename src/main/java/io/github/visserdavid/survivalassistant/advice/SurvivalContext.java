@@ -177,6 +177,8 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 	 * @param hiveFull          such a hive is full of honey (it drips)
 	 * @param beaconLevel       pyramid levels (0 - 4) under the best beacon nearby; 0 when there is none
 	 * @param fortressNear      a Nether fortress reaches into the chunks around the player (about 4 chunks)
+	 * @param bastionNear       a bastion remnant reaches into the chunks around the player (about 4 chunks)
+	 * @param crafterSlots      filled slots (0 - 9) of the fullest crafter nearby
 	 * @param anchorCharge      charges (0 - 4) of the fullest respawn anchor nearby; 0 when there is none
 	 * @param witherBase        a T of soul sand or soul soil nearby, free on top for the skulls
 	 * @param blocks            counts of the placed blocks the goal steps look at ({@link Steps#TRACKED_BLOCKS}), by id path
@@ -184,7 +186,8 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 	public record Nearby(int crops, int bookshelves, boolean lava, boolean fallingBlockAbove, boolean litArea,
 			boolean ironDoorOpen, boolean pistonExtended, boolean repeater, boolean hopper, boolean observer,
 			boolean crafter, boolean autoSmelter, boolean copperBulbLit, boolean hopperOnFurnace, int standBottles,
-			boolean standFuel, boolean hive, boolean hiveSmoked, boolean hiveFull, int beaconLevel, boolean fortressNear, int anchorCharge, boolean witherBase,
+			boolean standFuel, boolean hive, boolean hiveSmoked, boolean hiveFull, int beaconLevel, boolean fortressNear,
+			boolean bastionNear, int crafterSlots, int anchorCharge, boolean witherBase,
 			Map<String, Integer> blocks) {
 		public Nearby {
 			blocks = Map.copyOf(blocks);
@@ -269,8 +272,8 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		private int crops, bookshelves;
 		private boolean lava, fallingBlockAbove, litArea, ironDoorOpen, pistonExtended, repeater, hopper, observer,
 				crafter, autoSmelter, copperBulbLit, hopperOnFurnace, standFuel, hive, hiveSmoked, hiveFull,
-				fortressNear, witherBase;
-		private int standBottles, beaconLevel, anchorCharge;
+				fortressNear, bastionNear, witherBase;
+		private int standBottles, beaconLevel, anchorCharge, crafterSlots;
 		private final Map<String, Integer> blocks = new HashMap<>();
 		// creatures
 		private int hostiles, endCrystals;
@@ -390,6 +393,8 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public Builder hiveFull(boolean v) { hiveFull = v; return this; }
 		public Builder beaconLevel(int v) { beaconLevel = v; return this; }
 		public Builder fortressNear(boolean v) { fortressNear = v; return this; }
+		public Builder bastionNear(boolean v) { bastionNear = v; return this; }
+		public Builder crafterSlots(int v) { crafterSlots = v; return this; }
 		public Builder anchorCharge(int v) { anchorCharge = v; return this; }
 		public Builder witherBase(boolean v) { witherBase = v; return this; }
 		/** Sets the count of a tracked placed block (id path); 0 removes it. */
@@ -429,7 +434,8 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 							hasWindCharge, hasHeavyCore, hasMace, hasDriedGhast, hasHarness, waterBottles, treasureDistance, items),
 					new Nearby(crops, bookshelves, lava, fallingBlockAbove, litArea, ironDoorOpen, pistonExtended,
 							repeater, hopper, observer, crafter, autoSmelter, copperBulbLit, hopperOnFurnace, standBottles,
-							standFuel, hive, hiveSmoked, hiveFull, beaconLevel, fortressNear, anchorCharge, witherBase, blocks),
+							standFuel, hive, hiveSmoked, hiveFull, beaconLevel, fortressNear, bastionNear, crafterSlots,
+							anchorCharge, witherBase, blocks),
 					new Creatures(hostiles, creeper, warden, ghast, piglin, ghastling, ridingTamedHorse, ridingHappyGhast,
 							horseNearby, tamedHorseNearby, saddledHorseNearby, endCrystals, blazeNearby, drownedNearby,
 							tridentDrownedNearby, turtleNearby, babyTurtleNearby));

@@ -1179,5 +1179,21 @@
 "~step.copper_bulb.place": "Pune un bec",
 "~step.copper_bulb.place.tip": "Pune un bec de cupru unde vrei lumină, de exemplu lângă un perete.",
 "~step.copper_bulb.pulse": "Dă-i un impuls",
-"~step.copper_bulb.pulse.tip": "Pune un buton sau o manetă lângă bec și folosește-l. Fiecare impuls comută becul: aprins, apoi stins."
+"~step.copper_bulb.pulse.tip": "Pune un buton sau o manetă lângă bec și folosește-l. Fiecare impuls comută becul: aprins, apoi stins.",
+"~step.upgrade_template.nether": "Înapoi în Nether",
+"~step.upgrade_template.nether.tip": "Bastioanele există doar în Nether. Treci din nou prin portalul tău.",
+"~step.upgrade_template.bastion": "Găsește un bastion",
+"~step.upgrade_template.bastion.tip": "Explorează și caută construcții uriașe și întunecate din piatră neagră. Privește-le întâi dintr-un loc sigur.",
+"~step.upgrade_template.loot": "Caută în cufere",
+"~step.upgrade_template.loot.tip": "Un bastion e foarte aproape! Șablonul e într-un cufăr, aproape mereu în camera comorii. Deschiderea cuferelor îi înfurie pe piglini, așa că fii pregătit.",
+"~step.crafter_crafts.crafter": "Pune un meșter automat",
+"~step.crafter_crafts.crafter.tip": "Pune întâi un meșter automat: 5 lingouri de fier, o masă de lucru, 2 redstone și un aruncător.",
+"~step.crafter_crafts.iron": "5 lingouri de fier",
+"~step.crafter_crafts.iron.tip": "Noul meșter are nevoie de 5 lingouri de fier. Topește minereu de fier într-un cuptor.",
+"~step.crafter_crafts.parts": "Celelalte piese",
+"~step.crafter_crafts.parts.tip": "Mai ai nevoie de: un aruncător (7 pietre sparte în jurul unui redstone), o masă de lucru și 2 redstone.",
+"~step.crafter_crafts.fill": "Umple meșterul",
+"~step.crafter_crafts.fill.tip": "Deschide meșterul și așază rețeta: fier sus și pe laterale, masa de lucru în mijloc, jos redstone, aruncător, redstone.",
+"~step.crafter_crafts.pulse": "Dă-i un impuls",
+"~step.crafter_crafts.pulse.tip": "Apasă un buton lângă meșter. Scoate meșterul nou prin față."
 }

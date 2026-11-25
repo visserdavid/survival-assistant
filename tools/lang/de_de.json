@@ -1179,5 +1179,21 @@
 "~step.copper_bulb.place": "Stell eine Lampe auf",
 "~step.copper_bulb.place.tip": "Stell eine Kupferlampe dort auf, wo du Licht willst, zum Beispiel an eine Wand.",
 "~step.copper_bulb.pulse": "Gib einen Impuls",
-"~step.copper_bulb.pulse.tip": "Setz einen Knopf oder Hebel neben die Lampe und benutz ihn. Jeder Impuls schaltet die Lampe um: an, dann aus."
+"~step.copper_bulb.pulse.tip": "Setz einen Knopf oder Hebel neben die Lampe und benutz ihn. Jeder Impuls schaltet die Lampe um: an, dann aus.",
+"~step.upgrade_template.nether": "Zurück in den Nether",
+"~step.upgrade_template.nether.tip": "Bastionen gibt es nur im Nether. Geh zurück durch dein Portal.",
+"~step.upgrade_template.bastion": "Finde eine Bastion",
+"~step.upgrade_template.bastion.tip": "Erkunde und halte Ausschau nach riesigen, dunklen Bauten aus Schwarzstein. Sieh sie dir zuerst von einem sicheren Ort aus an.",
+"~step.upgrade_template.loot": "Durchsuche die Truhen",
+"~step.upgrade_template.loot.tip": "Eine Bastion ist ganz nah! Die Vorlage liegt in einer Truhe, fast immer in der Schatzkammer. Truhen öffnen macht Piglins wütend, sei also bereit.",
+"~step.crafter_crafts.crafter": "Stell einen Werker auf",
+"~step.crafter_crafts.crafter.tip": "Stell zuerst einen Werker auf: 5 Eisenbarren, eine Werkbank, 2 Redstone und ein Spender.",
+"~step.crafter_crafts.iron": "5 Eisenbarren",
+"~step.crafter_crafts.iron.tip": "Der neue Werker braucht 5 Eisenbarren. Schmilz Eisenerz in einem Ofen.",
+"~step.crafter_crafts.parts": "Die übrigen Teile",
+"~step.crafter_crafts.parts.tip": "Außerdem brauchst du: einen Spender (7 Bruchstein um ein Redstone), eine Werkbank und 2 Redstone.",
+"~step.crafter_crafts.fill": "Füll den Werker",
+"~step.crafter_crafts.fill.tip": "Öffne den Werker und leg das Rezept: Eisen oben und an den Seiten, die Werkbank in die Mitte, unten Redstone, Spender, Redstone.",
+"~step.crafter_crafts.pulse": "Gib einen Impuls",
+"~step.crafter_crafts.pulse.tip": "Drück einen Knopf neben dem Werker. Er wirft den neuen Werker vorne heraus."
 }

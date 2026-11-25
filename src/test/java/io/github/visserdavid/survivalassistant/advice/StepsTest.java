@@ -163,6 +163,29 @@ class StepsTest {
 	}
 
 	@Test
+	void upgradeTemplate() {
+		Tip g = TipRegistry.UPGRADE_TEMPLATE;
+		assertEquals("upgrade_template.nether", current(g, b -> b.bastionNear(true)));
+		assertEquals("upgrade_template.bastion", current(g, b -> b.dimension(SurvivalContext.NETHER)));
+		assertEquals("upgrade_template.loot", current(g, b -> b.dimension(SurvivalContext.NETHER).bastionNear(true)));
+	}
+
+	@Test
+	void crafterCraftsACrafter() {
+		Tip g = TipRegistry.CRAFTER_CRAFTS;
+		assertEquals("crafter_crafts.crafter", current(g, b -> b.item("iron_ingot", 5)));
+		assertEquals("crafter_crafts.iron", current(g, b -> b.crafter(true).item("iron_ingot", 4)));
+		assertEquals("crafter_crafts.parts", current(g, b -> b.crafter(true).item("iron_ingot", 5).item("dropper", 1).redstone(2)),
+				"the crafting table is missing");
+		assertEquals("crafter_crafts.fill", current(g, b -> b.crafter(true).item("iron_ingot", 5).item("dropper", 1)
+				.item("crafting_table", 1).redstone(2)));
+		assertEquals("crafter_crafts.fill", current(g, b -> b.crafter(true).item("iron_ingot", 2).crafterSlots(4)),
+				"filling the crafter uses up the carried iron; the step doesn't go back");
+		assertEquals("crafter_crafts.pulse", current(g, b -> b.crafter(true).crafterSlots(9)),
+				"the materials are in the crafter now");
+	}
+
+	@Test
 	void ironGolem() {
 		Tip g = TipRegistry.IRON_GOLEM;
 		assertEquals("iron_golem.iron_blocks", current(g, b -> b.item("iron_block", 3).item("iron_ingot", 8)));

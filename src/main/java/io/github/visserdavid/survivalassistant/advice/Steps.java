@@ -83,7 +83,8 @@ public final class Steps {
 	public static final Set<String> TRACKED_ITEMS = Set.of("glass_bottle", "blaze_powder", "paper", "leather", "book",
 			"bookshelf", "iron_block", "iron_ingot", "carved_pumpkin", "ancient_debris", "netherite_scrap", "gold_ingot",
 			"glass", "beacon", "hopper", "saddle", "crying_obsidian", "glowstone", "glowstone_dust", "respawn_anchor",
-			"compass", "seagrass", "turtle_scute", "ghast_tear", "copper_block", "copper_ingot", "copper_bulb");
+			"compass", "seagrass", "turtle_scute", "ghast_tear", "copper_block", "copper_ingot", "copper_bulb",
+			"crafting_table", "dropper");
 	/** Blocks whose placed count nearby the collector reports ({@link SurvivalContext.Nearby#placed}). */
 	public static final Set<String> TRACKED_BLOCKS = Set.of("obsidian", "nether_portal", "iron_block", "carved_pumpkin",
 			"beacon", "hopper", "nether_wart", "respawn_anchor", "turtle_egg", "copper_bulb");
@@ -96,6 +97,8 @@ public final class Steps {
 	public static final int TREASURE_NEAR = 8;
 	/** A respawn anchor holds 4 charges; the advancement wants it full. */
 	public static final int ANCHOR_CHARGES = 4;
+	/** The crafter's own recipe fills all 9 slots of a crafter. */
+	private static final int CRAFTER_SLOTS = 9;
 	/** 8 ghast tears around soul sand make a dried ghast. */
 	private static final int GHAST_TEARS = 8;
 	/** One glowstone block is 4 glowstone dust. */
@@ -130,6 +133,11 @@ public final class Steps {
 	/** Turtle eggs on the beach, a baby growing up, or scutes already: the breeding is behind the player. */
 	private static boolean turtlesBred(SurvivalContext c) {
 		return c.nearby().placed("turtle_egg") > 0 || c.creatures().babyTurtleNearby() || item(c, "turtle_scute") > 0;
+	}
+
+	/** Putting the recipe into the crafter uses up the carried materials, so from then on the filling counts. */
+	private static boolean fillingCrafter(SurvivalContext c) {
+		return c.nearby().crafterSlots() > 0;
 	}
 
 	private static boolean hasBulb(SurvivalContext c) {
@@ -250,6 +258,11 @@ public final class Steps {
 					count("netherite_ingot.smelt", c -> item(c, "netherite_scrap"), 4, c -> false),
 					count("netherite_ingot.gold", c -> item(c, "gold_ingot"), 4, c -> false),
 					finish("netherite_ingot.craft"))),
+			// chapter 11: bastions keep the template in their chests, almost always in the treasure room
+			Map.entry("upgrade_template", List.of(
+					step("upgrade_template.nether", Steps::inNether),
+					step("upgrade_template.bastion", c -> c.nearby().bastionNear()),
+					finish("upgrade_template.loot"))),
 			// chapter 11: 6 crying obsidian and 3 glowstone make the anchor; in the Nether, 4 glowstone fill it up
 			Map.entry("respawn_anchor", List.of(
 					count("respawn_anchor.crying", c -> item(c, "crying_obsidian"), 6, Steps::hasAnchor),
@@ -293,6 +306,14 @@ public final class Steps {
 					step("copper_bulb.craft", Steps::hasBulb),
 					step("copper_bulb.place", c -> c.nearby().placed("copper_bulb") > 0),
 					finish("copper_bulb.pulse"))),
+			// chapter 18: the crafter's own recipe in a crafter (5 iron, a crafting table, 2 redstone, a dropper), then a pulse
+			Map.entry("crafter_crafts", List.of(
+					step("crafter_crafts.crafter", c -> c.nearby().crafter()),
+					count("crafter_crafts.iron", c -> item(c, "iron_ingot"), 5, Steps::fillingCrafter),
+					step("crafter_crafts.parts", c -> fillingCrafter(c) || item(c, "dropper") > 0
+							&& item(c, "crafting_table") > 0 && c.inv().redstone() >= 2),
+					count("crafter_crafts.fill", c -> c.nearby().crafterSlots(), CRAFTER_SLOTS, c -> false),
+					finish("crafter_crafts.pulse"))),
 			// chapter 18: a hopper on top feeds the furnace, one below takes the result out
 			Map.entry("auto_smelter", List.of(
 					count("auto_smelter.hoppers", c -> item(c, "hopper") + c.nearby().placed("hopper"), 2, c -> false),

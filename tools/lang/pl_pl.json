@@ -1179,5 +1179,21 @@
 "~step.copper_bulb.place": "Postaw żarówkę",
 "~step.copper_bulb.place.tip": "Postaw miedzianą żarówkę tam, gdzie chcesz światła, na przykład przy ścianie.",
 "~step.copper_bulb.pulse": "Daj impuls",
-"~step.copper_bulb.pulse.tip": "Postaw przycisk lub dźwignię obok żarówki i użyj go. Każdy impuls ją przełącza: włączona, potem wyłączona."
+"~step.copper_bulb.pulse.tip": "Postaw przycisk lub dźwignię obok żarówki i użyj go. Każdy impuls ją przełącza: włączona, potem wyłączona.",
+"~step.upgrade_template.nether": "Wróć do Netheru",
+"~step.upgrade_template.nether.tip": "Bastiony są tylko w Netherze. Wróć przez swój portal.",
+"~step.upgrade_template.bastion": "Znajdź bastion",
+"~step.upgrade_template.bastion.tip": "Zwiedzaj i szukaj ogromnych, ciemnych budowli z czarnego kamienia. Najpierw obejrzyj je z bezpiecznego miejsca.",
+"~step.upgrade_template.loot": "Przeszukaj skrzynie",
+"~step.upgrade_template.loot.tip": "Bastion jest blisko! Szablon leży w skrzyni, prawie zawsze w skarbcu. Otwieranie skrzyń złości pigliny, więc bądź gotów.",
+"~step.crafter_crafts.crafter": "Postaw konstruktor",
+"~step.crafter_crafts.crafter.tip": "Najpierw postaw konstruktor: 5 sztabek żelaza, stół rzemieślniczy, 2 czerwony proszek i podajnik.",
+"~step.crafter_crafts.iron": "5 sztabek żelaza",
+"~step.crafter_crafts.iron.tip": "Nowy konstruktor potrzebuje 5 sztabek żelaza. Przetop rudę żelaza w piecu.",
+"~step.crafter_crafts.parts": "Pozostałe części",
+"~step.crafter_crafts.parts.tip": "Potrzebujesz też: podajnika (7 bruku wokół czerwonego proszku), stołu rzemieślniczego i 2 czerwonego proszku.",
+"~step.crafter_crafts.fill": "Napełnij konstruktor",
+"~step.crafter_crafts.fill.tip": "Otwórz konstruktor i ułóż przepis: żelazo na górze i po bokach, stół rzemieślniczy w środku, na dole czerwony proszek, podajnik, czerwony proszek.",
+"~step.crafter_crafts.pulse": "Daj impuls",
+"~step.crafter_crafts.pulse.tip": "Naciśnij przycisk obok konstruktora. Wyrzuci nowy konstruktor z przodu."
 }

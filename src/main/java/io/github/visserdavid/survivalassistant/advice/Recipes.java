@@ -90,6 +90,12 @@ public final class Recipes {
 	/** 9 copper ingots make a block: the copper bulb takes 3. */
 	private static final Recipe COPPER_BLOCK = new Recipe("minecraft:copper_block", 1, List.of("###", "###", "###"),
 			Map.of('#', "minecraft:copper_ingot"));
+	/** A crafter; the crafter-crafts-a-crafter goal puts this same recipe into one. */
+	private static final Recipe CRAFTER = new Recipe("minecraft:crafter", 1, List.of("###", "#C#", "RDR"),
+			Map.of('#', IRON, 'C', "minecraft:crafting_table", 'R', REDSTONE, 'D', "minecraft:dropper"));
+	/** 7 cobblestone and a redstone: the dropper inside the crafter. */
+	private static final Recipe DROPPER = new Recipe("minecraft:dropper", 1, List.of("###", "# #", "#R#"),
+			Map.of('#', "minecraft:cobblestone", 'R', REDSTONE));
 	/** 4 glowstone dust make a block: for the respawn anchor and its charges. */
 	private static final Recipe GLOWSTONE = new Recipe("minecraft:glowstone", 1, List.of("##", "##"),
 			Map.of('#', "minecraft:glowstone_dust"));
@@ -192,8 +198,7 @@ public final class Recipes {
 					Map.of('#', COBBLE, 'R', REDSTONE, 'Q', "minecraft:quartz"))),
 			Map.entry("copper_bulb", new Recipe("minecraft:copper_bulb", 4, List.of(" C ", "CBC", " R "),
 					Map.of('C', "minecraft:copper_block", 'B', "minecraft:blaze_rod", 'R', REDSTONE))),
-			Map.entry("crafter", new Recipe("minecraft:crafter", 1, List.of("###", "#C#", "RDR"),
-					Map.of('#', IRON, 'C', "minecraft:crafting_table", 'R', REDSTONE, 'D', "minecraft:dropper"))),
+			Map.entry("crafter", CRAFTER),
 
 			// ---- goal steps
 			Map.entry("enter_nether.light", FLINT_AND_STEEL),
@@ -204,6 +209,9 @@ public final class Recipes {
 			Map.entry("respawn_anchor.charge", GLOWSTONE),
 			Map.entry("recovery_compass.compass", COMPASS),
 			Map.entry("copper_bulb.copper", COPPER_BLOCK),
+			Map.entry("crafter_crafts.crafter", CRAFTER),
+			Map.entry("crafter_crafts.parts", DROPPER),
+			Map.entry("crafter_crafts.fill", CRAFTER),
 			Map.entry("enchanting_table.paper", PAPER),
 			Map.entry("enchanting_table.book", BOOK),
 			Map.entry("bookshelves.paper", PAPER),
