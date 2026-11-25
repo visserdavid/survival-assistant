@@ -384,6 +384,12 @@ public final class Steps {
 					step("open_vault.chambers", c -> inTrials(c) || item(c, "trial_key") > 0),
 					step("open_vault.key", c -> item(c, "trial_key") > 0),
 					finish("open_vault.open"))),
+			// chapter 10: after the dragon a gateway leads to the outer islands, where the end cities stand
+			Map.entry("end_city", List.of(
+					step("end_city.dragon", c -> c.player().has(Advancements.DRAGON) || c.nearby().outerEnd()),
+					step("end_city.gateway", c -> c.nearby().outerEnd()),
+					step("end_city.search", c -> c.nearby().endCityNear()),
+					finish("end_city.enter"))),
 			// chapter 10: in the End, an end city, its ship, the elytra in the item frame
 			Map.entry("elytra", List.of(
 					step("elytra.end", c -> c.world().inEnd()),
@@ -433,6 +439,11 @@ public final class Steps {
 					step("summon_wither.spot", c -> c.world().underground() || inNether(c) || c.nearby().witherBase()),
 					step("summon_wither.base", c -> c.nearby().witherBase()),
 					finish("summon_wither.skulls"))),
+			// chapter 12: the summoned Wither, defeat it, the star it drops
+			Map.entry("nether_star", List.of(
+					step("nether_star.wither", c -> c.creatures().witherNearby() || c.nearby().droppedStar()),
+					step("nether_star.defeat", c -> c.nearby().droppedStar()),
+					finish("nether_star.pick"))),
 			// chapter 12: 5 glass, 3 obsidian and the nether star make a beacon; it needs a 3x3 base to work
 			Map.entry("beacon", List.of(
 					count("beacon.glass", c -> item(c, "glass"), 5, Steps::hasBeacon),
@@ -443,6 +454,12 @@ public final class Steps {
 					step("full_beacon.level2", c -> c.nearby().beaconLevel() >= 2),
 					step("full_beacon.level3", c -> c.nearby().beaconLevel() >= 3),
 					finish("full_beacon.level4"))),
+			// chapter 14: an outpost, its captain (the illager with a banner), the bottle it drops
+			Map.entry("ominous_bottle", List.of(
+					step("ominous_bottle.outpost", c -> c.world().in(Structures.PILLAGER_OUTPOST) || c.creatures().captainNearby()
+							|| c.nearby().droppedBottle()),
+					step("ominous_bottle.captain", c -> c.creatures().captainNearby() || c.nearby().droppedBottle()),
+					finish("ominous_bottle.pick"))),
 			// chapter 14: the captain's ominous bottle, drink it (Bad Omen), walk into a village, win every wave
 			Map.entry("win_raid", List.of(
 					step("win_raid.bottle", c -> c.inv().hasOminousBottle() || c.player().omen() || c.nearby().raidActive()),

@@ -23,6 +23,9 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.animal.camel.Camel;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.raid.Raid;
+import net.minecraft.world.entity.raid.Raider;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.animal.cow.AbstractCow;
 import net.minecraft.world.entity.animal.feline.Cat;
 import net.minecraft.world.entity.animal.goat.Goat;
@@ -101,6 +104,10 @@ public final class ContextCollector {
 	private static final int STRUCTURE_CHUNKS = 4;
 	/** An end ship's elytra frame counts within this many blocks. */
 	private static final int ELYTRA_RADIUS = 48;
+	/** The End's outer islands start beyond the gap around the main island (it ends about 1000 blocks out). */
+	private static final int OUTER_END = 500;
+	/** Loot on the ground (a nether star, an ominous bottle) counts within this many blocks. */
+	private static final int DROP_RADIUS = 32;
 	/** Brewing stand slots: 0 - 2 hold the bottles, 4 the blaze powder. */
 	private static final int STAND_BOTTLE_SLOTS = 3, STAND_FUEL_SLOT = 4;
 
@@ -130,6 +137,11 @@ public final class ContextCollector {
 			b.endCityNear(structureNear(player.level(), player.blockPosition(), BuiltinStructures.END_CITY));
 			b.elytraFrame(!player.level().getEntitiesOfClass(ItemFrame.class, around(player, ELYTRA_RADIUS),
 					f -> f.getItem().is(Items.ELYTRA)).isEmpty());
+		}
+		if (player.level().dimension() == Level.END) b.outerEnd(Math.hypot(player.getX(), player.getZ()) > OUTER_END);
+		for (ItemEntity drop : player.level().getEntitiesOfClass(ItemEntity.class, around(player, DROP_RADIUS), Entity::isAlive)) {
+			if (drop.getItem().is(Items.NETHER_STAR)) b.droppedStar(true);
+			else if (drop.getItem().is(Items.OMINOUS_BOTTLE)) b.droppedBottle(true);
 		}
 		Raid raid = player.level().getRaidAt(player.blockPosition());
 		b.raidActive(raid != null && !raid.isOver());
@@ -537,6 +549,8 @@ public final class ContextCollector {
 				b.tameableNearby(true);
 			}
 			if (alive && close && (e instanceof AbstractCow || e instanceof Goat) && !e.isBaby()) b.milkableNearby(true);
+			if (alive && e instanceof WitherBoss) b.witherNearby(true);
+			if (alive && e instanceof Raider raider && raider.isCaptain()) b.captainNearby(true);
 			if (alive && close && e instanceof Turtle turtle) {
 				b.turtleNearby(true);
 				if (turtle.isBaby()) b.babyTurtleNearby(true);

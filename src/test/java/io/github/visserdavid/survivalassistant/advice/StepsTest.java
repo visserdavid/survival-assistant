@@ -382,6 +382,33 @@ class StepsTest {
 	}
 
 	@Test
+	void endCity() {
+		Tip g = TipRegistry.END_CITY;
+		assertEquals("end_city.dragon", current(g, b -> b.dimension(SurvivalContext.END)));
+		assertEquals("end_city.gateway", current(g, b -> b.dimension(SurvivalContext.END).advancement(Advancements.DRAGON)));
+		assertEquals("end_city.search", current(g, b -> b.dimension(SurvivalContext.END).outerEnd(true)),
+				"on the outer islands the dragon is behind the player");
+		assertEquals("end_city.enter", current(g, b -> b.dimension(SurvivalContext.END).outerEnd(true).endCityNear(true)));
+	}
+
+	@Test
+	void netherStar() {
+		Tip g = TipRegistry.NETHER_STAR;
+		assertEquals("nether_star.wither", current(g, b -> b));
+		assertEquals("nether_star.defeat", current(g, b -> b.witherNearby(true)));
+		assertEquals("nether_star.pick", current(g, b -> b.droppedStar(true)));
+	}
+
+	@Test
+	void ominousBottle() {
+		Tip g = TipRegistry.OMINOUS_BOTTLE;
+		assertEquals("ominous_bottle.outpost", current(g, b -> b));
+		assertEquals("ominous_bottle.captain", current(g, b -> b.structure(Structures.PILLAGER_OUTPOST)));
+		assertEquals("ominous_bottle.pick", current(g, b -> b.captainNearby(true)));
+		assertEquals("ominous_bottle.pick", current(g, b -> b.droppedBottle(true)), "the captain is gone, its bottle lies there");
+	}
+
+	@Test
 	void ironGolem() {
 		Tip g = TipRegistry.IRON_GOLEM;
 		assertEquals("iron_golem.iron_blocks", current(g, b -> b.item("iron_block", 3).item("iron_ingot", 8)));

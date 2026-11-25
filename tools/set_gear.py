@@ -125,6 +125,14 @@ KITS = {
                     TORCHES], armor(), SHIELD),
     "ominous_vault": ([SWORD, PICK, item("bow", ench={"power": 5, "infinity": 1}), item("arrow"), FOOD, GOLDEN,
                        item("totem_of_undying"), BLOCKS], armor(), SHIELD),
+    # late game: end city (pearls for the gateway), the Wither (smite, milk), the outpost captain; no star or bottle
+    "end_city": ([DIAMOND_SWORD, item("bow", ench={"power": 5, "infinity": 1}), item("arrow"), item("ender_pearl", 16),
+                  FOOD, GOLDEN, item("end_stone", 64)], armor("diamond", feet_extra={"feather_falling": 4}), SHIELD),
+    "nether_star": ([item("netherite_sword", ench={"smite": 5, "unbreaking": 3, "mending": 1}),
+                     item("bow", ench={"power": 5, "infinity": 1}), item("arrow"), item("milk_bucket", 3), FOOD, GOLDEN,
+                     item("totem_of_undying"), BLOCKS], armor(), SHIELD),
+    "ominous_bottle": ([SWORD, item("crossbow", ench={"quick_charge": 3}), item("arrow", 64), FOOD, GOLDEN, BLOCKS],
+                       armor(), SHIELD),
     # farm life, chapters 2 and 6: simple gear; never the wheat, bread, bones, fish, iron, bucket, string or rod tested
     "bread": ([item("stone_sword"), item("stone_hoe"), FOOD, TORCHES, TABLE], armor("iron"), None),
     "tame_animal": ([item("stone_sword"), FOOD, TORCHES, BLOCKS, item("lead", 2)], armor("iron"), SHIELD),

@@ -189,6 +189,9 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 	 * @param elytraFrame       an item frame holding an elytra within 48 blocks (the end ship)
 	 * @param raidActive        a raid is going on where the player stands
 	 * @param driedGhast        a dried ghast block nearby (placed)
+	 * @param outerEnd          in the End, more than 500 blocks from its centre: the outer islands
+	 * @param droppedStar       a nether star lies on the ground within 32 blocks
+	 * @param droppedBottle     an ominous bottle lies on the ground within 32 blocks
 	 * @param ghastHydration    hydration (0 - 3) of the wettest dried ghast standing in water nearby; -1 when none is
 	 * @param anchorCharge      charges (0 - 4) of the fullest respawn anchor nearby; 0 when there is none
 	 * @param witherBase        a T of soul sand or soul soil nearby, free on top for the skulls
@@ -199,7 +202,8 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 			boolean crafter, boolean autoSmelter, boolean copperBulbLit, boolean hopperOnFurnace, int standBottles,
 			boolean standFuel, boolean hive, boolean hiveSmoked, boolean hiveFull, int beaconLevel, boolean fortressNear,
 			boolean bastionNear, int crafterSlots, int ripeWheat, boolean endCityNear,
-			boolean elytraFrame, boolean raidActive, boolean driedGhast, int ghastHydration,
+			boolean elytraFrame, boolean raidActive, boolean driedGhast, int ghastHydration, boolean outerEnd,
+			boolean droppedStar, boolean droppedBottle,
 			int anchorCharge, boolean witherBase,
 			Map<String, Integer> blocks) {
 		public Nearby {
@@ -233,13 +237,15 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 	 * @param milkableNearby   a grown cow, mooshroom or goat within 16 blocks
 	 * @param grownHappyGhast  a grown happy ghast within 16 blocks
 	 * @param harnessedGhast   such a happy ghast wears a harness
+	 * @param witherNearby     the Wither within 32 blocks
+	 * @param captainNearby    a raid captain (an illager carrying a banner) within 32 blocks
 	 */
 	public record Creatures(int hostiles, boolean creeper, boolean warden, boolean ghast, boolean piglin,
 			boolean ghastling, boolean ridingTamedHorse, boolean ridingHappyGhast, boolean horseNearby,
 			boolean tamedHorseNearby, boolean saddledHorseNearby, int endCrystals, boolean blazeNearby,
 			boolean drownedNearby, boolean tridentDrownedNearby, boolean turtleNearby,
 			boolean babyTurtleNearby, boolean tameableNearby, boolean milkableNearby,
-			boolean grownHappyGhast, boolean harnessedGhast) {}
+			boolean grownHappyGhast, boolean harnessedGhast, boolean witherNearby, boolean captainNearby) {}
 
 	/** Monsters could spawn around the player: underground, or outside without a roof at dusk, at night or in a thunderstorm. */
 	public boolean darkMatters() {
@@ -291,7 +297,8 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		private int crops, bookshelves;
 		private boolean lava, fallingBlockAbove, litArea, ironDoorOpen, pistonExtended, repeater, hopper, observer,
 				crafter, autoSmelter, copperBulbLit, hopperOnFurnace, standFuel, hive, hiveSmoked, hiveFull,
-				fortressNear, bastionNear, witherBase, endCityNear, elytraFrame, raidActive, driedGhast;
+				fortressNear, bastionNear, witherBase, endCityNear, elytraFrame, raidActive, driedGhast,
+				outerEnd, droppedStar, droppedBottle;
 		private int standBottles, beaconLevel, anchorCharge, crafterSlots, ripeWheat, ghastHydration = -1;
 		private final Map<String, Integer> blocks = new HashMap<>();
 		// creatures
@@ -299,7 +306,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		private boolean creeper, warden, ghast, piglin, ghastling, ridingTamedHorse, ridingHappyGhast, horseNearby,
 				tamedHorseNearby, saddledHorseNearby, blazeNearby,
 				drownedNearby, tridentDrownedNearby, turtleNearby, babyTurtleNearby, tameableNearby,
-				milkableNearby, grownHappyGhast, harnessedGhast;
+				milkableNearby, grownHappyGhast, harnessedGhast, witherNearby, captainNearby;
 
 		private Builder() {}
 
@@ -425,6 +432,9 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public Builder raidActive(boolean v) { raidActive = v; return this; }
 		public Builder driedGhast(boolean v) { driedGhast = v; return this; }
 		public Builder ghastHydration(int v) { ghastHydration = v; return this; }
+		public Builder outerEnd(boolean v) { outerEnd = v; return this; }
+		public Builder droppedStar(boolean v) { droppedStar = v; return this; }
+		public Builder droppedBottle(boolean v) { droppedBottle = v; return this; }
 		public Builder anchorCharge(int v) { anchorCharge = v; return this; }
 		public Builder witherBase(boolean v) { witherBase = v; return this; }
 		/** Sets the count of a tracked placed block (id path); 0 removes it. */
@@ -451,6 +461,8 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public Builder milkableNearby(boolean v) { milkableNearby = v; return this; }
 		public Builder grownHappyGhast(boolean v) { grownHappyGhast = v; return this; }
 		public Builder harnessedGhast(boolean v) { harnessedGhast = v; return this; }
+		public Builder witherNearby(boolean v) { witherNearby = v; return this; }
+		public Builder captainNearby(boolean v) { captainNearby = v; return this; }
 
 		public SurvivalContext build() {
 			return new SurvivalContext(
@@ -469,12 +481,13 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 					new Nearby(crops, bookshelves, lava, fallingBlockAbove, litArea, ironDoorOpen, pistonExtended,
 							repeater, hopper, observer, crafter, autoSmelter, copperBulbLit, hopperOnFurnace, standBottles,
 							standFuel, hive, hiveSmoked, hiveFull, beaconLevel, fortressNear, bastionNear, crafterSlots,
-							ripeWheat, endCityNear, elytraFrame, raidActive, driedGhast, ghastHydration,
+							ripeWheat, endCityNear, elytraFrame, raidActive, driedGhast, ghastHydration, outerEnd,
+							droppedStar, droppedBottle,
 							anchorCharge, witherBase, blocks),
 					new Creatures(hostiles, creeper, warden, ghast, piglin, ghastling, ridingTamedHorse, ridingHappyGhast,
 							horseNearby, tamedHorseNearby, saddledHorseNearby, endCrystals, blazeNearby, drownedNearby,
 							tridentDrownedNearby, turtleNearby, babyTurtleNearby, tameableNearby, milkableNearby,
-							grownHappyGhast, harnessedGhast));
+							grownHappyGhast, harnessedGhast, witherNearby, captainNearby));
 		}
 	}
 }
