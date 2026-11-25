@@ -57,7 +57,7 @@ public class GuideEntity extends PathfinderMob {
 
 	public GuideEntity(EntityType<? extends GuideEntity> type, Level level) {
 		super(type, level);
-		this.setPermanentlyInvulnerable(true);
+		this.setInvulnerable(true);
 		this.setCustomNameVisible(true);
 		this.blocksBuilding = false; // a block can be placed where the guide stands (sealing a shelter at night)
 		for (PathType danger : DANGERS) this.setPathfindingMalus(danger, -1f);
@@ -157,7 +157,7 @@ public class GuideEntity extends PathfinderMob {
 		return InteractionResult.SUCCESS;
 	}
 
-	// --- an advisor, not a fighter or a victim (damage is blocked by setPermanentlyInvulnerable; /kill still works) ---
+	// --- an advisor, not a fighter or a victim (damage is blocked by setInvulnerable; /kill still works) ---
 
 	@Override
 	public boolean canBeSeenAsEnemy() {
