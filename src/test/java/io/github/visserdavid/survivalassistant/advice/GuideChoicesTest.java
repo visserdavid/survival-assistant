@@ -11,7 +11,7 @@ class GuideChoicesTest {
 	@Test
 	void serverDefaultsFillTheGaps() {
 		GuideChoices c = GuideChoices.of(new GuideProgress(), true, false);
-		assertEquals(new GuideChoices(true, "", GuideChoices.MUSINGS_ON, false), c);
+		assertEquals(new GuideChoices(true, "", GuideChoices.MUSINGS_ON, false, "free"), c);
 		assertNull(c.storedName());
 		assertNull(c.storedMusings());
 	}
@@ -24,14 +24,14 @@ class GuideChoicesTest {
 		p.musings = GuideChoices.MUSINGS_ALL;
 		p.guideName = "Bram";
 		GuideChoices c = GuideChoices.of(p, true, true);
-		assertEquals(new GuideChoices(false, "Bram", GuideChoices.MUSINGS_ALL, true), c);
+		assertEquals(new GuideChoices(false, "Bram", GuideChoices.MUSINGS_ALL, true, "free"), c);
 		assertEquals("Bram", c.storedName());
 		assertEquals(GuideChoices.MUSINGS_ALL, c.storedMusings());
 	}
 
 	@Test
 	void unknownMusingsAndBlankNamesAreCleanedUp() {
-		GuideChoices c = new GuideChoices(true, "  ", "sometimes", false);
+		GuideChoices c = new GuideChoices(true, "  ", "sometimes", false, "free");
 		assertEquals("", c.name());
 		assertEquals(GuideChoices.MUSINGS_ON, c.musings());
 		assertTrue(c.nameValid());
@@ -39,9 +39,9 @@ class GuideChoicesTest {
 
 	@Test
 	void invalidNamesAreRefused() {
-		assertFalse(new GuideChoices(true, "!!!", GuideChoices.MUSINGS_ON, false).nameValid());
-		assertFalse(new GuideChoices(true, "a".repeat(GuideNames.MAX_LENGTH + 1), GuideChoices.MUSINGS_ON, false).nameValid());
-		assertTrue(new GuideChoices(true, " Pim ", GuideChoices.MUSINGS_ON, false).nameValid());
+		assertFalse(new GuideChoices(true, "!!!", GuideChoices.MUSINGS_ON, false, "free").nameValid());
+		assertFalse(new GuideChoices(true, "a".repeat(GuideNames.MAX_LENGTH + 1), GuideChoices.MUSINGS_ON, false, "free").nameValid());
+		assertTrue(new GuideChoices(true, " Pim ", GuideChoices.MUSINGS_ON, false, "free").nameValid());
 	}
 
 	@Test

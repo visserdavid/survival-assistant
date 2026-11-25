@@ -16,7 +16,7 @@ export JAVA_HOME="C:/Program Files/Microsoft/jdk-25.0.5.102-hotspot"
 python tools/make_lang.py src/main/resources/assets/survivalassistant/lang   # regenerate + check all language files
 python tools/recipe_check.py         # check every recipe card against the game data in the Minecraft jar
 python tools/add_step_texts.py <texts.py>        # add the texts of new goal steps to all 15 languages (then make_lang)
-python tools/prep_chapter.py Stappentest <goal> [--spawn] [--revoke <advancement>]  # put a test world's guide at a goal (Minecraft closed; backups .before-prep)
+python tools/prep_chapter.py Stappentest <goal> [--spawn] [--revoke <advancement>] [--route <id|free|none>] [--done 6,3]  # put a test world's guide at a goal (Minecraft closed; backups .before-prep)
 python tools/set_gear.py Stappentest <goal>      # empty the inventory and give gear for that goal's test
 python tools/test_schematics.py [name]          # write WorldEdit schematics for tests into ModTesting (//schem load <name>, //paste)
 python tools/test_stair.py Stappentest [floorY]  # data pack that digs a 3x3 staircase from the player down (ores stay), once on world load

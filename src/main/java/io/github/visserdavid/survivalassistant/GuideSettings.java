@@ -88,6 +88,10 @@ final class GuideSettings {
 		// small talk can only be switched on when the server allows it
 		if (now.chat() != wanted.chat() && (cfg.chatEnabled || !wanted.chat())) progress.chatEnabled = wanted.chat();
 		if (now.character() != wanted.character()) GuideActions.setNpcEnabled(player, wanted.character());
+		// a new route works like /guide route (a finished chapter goes on with it); without a guide it is only stored
+		if (!now.route().equals(wanted.route()) && !GuideActions.chooseRoute(player, wanted.route())) {
+			progress.route = wanted.route();
+		}
 	}
 
 	private static void applyConfig(ServerPlayer player, String json) {

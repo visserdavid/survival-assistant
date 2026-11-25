@@ -8,6 +8,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.github.visserdavid.survivalassistant.advice.Chapter;
 import io.github.visserdavid.survivalassistant.advice.Chapters;
 import io.github.visserdavid.survivalassistant.advice.GuideNames;
+import io.github.visserdavid.survivalassistant.advice.Routes;
 import io.github.visserdavid.survivalassistant.chat.GuideMusings;
 import io.github.visserdavid.survivalassistant.config.ModConfig;
 import io.github.visserdavid.survivalassistant.state.GuideState;
@@ -20,7 +21,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.Predicate;
 
-/** /guide call | dismiss | continue | chapters | chapter &lt;id&gt; | about | name &lt;name&gt;|reset | chat on|off | musings on|off|all | tip | mute &lt;minutes&gt; | character on|off */
+/** /guide call | dismiss | continue | chapters | chapter &lt;id&gt; | route [&lt;id&gt;|free] | about | name &lt;name&gt;|reset | chat on|off | musings on|off|all | tip | mute &lt;minutes&gt; | character on|off */
 public final class GuideCommand {
 	private GuideCommand() {}
 
@@ -34,6 +35,10 @@ public final class GuideCommand {
 						.then(Commands.argument("id", StringArgumentType.word())
 								.suggests((c, b) -> SharedSuggestionProvider.suggest(Chapters.ALL.stream().map(Chapter::id), b))
 								.executes(GuideCommand::chapter)))
+				.then(Commands.literal("route").executes(c -> run(c, GuideActions::routes))
+						.then(Commands.argument("route", StringArgumentType.word())
+								.suggests((c, b) -> SharedSuggestionProvider.suggest(Routes.CHOICES, b))
+								.executes(c -> run(c, p -> GuideActions.chooseRoute(p, StringArgumentType.getString(c, "route"))))))
 				.then(Commands.literal("tip").executes(c -> run(c, GuideActions::tipNow)))
 				.then(Commands.literal("about").executes(c -> run(c, GuideActions::tellAbout)))
 				.then(Commands.literal("name")

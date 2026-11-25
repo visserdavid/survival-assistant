@@ -85,6 +85,27 @@ archaeology, the trial challenges, the happy ghast and automation.
   (skulls for the Wither, the heavy core in the mace) keep their goal ticked off.
 - Finished everything with an older version? `/guide call` brings the guide back with the new chapters.
 
+### Routes: choose a specialization
+When chapter 2 is done, the guide asks which way you want to go. A route puts the chapters in an order that fits a
+playing style. The guide then recommends the next chapter of your route: it has a star and stands out in gold in the
+chapter menu, and `/guide continue` starts it. A route adds no goals and locks nothing.
+
+| Route | Chapters in order |
+|---|---|
+| **Fighter** | The Nether, villages, raids, brewing and enchanting, the Wither, exploring, trial challenges, netherite, the End |
+| **Farmer** | Farming and animals, villages, the Nether, brewing and enchanting, the happy ghast, redstone, automation |
+| **Explorer** | Exploring, the ocean, archaeology, the Deep Dark, the Nether, brewing and enchanting, the End, the happy ghast |
+| **Researcher** | Redstone, the Nether, brewing and enchanting, automation, exploring, archaeology, the Deep Dark |
+
+- Chapters another chapter needs come first in each route.
+- Switch routes any time with `/guide route <name>` (`fighter`, `farmer`, `explorer`, `researcher`) or in the
+  settings (My guide). Progress is kept.
+  - After a finished chapter, the next chapter of the new route starts right away.
+  - In the middle of a chapter, the guide offers a button to switch.
+- `/guide route free` takes the route away, and you pick every chapter yourself.
+- Finish a route and the guide gives you a title, such as *master farmer*. Then you can pick another route; every
+  chapter stays open.
+
 ### Task card (top-left by default)
 <p>
   <img src="docs/images/task-card.png" alt="Task card: Guide, Ch. 1, First days, current task Chop wood 0/10, next: Make a crafting table, Wooden pickaxe" width="460">
@@ -289,7 +310,8 @@ Minecraft's font can't show.
 | `/guide tip` | Get the most important tip right now |
 | `/guide chapters` | Show the chapters: done, open (click to start) and locked |
 | `/guide chapter <name>` | Start or switch to a chapter that is open |
-| `/guide continue` | Start the next open chapter after finishing one |
+| `/guide continue` | Start the next open chapter after finishing one (the next one on your route first) |
+| `/guide route [<name>\|free]` | Show the routes, or choose one (`fighter`, `farmer`, `explorer`, `researcher`) |
 | `/guide call` | Bring the guide to you (or back after it said goodbye) |
 | `/guide dismiss` | Send the guide away |
 | `/guide mute <minutes>` | No unsolicited tips for a while (0–120) |
@@ -311,7 +333,7 @@ All options can be changed in the game, in the settings screen. Open it with the
 
 - **Display**: the task card (mode, corner, size, steps), the environment card, the recipe card, mob and ore info (distance, crosshair or card), the
   guide's skin, and a button for the keys. Stored on your computer.
-- **My guide**: the guide character, your own name for the guide, musings and small talk. Stored with your player
+- **My guide**: the guide character, your own name for the guide, musings, your route and small talk. Stored with your player
   on the server, so this works on multiplayer servers too.
 - **World**: the server options below. Without a world open you edit your own config file; in a world only the host
   of a singleplayer world or an admin operator (level 3) can see and change them. The language model

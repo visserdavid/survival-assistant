@@ -1,6 +1,7 @@
 package io.github.visserdavid.survivalassistant.client.settings;
 
 import io.github.visserdavid.survivalassistant.advice.GuideChoices;
+import io.github.visserdavid.survivalassistant.advice.Routes;
 import io.github.visserdavid.survivalassistant.client.hud.ClientConfig;
 import io.github.visserdavid.survivalassistant.config.JsonFiles;
 import io.github.visserdavid.survivalassistant.config.ModConfig;
@@ -279,7 +280,8 @@ public final class SettingsScreen extends OptionsSubScreen {
 			}
 			case TAB_GUIDE -> {
 				ModConfig defaults = world != null ? world : new ModConfig();
-				choices.set(new GuideChoices(defaults.npcEnabledByDefault, "", GuideChoices.MUSINGS_ON, chatAllowed));
+				// the route is a choice of where to go, not a setting: a reset keeps it
+				choices.set(new GuideChoices(defaults.npcEnabledByDefault, "", GuideChoices.MUSINGS_ON, chatAllowed, choices.route));
 			}
 			case TAB_WORLD -> world = new ModConfig();
 			default -> {}
@@ -411,16 +413,18 @@ public final class SettingsScreen extends OptionsSubScreen {
 		String name = "";
 		String musings = GuideChoices.MUSINGS_ON;
 		boolean chat;
+		String route = Routes.FREE;
 
 		void set(GuideChoices c) {
 			character = c.character();
 			name = c.name();
 			musings = c.musings();
 			chat = c.chat();
+			route = c.route();
 		}
 
 		GuideChoices toRecord() {
-			return new GuideChoices(character, name, musings, chat);
+			return new GuideChoices(character, name, musings, chat, route);
 		}
 	}
 }

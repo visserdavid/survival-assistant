@@ -2,10 +2,13 @@
 
 Usage: python tools/prep_chapter.py <world folder or ModTesting world name> <goal id>     (Minecraft must be closed)
 Example: python tools/prep_chapter.py Stappentest brew_potion [--spawn] [--revoke husbandry/tame_an_animal ...]
+         [--route fighter|farmer|explorer|researcher|free|none] [--done 6,3,4]
 
 With --spawn the player is also moved to the world spawn (useful when a test starts in the overworld).
 With --revoke the given advancements are taken away again (a goal that an earlier test already earned would otherwise
 be completed at once).
+With --route the player's route is set ("none" = not chosen yet, so the guide asks after the chapter).
+With --done the goals of those chapters are marked done too (to test the end of a route).
 
 Then give gear for the test with tools/set_gear.py.
 
@@ -101,12 +104,22 @@ def revoke(root, names):
         print(f"{f.name}: revoked {', '.join(gone) or 'nothing (not earned)'}")
 
 
+def option(argv, name):
+    """The value after --name (and removes both), or None."""
+    if name not in argv:
+        return None
+    i = argv.index(name)
+    value = argv[i + 1]
+    del argv[i:i + 2]
+    return value
+
+
 def main():
     argv, names = sys.argv[1:], []
     while "--revoke" in argv:
-        i = argv.index("--revoke")
-        names.append(argv[i + 1])
-        del argv[i:i + 2]
+        names.append(option(argv, "--revoke"))
+    route = option(argv, "--route")
+    extra = option(argv, "--done")
     args = [a for a in argv if a != "--spawn"]
     if len(args) != 2:
         sys.exit(__doc__)
@@ -115,6 +128,12 @@ def main():
         revoke(root, names)
     to_spawn = spawn(root) if "--spawn" in sys.argv else None
     (num, cid, goals, _), done = plan(goal)
+    if extra:
+        chs = {c[0]: c for c in chapters()}
+        for n in (int(x) for x in extra.split(",")):
+            if n == num:
+                sys.exit("--done can't include the chapter of the goal itself")
+            done += [g for g in chs[n][2] if g not in done]
     changed = 0
     for f, file_nbt, player in player_tags(root):
         attachments = player.setdefault("fabric:attachments", Compound())
@@ -129,6 +148,12 @@ def main():
         p["completed"] = List[String]([String(g) for g in done])
         p["chapter_started"] = Long(played)
         p["asked_played"] = Long(-1)
+        if route == "none":
+            p.pop("route", None)
+            p.pop("routes_done", None)
+        elif route:
+            p["route"] = String(route)
+            p.pop("routes_done", None)
         attachments[KEY] = p
         if to_spawn:
             dim, x, y, z = to_spawn
@@ -139,7 +164,8 @@ def main():
         file_nbt.save()
         changed += 1
         where = f", moved to the spawn ({to_spawn[0]})" if to_spawn else ""
-        print(f"{f.name}: chapter {num} ({cid}), next goal {goal}, {len(done)} goals marked done{where}")
+        print(f"{f.name}: chapter {num} ({cid}), next goal {goal}, {len(done)} goals marked done{where}"
+              + (f", route {route}" if route else ""))
     if not changed:
         sys.exit("no player data found: open the world once, walk around a few seconds, then quit to the title screen")
 

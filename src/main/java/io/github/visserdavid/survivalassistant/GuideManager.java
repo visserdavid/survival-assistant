@@ -117,7 +117,7 @@ public final class GuideManager {
 			ChapterMenu.offerNextChapter(player, guide, progress);
 		} else if (step == GuideLifecycle.Step.REMIND) {
 			progress.reminded = true;
-			ChapterMenu.show(player, guide, progress, "survivalassistant.chapters.reminder");
+			ChapterMenu.remind(player, guide, progress);
 		}
 
 		if (progress.comfortPending) {
@@ -237,6 +237,7 @@ public final class GuideManager {
 	/** All goals of the last chapter reached: a proper celebration, then the guide leaves. */
 	private static void congratulate(ServerPlayer player, GuideProgress progress) {
 		GuideEntity guide = GuideEntities.get(player);
+		ChapterMenu.praiseRoute(player, guide, progress);
 		String key = progress.chapter <= 1 ? "survivalassistant.congrats." : "survivalassistant.congrats.all.";
 		say(player, guide, Component.translatable(key + "1").withStyle(ChatFormatting.GREEN), false);
 		say(player, guide, Component.translatable(key + "2"), false);

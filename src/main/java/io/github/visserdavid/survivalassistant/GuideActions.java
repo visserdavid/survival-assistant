@@ -5,6 +5,8 @@ import io.github.visserdavid.survivalassistant.advice.Chapters;
 import io.github.visserdavid.survivalassistant.advice.ContextCollector;
 import io.github.visserdavid.survivalassistant.advice.GuideProgress;
 import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
+import io.github.visserdavid.survivalassistant.advice.Route;
+import io.github.visserdavid.survivalassistant.advice.Routes;
 import io.github.visserdavid.survivalassistant.config.ModConfig;
 import io.github.visserdavid.survivalassistant.entity.GuideEntity;
 import io.github.visserdavid.survivalassistant.entity.ai.FollowOwnerGoal;
@@ -110,8 +112,56 @@ public final class GuideActions {
 	public static boolean continueChapter(ServerPlayer player) {
 		GuideProgress progress = GuideState.of(player);
 		if (!Chapters.get(progress.chapter).done(progress.completed)) return false;
+		// the next chapter of the player's route first, then the menu order
+		Chapter next = Routes.recommended(progress).orElse(null);
+		if (next != null && Chapters.status(next, progress.chapter, progress.completed) == Chapters.Status.AVAILABLE) {
+			return startChapter(player, next);
+		}
 		List<Chapter> open = Chapters.available(progress.chapter, progress.completed);
 		return !open.isEmpty() && startChapter(player, open.getFirst());
+	}
+
+	/** /guide route: show the routes. */
+	public static boolean routes(ServerPlayer player) {
+		GuideProgress progress = GuideState.of(player);
+		if (progress.retired || !progress.met()) return false;
+		ChapterMenu.offerRoute(player, GuideEntities.get(player), progress, "survivalassistant.route.header");
+		return true;
+	}
+
+	/**
+	 * /guide route &lt;id|free&gt;: choose or switch the route at any time; progress is kept. With a finished chapter
+	 * (the menu question is open) the route's next chapter starts at once; in the middle of another chapter the guide
+	 * offers a button to switch.
+	 */
+	public static boolean chooseRoute(ServerPlayer player, String value) {
+		GuideProgress progress = GuideState.of(player);
+		if (progress.retired || !progress.met() || !Routes.valid(value)) return false;
+		GuideEntity guide = GuideEntities.get(player);
+		progress.route = value;
+		Route route = Routes.byId(value);
+		if (route == null) {
+			say(player, guide, Component.translatable("survivalassistant.route.free_chosen"), true);
+			if (progress.chapterOffered) ChapterMenu.show(player, guide, progress, "survivalassistant.chapters.offer");
+			return true;
+		}
+		say(player, guide, Component.translatable("survivalassistant.route." + route.id() + ".chosen")
+				.withStyle(ChatFormatting.GREEN), true);
+		Chapter next = route.next(progress.completed).orElse(null);
+		if (next == null) {
+			// the whole route is already behind them
+			progress.routesDone.add(route.id());
+			say(player, guide, Component.translatable("survivalassistant.route.complete",
+					Component.translatable("survivalassistant.route." + route.id() + ".title")), true);
+			return true;
+		}
+		if (next.number() == progress.chapter) return true; // already working on it
+		if (Chapters.get(progress.chapter).done(progress.completed) && startChapter(player, next)) return true;
+		say(player, guide, Component.translatable("survivalassistant.route.next", Component.translatable(next.titleKey())), true);
+		player.sendSystemMessage(Component.literal("   ").append(GuideSpeech.button("survivalassistant.route.switch",
+				"survivalassistant.route.switch_hover", "/guide chapter " + next.id(), ChatFormatting.GOLD,
+				Component.translatable(next.titleKey()))));
+		return true;
 	}
 
 	/** /guide chapter &lt;id&gt;: start or switch to a chapter that is open. Progress in other chapters is kept. */

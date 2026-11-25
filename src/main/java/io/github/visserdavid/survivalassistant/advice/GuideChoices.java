@@ -12,8 +12,9 @@ import java.util.List;
  * @param name      the player's own name for the guide; empty = the server's name
  * @param musings   {@link #MUSINGS_ON}, {@link #MUSINGS_OFF} or {@link #MUSINGS_ALL}
  * @param chat      small talk through a local language model
+ * @param route     {@link Routes#FREE} or a route id (see {@link Routes}); not chosen yet shows as free
  */
-public record GuideChoices(boolean character, String name, String musings, boolean chat) {
+public record GuideChoices(boolean character, String name, String musings, boolean chat, String route) {
 	public static final String MUSINGS_ON = "on";
 	public static final String MUSINGS_OFF = "off";
 	public static final String MUSINGS_ALL = "all";
@@ -22,13 +23,14 @@ public record GuideChoices(boolean character, String name, String musings, boole
 	public GuideChoices {
 		name = name == null ? "" : name.strip();
 		if (musings == null || !MUSINGS.contains(musings)) musings = MUSINGS_ON;
+		if (!Routes.valid(route)) route = Routes.FREE;
 	}
 
 	/** The choices that apply to this player now. */
 	public static GuideChoices of(GuideProgress p, boolean npcDefault, boolean chatDefault) {
 		String musings = p.musings == null ? MUSINGS_ON : p.musings;
 		return new GuideChoices(p.npcEnabled(npcDefault), p.guideName == null ? "" : p.guideName, musings,
-				p.chatEnabled(chatDefault));
+				p.chatEnabled(chatDefault), p.route);
 	}
 
 	/** The value for {@link GuideProgress#musings}: null means "on" (the server default). */

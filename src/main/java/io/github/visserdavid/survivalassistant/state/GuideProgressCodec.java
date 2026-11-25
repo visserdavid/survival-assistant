@@ -5,13 +5,14 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.visserdavid.survivalassistant.advice.GuideProgress;
 import io.github.visserdavid.survivalassistant.advice.Navigation;
+import io.github.visserdavid.survivalassistant.advice.Routes;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
- * How {@link GuideProgress} is saved with the player. The fields are read in three groups, but all keys stay flat
+ * How {@link GuideProgress} is saved with the player. The fields are read in four groups, but all keys stay flat
  * in one map, so the saved data looks exactly like it always did. Never rename a key: old worlds use them.
  * Keys that are no longer used (such as {@code extra_days} from the old day limit) are simply ignored.
  */
@@ -81,13 +82,26 @@ final class GuideProgressCodec {
 		}
 	}
 
+	/** The chosen specialization ("" = not asked yet) and the routes already finished. */
+	private record Path(String route, List<String> routesDone) {
+		static final MapCodec<Path> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+				Codec.STRING.lenientOptionalFieldOf("route", "").forGetter(Path::route),
+				Codec.STRING.listOf().lenientOptionalFieldOf("routes_done", List.of()).forGetter(Path::routesDone)
+		).apply(i, Path::new));
+
+		static Path of(GuideProgress p) {
+			return new Path(p.route, List.copyOf(p.routesDone));
+		}
+	}
+
 	static final Codec<GuideProgress> CODEC = RecordCodecBuilder.create(i -> i.group(
 			Course.CODEC.forGetter(Course::of),
 			Choices.CODEC.forGetter(Choices::of),
-			Memory.CODEC.forGetter(Memory::of)
+			Memory.CODEC.forGetter(Memory::of),
+			Path.CODEC.forGetter(Path::of)
 	).apply(i, GuideProgressCodec::progress));
 
-	private static GuideProgress progress(Course course, Choices choices, Memory memory) {
+	private static GuideProgress progress(Course course, Choices choices, Memory memory, Path path) {
 		GuideProgress p = new GuideProgress();
 		p.startTick = course.startTick();
 		p.retired = course.retired();
@@ -108,6 +122,9 @@ final class GuideProgressCodec {
 		p.homeFallback = orNull(memory.homeFallback());
 		p.muteUntil = memory.muteUntil();
 		p.reminded = memory.reminded();
+		// an unknown route (from a newer version) counts as not chosen: the guide asks again
+		p.route = Routes.valid(path.route()) ? path.route() : "";
+		p.routesDone.addAll(path.routesDone());
 		return p;
 	}
 

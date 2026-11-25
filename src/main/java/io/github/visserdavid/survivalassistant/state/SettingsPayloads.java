@@ -25,6 +25,7 @@ public final class SettingsPayloads {
 			ByteBufCodecs.stringUtf8(64), GuideChoices::name,
 			ByteBufCodecs.stringUtf8(8), GuideChoices::musings,
 			ByteBufCodecs.BOOL, GuideChoices::chat,
+			ByteBufCodecs.stringUtf8(16), GuideChoices::route,
 			GuideChoices::new);
 
 	/** Not via SurvivalAssistant.id(): that would load the main class (and its registry work) in the tests. */

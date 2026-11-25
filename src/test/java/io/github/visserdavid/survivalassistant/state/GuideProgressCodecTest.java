@@ -54,6 +54,19 @@ class GuideProgressCodecTest {
 	}
 
 	@Test
+	void theRouteAndFinishedRoutesRoundTrip() {
+		GuideProgress p = decode("{\"route\": \"farmer\", \"routes_done\": [\"explorer\"]}");
+		assertEquals("farmer", p.route);
+		assertEquals(Set.of("explorer"), p.routesDone);
+		GuideProgress again = decode(GuideProgressCodec.CODEC.encodeStart(JsonOps.INSTANCE, p).getOrThrow().toString());
+		assertEquals("farmer", again.route);
+		assertEquals(Set.of("explorer"), again.routesDone);
+		assertEquals("free", decode("{\"route\": \"free\"}").route);
+		// a route this version doesn't know: the guide asks again
+		assertEquals("", decode("{\"route\": \"wizard\"}").route);
+	}
+
+	@Test
 	void missingKeysGetTheirDefaults() {
 		GuideProgress p = decode("{}");
 		assertEquals(-1, p.startTick);
@@ -64,6 +77,8 @@ class GuideProgressCodecTest {
 		assertEquals(-1, p.askedAtTick);
 		assertEquals(-1, p.chapterStartedAt);
 		assertEquals(0, p.playedTicks);
+		assertEquals("", p.route);
+		assertTrue(p.routesDone.isEmpty());
 	}
 
 	@Test

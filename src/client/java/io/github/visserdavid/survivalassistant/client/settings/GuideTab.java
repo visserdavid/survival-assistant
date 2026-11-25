@@ -2,6 +2,8 @@ package io.github.visserdavid.survivalassistant.client.settings;
 
 import io.github.visserdavid.survivalassistant.advice.GuideChoices;
 import io.github.visserdavid.survivalassistant.advice.GuideNames;
+import io.github.visserdavid.survivalassistant.advice.Route;
+import io.github.visserdavid.survivalassistant.advice.Routes;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -29,12 +31,18 @@ final class GuideTab {
 				.cycle("musings", GuideChoices.MUSINGS, d.musings, GuideTab::musingsName, v -> d.musings = v);
 		rows.text("name", d.name, serverName, GuideNames.MAX_LENGTH,
 				v -> v.isBlank() || GuideNames.valid(v), v -> d.name = v.strip());
+		rows.cycle("route", Routes.CHOICES, d.route, GuideTab::routeName, v -> d.route = v);
 
 		rows.header("small_talk")
 				.toggle("chat", d.chat, v -> d.chat = v);
 		// only the server can allow small talk; then each player can switch it off for themselves
 		if (!chatAllowed) rows.lockLast(Component.translatable(KEY + "chat.not_allowed"));
 		rows.flush();
+	}
+
+	private static Component routeName(String value) {
+		Route route = Routes.byId(value);
+		return route == null ? Component.translatable(KEY + "route.free") : Component.translatable(route.nameKey());
 	}
 
 	/** On and off look like every other switch; "everywhere" is the third choice. */

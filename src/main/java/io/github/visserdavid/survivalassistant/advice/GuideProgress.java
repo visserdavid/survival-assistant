@@ -46,6 +46,10 @@ public final class GuideProgress {
 	public boolean chapterOffered = false;
 	/** The final congratulation happened; when called back the guide only helps, without new goals. */
 	public boolean finished = false;
+	/** The chosen route (see {@link Routes}): "" = not asked yet, {@link Routes#FREE}, or a route id. */
+	public String route = "";
+	/** Routes the player finished (the title was given once for each). */
+	public final Set<String> routesDone = new LinkedHashSet<>();
 
 	/** Game tick until which unsolicited tips are muted (saved, so logging out and in doesn't end /guide mute). */
 	public long muteUntil = 0;
