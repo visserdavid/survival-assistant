@@ -2,6 +2,8 @@ package io.github.visserdavid.survivalassistant.client.skin;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import io.github.visserdavid.survivalassistant.SurvivalAssistant;
+import io.github.visserdavid.survivalassistant.advice.Route;
+import io.github.visserdavid.survivalassistant.advice.Routes;
 import io.github.visserdavid.survivalassistant.client.hud.ClientConfig;
 import io.github.visserdavid.survivalassistant.skin.SkinNames;
 import net.fabricmc.loader.api.FabricLoader;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * Custom guide skins from {@code config/survivalassistant/skins/}. Client only: every player picks the look of
@@ -28,11 +31,18 @@ public final class GuideSkins {
 	private GuideSkins() {}
 
 	public static final Identifier DEFAULT_TEXTURE = SurvivalAssistant.id("textures/entity/guide.png");
+	public static final Identifier CLASSIC_TEXTURE = SurvivalAssistant.id("textures/entity/guide_classic.png");
+	/** Only the eyes of the keeper skins (default and route outfits), drawn full-bright by {@code GuideEyesLayer}. */
+	public static final Identifier EYES_TEXTURE = SurvivalAssistant.id("textures/entity/guide_eyes.png");
 
 	/** A skin to draw: texture and arm model. */
 	public record Skin(Identifier texture, boolean slim) {}
 
 	private static final Skin DEFAULT = new Skin(DEFAULT_TEXTURE, false);
+	private static final Skin CLASSIC = new Skin(CLASSIC_TEXTURE, false);
+	/** The keeper's outfit per route: textures/entity/guide_&lt;route&gt;.png (drawn by tools/make_guide_skin.py). */
+	private static final Map<String, Skin> ROUTE_SKINS = Routes.ALL.stream().collect(Collectors.toUnmodifiableMap(Route::id,
+			r -> new Skin(SurvivalAssistant.id("textures/entity/guide_" + r.id() + ".png"), false)));
 	private static final Map<String, Skin> SKINS = new TreeMap<>();
 	private static final List<String> PROBLEMS = new ArrayList<>();
 
@@ -65,17 +75,35 @@ public final class GuideSkins {
 		}
 	}
 
-	/** The skin chosen in the client config, or the built-in one when it isn't available. */
-	public static Skin current() {
+	/**
+	 * The skin for a guide whose owner follows {@code route} ("" for none): the skin chosen in the client config, or
+	 * with "default" (and when the chosen skin isn't available) the keeper, dressed for the route.
+	 */
+	public static Skin current(String route) {
 		String chosen = ClientConfig.get().guideSkin;
-		if (chosen == null || chosen.equals(SkinNames.DEFAULT)) return DEFAULT;
-		return SKINS.getOrDefault(chosen, DEFAULT);
+		if (SkinNames.CLASSIC.equals(chosen)) return CLASSIC;
+		Skin own = chosen == null ? null : SKINS.get(chosen);
+		if (own != null) return own;
+		return ROUTE_SKINS.getOrDefault(route, DEFAULT);
+	}
+
+	/** True when the keeper is shown (default or a route outfit): only he has glowing eyes. */
+	public static boolean keeperShown(String route) {
+		Skin skin = current(route);
+		return skin == DEFAULT || ROUTE_SKINS.containsValue(skin);
+	}
+
+	/** The built-in skins, then the ones from the folder: everything {@code /guideskin set} accepts. */
+	public static List<String> choices() {
+		List<String> all = new ArrayList<>(SkinNames.BUILT_IN);
+		all.addAll(SKINS.keySet());
+		return all;
 	}
 
 	/** True when a custom skin is chosen but not found (the guide then falls back to the built-in skin). */
 	public static boolean chosenMissing() {
 		String chosen = ClientConfig.get().guideSkin;
-		return chosen != null && !chosen.equals(SkinNames.DEFAULT) && !SKINS.containsKey(chosen);
+		return chosen != null && !SkinNames.BUILT_IN.contains(chosen) && !SKINS.containsKey(chosen);
 	}
 
 	/** Names of the usable skins, sorted. */

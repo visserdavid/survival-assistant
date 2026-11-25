@@ -88,8 +88,10 @@ chapter is on [GitHub](https://github.com/visserdavid/survival-assistant/tree/ma
 No speedrun tricks: the path is made for an average player.
 
 ## Meet Pim
-The guide has a name and a story: an old explorer whose own first night went badly. Ask him about himself with
-`/guide about`, give him another name with `/guide name`, or give him your own skin with `/guideskin`. Now and
+The guide has a name and a story: an old explorer whose own first night went badly. He walks in a deep hood
+with a long grey beard, and his eyes glow softly in the dark. On a route he dresses for it, from chainmail for
+the fighter to a straw hat for the farmer. Ask him about himself with `/guide about`, give him
+another name with `/guide name`, or another look with `/guideskin` (the classic traveller, or your own skin). Now and
 then he shares a building idea for the biome you're in, or a remark about the animals around you.
 
 ## Optional: small talk with a local AI
@@ -125,7 +127,8 @@ This mod was made with a lot of help from AI. To be open about it:
 
 - **Made with AI:** the code (written with Claude by Anthropic, at the developer's direction), all texts
   including the guide's lines and story, all translations, the research (looked up with AI, then checked
-  against Minecraft 26.3's own data files), the mod icon and the guide's default skin.
+  against Minecraft 26.3's own data files), the mod icon and the guide's classic skin. The default skin was
+  drawn pixel by pixel by a script written with Claude, following skin-design guidelines.
 - **Not made with AI:** the idea, the choices about what the mod does and how it feels, the play testing, and
   the screenshots (real in-game screenshots). The game facts come from Minecraft's data, not from the AI's memory.
 - **AI while you play:** none by default. Every tip and warning is a fixed, checked text. Only the optional

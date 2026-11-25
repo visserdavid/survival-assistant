@@ -4,6 +4,9 @@ import io.github.visserdavid.survivalassistant.GuideManager;
 import io.github.visserdavid.survivalassistant.entity.ai.FollowOwnerGoal;
 import io.github.visserdavid.survivalassistant.entity.ai.KeepClearGoal;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -45,6 +48,9 @@ public class GuideEntity extends PathfinderMob {
 	private static final PathType[] DANGERS = {PathType.LAVA, PathType.FIRE, PathType.FIRE_IN_NEIGHBOR, PathType.DAMAGING,
 			PathType.DAMAGING_IN_NEIGHBOR, PathType.POWDER_SNOW, PathType.ON_TOP_OF_POWDER_SNOW};
 
+	/** The owner's route ("" when none), synced so every client can dress the guide for it. */
+	private static final EntityDataAccessor<String> DATA_ROUTE = SynchedEntityData.defineId(GuideEntity.class, EntityDataSerializers.STRING);
+
 	private @Nullable UUID ownerId;
 	private @Nullable BlockPos pointAt;
 	private int pointTicks;
@@ -77,6 +83,21 @@ public class GuideEntity extends PathfinderMob {
 		this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8f));
 		this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
 		// no random strolling: wandering off is how a guide ends up in front of you
+	}
+
+	@Override
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(DATA_ROUTE, "");
+	}
+
+	/** The owner's route id, or "" (no route, or choosing freely). Sent to clients only when it changes. */
+	public void setRoute(String route) {
+		if (!route.equals(getRoute())) entityData.set(DATA_ROUTE, route);
+	}
+
+	public String getRoute() {
+		return entityData.get(DATA_ROUTE);
 	}
 
 	// --- owner ---

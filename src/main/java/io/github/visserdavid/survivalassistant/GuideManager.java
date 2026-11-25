@@ -101,6 +101,7 @@ public final class GuideManager {
 		if (npc) {
 			guide = GuideEntities.ensure(player);
 			if (guide == null) return;
+			guide.setRoute(progress.route); // the guide dresses for the route (client side, see GuideSkins)
 		} else {
 			GuideEntities.remove(player.getUUID(), true);
 		}

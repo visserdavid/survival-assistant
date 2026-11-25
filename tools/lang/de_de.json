@@ -862,6 +862,7 @@
 "~settings.unit.blocks": "%s Blöcke",
 "~settings.unit.none": "Keine",
 "~settings.skin.default": "Standard",
+"~settings.skin.classic": "Klassisch",
 "~settings.musings.all": "Überall",
 "~settings.group.task_card": "Aufgabenkarte",
 "~settings.group.environment": "Umgebungskarte",

@@ -208,9 +208,13 @@ chapter menu, and `/guide continue` starts it. A route adds no goals and locks n
   (then only careful remarks, no building ideas there). `/guide musings off` turns them off.
 
 ### Your own guide skin
+- The built-in guide is an old keeper in a deep hood whose eyes glow softly in the dark. On a route he dresses for
+  it: chainmail and a crimson tabard for the fighter, a straw hat for the farmer, an ochre cloak with a map for the
+  explorer, an amethyst cloak with goggles for the researcher. Other players see your guide in your route's outfit.
+- `/guideskin set classic` gives him the earlier traveller's look (without glowing eyes); `/guideskin set default`
+  brings back the keeper.
 - Put any Minecraft skin (PNG, 64x64) in `config/survivalassistant/skins/`, then use `/guideskin reload`
-  and `/guideskin set <name>` (the file name without `.png`, with tab completion). `/guideskin set default`
-  brings back the built-in guide.
+  and `/guideskin set <name>` (the file name without `.png`, with tab completion). Your own skins don't glow.
 - File names ending in `_slim` (for example `elf_slim.png`) use the slim (Alex) arms. The skin's second
   layer (hat, jacket, sleeves, pants) is shown too.
 - `/guideskin list` shows the skins (click one to use it) and `/guideskin folder` gives a clickable link to
@@ -403,7 +407,7 @@ The settings screen writes these files; you can also edit them by hand (server o
 | `crosshairInfo` | `true` | Info about the mob or ore you look at |
 | `crosshairRange` | `16` | Mobs up to this many blocks away get info (3–32); ores keep the normal reach |
 | `crosshairPlace` | `CROSSHAIR` | `CROSSHAIR` (under the crosshair) or `CARD` (a card under the environment card) |
-| `guideSkin` | `default` | Guide skin from `config/survivalassistant/skins` (set with `/guideskin set`) |
+| `guideSkin` | `default` | Guide skin: `default`, `classic` or one from `config/survivalassistant/skins` (set with `/guideskin set`) |
 | `scale` | `1.0` | Extra scale on top of the GUI scale (0.5–2.0) |
 | `margin` | `4` | Distance from the screen edge |
 
@@ -499,7 +503,9 @@ This mod was made with a lot of help from AI. To be open about what that means:
 - **Research**: the game facts were looked up with AI, then checked against Minecraft 26.3's own data files,
   partly with scripts (`tools/recipe_check.py`, `tools/biome_facts.py`). The research documents above show the
   sources and the checks.
-- **Images**: the mod icon and the guide's default skin are AI-generated.
+- **Images**: the mod icon and the guide's classic skin are AI-generated. The default skin, the hooded "Keeper of
+  the Ancients", and his route outfits are drawn pixel by pixel by `tools/make_guide_skin.py`, a script written
+  with Claude.
 
 **Not made with AI**
 - The idea, the choices about what the mod does and how it should feel, and the play testing in the game are the

@@ -2324,6 +2324,7 @@ L = {
     P + "settings.unit.blocks": ("%s blocks", "%s blokken"),
     P + "settings.unit.none": ("None", "Geen"),
     P + "settings.skin.default": ("Standard", "Standaard"),
+    P + "settings.skin.classic": ("Classic", "Klassiek"),
     P + "settings.musings.all": ("Everywhere", "Overal"),
     P + "settings.group.task_card": ("Task card", "Takenkaart"),
     P + "settings.group.environment": ("Environment card", "Omgevingskaart"),

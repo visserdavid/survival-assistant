@@ -14,7 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -32,11 +31,7 @@ public final class SkinCommand {
 				.then(ClientCommands.literal("folder").executes(SkinCommand::folder))
 				.then(ClientCommands.literal("set")
 						.then(ClientCommands.argument("name", StringArgumentType.word())
-								.suggests((c, b) -> {
-									List<String> options = new ArrayList<>(GuideSkins.names());
-									options.add(0, SkinNames.DEFAULT);
-									return SharedSuggestionProvider.suggest(options, b);
-								})
+								.suggests((c, b) -> SharedSuggestionProvider.suggest(GuideSkins.choices(), b))
 								.executes(SkinCommand::set))));
 	}
 
@@ -44,8 +39,7 @@ public final class SkinCommand {
 		List<String> names = GuideSkins.names();
 		String active = ClientConfig.get().guideSkin;
 		c.getSource().sendFeedback(Component.translatable(KEY_PREFIX + "list_header", names.size()).withStyle(ChatFormatting.GOLD));
-		c.getSource().sendFeedback(entry(SkinNames.DEFAULT, active));
-		for (String name : names) c.getSource().sendFeedback(entry(name, active));
+		for (String name : GuideSkins.choices()) c.getSource().sendFeedback(entry(name, active));
 		if (names.isEmpty()) c.getSource().sendFeedback(Component.translatable(KEY_PREFIX + "empty").withStyle(ChatFormatting.GRAY));
 		reportProblems(c);
 		c.getSource().sendFeedback(folderLink());
@@ -62,7 +56,7 @@ public final class SkinCommand {
 
 	private static int set(CommandContext<FabricClientCommandSource> c) {
 		String name = StringArgumentType.getString(c, "name").toLowerCase(Locale.ROOT);
-		if (!name.equals(SkinNames.DEFAULT) && !GuideSkins.names().contains(name)) {
+		if (!GuideSkins.choices().contains(name)) {
 			c.getSource().sendError(Component.translatable(KEY_PREFIX + "not_found", name));
 			return 0;
 		}

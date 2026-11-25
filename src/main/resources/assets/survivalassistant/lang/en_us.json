@@ -1301,6 +1301,7 @@
 	"survivalassistant.settings.unit.blocks": "%s blocks",
 	"survivalassistant.settings.unit.none": "None",
 	"survivalassistant.settings.skin.default": "Standard",
+	"survivalassistant.settings.skin.classic": "Classic",
 	"survivalassistant.settings.musings.all": "Everywhere",
 	"survivalassistant.settings.group.task_card": "Task card",
 	"survivalassistant.settings.group.environment": "Environment card",

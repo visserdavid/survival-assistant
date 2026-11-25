@@ -49,13 +49,11 @@ final class DisplayTab {
 						v -> c.crosshairPlace = v)
 				.slider("crosshair_range", 3, 32, c.crosshairRange, Rows::blocks, v -> c.crosshairRange = v);
 
-		List<String> skins = new ArrayList<>();
-		skins.add(SkinNames.DEFAULT);
-		skins.addAll(GuideSkins.names());
+		List<String> skins = new ArrayList<>(GuideSkins.choices());
 		if (!skins.contains(c.guideSkin)) skins.add(c.guideSkin);
 		rows.header("look")
 				.cycle("skin", skins, c.guideSkin,
-						s -> s.equals(SkinNames.DEFAULT) ? Component.translatable(KEY + "skin.default") : Component.literal(shortName(s)),
+						s -> SkinNames.BUILT_IN.contains(s) ? Component.translatable(KEY + "skin." + s) : Component.literal(shortName(s)),
 						v -> c.guideSkin = v)
 				.button(Button.builder(label("skin_folder"), b -> Blaze3D.openPath(GuideSkins.folder()))
 						.width(Rows.WIDGET_WIDTH).tooltip(tip("skin_folder")).build());
