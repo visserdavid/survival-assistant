@@ -98,7 +98,9 @@ archaeology, the trial challenges, the happy ghast and automation.
   check-mark animation when a goal is done.
 - **Steps**: big goals are split into small steps, shown under the current task with their own counter, and the
   guide tells you each step as soon as you reach it. Brewing a potion, for example, goes: glass bottles (3/3), fill
-  them with water, blaze powder as fuel, brew. Steps exist for the first farm (a hoe, seeds, tilled soil by water, plant), the bow (string, the bow, flint,
+  them with water, blaze powder as fuel, brew. Steps exist for the first farm (a hoe, seeds, tilled soil by water, plant), bread (ripe wheat, 9 wheat, bake),
+  taming an animal (a wolf or cat, bones or raw fish, feed it), milk (iron, a bucket, a cow), fishing (string, a rod,
+  water, cast), the bow (string, the bow, flint,
   feathers, arrows), the enchanting table, the iron golem, the Nether
   portal, the Nether fortress (the guide notices when one is close), blaze rods, Nether wart, brewing, bookshelves, honey (bottle, nest, campfire, wait), your own horse (find, tame, saddle),
   buried treasure (map, red X, dig), the turtle shell (turtles, seagrass, eggs, 5 scutes), the trident (find drowned, one holding a trident, beat it at the shore),

@@ -90,12 +90,14 @@ public final class Steps {
 	/** Items whose carried count the collector reports ({@link SurvivalContext.Inventory#count}). */
 	public static final Set<String> TRACKED_ITEMS = Stream.concat(Stream.concat(HOES.stream(), SEEDS.stream()), Stream.of(
 			"glass_bottle", "blaze_powder", "paper", "leather", "book", "bookshelf", "iron_block", "iron_ingot",
-			"carved_pumpkin", "ancient_debris", "netherite_scrap", "gold_ingot", "glass", "beacon", "hopper", "saddle", "crying_obsidian", "glowstone", "glowstone_dust", "respawn_anchor",
-			"compass", "seagrass", "turtle_scute", "ghast_tear", "copper_block", "copper_ingot", "copper_bulb",
-			"crafting_table", "dropper", "string", "flint", "feather")).collect(Collectors.toUnmodifiableSet());
+			"carved_pumpkin", "ancient_debris", "netherite_scrap", "gold_ingot", "glass", "beacon", "hopper",
+			"saddle", "crying_obsidian", "glowstone", "glowstone_dust", "respawn_anchor", "compass", "seagrass",
+			"turtle_scute", "ghast_tear", "copper_block", "copper_ingot", "copper_bulb", "crafting_table", "dropper",
+			"string", "flint", "feather", "wheat", "bone", "cod", "salmon", "bucket", "fishing_rod"))
+			.collect(Collectors.toUnmodifiableSet());
 	/** Blocks whose placed count nearby the collector reports ({@link SurvivalContext.Nearby#placed}). */
 	public static final Set<String> TRACKED_BLOCKS = Set.of("obsidian", "nether_portal", "iron_block", "carved_pumpkin",
-			"beacon", "hopper", "nether_wart", "respawn_anchor", "turtle_egg", "copper_bulb", "farmland");
+			"beacon", "hopper", "nether_wart", "respawn_anchor", "turtle_egg", "copper_bulb", "farmland", "water");
 
 	/** The pyramid has at most 4 levels: 9 + 25 + 49 + 81 = 164 blocks. */
 	public static final int MAX_BEACON_LEVEL = 4;
@@ -107,6 +109,8 @@ public final class Steps {
 	public static final int ANCHOR_CHARGES = 4;
 	/** One flint, stick and feather make 4 arrows; the bow goal wants 16. */
 	private static final int ARROWS_PER_CRAFT = 4, ARROW_CRAFTS = 4;
+	/** 3 wheat make a bread; the bread goal wants 3. */
+	private static final int WHEAT_PER_BREAD = 3, BREADS = 3;
 	/** The farm goal wants 6 crops. */
 	private static final int FARM_CROPS = 6;
 	/** The crafter's own recipe fills all 9 slots of a crafter. */
@@ -166,6 +170,11 @@ public final class Steps {
 		return c.inv().arrows() / ARROWS_PER_CRAFT;
 	}
 
+	/** Wheat carried, plus the wheat already baked into bread. */
+	private static int wheat(SurvivalContext c) {
+		return item(c, "wheat") + WHEAT_PER_BREAD * c.inv().bread();
+	}
+
 	private static boolean hasBulb(SurvivalContext c) {
 		return item(c, "copper_bulb") > 0 || c.nearby().placed("copper_bulb") > 0;
 	}
@@ -177,6 +186,11 @@ public final class Steps {
 	// ---------------------------------------------------------------- the steps per goal
 
 	public static final Map<String, List<Step>> BY_GOAL = Map.ofEntries(
+			// chapter 2: ripe wheat, 9 of it (baked bread counts), then 3 in a row
+			Map.entry("bread", List.of(
+					step("bread.ripe", c -> c.nearby().ripeWheat() > 0 || wheat(c) >= WHEAT_PER_BREAD * BREADS),
+					count("bread.harvest", Steps::wheat, WHEAT_PER_BREAD * BREADS, c -> false),
+					finish("bread.bake"))),
 			// chapter 2: a hoe, seeds (planted ones count), tilled soil by the water, then plant
 			Map.entry("farm", List.of(
 					step("farm.hoe", c -> sum(c, HOES) > 0 || planting(c)),
@@ -239,6 +253,23 @@ public final class Steps {
 					count("bookshelves.books", c -> item(c, "book"), BOOKS_PER_SHELF, Steps::carriesShelves),
 					step("bookshelves.craft", Steps::carriesShelves),
 					finish("bookshelves.place"))),
+			// chapter 6: an untamed wolf or cat, bones or raw fish, then feed it until hearts appear
+			Map.entry("tame_animal", List.of(
+					step("tame_animal.find", c -> c.creatures().tameableNearby()),
+					step("tame_animal.food", c -> item(c, "bone") + item(c, "cod") + item(c, "salmon") > 0),
+					finish("tame_animal.feed"))),
+			// chapter 6: 3 iron make a bucket; a cow, mooshroom or goat gives milk
+			Map.entry("milk", List.of(
+					count("milk.iron", c -> item(c, "iron_ingot"), 3, c -> item(c, "bucket") > 0),
+					step("milk.bucket", c -> item(c, "bucket") > 0),
+					step("milk.cow", c -> c.creatures().milkableNearby()),
+					finish("milk.milk"))),
+			// chapter 6: 3 sticks and 2 string make a rod; any water will do
+			Map.entry("fishing", List.of(
+					count("fishing.string", c -> item(c, "string"), 2, c -> item(c, "fishing_rod") > 0),
+					step("fishing.rod", c -> item(c, "fishing_rod") > 0),
+					step("fishing.water", c -> c.nearby().placed("water") > 0),
+					finish("fishing.cast"))),
 			// chapter 6: a bottle, a hive, a campfire under it (calm bees), wait until it's full, then the bottle
 			Map.entry("honey", List.of(
 					count("honey.bottle", c -> item(c, "glass_bottle"), 1, c -> false),

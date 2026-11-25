@@ -71,8 +71,32 @@ def farm_plot():
     return b
 
 
+def wheat_field():
+    """The farm plot, tilled and full of ripe wheat around the water: 80 plants, 9 wheat is quick to harvest."""
+    b = Build(9, 4, 9, (-4, -1, -4))
+    b.layer(0, "minecraft:farmland[moisture=7]")
+    b.layer(1, "minecraft:wheat[age=7]")
+    b.set(4, 0, 4, "minecraft:water[level=0]")
+    b.set(4, 1, 4, "minecraft:air")
+    return b
+
+
+def pond():
+    """A 5x5 pond, 2 deep, with a grass rim, the player standing on the rim at the near edge."""
+    b = Build(7, 5, 7, (-3, -3, 1))
+    for y in range(3):
+        b.layer(y, "minecraft:grass_block" if y == 2 else "minecraft:dirt")
+    for x in range(1, 6):
+        for z in range(1, 6):
+            b.set(x, 1, z, "minecraft:water[level=0]")
+            b.set(x, 2, z, "minecraft:water[level=0]")
+    return b
+
+
 BUILDS = {
     "sa_farm_plot": farm_plot,
+    "sa_wheat_field": wheat_field,
+    "sa_pond": pond,
 }
 
 

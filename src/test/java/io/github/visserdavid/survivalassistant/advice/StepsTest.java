@@ -209,6 +209,41 @@ class StepsTest {
 	}
 
 	@Test
+	void bread() {
+		Tip g = TipRegistry.BREAD;
+		assertEquals("bread.ripe", current(g, b -> b.crops(6).item("wheat", 2)));
+		assertEquals("bread.harvest", current(g, b -> b.ripeWheat(3).item("wheat", 2)));
+		assertEquals("bread.bake", current(g, b -> b.item("wheat", 9)));
+		assertEquals("bread.bake", current(g, b -> b.item("wheat", 3).bread(2)), "baked bread counts as its wheat");
+	}
+
+	@Test
+	void tameAnimal() {
+		Tip g = TipRegistry.TAME_ANIMAL;
+		assertEquals("tame_animal.find", current(g, b -> b.item("bone", 5)));
+		assertEquals("tame_animal.food", current(g, b -> b.tameableNearby(true)));
+		assertEquals("tame_animal.feed", current(g, b -> b.tameableNearby(true).item("cod", 1)));
+	}
+
+	@Test
+	void milk() {
+		Tip g = TipRegistry.MILK;
+		assertEquals("milk.iron", current(g, b -> b.item("iron_ingot", 2).milkableNearby(true)));
+		assertEquals("milk.bucket", current(g, b -> b.item("iron_ingot", 3)));
+		assertEquals("milk.cow", current(g, b -> b.item("bucket", 1)), "crafting the bucket used up the iron");
+		assertEquals("milk.milk", current(g, b -> b.item("bucket", 1).milkableNearby(true)));
+	}
+
+	@Test
+	void fishing() {
+		Tip g = TipRegistry.FISHING;
+		assertEquals("fishing.string", current(g, b -> b.item("string", 1).block("water", 20)));
+		assertEquals("fishing.rod", current(g, b -> b.item("string", 2)));
+		assertEquals("fishing.water", current(g, b -> b.item("fishing_rod", 1)));
+		assertEquals("fishing.cast", current(g, b -> b.item("fishing_rod", 1).block("water", 20)));
+	}
+
+	@Test
 	void ironGolem() {
 		Tip g = TipRegistry.IRON_GOLEM;
 		assertEquals("iron_golem.iron_blocks", current(g, b -> b.item("iron_block", 3).item("iron_ingot", 8)));

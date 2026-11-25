@@ -90,6 +90,11 @@ KITS = {
               item("dirt", 32), TABLE], armor("iron"), None),
     "bow": ([item("stone_sword"), item("stone_shovel"), item("stick", 8), item("gravel", 32), FOOD, TORCHES, TABLE],
             armor("iron"), SHIELD),
+    # farm life, chapters 2 and 6: simple gear; never the wheat, bread, bones, fish, iron, bucket, string or rod tested
+    "bread": ([item("stone_sword"), item("stone_hoe"), FOOD, TORCHES, TABLE], armor("iron"), None),
+    "tame_animal": ([item("stone_sword"), FOOD, TORCHES, BLOCKS, item("lead", 2)], armor("iron"), SHIELD),
+    "milk": ([item("stone_sword"), item("stone_pickaxe"), FOOD, TORCHES, item("furnace"), TABLE], armor("iron"), SHIELD),
+    "fishing": ([item("stone_sword"), item("stick", 3), FOOD, TORCHES, TABLE], armor("iron"), SHIELD),
     # redstone: a lever and buttons for the pulse; no copper, blaze rod, redstone or bulbs
     "copper_bulb": ([PICK, item("lever", 4), item("stone_button", 4), BLOCKS, TORCHES, FOOD, TABLE], armor(), SHIELD),
 }

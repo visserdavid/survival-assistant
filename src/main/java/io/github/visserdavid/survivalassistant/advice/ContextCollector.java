@@ -18,7 +18,12 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.camel.Camel;
+import net.minecraft.world.entity.animal.cow.AbstractCow;
+import net.minecraft.world.entity.animal.feline.Cat;
+import net.minecraft.world.entity.animal.goat.Goat;
+import net.minecraft.world.entity.animal.wolf.Wolf;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.entity.animal.equine.Llama;
 import net.minecraft.world.entity.animal.happyghast.HappyGhast;
@@ -44,6 +49,7 @@ import net.minecraft.world.level.block.BeehiveBlock;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CopperBulbBlock;
+import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.EnchantingTableBlock;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.RespawnAnchorBlock;
@@ -295,7 +301,7 @@ public final class ContextCollector {
 		int r = BLOCK_SCAN_RADIUS, h = BLOCK_SCAN_HEIGHT;
 		int crops = 0, bookshelves = 0;
 		boolean autoSmelter = false, hopperOnFurnace = false, standFuel = false;
-		int standBottles = 0, beaconLevel = 0, anchorCharge = 0, crafterSlots = 0;
+		int standBottles = 0, beaconLevel = 0, anchorCharge = 0, crafterSlots = 0, ripeWheat = 0;
 		boolean witherBase = false;
 		Map<String, Integer> tracked = new HashMap<>();
 		for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-r, -h, -r), origin.offset(r, h, r))) {
@@ -307,7 +313,10 @@ public final class ContextCollector {
 			else if (st.is(Blocks.FURNACE)) b.hasFurnace(true);
 			else if (st.is(Blocks.CHEST)) b.hasChest(true);
 			else if (st.is(BlockTags.BEDS)) b.hasBed(true);
-			else if (st.is(BlockTags.CROPS)) crops++;
+			else if (st.is(BlockTags.CROPS)) {
+				crops++;
+				if (st.is(Blocks.WHEAT) && st.getBlock() instanceof CropBlock crop && crop.isMaxAge(st)) ripeWheat++;
+			}
 			else if (st.is(Blocks.ENCHANTING_TABLE)) {
 				b.hasEnchantingTable(true);
 				bookshelves = Math.max(bookshelves, bookshelvesAround(level, pos));
@@ -344,7 +353,7 @@ public final class ContextCollector {
 		scanHives(level, origin, b);
 		b.crops(crops).bookshelves(bookshelves).autoSmelter(autoSmelter).hopperOnFurnace(hopperOnFurnace)
 				.standBottles(standBottles).standFuel(standFuel).beaconLevel(beaconLevel)
-				.anchorCharge(anchorCharge).witherBase(witherBase).crafterSlots(crafterSlots);
+				.anchorCharge(anchorCharge).witherBase(witherBase).crafterSlots(crafterSlots).ripeWheat(ripeWheat);
 		tracked.forEach(b::block);
 	}
 
@@ -483,6 +492,10 @@ public final class ContextCollector {
 			if (close && e instanceof HappyGhast ghast && ghast.isBaby()) b.ghastling(true);
 			if (!overworld && alive && e instanceof Ghast) b.ghast(true);
 			if (!overworld && alive && e instanceof Blaze) b.blazeNearby(true);
+			if (alive && close && (e instanceof Wolf || e instanceof Cat) && !((TamableAnimal) e).isTame()) {
+				b.tameableNearby(true);
+			}
+			if (alive && close && (e instanceof AbstractCow || e instanceof Goat) && !e.isBaby()) b.milkableNearby(true);
 			if (alive && close && e instanceof Turtle turtle) {
 				b.turtleNearby(true);
 				if (turtle.isBaby()) b.babyTurtleNearby(true);

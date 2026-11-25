@@ -179,6 +179,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 	 * @param fortressNear      a Nether fortress reaches into the chunks around the player (about 4 chunks)
 	 * @param bastionNear       a bastion remnant reaches into the chunks around the player (about 4 chunks)
 	 * @param crafterSlots      filled slots (0 - 9) of the fullest crafter nearby
+	 * @param ripeWheat         fully grown wheat nearby
 	 * @param anchorCharge      charges (0 - 4) of the fullest respawn anchor nearby; 0 when there is none
 	 * @param witherBase        a T of soul sand or soul soil nearby, free on top for the skulls
 	 * @param blocks            counts of the placed blocks the goal steps look at ({@link Steps#TRACKED_BLOCKS}), by id path
@@ -187,7 +188,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 			boolean ironDoorOpen, boolean pistonExtended, boolean repeater, boolean hopper, boolean observer,
 			boolean crafter, boolean autoSmelter, boolean copperBulbLit, boolean hopperOnFurnace, int standBottles,
 			boolean standFuel, boolean hive, boolean hiveSmoked, boolean hiveFull, int beaconLevel, boolean fortressNear,
-			boolean bastionNear, int crafterSlots, int anchorCharge, boolean witherBase,
+			boolean bastionNear, int crafterSlots, int ripeWheat, int anchorCharge, boolean witherBase,
 			Map<String, Integer> blocks) {
 		public Nearby {
 			blocks = Map.copyOf(blocks);
@@ -216,12 +217,14 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 	 * @param tridentDrownedNearby such a drowned holds a trident
 	 * @param turtleNearby     a turtle within 16 blocks
 	 * @param babyTurtleNearby such a turtle is a baby (it drops a scute when it grows up)
+	 * @param tameableNearby   an untamed wolf or cat within 16 blocks
+	 * @param milkableNearby   a grown cow, mooshroom or goat within 16 blocks
 	 */
 	public record Creatures(int hostiles, boolean creeper, boolean warden, boolean ghast, boolean piglin,
 			boolean ghastling, boolean ridingTamedHorse, boolean ridingHappyGhast, boolean horseNearby,
 			boolean tamedHorseNearby, boolean saddledHorseNearby, int endCrystals, boolean blazeNearby,
 			boolean drownedNearby, boolean tridentDrownedNearby, boolean turtleNearby,
-			boolean babyTurtleNearby) {}
+			boolean babyTurtleNearby, boolean tameableNearby, boolean milkableNearby) {}
 
 	/** Monsters could spawn around the player: underground, or outside without a roof at dusk, at night or in a thunderstorm. */
 	public boolean darkMatters() {
@@ -273,13 +276,14 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		private boolean lava, fallingBlockAbove, litArea, ironDoorOpen, pistonExtended, repeater, hopper, observer,
 				crafter, autoSmelter, copperBulbLit, hopperOnFurnace, standFuel, hive, hiveSmoked, hiveFull,
 				fortressNear, bastionNear, witherBase;
-		private int standBottles, beaconLevel, anchorCharge, crafterSlots;
+		private int standBottles, beaconLevel, anchorCharge, crafterSlots, ripeWheat;
 		private final Map<String, Integer> blocks = new HashMap<>();
 		// creatures
 		private int hostiles, endCrystals;
 		private boolean creeper, warden, ghast, piglin, ghastling, ridingTamedHorse, ridingHappyGhast, horseNearby,
 				tamedHorseNearby, saddledHorseNearby, blazeNearby,
-				drownedNearby, tridentDrownedNearby, turtleNearby, babyTurtleNearby;
+				drownedNearby, tridentDrownedNearby, turtleNearby, babyTurtleNearby, tameableNearby,
+				milkableNearby;
 
 		private Builder() {}
 
@@ -395,6 +399,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public Builder fortressNear(boolean v) { fortressNear = v; return this; }
 		public Builder bastionNear(boolean v) { bastionNear = v; return this; }
 		public Builder crafterSlots(int v) { crafterSlots = v; return this; }
+		public Builder ripeWheat(int v) { ripeWheat = v; return this; }
 		public Builder anchorCharge(int v) { anchorCharge = v; return this; }
 		public Builder witherBase(boolean v) { witherBase = v; return this; }
 		/** Sets the count of a tracked placed block (id path); 0 removes it. */
@@ -417,6 +422,8 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public Builder tridentDrownedNearby(boolean v) { tridentDrownedNearby = v; return this; }
 		public Builder turtleNearby(boolean v) { turtleNearby = v; return this; }
 		public Builder babyTurtleNearby(boolean v) { babyTurtleNearby = v; return this; }
+		public Builder tameableNearby(boolean v) { tameableNearby = v; return this; }
+		public Builder milkableNearby(boolean v) { milkableNearby = v; return this; }
 
 		public SurvivalContext build() {
 			return new SurvivalContext(
@@ -435,10 +442,11 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 					new Nearby(crops, bookshelves, lava, fallingBlockAbove, litArea, ironDoorOpen, pistonExtended,
 							repeater, hopper, observer, crafter, autoSmelter, copperBulbLit, hopperOnFurnace, standBottles,
 							standFuel, hive, hiveSmoked, hiveFull, beaconLevel, fortressNear, bastionNear, crafterSlots,
+							ripeWheat,
 							anchorCharge, witherBase, blocks),
 					new Creatures(hostiles, creeper, warden, ghast, piglin, ghastling, ridingTamedHorse, ridingHappyGhast,
 							horseNearby, tamedHorseNearby, saddledHorseNearby, endCrystals, blazeNearby, drownedNearby,
-							tridentDrownedNearby, turtleNearby, babyTurtleNearby));
+							tridentDrownedNearby, turtleNearby, babyTurtleNearby, tameableNearby, milkableNearby));
 		}
 	}
 }
