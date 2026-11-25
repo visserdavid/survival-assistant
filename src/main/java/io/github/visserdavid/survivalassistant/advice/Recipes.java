@@ -90,6 +90,12 @@ public final class Recipes {
 	/** 9 copper ingots make a block: the copper bulb takes 3. */
 	private static final Recipe COPPER_BLOCK = new Recipe("minecraft:copper_block", 1, List.of("###", "###", "###"),
 			Map.of('#', "minecraft:copper_ingot"));
+	private static final Recipe IRON_HELMET = new Recipe("minecraft:iron_helmet", 1, List.of("XXX", "X X"), Map.of('X', IRON));
+	private static final Recipe IRON_CHESTPLATE = new Recipe("minecraft:iron_chestplate", 1, List.of("X X", "XXX", "XXX"),
+			Map.of('X', IRON));
+	private static final Recipe IRON_LEGGINGS = new Recipe("minecraft:iron_leggings", 1, List.of("XXX", "X X", "X X"),
+			Map.of('X', IRON));
+	private static final Recipe IRON_BOOTS = new Recipe("minecraft:iron_boots", 1, List.of("X X", "X X"), Map.of('X', IRON));
 	/** Flint, a stick and a feather make 4 arrows. */
 	private static final Recipe ARROW = new Recipe("minecraft:arrow", 4, List.of("X", "#", "Y"),
 			Map.of('X', "minecraft:flint", '#', STICK, 'Y', "minecraft:feather"));
@@ -125,7 +131,7 @@ public final class Recipes {
 			Map.entry("chest", new Recipe("minecraft:chest", 1, List.of("###", "# #", "###"), Map.of('#', PLANKS))),
 			Map.entry("shield", new Recipe("minecraft:shield", 1, List.of("WoW", "WWW", " W "), Map.of('W', PLANKS, 'o', IRON))),
 			Map.entry("iron_pickaxe", pickaxe("minecraft:iron_pickaxe", IRON)),
-			Map.entry("iron_armor", new Recipe("minecraft:iron_chestplate", 1, List.of("X X", "XXX", "XXX"), Map.of('X', IRON))),
+			Map.entry("iron_armor", IRON_CHESTPLATE),
 			Map.entry("water_bucket", BUCKET),
 			// chapter 2
 			Map.entry("farm", new Recipe("minecraft:wooden_hoe", 1, List.of("XX", " #", " #"), Map.of('X', PLANKS, '#', STICK))),
@@ -212,6 +218,11 @@ public final class Recipes {
 			Map.entry("respawn_anchor.charge", GLOWSTONE),
 			Map.entry("recovery_compass.compass", COMPASS),
 			Map.entry("copper_bulb.copper", COPPER_BLOCK),
+			Map.entry("diamond_pickaxe.iron_pickaxe", pickaxe("minecraft:iron_pickaxe", IRON)),
+			Map.entry("full_iron_armor.helmet", IRON_HELMET),
+			Map.entry("full_iron_armor.chestplate", IRON_CHESTPLATE),
+			Map.entry("full_iron_armor.leggings", IRON_LEGGINGS),
+			Map.entry("full_iron_armor.boots", IRON_BOOTS),
 			Map.entry("bow.flint", ARROW),
 			Map.entry("bow.feathers", ARROW),
 			Map.entry("bow.arrows", ARROW),

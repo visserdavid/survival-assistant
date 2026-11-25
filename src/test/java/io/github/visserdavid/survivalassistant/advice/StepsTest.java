@@ -244,6 +244,37 @@ class StepsTest {
 	}
 
 	@Test
+	void fullIronArmor() {
+		Tip g = TipRegistry.FULL_IRON_ARMOR;
+		assertEquals("full_iron_armor.helmet", current(g, b -> b.item("iron_ingot", 3).armorSlots(2)));
+		assertEquals("full_iron_armor.helmet", current(g, b -> b.item("iron_ingot", 20)),
+				"enough iron isn't the helmet yet: the step waits until it is crafted");
+		assertEquals("full_iron_armor.leggings", current(g, b -> b.armorSlots(1 | 2 | 8)), "pieces the player has are skipped");
+		assertEquals("full_iron_armor.boots", current(g, b -> b.armorSlots(1 | 2 | 4)));
+		Steps.Step helmet = Steps.BY_GOAL.get("full_iron_armor").getFirst();
+		assertEquals(3, helmet.value(SurvivalContext.builder().item("iron_ingot", 3).build()));
+		assertEquals(5, helmet.target());
+	}
+
+	@Test
+	void diamondPickaxe() {
+		Tip g = TipRegistry.DIAMOND_PICKAXE;
+		assertEquals("diamond_pickaxe.iron_pickaxe", current(g, b -> b.pickaxeTier(2).y(-50)));
+		assertEquals("diamond_pickaxe.deep", current(g, b -> b.pickaxeTier(3).y(40)));
+		assertEquals("diamond_pickaxe.diamonds", current(g, b -> b.pickaxeTier(3).y(-50).diamonds(1)));
+		assertEquals("diamond_pickaxe.craft", current(g, b -> b.pickaxeTier(3).y(70).diamonds(3)), "back home with the diamonds");
+	}
+
+	@Test
+	void enchant() {
+		Tip g = TipRegistry.ENCHANT;
+		assertEquals("enchant.table", current(g, b -> b.item("lapis_lazuli", 5).xpLevel(10)));
+		assertEquals("enchant.lapis", current(g, b -> b.hasEnchantingTable(true).item("lapis_lazuli", 2)));
+		assertEquals("enchant.levels", current(g, b -> b.hasEnchantingTable(true).item("lapis_lazuli", 3).xpLevel(2)));
+		assertEquals("enchant.enchant", current(g, b -> b.hasEnchantingTable(true).item("lapis_lazuli", 3).xpLevel(5)));
+	}
+
+	@Test
 	void ironGolem() {
 		Tip g = TipRegistry.IRON_GOLEM;
 		assertEquals("iron_golem.iron_blocks", current(g, b -> b.item("iron_block", 3).item("iron_ingot", 8)));

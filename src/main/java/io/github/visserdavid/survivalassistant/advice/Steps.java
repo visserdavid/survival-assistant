@@ -93,7 +93,7 @@ public final class Steps {
 			"carved_pumpkin", "ancient_debris", "netherite_scrap", "gold_ingot", "glass", "beacon", "hopper",
 			"saddle", "crying_obsidian", "glowstone", "glowstone_dust", "respawn_anchor", "compass", "seagrass",
 			"turtle_scute", "ghast_tear", "copper_block", "copper_ingot", "copper_bulb", "crafting_table", "dropper",
-			"string", "flint", "feather", "wheat", "bone", "cod", "salmon", "bucket", "fishing_rod"))
+			"string", "flint", "feather", "wheat", "bone", "cod", "salmon", "bucket", "fishing_rod", "lapis_lazuli"))
 			.collect(Collectors.toUnmodifiableSet());
 	/** Blocks whose placed count nearby the collector reports ({@link SurvivalContext.Nearby#placed}). */
 	public static final Set<String> TRACKED_BLOCKS = Set.of("obsidian", "nether_portal", "iron_block", "carved_pumpkin",
@@ -109,6 +109,14 @@ public final class Steps {
 	public static final int ANCHOR_CHARGES = 4;
 	/** One flint, stick and feather make 4 arrows; the bow goal wants 16. */
 	private static final int ARROWS_PER_CRAFT = 4, ARROW_CRAFTS = 4;
+	/** Iron for each armor piece: helmet, chestplate, leggings, boots. */
+	private static final int HELMET_IRON = 5, CHESTPLATE_IRON = 8, LEGGINGS_IRON = 7, BOOTS_IRON = 4;
+	/** Bits of {@link SurvivalContext.Inventory#armorSlots}. */
+	private static final int HEAD = 1, CHEST = 2, LEGS = 4;
+	/** Diamonds are most common deep down; above this height there are hardly any. */
+	public static final int DIAMOND_DEPTH = 16;
+	/** The cheapest enchantment costs 1 lapis, the best 3; levels as much. */
+	private static final int ENCHANT_LAPIS = 3, ENCHANT_LEVELS = 3;
 	/** 3 wheat make a bread; the bread goal wants 3. */
 	private static final int WHEAT_PER_BREAD = 3, BREADS = 3;
 	/** The farm goal wants 6 crops. */
@@ -170,6 +178,19 @@ public final class Steps {
 		return c.inv().arrows() / ARROWS_PER_CRAFT;
 	}
 
+	private static boolean wears(SurvivalContext c, int slot) {
+		return (c.inv().armorSlots() & slot) != 0;
+	}
+
+	private static int ironIngots(SurvivalContext c) {
+		return item(c, "iron_ingot");
+	}
+
+	/** An armor piece: done once the player has it (not when the iron is there), the counter shows the iron for it. */
+	private static Step piece(String id, int slot, int iron) {
+		return new Step(id, c -> wears(c, slot), Steps::ironIngots, iron);
+	}
+
 	/** Wheat carried, plus the wheat already baked into bread. */
 	private static int wheat(SurvivalContext c) {
 		return item(c, "wheat") + WHEAT_PER_BREAD * c.inv().bread();
@@ -186,6 +207,18 @@ public final class Steps {
 	// ---------------------------------------------------------------- the steps per goal
 
 	public static final Map<String, List<Step>> BY_GOAL = Map.ofEntries(
+			// chapter 2: every piece still missing, with the iron it takes (pieces the player has are skipped)
+			Map.entry("full_iron_armor", List.of(
+					piece("full_iron_armor.helmet", HEAD, HELMET_IRON),
+					piece("full_iron_armor.chestplate", CHEST, CHESTPLATE_IRON),
+					piece("full_iron_armor.leggings", LEGS, LEGGINGS_IRON),
+					finish("full_iron_armor.boots", Steps::ironIngots, BOOTS_IRON))),
+			// chapter 2: an iron pickaxe mines diamonds; they lie deep down; 3 of them make the pickaxe
+			Map.entry("diamond_pickaxe", List.of(
+					step("diamond_pickaxe.iron_pickaxe", c -> c.inv().pickaxeTier() >= 3),
+					step("diamond_pickaxe.deep", c -> c.player().y() <= DIAMOND_DEPTH || c.inv().diamonds() >= 3),
+					count("diamond_pickaxe.diamonds", c -> c.inv().diamonds(), 3, c -> false),
+					finish("diamond_pickaxe.craft"))),
 			// chapter 2: ripe wheat, 9 of it (baked bread counts), then 3 in a row
 			Map.entry("bread", List.of(
 					step("bread.ripe", c -> c.nearby().ripeWheat() > 0 || wheat(c) >= WHEAT_PER_BREAD * BREADS),
@@ -245,6 +278,12 @@ public final class Steps {
 					count("brew_potion.water", c -> c.inv().waterBottles() + c.nearby().standBottles(), 3, c -> false),
 					step("brew_potion.fuel", c -> item(c, "blaze_powder") > 0 || c.nearby().standFuel()),
 					finish("brew_potion.brew"))),
+			// chapter 5: an enchanting table, lapis and levels, then enchant
+			Map.entry("enchant", List.of(
+					step("enchant.table", c -> c.inv().hasEnchantingTable()),
+					count("enchant.lapis", c -> item(c, "lapis_lazuli"), ENCHANT_LAPIS, c -> false),
+					count("enchant.levels", c -> c.player().xpLevel(), ENCHANT_LEVELS, c -> false),
+					finish("enchant.enchant"))),
 			// chapter 5: one bookshelf at a time; books count as the paper and leather in them, so crafting doesn't go back
 			Map.entry("bookshelves", List.of(
 					count("bookshelves.paper", c -> item(c, "paper") + PAPER_PER_BOOK * item(c, "book"),

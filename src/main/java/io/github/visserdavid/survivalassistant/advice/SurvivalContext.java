@@ -100,11 +100,12 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 	 * @param animalsBred    statistic animals_bred
 	 * @param trades         statistic traded_with_villager
 	 * @param digDownStreak  recent breaks of the block directly under the player's feet
+	 * @param eyesThrown     how often the player used an eye of ender (thrown, or put in a portal frame)
+	 * @param y              the block height of the player's feet
 	 * @param advancements   the vanilla advancements the chapters track that this player has completed
 	 */
-	/** @param eyesThrown how often the player used an eye of ender (thrown, or put in a portal frame) */
 	public record Player(float health, int food, int xpLevel, int ticksSinceRest, int animalsBred, int trades,
-			int digDownStreak, int eyesThrown, Set<String> advancements) {
+			int digDownStreak, int eyesThrown, int y, Set<String> advancements) {
 		public Player {
 			advancements = Set.copyOf(advancements);
 		}
@@ -125,6 +126,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 	 * @param iron            raw iron + iron ingots
 	 * @param enderPearls     ender pearls plus eyes of ender (an eye is made from a pearl)
 	 * @param armorPieces     armor slots (head, chest, legs, feet) covered by iron or better, worn or carried
+	 * @param armorSlots      the same slots as bits: 1 head, 2 chest, 4 legs, 8 feet
 	 * @param hasIronArmor    wearing at least one piece of iron (or better) armor
 	 * @param goldArmorWorn   wearing at least one piece of piglin-safe (golden) armor
 	 * @param bedInInventory  a bed carried (not a placed one)
@@ -137,7 +139,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 			int logs, int planks, int cobblestone, int foodItems, int wool, int torches, int iron, int bread, int arrows,
 			int diamonds, int obsidian, int emeralds, int blazeRods, int netherWart, int sugarCane, int redstone,
 			int enderPearls, int eyesOfEnder, int witherSkulls, int soulSand, int echoShards, int breezeRods,
-			int pickaxeTier, int swordTier, int armorPieces,
+			int pickaxeTier, int swordTier, int armorPieces, int armorSlots,
 			boolean hasIronArmor, boolean goldArmorWorn,
 			boolean hasCraftingTable, boolean hasFurnace, boolean hasChest, boolean hasBed, boolean bedInInventory,
 			boolean hasShield, boolean hasWaterBucket, boolean hasBow, boolean hasFlintAndSteel, boolean hasEnchantingTable,
@@ -257,12 +259,12 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		private boolean thundering, sheltered, underground;
 		// player
 		private float health = 20f;
-		private int food = 20, xpLevel, ticksSinceRest, animalsBred, trades, digDownStreak, eyesThrown;
+		private int food = 20, xpLevel, ticksSinceRest, animalsBred, trades, digDownStreak, eyesThrown, y = 64;
 		private final Set<String> advancements = new HashSet<>();
 		// inventory
 		private int logs, planks, cobblestone, foodItems, wool, torches, iron, bread, arrows, diamonds, obsidian, emeralds,
 				blazeRods, netherWart, sugarCane, redstone, enderPearls, eyesOfEnder, witherSkulls, soulSand, echoShards,
-				breezeRods, pickaxeTier, swordTier, armorPieces;
+				breezeRods, pickaxeTier, swordTier, armorPieces, armorSlots;
 		private boolean hasIronArmor, goldArmorWorn, hasCraftingTable, hasFurnace, hasChest, hasBed, bedInInventory,
 				hasShield, hasWaterBucket, hasBow, hasFlintAndSteel, hasEnchantingTable, hasEnchantedBook, hasBrewingStand,
 				hasAnvil, hasBoat, hasMilk, hasHeartOfTheSea, hasTurtleHelmet, hasTrident, hasFilledMap, hasSpyglass,
@@ -304,6 +306,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public Builder trades(int v) { trades = v; return this; }
 		public Builder digDownStreak(int v) { digDownStreak = v; return this; }
 		public Builder eyesThrown(int v) { eyesThrown = v; return this; }
+		public Builder y(int v) { y = v; return this; }
 		public Builder advancement(String v) { advancements.add(v); return this; }
 		public Builder advancements(Set<String> v) { advancements.addAll(v); return this; }
 		// inventory: counts
@@ -332,6 +335,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public Builder pickaxeTier(int v) { pickaxeTier = v; return this; }
 		public Builder swordTier(int v) { swordTier = v; return this; }
 		public Builder armorPieces(int v) { armorPieces = v; return this; }
+		public Builder armorSlots(int v) { armorSlots = v; return this; }
 		// inventory: flags
 		public Builder hasIronArmor(boolean v) { hasIronArmor = v; return this; }
 		public Builder goldArmorWorn(boolean v) { goldArmorWorn = v; return this; }
@@ -428,11 +432,11 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public SurvivalContext build() {
 			return new SurvivalContext(
 					new World(dayIndex, timeOfDay, dimension, structure, thundering, sheltered, underground),
-					new Player(health, food, xpLevel, ticksSinceRest, animalsBred, trades, digDownStreak, eyesThrown,
+					new Player(health, food, xpLevel, ticksSinceRest, animalsBred, trades, digDownStreak, eyesThrown, y,
 							advancements),
 					new Inventory(logs, planks, cobblestone, foodItems, wool, torches, iron, bread, arrows, diamonds,
 							obsidian, emeralds, blazeRods, netherWart, sugarCane, redstone, enderPearls, eyesOfEnder,
-							witherSkulls, soulSand, echoShards, breezeRods, pickaxeTier, swordTier, armorPieces,
+							witherSkulls, soulSand, echoShards, breezeRods, pickaxeTier, swordTier, armorPieces, armorSlots,
 							hasIronArmor, goldArmorWorn, hasCraftingTable, hasFurnace, hasChest, hasBed, bedInInventory,
 							hasShield, hasWaterBucket, hasBow, hasFlintAndSteel, hasEnchantingTable, hasEnchantedBook,
 							hasBrewingStand, hasAnvil, hasBoat, hasMilk, hasHeartOfTheSea, hasTurtleHelmet, hasTrident,

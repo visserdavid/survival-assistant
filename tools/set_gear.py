@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 import nbtlib
-from nbtlib.tag import Byte, Compound, Int, List, String
+from nbtlib.tag import Byte, Compound, Float, Int, List, String
 
 
 def world_folder(arg):
@@ -90,6 +90,14 @@ KITS = {
               item("dirt", 32), TABLE], armor("iron"), None),
     "bow": ([item("stone_sword"), item("stone_shovel"), item("stick", 8), item("gravel", 32), FOOD, TORCHES, TABLE],
             armor("iron"), SHIELD),
+    # iron armor test: leather only (iron, diamond or netherite pieces would count); no iron ingots
+    "full_iron_armor": ([item("stone_sword"), item("stone_pickaxe"), FOOD, TORCHES, item("furnace"), TABLE],
+                        armor("leather"), SHIELD),
+    # diamonds: a stone pickaxe (the iron one is a step), light and blocks for the way down; no diamonds
+    "diamond_pickaxe": ([item("iron_sword"), item("stone_pickaxe"), item("stone_shovel"), FOOD, item("torch", 64),
+                         BLOCKS, item("water_bucket"), TABLE], armor("iron"), SHIELD),
+    # enchanting: iron gear to enchant; no enchanting table, lapis or levels (set_gear resets the levels)
+    "enchant": ([item("iron_sword"), item("iron_pickaxe"), FOOD, TORCHES, item("bookshelf", 15)], armor("iron"), SHIELD),
     # farm life, chapters 2 and 6: simple gear; never the wheat, bread, bones, fish, iron, bucket, string or rod tested
     "bread": ([item("stone_sword"), item("stone_hoe"), FOOD, TORCHES, TABLE], armor("iron"), None),
     "tame_animal": ([item("stone_sword"), FOOD, TORCHES, BLOCKS, item("lead", 2)], armor("iron"), SHIELD),
@@ -117,6 +125,7 @@ def main():
             eq["offhand"] = Compound(offhand)
         nbt["equipment"] = eq
         nbt["SelectedItemSlot"] = Int(0)
+        nbt["XpLevel"], nbt["XpP"], nbt["XpTotal"] = Int(0), Float(0), Int(0)  # tests give levels with /xp
         nbt.save()
         print(f"{f.name}: inventory emptied, gear for {goal}: " + ", ".join(str(i["id"])[10:] for i in hotbar)
               + " + " + ", ".join(str(v["id"])[10:] for v in worn.values()))

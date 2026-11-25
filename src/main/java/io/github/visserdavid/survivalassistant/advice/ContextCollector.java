@@ -163,6 +163,7 @@ public final class ContextCollector {
 				.animalsBred(stats.getValue(Stats.CUSTOM.get(Stats.ANIMALS_BRED)))
 				.trades(stats.getValue(Stats.CUSTOM.get(Stats.TRADED_WITH_VILLAGER)))
 				.eyesThrown(stats.getValue(Stats.ITEM_USED.get(Items.ENDER_EYE)))
+				.y(player.blockPosition().getY())
 				.digDownStreak(digDownStreak)
 				.advancements(advancements(player));
 	}
@@ -261,14 +262,19 @@ public final class ContextCollector {
 		}
 		if (player.getVehicle() instanceof AbstractBoat) b.hasBoat(true);
 
-		int armorPieces = 0;
-		for (boolean covered : armor) if (covered) armorPieces++;
+		int armorPieces = 0, armorSlots = 0;
+		for (int i = 0; i < armor.length; i++) {
+			if (armor[i]) {
+				armorPieces++;
+				armorSlots |= 1 << i;
+			}
+		}
 
 		b.logs(logs).planks(planks).cobblestone(cobble).foodItems(foodItems).wool(wool).torches(torches).iron(iron)
 				.bread(bread).arrows(arrows).diamonds(diamonds).obsidian(obsidian).emeralds(emeralds).blazeRods(blazeRods)
 				.netherWart(netherWart).sugarCane(sugarCane).redstone(redstone).enderPearls(pearls).eyesOfEnder(eyes)
 				.witherSkulls(skulls).soulSand(soulSand).echoShards(echoShards).breezeRods(breezeRods)
-				.pickaxeTier(pickaxe).swordTier(weapon).armorPieces(armorPieces).waterBottles(waterBottles)
+				.pickaxeTier(pickaxe).swordTier(weapon).armorPieces(armorPieces).armorSlots(armorSlots).waterBottles(waterBottles)
 				.treasureDistance(treasureDistance);
 		tracked.forEach(b::item);
 	}
