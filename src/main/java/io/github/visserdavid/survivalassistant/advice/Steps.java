@@ -82,7 +82,8 @@ public final class Steps {
 	/** Items whose carried count the collector reports ({@link SurvivalContext.Inventory#count}). */
 	public static final Set<String> TRACKED_ITEMS = Set.of("glass_bottle", "blaze_powder", "paper", "leather", "book",
 			"bookshelf", "iron_block", "iron_ingot", "carved_pumpkin", "ancient_debris", "netherite_scrap", "gold_ingot",
-			"glass", "beacon", "hopper", "saddle", "crying_obsidian", "glowstone", "glowstone_dust", "respawn_anchor");
+			"glass", "beacon", "hopper", "saddle", "crying_obsidian", "glowstone", "glowstone_dust", "respawn_anchor",
+			"compass");
 	/** Blocks whose placed count nearby the collector reports ({@link SurvivalContext.Nearby#placed}). */
 	public static final Set<String> TRACKED_BLOCKS = Set.of("obsidian", "nether_portal", "iron_block", "carved_pumpkin",
 			"beacon", "hopper", "nether_wart", "respawn_anchor");
@@ -198,6 +199,21 @@ public final class Steps {
 					step("treasure.map", c -> c.inv().treasureDistance() >= 0),
 					step("treasure.follow", c -> c.inv().treasureDistance() >= 0 && c.inv().treasureDistance() <= TREASURE_NEAR),
 					finish("treasure.dig"))),
+			// chapter 7: only drowned carry tridents; find one that holds a trident and beat it at the waterline
+			Map.entry("trident", List.of(
+					step("trident.drowned", c -> c.creatures().drownedNearby()),
+					step("trident.armed", c -> c.creatures().tridentDrownedNearby()),
+					finish("trident.fight"))),
+			// chapter 13: 8 echo shards around a compass
+			Map.entry("recovery_compass", List.of(
+					count("recovery_compass.shards", c -> c.inv().echoShards(), 8, c -> false),
+					count("recovery_compass.compass", c -> item(c, "compass"), 1, c -> false),
+					finish("recovery_compass.craft"))),
+			// chapter 16: the heavy core on top of a breeze rod
+			Map.entry("mace", List.of(
+					count("mace.rod", c -> c.inv().breezeRods(), 1, c -> false),
+					step("mace.core", c -> c.inv().hasHeavyCore()),
+					finish("mace.craft"))),
 			// chapter 10: blaze powder for every eye still to make
 			Map.entry("eyes_of_ender", List.of(
 					count("eyes_of_ender.powder", c -> item(c, "blaze_powder") + c.inv().eyesOfEnder(), 12, c -> false),

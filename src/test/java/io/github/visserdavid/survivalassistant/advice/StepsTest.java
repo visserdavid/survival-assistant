@@ -107,6 +107,30 @@ class StepsTest {
 	}
 
 	@Test
+	void trident() {
+		Tip g = TipRegistry.TRIDENT;
+		assertEquals("trident.drowned", current(g, b -> b));
+		assertEquals("trident.armed", current(g, b -> b.drownedNearby(true)));
+		assertEquals("trident.fight", current(g, b -> b.drownedNearby(true).tridentDrownedNearby(true)));
+	}
+
+	@Test
+	void recoveryCompass() {
+		Tip g = TipRegistry.RECOVERY_COMPASS;
+		assertEquals("recovery_compass.shards", current(g, b -> b.echoShards(7).item("compass", 1)));
+		assertEquals("recovery_compass.compass", current(g, b -> b.echoShards(8)));
+		assertEquals("recovery_compass.craft", current(g, b -> b.echoShards(8).item("compass", 1)));
+	}
+
+	@Test
+	void mace() {
+		Tip g = TipRegistry.MACE;
+		assertEquals("mace.rod", current(g, b -> b.hasHeavyCore(true)));
+		assertEquals("mace.core", current(g, b -> b.breezeRods(1)));
+		assertEquals("mace.craft", current(g, b -> b.breezeRods(1).hasHeavyCore(true)));
+	}
+
+	@Test
 	void ironGolem() {
 		Tip g = TipRegistry.IRON_GOLEM;
 		assertEquals("iron_golem.iron_blocks", current(g, b -> b.item("iron_block", 3).item("iron_ingot", 8)));

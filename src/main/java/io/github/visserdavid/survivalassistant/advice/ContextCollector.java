@@ -28,6 +28,7 @@ import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.monster.warden.Warden;
+import net.minecraft.world.entity.monster.zombie.Drowned;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -466,6 +467,12 @@ public final class ContextCollector {
 			if (close && e instanceof HappyGhast ghast && ghast.isBaby()) b.ghastling(true);
 			if (!overworld && alive && e instanceof Ghast) b.ghast(true);
 			if (!overworld && alive && e instanceof Blaze) b.blazeNearby(true);
+			if (alive && e instanceof Drowned drowned) {
+				b.drownedNearby(true);
+				if (drowned.getMainHandItem().is(Items.TRIDENT) || drowned.getOffhandItem().is(Items.TRIDENT)) {
+					b.tridentDrownedNearby(true);
+				}
+			}
 			if (!overworld && alive && close && e instanceof Piglin) b.piglin(true);
 			if (alive && close && e instanceof AbstractHorse horse && !(e instanceof Llama) && !(e instanceof Camel)) {
 				b.horseNearby(true);

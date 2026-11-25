@@ -84,6 +84,9 @@ public final class Recipes {
 	private static final Recipe GLASS_BOTTLE = new Recipe("minecraft:glass_bottle", 3, List.of("# #", " # "),
 			Map.of('#', "minecraft:glass"));
 	/** One blaze rod gives 2 powder (shapeless): fuel for the brewing stand, and half of an eye of ender. */
+	/** 4 iron and a redstone: the compass inside the recovery compass. */
+	private static final Recipe COMPASS = new Recipe("minecraft:compass", 1, List.of(" # ", "#X#", " # "),
+			Map.of('#', "minecraft:iron_ingot", 'X', "minecraft:redstone"));
 	/** 4 glowstone dust make a block: for the respawn anchor and its charges. */
 	private static final Recipe GLOWSTONE = new Recipe("minecraft:glowstone", 1, List.of("##", "##"),
 			Map.of('#', "minecraft:glowstone_dust"));
@@ -196,6 +199,7 @@ public final class Recipes {
 			Map.entry("brew_potion.fuel", BLAZE_POWDER),
 			Map.entry("respawn_anchor.glowstone", GLOWSTONE),
 			Map.entry("respawn_anchor.charge", GLOWSTONE),
+			Map.entry("recovery_compass.compass", COMPASS),
 			Map.entry("enchanting_table.paper", PAPER),
 			Map.entry("enchanting_table.book", BOOK),
 			Map.entry("bookshelves.paper", PAPER),
