@@ -127,8 +127,8 @@ This mod was made with a lot of help from AI. To be open about it:
 
 - **Made with AI:** the code (written with Claude by Anthropic, at the developer's direction), all texts
   including the guide's lines and story, all translations, the research (looked up with AI, then checked
-  against Minecraft 26.3's own data files), the mod icon and the guide's classic skin. The default skin was
-  drawn pixel by pixel by a script written with Claude, following skin-design guidelines.
+  against Minecraft 26.3's own data files) and the guide's classic skin. The default skin, its route outfits
+  and the mod icon were drawn pixel by pixel by scripts written with Claude, following skin-design guidelines.
 - **Not made with AI:** the idea, the choices about what the mod does and how it feels, the play testing, and
   the screenshots (real in-game screenshots). The game facts come from Minecraft's data, not from the AI's memory.
 - **AI while you play:** none by default. Every tip and warning is a fixed, checked text. Only the optional

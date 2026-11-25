@@ -470,8 +470,8 @@ Developer tools:
   puts the guide at a chosen goal (with an optional route), `tools/set_gear.py` gives fitting gear for that test,
   `tools/test_schematics.py` writes WorldEdit schematics (a farm plot, a wheat field, a pond) and
   `tools/test_stair.py` digs a staircase down to a chosen depth.
-- `tools/make_icon.py` builds the transparent PNG icons from `docs/images/SurvivalAssistant.jpg`
-  (`uv run --with pillow python tools/make_icon.py`).
+- `tools/make_guide_skin.py` draws the guide's built-in skins; `tools/make_icon.py` then renders the mod icon
+  (the keeper on a copper medallion) from the default skin (`uv run --with pillow python tools/make_icon.py`).
 
 ## How the advice was verified
 Every chapter has its own research document with the sources, how each goal is detected (inventory, statistics,
@@ -503,9 +503,9 @@ This mod was made with a lot of help from AI. To be open about what that means:
 - **Research**: the game facts were looked up with AI, then checked against Minecraft 26.3's own data files,
   partly with scripts (`tools/recipe_check.py`, `tools/biome_facts.py`). The research documents above show the
   sources and the checks.
-- **Images**: the mod icon and the guide's classic skin are AI-generated. The default skin, the hooded "Keeper of
-  the Ancients", and his route outfits are drawn pixel by pixel by `tools/make_guide_skin.py`, a script written
-  with Claude.
+- **Images**: the guide's classic skin is AI-generated. The default skin, the hooded "Keeper of the Ancients",
+  his route outfits and the mod icon are drawn pixel by pixel by `tools/make_guide_skin.py` and
+  `tools/make_icon.py`, scripts written with Claude.
 
 **Not made with AI**
 - The idea, the choices about what the mod does and how it should feel, and the play testing in the game are the
