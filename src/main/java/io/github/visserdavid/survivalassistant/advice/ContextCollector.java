@@ -21,6 +21,7 @@ import net.minecraft.world.entity.animal.camel.Camel;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.entity.animal.equine.Llama;
 import net.minecraft.world.entity.animal.happyghast.HappyGhast;
+import net.minecraft.world.entity.animal.turtle.Turtle;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.monster.Creeper;
@@ -467,6 +468,10 @@ public final class ContextCollector {
 			if (close && e instanceof HappyGhast ghast && ghast.isBaby()) b.ghastling(true);
 			if (!overworld && alive && e instanceof Ghast) b.ghast(true);
 			if (!overworld && alive && e instanceof Blaze) b.blazeNearby(true);
+			if (alive && close && e instanceof Turtle turtle) {
+				b.turtleNearby(true);
+				if (turtle.isBaby()) b.babyTurtleNearby(true);
+			}
 			if (alive && e instanceof Drowned drowned) {
 				b.drownedNearby(true);
 				if (drowned.getMainHandItem().is(Items.TRIDENT) || drowned.getOffhandItem().is(Items.TRIDENT)) {

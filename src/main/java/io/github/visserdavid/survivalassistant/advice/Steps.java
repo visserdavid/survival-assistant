@@ -83,10 +83,10 @@ public final class Steps {
 	public static final Set<String> TRACKED_ITEMS = Set.of("glass_bottle", "blaze_powder", "paper", "leather", "book",
 			"bookshelf", "iron_block", "iron_ingot", "carved_pumpkin", "ancient_debris", "netherite_scrap", "gold_ingot",
 			"glass", "beacon", "hopper", "saddle", "crying_obsidian", "glowstone", "glowstone_dust", "respawn_anchor",
-			"compass");
+			"compass", "seagrass", "turtle_scute", "ghast_tear", "copper_block", "copper_ingot", "copper_bulb");
 	/** Blocks whose placed count nearby the collector reports ({@link SurvivalContext.Nearby#placed}). */
 	public static final Set<String> TRACKED_BLOCKS = Set.of("obsidian", "nether_portal", "iron_block", "carved_pumpkin",
-			"beacon", "hopper", "nether_wart", "respawn_anchor");
+			"beacon", "hopper", "nether_wart", "respawn_anchor", "turtle_egg", "copper_bulb");
 
 	/** The pyramid has at most 4 levels: 9 + 25 + 49 + 81 = 164 blocks. */
 	public static final int MAX_BEACON_LEVEL = 4;
@@ -96,6 +96,8 @@ public final class Steps {
 	public static final int TREASURE_NEAR = 8;
 	/** A respawn anchor holds 4 charges; the advancement wants it full. */
 	public static final int ANCHOR_CHARGES = 4;
+	/** 8 ghast tears around soul sand make a dried ghast. */
+	private static final int GHAST_TEARS = 8;
 	/** One glowstone block is 4 glowstone dust. */
 	private static final int DUST_PER_GLOWSTONE = 4;
 	/** One bookshelf takes 3 books; one book takes 3 paper and 1 leather. */
@@ -123,6 +125,15 @@ public final class Steps {
 
 	private static boolean hasAnchor(SurvivalContext c) {
 		return item(c, "respawn_anchor") > 0 || c.nearby().placed("respawn_anchor") > 0;
+	}
+
+	/** Turtle eggs on the beach, a baby growing up, or scutes already: the breeding is behind the player. */
+	private static boolean turtlesBred(SurvivalContext c) {
+		return c.nearby().placed("turtle_egg") > 0 || c.creatures().babyTurtleNearby() || item(c, "turtle_scute") > 0;
+	}
+
+	private static boolean hasBulb(SurvivalContext c) {
+		return item(c, "copper_bulb") > 0 || c.nearby().placed("copper_bulb") > 0;
 	}
 
 	private static boolean wartGrowing(SurvivalContext c) {
@@ -199,6 +210,13 @@ public final class Steps {
 					step("treasure.map", c -> c.inv().treasureDistance() >= 0),
 					step("treasure.follow", c -> c.inv().treasureDistance() >= 0 && c.inv().treasureDistance() <= TREASURE_NEAR),
 					finish("treasure.dig"))),
+			// chapter 7: feed two turtles seagrass, they lay eggs; every baby drops a scute as it grows up; 5 scutes
+			Map.entry("turtle_helmet", List.of(
+					step("turtle_helmet.turtles", c -> c.creatures().turtleNearby() || turtlesBred(c)),
+					count("turtle_helmet.seagrass", c -> item(c, "seagrass"), 2, Steps::turtlesBred),
+					step("turtle_helmet.eggs", Steps::turtlesBred),
+					count("turtle_helmet.scutes", c -> item(c, "turtle_scute"), 5, c -> false),
+					finish("turtle_helmet.craft"))),
 			// chapter 7: only drowned carry tridents; find one that holds a trident and beat it at the waterline
 			Map.entry("trident", List.of(
 					step("trident.drowned", c -> c.creatures().drownedNearby()),
@@ -255,12 +273,26 @@ public final class Steps {
 					step("full_beacon.level2", c -> c.nearby().beaconLevel() >= 2),
 					step("full_beacon.level3", c -> c.nearby().beaconLevel() >= 3),
 					finish("full_beacon.level4"))),
+			// chapter 17: ghast tears from the Nether around soul sand (a dried ghast from a fossil completes it too)
+			Map.entry("dried_ghast", List.of(
+					step("dried_ghast.nether", c -> inNether(c) || item(c, "ghast_tear") >= GHAST_TEARS),
+					count("dried_ghast.tears", c -> item(c, "ghast_tear"), GHAST_TEARS, c -> false),
+					count("dried_ghast.soul_sand", c -> c.inv().soulSand(), 1, c -> false),
+					finish("dried_ghast.craft"))),
 			// chapter 17: 3 leather, 2 glass and 1 wool (its color is the harness's color)
 			Map.entry("harness", List.of(
 					count("harness.leather", c -> item(c, "leather"), 3, c -> false),
 					count("harness.glass", c -> item(c, "glass"), 2, c -> false),
 					count("harness.wool", c -> c.inv().wool(), 1, c -> false),
 					finish("harness.craft"))),
+			// chapter 18: 3 copper blocks, a blaze rod and redstone make 4 bulbs; each rising pulse switches one
+			Map.entry("copper_bulb", List.of(
+					count("copper_bulb.copper", c -> item(c, "copper_block") + item(c, "copper_ingot") / 9, 3, Steps::hasBulb),
+					count("copper_bulb.blaze_rod", c -> c.inv().blazeRods(), 1, Steps::hasBulb),
+					count("copper_bulb.redstone", c -> c.inv().redstone(), 1, Steps::hasBulb),
+					step("copper_bulb.craft", Steps::hasBulb),
+					step("copper_bulb.place", c -> c.nearby().placed("copper_bulb") > 0),
+					finish("copper_bulb.pulse"))),
 			// chapter 18: a hopper on top feeds the furnace, one below takes the result out
 			Map.entry("auto_smelter", List.of(
 					count("auto_smelter.hoppers", c -> item(c, "hopper") + c.nearby().placed("hopper"), 2, c -> false),

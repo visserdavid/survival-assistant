@@ -211,11 +211,14 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 	 * @param blazeNearby      a blaze within 32 blocks (outside the overworld)
 	 * @param drownedNearby    a drowned within 32 blocks
 	 * @param tridentDrownedNearby such a drowned holds a trident
+	 * @param turtleNearby     a turtle within 16 blocks
+	 * @param babyTurtleNearby such a turtle is a baby (it drops a scute when it grows up)
 	 */
 	public record Creatures(int hostiles, boolean creeper, boolean warden, boolean ghast, boolean piglin,
 			boolean ghastling, boolean ridingTamedHorse, boolean ridingHappyGhast, boolean horseNearby,
 			boolean tamedHorseNearby, boolean saddledHorseNearby, int endCrystals, boolean blazeNearby,
-			boolean drownedNearby, boolean tridentDrownedNearby) {}
+			boolean drownedNearby, boolean tridentDrownedNearby, boolean turtleNearby,
+			boolean babyTurtleNearby) {}
 
 	/** Monsters could spawn around the player: underground, or outside without a roof at dusk, at night or in a thunderstorm. */
 	public boolean darkMatters() {
@@ -273,7 +276,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		private int hostiles, endCrystals;
 		private boolean creeper, warden, ghast, piglin, ghastling, ridingTamedHorse, ridingHappyGhast, horseNearby,
 				tamedHorseNearby, saddledHorseNearby, blazeNearby,
-				drownedNearby, tridentDrownedNearby;
+				drownedNearby, tridentDrownedNearby, turtleNearby, babyTurtleNearby;
 
 		private Builder() {}
 
@@ -407,6 +410,8 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public Builder blazeNearby(boolean v) { blazeNearby = v; return this; }
 		public Builder drownedNearby(boolean v) { drownedNearby = v; return this; }
 		public Builder tridentDrownedNearby(boolean v) { tridentDrownedNearby = v; return this; }
+		public Builder turtleNearby(boolean v) { turtleNearby = v; return this; }
+		public Builder babyTurtleNearby(boolean v) { babyTurtleNearby = v; return this; }
 
 		public SurvivalContext build() {
 			return new SurvivalContext(
@@ -427,7 +432,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 							standFuel, hive, hiveSmoked, hiveFull, beaconLevel, fortressNear, anchorCharge, witherBase, blocks),
 					new Creatures(hostiles, creeper, warden, ghast, piglin, ghastling, ridingTamedHorse, ridingHappyGhast,
 							horseNearby, tamedHorseNearby, saddledHorseNearby, endCrystals, blazeNearby, drownedNearby,
-							tridentDrownedNearby));
+							tridentDrownedNearby, turtleNearby, babyTurtleNearby));
 		}
 	}
 }

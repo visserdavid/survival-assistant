@@ -100,11 +100,12 @@ archaeology, the trial challenges, the happy ghast and automation.
   guide tells you each step as soon as you reach it. Brewing a potion, for example, goes: glass bottles (3/3), fill
   them with water, blaze powder as fuel, brew. Steps exist for the enchanting table, the iron golem, the Nether
   portal, the Nether fortress (the guide notices when one is close), blaze rods, Nether wart, brewing, bookshelves, honey (bottle, nest, campfire, wait), your own horse (find, tame, saddle),
-  buried treasure (map, red X, dig), the trident (find drowned, one holding a trident, beat it at the shore),
+  buried treasure (map, red X, dig), the turtle shell (turtles, seagrass, eggs, 5 scutes), the trident (find drowned, one holding a trident, beat it at the shore),
   eyes of ender, finding the stronghold, the
   dragon, the netherite ingot, the respawn anchor (crying obsidian, glowstone, craft, place in the Nether, charge 4/4),
   summoning the Wither (a safe spot, the T of soul sand, the skulls), the recovery compass (echo shards, a compass,
-  craft), the mace (breeze rod, heavy core, craft), the beacon (and its full pyramid), the happy ghast's harness and the automatic furnace. The recipe card follows the step (for example glass bottles, then blaze powder).
+  craft), the mace (breeze rod, heavy core, craft), the beacon (and its full pyramid), the dried ghast (8 ghast tears around soul sand), the happy ghast's harness, the automatic furnace and the
+  copper bulb (copper blocks, blaze rod, redstone, craft, place, a pulse). The recipe card follows the step (for example glass bottles, then blaze powder).
 - The title shows the chapter you are in (for example Ch. 6 · Farming and animals).
 - A clock (the in-game clock item) with a bar that counts down to sunset, turning orange at dusk and red at night.
 - **Urgent mode**: the border pulses red, and the current-task line becomes a warning (a warden or creeper

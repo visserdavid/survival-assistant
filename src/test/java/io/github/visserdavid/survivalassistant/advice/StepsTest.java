@@ -131,6 +131,38 @@ class StepsTest {
 	}
 
 	@Test
+	void turtleShell() {
+		Tip g = TipRegistry.TURTLE_HELMET;
+		assertEquals("turtle_helmet.turtles", current(g, b -> b.item("seagrass", 5)));
+		assertEquals("turtle_helmet.seagrass", current(g, b -> b.turtleNearby(true).item("seagrass", 1)));
+		assertEquals("turtle_helmet.eggs", current(g, b -> b.turtleNearby(true).item("seagrass", 2)));
+		assertEquals("turtle_helmet.scutes", current(g, b -> b.block("turtle_egg", 3)), "the seagrass was used up for the eggs");
+		assertEquals("turtle_helmet.scutes", current(g, b -> b.turtleNearby(true).babyTurtleNearby(true)),
+				"the eggs hatched, the babies are growing up");
+		assertEquals("turtle_helmet.craft", current(g, b -> b.item("turtle_scute", 5)));
+	}
+
+	@Test
+	void driedGhast() {
+		Tip g = TipRegistry.DRIED_GHAST;
+		assertEquals("dried_ghast.nether", current(g, b -> b.item("ghast_tear", 3)));
+		assertEquals("dried_ghast.tears", current(g, b -> b.dimension(SurvivalContext.NETHER).item("ghast_tear", 3)));
+		assertEquals("dried_ghast.soul_sand", current(g, b -> b.item("ghast_tear", 8)), "back home with all the tears");
+		assertEquals("dried_ghast.craft", current(g, b -> b.item("ghast_tear", 8).soulSand(1)));
+	}
+
+	@Test
+	void copperBulb() {
+		Tip g = TipRegistry.COPPER_BULB;
+		assertEquals("copper_bulb.copper", current(g, b -> b.item("copper_block", 2).item("copper_ingot", 8)));
+		assertEquals("copper_bulb.blaze_rod", current(g, b -> b.item("copper_block", 2).item("copper_ingot", 9)));
+		assertEquals("copper_bulb.redstone", current(g, b -> b.item("copper_block", 3).blazeRods(1)));
+		assertEquals("copper_bulb.craft", current(g, b -> b.item("copper_block", 3).blazeRods(1).redstone(1)));
+		assertEquals("copper_bulb.place", current(g, b -> b.item("copper_bulb", 4)), "crafting doesn't go back");
+		assertEquals("copper_bulb.pulse", current(g, b -> b.block("copper_bulb", 1)));
+	}
+
+	@Test
 	void ironGolem() {
 		Tip g = TipRegistry.IRON_GOLEM;
 		assertEquals("iron_golem.iron_blocks", current(g, b -> b.item("iron_block", 3).item("iron_ingot", 8)));
