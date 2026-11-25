@@ -275,6 +275,37 @@ class StepsTest {
 	}
 
 	@Test
+	void elytra() {
+		Tip g = TipRegistry.ELYTRA;
+		assertEquals("elytra.end", current(g, b -> b.endCityNear(true)));
+		assertEquals("elytra.city", current(g, b -> b.dimension(SurvivalContext.END)));
+		assertEquals("elytra.ship", current(g, b -> b.dimension(SurvivalContext.END).endCityNear(true)));
+		assertEquals("elytra.take", current(g, b -> b.dimension(SurvivalContext.END).elytraFrame(true)),
+				"the ship floats beside the city; seeing the frame is enough");
+	}
+
+	@Test
+	void netheriteGear() {
+		Tip g = TipRegistry.NETHERITE_GEAR;
+		assertEquals("netherite_gear.template", current(g, b -> b.item("diamond_sword", 1).hasNetheriteIngot(true)));
+		assertEquals("netherite_gear.diamond", current(g, b -> b.hasUpgradeTemplate(true)));
+		assertEquals("netherite_gear.ingot", current(g, b -> b.hasUpgradeTemplate(true).item("diamond_chestplate", 1)));
+		assertEquals("netherite_gear.table", current(g, b -> b.hasUpgradeTemplate(true).item("diamond_pickaxe", 1)
+				.hasNetheriteIngot(true)));
+		assertEquals("netherite_gear.upgrade", current(g, b -> b.hasUpgradeTemplate(true).item("diamond_pickaxe", 1)
+				.hasNetheriteIngot(true).block("smithing_table", 1)));
+	}
+
+	@Test
+	void winRaid() {
+		Tip g = TipRegistry.WIN_RAID;
+		assertEquals("win_raid.bottle", current(g, b -> b));
+		assertEquals("win_raid.omen", current(g, b -> b.hasOminousBottle(true)));
+		assertEquals("win_raid.village", current(g, b -> b.omen(true)), "the bottle is drunk");
+		assertEquals("win_raid.fight", current(g, b -> b.raidActive(true)), "the omen turns into the raid");
+	}
+
+	@Test
 	void ironGolem() {
 		Tip g = TipRegistry.IRON_GOLEM;
 		assertEquals("iron_golem.iron_blocks", current(g, b -> b.item("iron_block", 3).item("iron_ingot", 8)));

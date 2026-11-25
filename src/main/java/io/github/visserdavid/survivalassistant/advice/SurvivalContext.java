@@ -102,10 +102,11 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 	 * @param digDownStreak  recent breaks of the block directly under the player's feet
 	 * @param eyesThrown     how often the player used an eye of ender (thrown, or put in a portal frame)
 	 * @param y              the block height of the player's feet
+	 * @param omen           Bad Omen or Raid Omen: a village the player enters starts a raid
 	 * @param advancements   the vanilla advancements the chapters track that this player has completed
 	 */
 	public record Player(float health, int food, int xpLevel, int ticksSinceRest, int animalsBred, int trades,
-			int digDownStreak, int eyesThrown, int y, Set<String> advancements) {
+			int digDownStreak, int eyesThrown, int y, boolean omen, Set<String> advancements) {
 		public Player {
 			advancements = Set.copyOf(advancements);
 		}
@@ -182,6 +183,9 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 	 * @param bastionNear       a bastion remnant reaches into the chunks around the player (about 4 chunks)
 	 * @param crafterSlots      filled slots (0 - 9) of the fullest crafter nearby
 	 * @param ripeWheat         fully grown wheat nearby
+	 * @param endCityNear       an end city reaches into the chunks around the player (in the End)
+	 * @param elytraFrame       an item frame holding an elytra within 48 blocks (the end ship)
+	 * @param raidActive        a raid is going on where the player stands
 	 * @param anchorCharge      charges (0 - 4) of the fullest respawn anchor nearby; 0 when there is none
 	 * @param witherBase        a T of soul sand or soul soil nearby, free on top for the skulls
 	 * @param blocks            counts of the placed blocks the goal steps look at ({@link Steps#TRACKED_BLOCKS}), by id path
@@ -190,7 +194,8 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 			boolean ironDoorOpen, boolean pistonExtended, boolean repeater, boolean hopper, boolean observer,
 			boolean crafter, boolean autoSmelter, boolean copperBulbLit, boolean hopperOnFurnace, int standBottles,
 			boolean standFuel, boolean hive, boolean hiveSmoked, boolean hiveFull, int beaconLevel, boolean fortressNear,
-			boolean bastionNear, int crafterSlots, int ripeWheat, int anchorCharge, boolean witherBase,
+			boolean bastionNear, int crafterSlots, int ripeWheat, boolean endCityNear,
+			boolean elytraFrame, boolean raidActive, int anchorCharge, boolean witherBase,
 			Map<String, Integer> blocks) {
 		public Nearby {
 			blocks = Map.copyOf(blocks);
@@ -260,6 +265,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		// player
 		private float health = 20f;
 		private int food = 20, xpLevel, ticksSinceRest, animalsBred, trades, digDownStreak, eyesThrown, y = 64;
+		private boolean omen;
 		private final Set<String> advancements = new HashSet<>();
 		// inventory
 		private int logs, planks, cobblestone, foodItems, wool, torches, iron, bread, arrows, diamonds, obsidian, emeralds,
@@ -277,7 +283,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		private int crops, bookshelves;
 		private boolean lava, fallingBlockAbove, litArea, ironDoorOpen, pistonExtended, repeater, hopper, observer,
 				crafter, autoSmelter, copperBulbLit, hopperOnFurnace, standFuel, hive, hiveSmoked, hiveFull,
-				fortressNear, bastionNear, witherBase;
+				fortressNear, bastionNear, witherBase, endCityNear, elytraFrame, raidActive;
 		private int standBottles, beaconLevel, anchorCharge, crafterSlots, ripeWheat;
 		private final Map<String, Integer> blocks = new HashMap<>();
 		// creatures
@@ -307,6 +313,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public Builder digDownStreak(int v) { digDownStreak = v; return this; }
 		public Builder eyesThrown(int v) { eyesThrown = v; return this; }
 		public Builder y(int v) { y = v; return this; }
+		public Builder omen(boolean v) { omen = v; return this; }
 		public Builder advancement(String v) { advancements.add(v); return this; }
 		public Builder advancements(Set<String> v) { advancements.addAll(v); return this; }
 		// inventory: counts
@@ -404,6 +411,9 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public Builder bastionNear(boolean v) { bastionNear = v; return this; }
 		public Builder crafterSlots(int v) { crafterSlots = v; return this; }
 		public Builder ripeWheat(int v) { ripeWheat = v; return this; }
+		public Builder endCityNear(boolean v) { endCityNear = v; return this; }
+		public Builder elytraFrame(boolean v) { elytraFrame = v; return this; }
+		public Builder raidActive(boolean v) { raidActive = v; return this; }
 		public Builder anchorCharge(int v) { anchorCharge = v; return this; }
 		public Builder witherBase(boolean v) { witherBase = v; return this; }
 		/** Sets the count of a tracked placed block (id path); 0 removes it. */
@@ -432,7 +442,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 		public SurvivalContext build() {
 			return new SurvivalContext(
 					new World(dayIndex, timeOfDay, dimension, structure, thundering, sheltered, underground),
-					new Player(health, food, xpLevel, ticksSinceRest, animalsBred, trades, digDownStreak, eyesThrown, y,
+					new Player(health, food, xpLevel, ticksSinceRest, animalsBred, trades, digDownStreak, eyesThrown, y, omen,
 							advancements),
 					new Inventory(logs, planks, cobblestone, foodItems, wool, torches, iron, bread, arrows, diamonds,
 							obsidian, emeralds, blazeRods, netherWart, sugarCane, redstone, enderPearls, eyesOfEnder,
@@ -446,7 +456,7 @@ public record SurvivalContext(World world, Player player, Inventory inv, Nearby 
 					new Nearby(crops, bookshelves, lava, fallingBlockAbove, litArea, ironDoorOpen, pistonExtended,
 							repeater, hopper, observer, crafter, autoSmelter, copperBulbLit, hopperOnFurnace, standBottles,
 							standFuel, hive, hiveSmoked, hiveFull, beaconLevel, fortressNear, bastionNear, crafterSlots,
-							ripeWheat,
+							ripeWheat, endCityNear, elytraFrame, raidActive,
 							anchorCharge, witherBase, blocks),
 					new Creatures(hostiles, creeper, warden, ghast, piglin, ghastling, ridingTamedHorse, ridingHappyGhast,
 							horseNearby, tamedHorseNearby, saddledHorseNearby, endCrystals, blazeNearby, drownedNearby,

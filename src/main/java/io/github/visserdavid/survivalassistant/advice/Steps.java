@@ -84,20 +84,23 @@ public final class Steps {
 	/** Every hoe tills the soil. */
 	private static final List<String> HOES = List.of("wooden_hoe", "stone_hoe", "copper_hoe", "iron_hoe", "golden_hoe",
 			"diamond_hoe", "netherite_hoe");
+	/** Diamond gear a smithing table turns into netherite. */
+	private static final List<String> DIAMOND_GEAR = List.of("diamond_sword", "diamond_pickaxe", "diamond_axe",
+			"diamond_shovel", "diamond_hoe", "diamond_helmet", "diamond_chestplate", "diamond_leggings", "diamond_boots");
 	/** What a farm can be planted with. */
 	private static final List<String> SEEDS = List.of("wheat_seeds", "carrot", "potato", "beetroot_seeds");
 
 	/** Items whose carried count the collector reports ({@link SurvivalContext.Inventory#count}). */
-	public static final Set<String> TRACKED_ITEMS = Stream.concat(Stream.concat(HOES.stream(), SEEDS.stream()), Stream.of(
+	public static final Set<String> TRACKED_ITEMS = Stream.concat(Stream.of(HOES, SEEDS, DIAMOND_GEAR).flatMap(List::stream), Stream.of(
 			"glass_bottle", "blaze_powder", "paper", "leather", "book", "bookshelf", "iron_block", "iron_ingot",
 			"carved_pumpkin", "ancient_debris", "netherite_scrap", "gold_ingot", "glass", "beacon", "hopper",
 			"saddle", "crying_obsidian", "glowstone", "glowstone_dust", "respawn_anchor", "compass", "seagrass",
 			"turtle_scute", "ghast_tear", "copper_block", "copper_ingot", "copper_bulb", "crafting_table", "dropper",
-			"string", "flint", "feather", "wheat", "bone", "cod", "salmon", "bucket", "fishing_rod", "lapis_lazuli"))
+			"string", "flint", "feather", "wheat", "bone", "cod", "salmon", "bucket", "fishing_rod", "lapis_lazuli", "smithing_table"))
 			.collect(Collectors.toUnmodifiableSet());
 	/** Blocks whose placed count nearby the collector reports ({@link SurvivalContext.Nearby#placed}). */
 	public static final Set<String> TRACKED_BLOCKS = Set.of("obsidian", "nether_portal", "iron_block", "carved_pumpkin",
-			"beacon", "hopper", "nether_wart", "respawn_anchor", "turtle_egg", "copper_bulb", "farmland", "water");
+			"beacon", "hopper", "nether_wart", "respawn_anchor", "turtle_egg", "copper_bulb", "farmland", "water", "smithing_table");
 
 	/** The pyramid has at most 4 levels: 9 + 25 + 49 + 81 = 164 blocks. */
 	public static final int MAX_BEACON_LEVEL = 4;
@@ -349,6 +352,12 @@ public final class Steps {
 					count("mace.rod", c -> c.inv().breezeRods(), 1, c -> false),
 					step("mace.core", c -> c.inv().hasHeavyCore()),
 					finish("mace.craft"))),
+			// chapter 10: in the End, an end city, its ship, the elytra in the item frame
+			Map.entry("elytra", List.of(
+					step("elytra.end", c -> c.world().inEnd()),
+					step("elytra.city", c -> c.nearby().endCityNear() || c.nearby().elytraFrame()),
+					step("elytra.ship", c -> c.nearby().elytraFrame()),
+					finish("elytra.take"))),
 			// chapter 10: blaze powder for every eye still to make
 			Map.entry("eyes_of_ender", List.of(
 					count("eyes_of_ender.powder", c -> item(c, "blaze_powder") + c.inv().eyesOfEnder(), 12, c -> false),
@@ -372,6 +381,13 @@ public final class Steps {
 					step("upgrade_template.nether", Steps::inNether),
 					step("upgrade_template.bastion", c -> c.nearby().bastionNear()),
 					finish("upgrade_template.loot"))),
+			// chapter 11: template, diamond gear and an ingot on a smithing table
+			Map.entry("netherite_gear", List.of(
+					step("netherite_gear.template", c -> c.inv().hasUpgradeTemplate()),
+					step("netherite_gear.diamond", c -> sum(c, DIAMOND_GEAR) > 0),
+					step("netherite_gear.ingot", c -> c.inv().hasNetheriteIngot()),
+					step("netherite_gear.table", c -> item(c, "smithing_table") > 0 || c.nearby().placed("smithing_table") > 0),
+					finish("netherite_gear.upgrade"))),
 			// chapter 11: 6 crying obsidian and 3 glowstone make the anchor; in the Nether, 4 glowstone fill it up
 			Map.entry("respawn_anchor", List.of(
 					count("respawn_anchor.crying", c -> item(c, "crying_obsidian"), 6, Steps::hasAnchor),
@@ -395,6 +411,12 @@ public final class Steps {
 					step("full_beacon.level2", c -> c.nearby().beaconLevel() >= 2),
 					step("full_beacon.level3", c -> c.nearby().beaconLevel() >= 3),
 					finish("full_beacon.level4"))),
+			// chapter 14: the captain's ominous bottle, drink it (Bad Omen), walk into a village, win every wave
+			Map.entry("win_raid", List.of(
+					step("win_raid.bottle", c -> c.inv().hasOminousBottle() || c.player().omen() || c.nearby().raidActive()),
+					step("win_raid.omen", c -> c.player().omen() || c.nearby().raidActive()),
+					step("win_raid.village", c -> c.nearby().raidActive()),
+					finish("win_raid.fight"))),
 			// chapter 17: ghast tears from the Nether around soul sand (a dried ghast from a fossil completes it too)
 			Map.entry("dried_ghast", List.of(
 					step("dried_ghast.nether", c -> inNether(c) || item(c, "ghast_tear") >= GHAST_TEARS),

@@ -98,6 +98,16 @@ KITS = {
                          BLOCKS, item("water_bucket"), TABLE], armor("iron"), SHIELD),
     # enchanting: iron gear to enchant; no enchanting table, lapis or levels (set_gear resets the levels)
     "enchant": ([item("iron_sword"), item("iron_pickaxe"), FOOD, TORCHES, item("bookshelf", 15)], armor("iron"), SHIELD),
+    # End: elytra test; slow falling and pearls for the islands; no elytra, no netherite (that is the next goal)
+    "elytra": ([DIAMOND_SWORD, DIAMOND_PICK, item("bow", ench={"power": 5, "infinity": 1}), item("arrow"),
+                item("ender_pearl", 16), FOOD, GOLDEN, item("end_stone", 64),
+                item("potion", 3, **{"minecraft:potion_contents": Compound({"potion": String("minecraft:long_slow_falling")})})],
+               armor("diamond"), SHIELD),
+    # netherite: diamond gear to upgrade is part of the test, so iron here; no template, ingot or smithing table
+    "netherite_gear": ([item("iron_sword"), item("iron_pickaxe"), FOOD, TORCHES, TABLE], armor("iron"), SHIELD),
+    # raid: strong gear for the waves; no ominous bottle
+    "win_raid": ([SWORD, item("crossbow", ench={"quick_charge": 3, "multishot": 1}), item("arrow", 64), FOOD, GOLDEN,
+                  item("totem_of_undying"), BLOCKS, TORCHES], armor(), SHIELD),
     # farm life, chapters 2 and 6: simple gear; never the wheat, bread, bones, fish, iron, bucket, string or rod tested
     "bread": ([item("stone_sword"), item("stone_hoe"), FOOD, TORCHES, TABLE], armor("iron"), None),
     "tame_animal": ([item("stone_sword"), FOOD, TORCHES, BLOCKS, item("lead", 2)], armor("iron"), SHIELD),

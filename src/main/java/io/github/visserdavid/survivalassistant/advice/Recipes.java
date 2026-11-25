@@ -96,6 +96,9 @@ public final class Recipes {
 	private static final Recipe IRON_LEGGINGS = new Recipe("minecraft:iron_leggings", 1, List.of("XXX", "X X", "X X"),
 			Map.of('X', IRON));
 	private static final Recipe IRON_BOOTS = new Recipe("minecraft:iron_boots", 1, List.of("X X", "X X"), Map.of('X', IRON));
+	/** 2 iron and 4 planks: where diamond gear becomes netherite. */
+	private static final Recipe SMITHING_TABLE = new Recipe("minecraft:smithing_table", 1, List.of("@@", "##", "##"),
+			Map.of('@', IRON, '#', PLANKS));
 	/** Flint, a stick and a feather make 4 arrows. */
 	private static final Recipe ARROW = new Recipe("minecraft:arrow", 4, List.of("X", "#", "Y"),
 			Map.of('X', "minecraft:flint", '#', STICK, 'Y', "minecraft:feather"));
@@ -223,6 +226,7 @@ public final class Recipes {
 			Map.entry("full_iron_armor.chestplate", IRON_CHESTPLATE),
 			Map.entry("full_iron_armor.leggings", IRON_LEGGINGS),
 			Map.entry("full_iron_armor.boots", IRON_BOOTS),
+			Map.entry("netherite_gear.table", SMITHING_TABLE),
 			Map.entry("bow.flint", ARROW),
 			Map.entry("bow.feathers", ARROW),
 			Map.entry("bow.arrows", ARROW),

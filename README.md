@@ -107,7 +107,9 @@ archaeology, the trial challenges, the happy ghast and automation.
   portal, the Nether fortress (the guide notices when one is close), blaze rods, Nether wart, brewing, bookshelves, honey (bottle, nest, campfire, wait), your own horse (find, tame, saddle),
   buried treasure (map, red X, dig), the turtle shell (turtles, seagrass, eggs, 5 scutes), the trident (find drowned, one holding a trident, beat it at the shore),
   eyes of ender, finding the stronghold, the
-  dragon, the netherite ingot, the upgrade template (find a bastion, search its chests), the respawn anchor (crying obsidian, glowstone, craft, place in the Nether, charge 4/4),
+  dragon, the elytra (back to the End, an end city, its ship, the item frame), the netherite ingot, netherite gear
+  (template, diamond gear, ingot, smithing table, upgrade), winning a raid (the ominous bottle, drink it, a village,
+  every wave), the upgrade template (find a bastion, search its chests), the respawn anchor (crying obsidian, glowstone, craft, place in the Nether, charge 4/4),
   summoning the Wither (a safe spot, the T of soul sand, the skulls), the recovery compass (echo shards, a compass,
   craft), the mace (breeze rod, heavy core, craft), the beacon (and its full pyramid), the dried ghast (8 ghast tears around soul sand), the happy ghast's harness, the automatic furnace and the
   copper bulb (copper blocks, blaze rod, redstone, craft, place, a pulse) and a crafter that crafts a crafter (place

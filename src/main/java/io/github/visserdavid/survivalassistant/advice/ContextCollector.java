@@ -19,7 +19,10 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.animal.camel.Camel;
+import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.entity.animal.cow.AbstractCow;
 import net.minecraft.world.entity.animal.feline.Cat;
 import net.minecraft.world.entity.animal.goat.Goat;
@@ -95,6 +98,8 @@ public final class ContextCollector {
 	private static final int HIVE_EXTRA_HEIGHT = 4;
 	/** Chunks around the player in which a fortress or bastion counts as "near" (4 chunks = about 64 blocks). */
 	private static final int STRUCTURE_CHUNKS = 4;
+	/** An end ship's elytra frame counts within this many blocks. */
+	private static final int ELYTRA_RADIUS = 48;
 	/** Brewing stand slots: 0 - 2 hold the bottles, 4 the blaze powder. */
 	private static final int STAND_BOTTLE_SLOTS = 3, STAND_FUEL_SLOT = 4;
 
@@ -119,7 +124,14 @@ public final class ContextCollector {
 		scanBlocks(player.level(), player.blockPosition(), b);
 		scanDanger(player, env, b);
 		scanCreatures(player, env.overworld(), b);
-		if (player.level().dimension() == Level.END) b.endCrystals(endCrystals(player.level()));
+		if (player.level().dimension() == Level.END) {
+			b.endCrystals(endCrystals(player.level()));
+			b.endCityNear(structureNear(player.level(), player.blockPosition(), BuiltinStructures.END_CITY));
+			b.elytraFrame(!player.level().getEntitiesOfClass(ItemFrame.class, around(player, ELYTRA_RADIUS),
+					f -> f.getItem().is(Items.ELYTRA)).isEmpty());
+		}
+		Raid raid = player.level().getRaidAt(player.blockPosition());
+		b.raidActive(raid != null && !raid.isOver());
 		if (player.level().dimension() == Level.NETHER) {
 			b.fortressNear(structureNear(player.level(), player.blockPosition(), BuiltinStructures.FORTRESS));
 			b.bastionNear(structureNear(player.level(), player.blockPosition(), BuiltinStructures.BASTION_REMNANT));
@@ -164,6 +176,7 @@ public final class ContextCollector {
 				.trades(stats.getValue(Stats.CUSTOM.get(Stats.TRADED_WITH_VILLAGER)))
 				.eyesThrown(stats.getValue(Stats.ITEM_USED.get(Items.ENDER_EYE)))
 				.y(player.blockPosition().getY())
+				.omen(player.hasEffect(MobEffects.BAD_OMEN) || player.hasEffect(MobEffects.RAID_OMEN))
 				.digDownStreak(digDownStreak)
 				.advancements(advancements(player));
 	}
