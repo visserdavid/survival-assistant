@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Smaller steps inside the goals that hide many actions behind one line ("Brew a potion", "Enter the Nether"). The task
@@ -79,15 +81,21 @@ public final class Steps {
 
 	// ---------------------------------------------------------------- what the steps look at
 
+	/** Every hoe tills the soil. */
+	private static final List<String> HOES = List.of("wooden_hoe", "stone_hoe", "copper_hoe", "iron_hoe", "golden_hoe",
+			"diamond_hoe", "netherite_hoe");
+	/** What a farm can be planted with. */
+	private static final List<String> SEEDS = List.of("wheat_seeds", "carrot", "potato", "beetroot_seeds");
+
 	/** Items whose carried count the collector reports ({@link SurvivalContext.Inventory#count}). */
-	public static final Set<String> TRACKED_ITEMS = Set.of("glass_bottle", "blaze_powder", "paper", "leather", "book",
-			"bookshelf", "iron_block", "iron_ingot", "carved_pumpkin", "ancient_debris", "netherite_scrap", "gold_ingot",
-			"glass", "beacon", "hopper", "saddle", "crying_obsidian", "glowstone", "glowstone_dust", "respawn_anchor",
+	public static final Set<String> TRACKED_ITEMS = Stream.concat(Stream.concat(HOES.stream(), SEEDS.stream()), Stream.of(
+			"glass_bottle", "blaze_powder", "paper", "leather", "book", "bookshelf", "iron_block", "iron_ingot",
+			"carved_pumpkin", "ancient_debris", "netherite_scrap", "gold_ingot", "glass", "beacon", "hopper", "saddle", "crying_obsidian", "glowstone", "glowstone_dust", "respawn_anchor",
 			"compass", "seagrass", "turtle_scute", "ghast_tear", "copper_block", "copper_ingot", "copper_bulb",
-			"crafting_table", "dropper");
+			"crafting_table", "dropper", "string", "flint", "feather")).collect(Collectors.toUnmodifiableSet());
 	/** Blocks whose placed count nearby the collector reports ({@link SurvivalContext.Nearby#placed}). */
 	public static final Set<String> TRACKED_BLOCKS = Set.of("obsidian", "nether_portal", "iron_block", "carved_pumpkin",
-			"beacon", "hopper", "nether_wart", "respawn_anchor", "turtle_egg", "copper_bulb");
+			"beacon", "hopper", "nether_wart", "respawn_anchor", "turtle_egg", "copper_bulb", "farmland");
 
 	/** The pyramid has at most 4 levels: 9 + 25 + 49 + 81 = 164 blocks. */
 	public static final int MAX_BEACON_LEVEL = 4;
@@ -97,6 +105,10 @@ public final class Steps {
 	public static final int TREASURE_NEAR = 8;
 	/** A respawn anchor holds 4 charges; the advancement wants it full. */
 	public static final int ANCHOR_CHARGES = 4;
+	/** One flint, stick and feather make 4 arrows; the bow goal wants 16. */
+	private static final int ARROWS_PER_CRAFT = 4, ARROW_CRAFTS = 4;
+	/** The farm goal wants 6 crops. */
+	private static final int FARM_CROPS = 6;
 	/** The crafter's own recipe fills all 9 slots of a crafter. */
 	private static final int CRAFTER_SLOTS = 9;
 	/** 8 ghast tears around soul sand make a dried ghast. */
@@ -140,6 +152,20 @@ public final class Steps {
 		return c.nearby().crafterSlots() > 0;
 	}
 
+	private static int sum(SurvivalContext c, List<String> ids) {
+		return ids.stream().mapToInt(id -> item(c, id)).sum();
+	}
+
+	/** Crops in the ground or tilled soil: the farm is started. */
+	private static boolean planting(SurvivalContext c) {
+		return c.nearby().crops() > 0 || c.nearby().placed("farmland") > 0;
+	}
+
+	/** Arrows already made count as the flint or feathers that went into them (1 of each makes 4). */
+	private static int arrowSets(SurvivalContext c) {
+		return c.inv().arrows() / ARROWS_PER_CRAFT;
+	}
+
 	private static boolean hasBulb(SurvivalContext c) {
 		return item(c, "copper_bulb") > 0 || c.nearby().placed("copper_bulb") > 0;
 	}
@@ -151,6 +177,19 @@ public final class Steps {
 	// ---------------------------------------------------------------- the steps per goal
 
 	public static final Map<String, List<Step>> BY_GOAL = Map.ofEntries(
+			// chapter 2: a hoe, seeds (planted ones count), tilled soil by the water, then plant
+			Map.entry("farm", List.of(
+					step("farm.hoe", c -> sum(c, HOES) > 0 || planting(c)),
+					count("farm.seeds", c -> sum(c, SEEDS) + c.nearby().crops(), FARM_CROPS, c -> false),
+					step("farm.till", Steps::planting),
+					finish("farm.plant"))),
+			// chapter 2: string from spiders makes the bow; flint, a stick and a feather make 4 arrows
+			Map.entry("bow", List.of(
+					count("bow.string", c -> item(c, "string"), 3, c -> c.inv().hasBow()),
+					step("bow.craft", c -> c.inv().hasBow()),
+					count("bow.flint", c -> item(c, "flint") + arrowSets(c), ARROW_CRAFTS, c -> false),
+					count("bow.feathers", c -> item(c, "feather") + arrowSets(c), ARROW_CRAFTS, c -> false),
+					finish("bow.arrows"))),
 			// chapter 2: a book, 2 diamonds and 4 obsidian (the diamond pickaxe often used up the diamonds)
 			Map.entry("enchanting_table", List.of(
 					count("enchanting_table.diamonds", c -> c.inv().diamonds(), 2, c -> false),

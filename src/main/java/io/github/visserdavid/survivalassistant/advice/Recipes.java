@@ -90,6 +90,9 @@ public final class Recipes {
 	/** 9 copper ingots make a block: the copper bulb takes 3. */
 	private static final Recipe COPPER_BLOCK = new Recipe("minecraft:copper_block", 1, List.of("###", "###", "###"),
 			Map.of('#', "minecraft:copper_ingot"));
+	/** Flint, a stick and a feather make 4 arrows. */
+	private static final Recipe ARROW = new Recipe("minecraft:arrow", 4, List.of("X", "#", "Y"),
+			Map.of('X', "minecraft:flint", '#', STICK, 'Y', "minecraft:feather"));
 	/** A crafter; the crafter-crafts-a-crafter goal puts this same recipe into one. */
 	private static final Recipe CRAFTER = new Recipe("minecraft:crafter", 1, List.of("###", "#C#", "RDR"),
 			Map.of('#', IRON, 'C', "minecraft:crafting_table", 'R', REDSTONE, 'D', "minecraft:dropper"));
@@ -209,6 +212,9 @@ public final class Recipes {
 			Map.entry("respawn_anchor.charge", GLOWSTONE),
 			Map.entry("recovery_compass.compass", COMPASS),
 			Map.entry("copper_bulb.copper", COPPER_BLOCK),
+			Map.entry("bow.flint", ARROW),
+			Map.entry("bow.feathers", ARROW),
+			Map.entry("bow.arrows", ARROW),
 			Map.entry("crafter_crafts.crafter", CRAFTER),
 			Map.entry("crafter_crafts.parts", DROPPER),
 			Map.entry("crafter_crafts.fill", CRAFTER),

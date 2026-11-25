@@ -186,6 +186,29 @@ class StepsTest {
 	}
 
 	@Test
+	void farm() {
+		Tip g = TipRegistry.FARM;
+		assertEquals("farm.hoe", current(g, b -> b.item("wheat_seeds", 6)));
+		assertEquals("farm.seeds", current(g, b -> b.item("stone_hoe", 1).item("wheat_seeds", 3).item("carrot", 2)));
+		assertEquals("farm.till", current(g, b -> b.item("wooden_hoe", 1).item("wheat_seeds", 4).item("potato", 2)));
+		assertEquals("farm.plant", current(g, b -> b.item("wheat_seeds", 6).block("farmland", 2)), "the hoe may stay at home");
+		assertEquals("farm.plant", current(g, b -> b.item("wheat_seeds", 2).crops(4).block("farmland", 6)),
+				"planted seeds count, so planting doesn't send the player back");
+	}
+
+	@Test
+	void bow() {
+		Tip g = TipRegistry.BOW;
+		assertEquals("bow.string", current(g, b -> b.item("string", 2)));
+		assertEquals("bow.craft", current(g, b -> b.item("string", 3)));
+		assertEquals("bow.flint", current(g, b -> b.hasBow(true).item("flint", 2).arrows(4)), "4 arrows count as one flint");
+		assertEquals("bow.feathers", current(g, b -> b.hasBow(true).item("flint", 3).arrows(4)));
+		assertEquals("bow.arrows", current(g, b -> b.hasBow(true).item("flint", 4).item("feather", 4)));
+		assertEquals("bow.arrows", current(g, b -> b.hasBow(true).item("flint", 1).item("feather", 1).arrows(12)),
+				"crafting arrows doesn't send the player back");
+	}
+
+	@Test
 	void ironGolem() {
 		Tip g = TipRegistry.IRON_GOLEM;
 		assertEquals("iron_golem.iron_blocks", current(g, b -> b.item("iron_block", 3).item("iron_ingot", 8)));

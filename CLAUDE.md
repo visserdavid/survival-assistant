@@ -18,6 +18,7 @@ python tools/recipe_check.py         # check every recipe card against the game 
 python tools/add_step_texts.py <texts.py>        # add the texts of new goal steps to all 15 languages (then make_lang)
 python tools/prep_chapter.py Stappentest <goal> [--spawn]  # put a test world's guide at a goal (Minecraft closed; backup .before-prep)
 python tools/set_gear.py Stappentest <goal>      # empty the inventory and give gear for that goal's test
+python tools/test_schematics.py [name]          # write WorldEdit schematics for tests into ModTesting (//schem load <name>, //paste)
 ```
 
 The world scripts take a world folder or the name of a world in the ModTesting instance, and need `nbtlib`. `set_gear.py` never gives the items a test is about, nor gear that completes the goal by itself (no netherite for `upgrade_template`); add a kit to its `KITS` for every new goal with steps.

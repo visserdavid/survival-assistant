@@ -85,6 +85,11 @@ KITS = {
     # crafter: buttons for the pulse, a table to place first; no crafter, iron, dropper or redstone
     "crafter_crafts": ([PICK, item("stone_button", 4), item("hopper", 2), item("chest"), BLOCKS, TORCHES, FOOD, TABLE],
                        armor(), SHIELD),
+    # early game, chapter 2: simple stone tools; no hoe, seeds, string, flint, feathers, bow or arrows
+    "farm": ([item("stone_sword"), item("stone_pickaxe"), item("stone_shovel"), item("water_bucket"), FOOD, TORCHES,
+              item("dirt", 32), TABLE], armor("iron"), None),
+    "bow": ([item("stone_sword"), item("stone_shovel"), item("stick", 8), item("gravel", 32), FOOD, TORCHES, TABLE],
+            armor("iron"), SHIELD),
     # redstone: a lever and buttons for the pulse; no copper, blaze rod, redstone or bulbs
     "copper_bulb": ([PICK, item("lever", 4), item("stone_button", 4), BLOCKS, TORCHES, FOOD, TABLE], armor(), SHIELD),
 }
