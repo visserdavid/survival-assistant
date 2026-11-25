@@ -2,8 +2,9 @@
 
 A Fabric mod for **Minecraft 26.3** that teaches survival, from your very first night to the ender dragon and
 beyond. A friendly guide called Pim walks with you through **18 chapters**: he tells you what to do next, warns you
-when you're in danger and celebrates every goal you reach. A compact task card shows your progress, and an
-environment card explains your current biome and which ores are worth digging for at your height.
+when you're in danger and celebrates every goal you reach. A compact task card shows your progress and breaks big
+goals into small steps, and an environment card explains your current biome and which ores are worth digging for at
+your height. After the basics you choose your own route: fighter, farmer, explorer or researcher.
 
 All advice follows a researched path for an average player, without speedrun tricks. Recipes, mob spawns, ore
 heights and other facts were **checked against the game's own data files**; see
@@ -117,30 +118,17 @@ chapter menu, and `/guide continue` starts it. A route adds no goals and locks n
 
 - The current task and the next two, with live counters (for example logs 6/10 or blaze rods 2/3) and a
   check-mark animation when a goal is done.
-- **Steps**: big goals are split into small steps, shown under the current task with their own counter, and the
-  guide tells you each step as soon as you reach it. Brewing a potion, for example, goes: glass bottles (3/3), fill
-  them with water, blaze powder as fuel, brew. Steps exist for the first iron armor (8 iron, the chestplate, put it on), full iron armor (one step per missing piece, with its iron), the diamond pickaxe (an iron
-  pickaxe, dig deep, 3 diamonds, craft), enchanting (a table, lapis, levels), the first farm (a hoe, seeds, tilled soil
-  by water, plant), bread (ripe wheat, 9 wheat, bake),
-  taming an animal (a wolf or cat, bones or raw fish, feed it), milk (iron, a bucket, a cow), fishing (string, a rod,
-  water, cast), the bow (string, the bow, flint,
-  feathers, arrows), the enchanting table, the iron golem, the Nether
-  portal, the Nether fortress (the guide notices when one is close), blaze rods, Nether wart, brewing, bookshelves, honey (bottle, nest, campfire, wait), your own horse (find, tame, saddle),
-  buried treasure (map, red X, dig), the turtle shell (turtles, seagrass, eggs, 5 scutes), the trident (find drowned, one holding a trident, beat it at the shore),
-  eyes of ender, finding the stronghold, the
-  dragon, the end city (the dragon, the gateway to the outer islands, a city nearby, walk in), the elytra (back to the End, an end city, its ship, the item frame), the netherite ingot, netherite gear
-  (template, diamond gear, ingot, smithing table, upgrade), winning a raid (the ominous bottle, drink it, a village,
-  every wave), the upgrade template (find a bastion, search its chests), the respawn anchor (crying obsidian, glowstone, craft, place in the Nether, charge 4/4),
-  summoning the Wither (a safe spot, the T of soul sand, the skulls), the nether star (find the Wither, defeat it,
-  pick up the star), the ominous bottle (an outpost, its captain, the bottle), the recovery compass (echo shards, a compass,
-  craft), the mace (breeze rod, heavy core, craft), the piston (planks, cobblestone, iron, redstone, craft, place, power), sneaking past a sculk sensor (the deep dark, a
-  sensor, sneak), opening a vault (the trial chambers, a trial key) and an ominous vault
-  (an ominous bottle, drink it, the chambers, an ominous key), the beacon (and its full pyramid), the dried ghast (8 ghast tears around soul sand), putting it in water, letting it swell (0/3), the happy ghast's
-  harness and riding it (a grown ghast, a harness, put it on, climb on), the automatic furnace and the
-  decorated pot (4 sherds or bricks, craft), the armor trim (template, material, armor piece, smithing table,
-  trim), the sniffer egg (a brush, a warm ocean ruin, brush the sand), the
-  copper bulb (copper blocks, blaze rod, redstone, craft, place, a pulse) and a crafter that crafts a crafter (place
-  one, 5 iron, a dropper, a crafting table, 2 redstone, fill it, a pulse). Every ingredient of a recipe is a step of its own, with its own counter. The recipe card follows the step (for example glass bottles, then blaze powder).
+- **Steps**: 55 of the 113 goals are split into small steps, shown under the current task with their own counter.
+  The guide tells you each step as soon as you reach it. Every ingredient of a recipe is a step of its own, and the
+  last action (put it on, place it, power it) is one too. The piston, for example, goes: 3 planks, 4 cobblestone,
+  1 iron ingot, 1 redstone, *Craft a piston*, *Place the piston*, *Power it*. Brewing goes: glass, 3 bottles,
+  fill them with water, blaze powder as fuel, Nether wart, brew.
+  - Steps follow what you actually do: the guide notices a fortress nearby, a ripe wheat field, a brewing stand
+    with wart in it or a dried ghast that is swelling up.
+  - Goals that are one action (chop wood, find a village, make a crafting table) have no steps.
+  - Steps aren't saved: they're worked out from your inventory and surroundings. Use something up and the step
+    goes back, which is exactly what you need to know.
+  - Don't want them? Switch off **Show steps** in the settings (Display).
 - The title shows the chapter you are in (for example Ch. 6 · Farming and animals).
 - A clock (the in-game clock item) with a bar that counts down to sunset, turning orange at dusk and red at night.
 - **Urgent mode**: the border pulses red, and the current-task line becomes a warning (a warden or creeper
@@ -179,7 +167,9 @@ chapter menu, and `/guide continue` starts it. A route adds no goals and locks n
 - **Recipe card**: open your inventory or a crafting table and a small card next to the window shows how to
   craft the item for your current task (grid, arrow, result). For 3x3 recipes in the inventory it reminds
   you that you need a crafting table. The full list (J) shows the same recipe under the goals.
-  All 48 recipe cards are checked against the game data (`tools/recipe_check.py`).
+  The card follows the current step (for example glass bottles, then blaze powder), and in the inventory it moves
+  below your status effects, so you can still see how long they last.
+  All 66 recipe cards are checked against the game data (`tools/recipe_check.py`).
 - **Crosshair info**: look at a mob for a moment and a line under the crosshair tells you what it does
   (creeper, skeleton, enderman, the new parched skeleton, sheep, ...). Look at an ore and it tells you which
   pickaxe you need: green when your tool works, red when it would break the block without dropping anything.
@@ -302,6 +292,28 @@ so a reply arrives in about 0.3 s. Its Dutch was clearly better than Qwen3.5 4B'
 (about 130 tokens per second, 3.0 GB) but made up words now and then. The mod adds its own guard against
 repetition (the guide remembers its last replies and is told to vary its wording) and removes emoji, which
 Minecraft's font can't show.
+
+## What it does and doesn't do (yet)
+Honest about the limits:
+
+- **Minecraft 26.3 with Fabric only.** There is no version for older Minecraft, Forge, NeoForge or Quilt.
+- **The mod is needed on both sides**: on the server (or in singleplayer) for the guide and the advice, and on the
+  client for the cards. On a server, every player needs it too.
+- **It teaches one path for an average player.** It is not a wiki: it covers the 113 goals of the chapters, not
+  every block, mob or trick in the game, and it never teaches speedrun or exploit tricks.
+- **Steps for 55 of the 113 goals.** The other goals are single actions, or goals where a step would add nothing
+  (level 30, for example). More may follow.
+- **Routes reorder; they don't add content.** A route recommends chapters in an order that fits a style. There are
+  no route-only chapters or goals.
+- **Only the current chapter counts.** Goals are checked in the chapter you're in. Most of what you did before is
+  ticked off the moment you start a chapter (advancements, items, statistics), but not everything can be seen
+  afterwards.
+- **Translations are AI-made** and not yet checked by native speakers (see [Languages](#languages)).
+- **Small talk is optional and can be wrong.** It needs a local language model and a reasonably strong computer;
+  its replies are not checked, so it never gives recipes or instructions.
+- **Mostly tested in singleplayer.** Multiplayer servers are supported (each player has their own guide, progress
+  and route), but most play testing so far happened in singleplayer.
+- **Not on CurseForge yet**, and the Modrinth page is still being prepared.
 
 ## Commands
 
@@ -447,6 +459,11 @@ Developer tools:
 - Both find the Minecraft jar in the Loom cache after a build (`tools/mcjar.py`); pass `--jar <path>` to use another.
   The CI workflow runs the build, the tests, the language check and the recipe check on every push to `main` and
   on pull requests.
+- `tools/add_step_texts.py` adds the texts of new goal steps to all 15 languages.
+- Test helpers for a world in the "ModTesting" instance (Minecraft closed, needs `nbtlib`): `tools/prep_chapter.py`
+  puts the guide at a chosen goal (with an optional route), `tools/set_gear.py` gives fitting gear for that test,
+  `tools/test_schematics.py` writes WorldEdit schematics (a farm plot, a wheat field, a pond) and
+  `tools/test_stair.py` digs a staircase down to a chosen depth.
 - `tools/make_icon.py` builds the transparent PNG icons from `docs/images/SurvivalAssistant.jpg`
   (`uv run --with pillow python tools/make_icon.py`).
 

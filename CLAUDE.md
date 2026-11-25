@@ -43,6 +43,8 @@ The world scripts take a world folder or the name of a world in the ModTesting i
 
 **Pure logic, testable without Minecraft.** Most of `advice/` and `chat/` is plain Java:
 - chapters and goals (`Chapters`, `Chapter`, `Recipes`, `Gear`, `OreTable`, `BiomeGroup`);
+- goal steps (`Steps`: per goal an ordered list, the current step is the first that isn't done; never saved) and
+  routes (`Routes`, `Route`: an order over the chapters; `GuideProgress.route` is `""` until the player answers);
 - the lifecycle;
 - crosshair advice;
 - the small-talk prompt and scheduling.

@@ -15,8 +15,9 @@ Project settings
 -->
 
 **Learn Minecraft survival while you play.** A friendly guide called Pim walks with you through **18 chapters**,
-from your very first night to the ender dragon and beyond. He tells you what to do next, warns you when you're in
-danger and celebrates every goal you reach.
+from your very first night to the ender dragon and beyond. He tells you what to do next, one small step at a time,
+warns you when you're in danger and celebrates every goal you reach. Once you know the basics, you choose your own
+way: fighter, farmer, explorer or researcher.
 
 ![Task card](https://raw.githubusercontent.com/visserdavid/survival-assistant/main/docs/images/task-card.png)
 
@@ -25,12 +26,18 @@ danger and celebrates every goal you reach.
   no pushing, no blocking, no trampled farmland.
 - **A task card** with your current goal, live counters (logs 6/10, blaze rods 2/3, ...) and a clock that counts
   down to sunset.
+- **Small steps for big goals.** No more staring at "Brew a potion": the card shows glass, 3 bottles, fill them with
+  water, blaze powder, Nether wart, brew, each with its own counter. Every ingredient is a step of its own, and
+  the steps follow what you actually do, such as a fortress nearby or a ghast that is swelling up. 55 goals have
+  steps.
+- **Routes**: after chapter 2 you pick a specialization, and the guide recommends the chapters in an order that
+  fits it. Finish your route and you earn a title, such as *master farmer*. Switch any time; nothing is locked.
 - **Safety warnings** for creepers, digging straight down, lava, the night, phantoms, ghasts, piglins without gold
   and, most urgent of all, the warden. One-time notes in special places: the Nether, temples, trial chambers,
   strongholds, the End, bastions, ancient cities and more.
 - **Safe in the light**: in a well-lit cave or a lit spot at night the guide tells you you're safe, instead of
   warning about the dark.
-- **A recipe card** next to your inventory for the item your task needs, and **info about the mob or ore you look at**,
+- **A recipe card** next to your inventory for the item your task needs (66 recipes, all checked), and **info about the mob or ore you look at**,
   from up to 16 blocks away: read about that creeper before it hisses.
 - **An environment card** with a pro and a con for every biome and the ores worth digging for at your height.
 - **A light check** (key L) that shows every spot where monsters can spawn.
@@ -61,10 +68,18 @@ danger and celebrates every goal you reach.
 | 18 | Automation | An observer, an automatic furnace, a copper bulb, the crafter |
 
 Chapters 1 and 2 are the base; after that you choose what to learn from a clickable menu in chat
-(`/guide chapters`). Goals use Minecraft's own advancements where possible, so things you already did are ticked
+(`/guide chapters`), or let your route choose for you. Goals use Minecraft's own advancements where possible, so things you already did are ticked
 off right away.
 
 ![Chapter menu](https://raw.githubusercontent.com/visserdavid/survival-assistant/main/docs/images/chapters-menu.png)
+
+## Routes
+| Route | The way it goes |
+|---|---|
+| Fighter | The Nether, villages, raids, brewing, the Wither, the trial chambers, netherite, the End |
+| Farmer | Animals and farming, villages, the Nether, brewing, the happy ghast, redstone, automation |
+| Explorer | Exploring, the ocean, archaeology, the Deep Dark, the Nether, the End, the happy ghast |
+| Researcher | Redstone, the Nether, brewing and enchanting, automation, exploring, archaeology, the Deep Dark |
 
 ## Checked against the game
 Every recipe, ore height, mob spawn and game fact the guide mentions was checked against Minecraft 26.3's own data
@@ -82,6 +97,21 @@ If you like, the guide can chat with you through a language model that runs **on
 (`chatEnabled`, or *Small talk allowed* in the settings), the mod connects to `llama-server` on your own machine
 (`127.0.0.1`) by default. On a server, what you say to the guide goes to the model server the server owner set up. Without it, everything else works the same. Setup instructions and model advice are in the
 [README](https://github.com/visserdavid/survival-assistant#small-talk-with-a-local-ai-model-optional).
+
+## What it doesn't do (yet)
+We'd rather you know before you download:
+
+- **Minecraft 26.3 with Fabric only.** No older versions, Forge, NeoForge or Quilt.
+- **Needed on both sides**: on the server (or in singleplayer) and on every player's client.
+- **One path, not a wiki.** It teaches the 113 goals of its chapters for an average player, not every block, mob or
+  trick in the game.
+- **Steps for 55 of the 113 goals.** Simple goals, like chopping wood or finding a village, are one action.
+- **Routes reorder the chapters**; they don't add chapters of their own.
+- **Goals count in the chapter you're in.** Most of what you did before is ticked off when you start a chapter,
+  but not everything can be seen afterwards.
+- **Translations are AI-made** and not yet checked by native speakers.
+- **Mostly tested in singleplayer.** Multiplayer works (every player has their own guide), but has had less play
+  testing.
 
 ## Languages
 English, Dutch, German, French, Spanish, Italian, Portuguese (Brazil), Polish, Romanian, Russian, Ukrainian,
