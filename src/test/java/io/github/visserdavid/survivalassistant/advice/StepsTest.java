@@ -30,8 +30,10 @@ class StepsTest {
 	@Test
 	void brewingGoesStepByStep() {
 		Tip g = TipRegistry.BREW_POTION;
-		assertEquals("brew_potion.bottles", current(g, b -> b));
-		assertEquals("brew_potion.bottles", current(g, b -> b.item("glass_bottle", 2)));
+		assertEquals("brew_potion.glass", current(g, b -> b));
+		assertEquals("brew_potion.bottles", current(g, b -> b.item("glass", 3)));
+		assertEquals("brew_potion.glass", current(g, b -> b.item("glass_bottle", 2)), "2 bottles: one more glass");
+		assertEquals("brew_potion.bottles", current(g, b -> b.item("glass_bottle", 2).item("glass", 1)));
 		assertEquals("brew_potion.water", current(g, b -> b.item("glass_bottle", 3)));
 		assertEquals("brew_potion.water", current(g, b -> b.item("glass_bottle", 1).waterBottles(2)));
 		assertEquals("brew_potion.fuel", current(g, b -> b.waterBottles(3)));
@@ -586,17 +588,17 @@ class StepsTest {
 		Steps.Step bottles = Steps.BY_GOAL.get("brew_potion").getFirst();
 		assertEquals(3, bottles.target());
 		assertEquals(3, bottles.value(SurvivalContext.builder().item("glass_bottle", 9).build()));
-		assertEquals(0, Steps.BY_GOAL.get("brew_potion").get(2).value(SurvivalContext.builder().build()), "no counter");
+		assertEquals(0, Steps.BY_GOAL.get("brew_potion").get(3).value(SurvivalContext.builder().build()), "no counter");
 	}
 
 	@Test
 	void advancedOnlyCountsMovingForwardInTheSameGoal() {
 		List<Steps.Step> brew = Steps.BY_GOAL.get("brew_potion");
-		assertTrue(Steps.advanced("brew_potion.bottles", brew.get(1)));
-		assertFalse(Steps.advanced("brew_potion.water", brew.get(0)), "going back (bottles used up) is no news");
-		assertFalse(Steps.advanced("brew_potion.water", brew.get(1)));
-		assertFalse(Steps.advanced("", brew.get(1)), "the first look is no news");
-		assertFalse(Steps.advanced("bookshelves.paper", brew.get(1)), "another goal");
+		assertTrue(Steps.advanced("brew_potion.bottles", brew.get(2)));
+		assertFalse(Steps.advanced("brew_potion.water", brew.get(1)), "going back (bottles used up) is no news");
+		assertFalse(Steps.advanced("brew_potion.water", brew.get(2)));
+		assertFalse(Steps.advanced("", brew.get(2)), "the first look is no news");
+		assertFalse(Steps.advanced("bookshelves.paper", brew.get(2)), "another goal");
 		assertFalse(Steps.advanced("brew_potion.bottles", null));
 	}
 
@@ -622,7 +624,7 @@ class StepsTest {
 		List<AdviceEngine.Message> first = evaluate(SurvivalContext.builder().build(), p, 0);
 		assertEquals(1, first.size());
 		assertEquals(TipRegistry.BREW_POTION, first.getFirst().tip());
-		assertEquals("brew_potion.bottles", first.getFirst().step().id());
+		assertEquals("brew_potion.glass", first.getFirst().step().id());
 
 		assertTrue(evaluate(SurvivalContext.builder().build(), p, 20).isEmpty(), "same step: wait for the cooldown");
 

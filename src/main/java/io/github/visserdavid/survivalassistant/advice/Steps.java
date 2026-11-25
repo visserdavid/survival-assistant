@@ -343,6 +343,8 @@ public final class Steps {
 					finish("nether_wart.pick"))),
 			// chapter 5: bottles, water, fuel, then brew (bottles in the stand still count)
 			Map.entry("brew_potion", List.of(
+					count("brew_potion.glass", c -> item(c, "glass") + item(c, "glass_bottle") + c.inv().waterBottles()
+							+ c.nearby().standBottles(), 3, c -> false),
 					count("brew_potion.bottles",
 							c -> item(c, "glass_bottle") + c.inv().waterBottles() + c.nearby().standBottles(), 3, c -> false),
 					count("brew_potion.water", c -> c.inv().waterBottles() + c.nearby().standBottles(), 3, c -> false),

@@ -88,7 +88,7 @@ KITS = {
     # early game, chapter 2: simple stone tools; no hoe, seeds, string, flint, feathers, bow or arrows
     "farm": ([item("stone_sword"), item("stone_pickaxe"), item("stone_shovel"), item("water_bucket"), FOOD, TORCHES,
               item("dirt", 32), TABLE], armor("iron"), None),
-    "bow": ([item("stone_sword"), item("stone_shovel"), item("stick", 8), item("gravel", 32), FOOD, TORCHES, TABLE],
+    "bow": ([item("stone_sword"), item("stone_shovel"), item("oak_planks", 8), item("gravel", 32), FOOD, TORCHES, TABLE],
             armor("iron"), SHIELD),
     # iron armor test: leather only (iron, diamond or netherite pieces would count); no iron ingots
     "full_iron_armor": ([item("stone_sword"), item("stone_pickaxe"), FOOD, TORCHES, item("furnace"), TABLE],
@@ -141,11 +141,14 @@ KITS = {
     # deep dark: sneak fast and quietly; wool dampens vibrations
     "sneak_past": ([SWORD, PICK, FOOD, GOLDEN, TORCHES, item("white_wool", 32), BLOCKS],
                    armor(legs_extra={"swift_sneak": 3}), SHIELD),
+    # bees: a furnace for the glass, an axe for the logs of a campfire; no glass, bottles or campfire
+    "honey": ([item("iron_sword"), item("iron_axe"), item("furnace"), item("coal", 8), FOOD, TORCHES, BLOCKS, TABLE],
+              armor("iron"), SHIELD),
     # farm life, chapters 2 and 6: simple gear; never the wheat, bread, bones, fish, iron, bucket, string or rod tested
     "bread": ([item("stone_sword"), item("stone_hoe"), FOOD, TORCHES, TABLE], armor("iron"), None),
     "tame_animal": ([item("stone_sword"), FOOD, TORCHES, BLOCKS, item("lead", 2)], armor("iron"), SHIELD),
     "milk": ([item("stone_sword"), item("stone_pickaxe"), FOOD, TORCHES, item("furnace"), TABLE], armor("iron"), SHIELD),
-    "fishing": ([item("stone_sword"), item("stick", 3), FOOD, TORCHES, TABLE], armor("iron"), SHIELD),
+    "fishing": ([item("stone_sword"), item("oak_planks", 4), FOOD, TORCHES, TABLE], armor("iron"), SHIELD),
     # redstone: a lever and buttons for the pulse; no copper, blaze rod, redstone or bulbs
     "copper_bulb": ([PICK, item("lever", 4), item("stone_button", 4), BLOCKS, TORCHES, FOOD, TABLE], armor(), SHIELD),
 }
