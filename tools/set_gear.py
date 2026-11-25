@@ -133,6 +133,14 @@ KITS = {
                      item("totem_of_undying"), BLOCKS], armor(), SHIELD),
     "ominous_bottle": ([SWORD, item("crossbow", ench={"quick_charge": 3}), item("arrow", 64), FOOD, GOLDEN, BLOCKS],
                        armor(), SHIELD),
+    # first iron armor: leather only, raw iron and coal to smelt (ingots are what the test counts)
+    "iron_armor": ([item("stone_sword"), item("stone_pickaxe"), item("raw_iron", 8), item("coal", 8), item("furnace"),
+                    FOOD, TORCHES, TABLE], armor("leather"), SHIELD),
+    # redstone: a lever for the power step; no redstone or piston
+    "piston": ([item("iron_pickaxe"), item("lever", 2), FOOD, TORCHES, TABLE], armor("iron"), SHIELD),
+    # deep dark: sneak fast and quietly; wool dampens vibrations
+    "sneak_past": ([SWORD, PICK, FOOD, GOLDEN, TORCHES, item("white_wool", 32), BLOCKS],
+                   armor(legs_extra={"swift_sneak": 3}), SHIELD),
     # farm life, chapters 2 and 6: simple gear; never the wheat, bread, bones, fish, iron, bucket, string or rod tested
     "bread": ([item("stone_sword"), item("stone_hoe"), FOOD, TORCHES, TABLE], armor("iron"), None),
     "tame_animal": ([item("stone_sword"), FOOD, TORCHES, BLOCKS, item("lead", 2)], armor("iron"), SHIELD),

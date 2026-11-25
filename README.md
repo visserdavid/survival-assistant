@@ -98,7 +98,7 @@ archaeology, the trial challenges, the happy ghast and automation.
   check-mark animation when a goal is done.
 - **Steps**: big goals are split into small steps, shown under the current task with their own counter, and the
   guide tells you each step as soon as you reach it. Brewing a potion, for example, goes: glass bottles (3/3), fill
-  them with water, blaze powder as fuel, brew. Steps exist for full iron armor (one step per missing piece, with its iron), the diamond pickaxe (an iron
+  them with water, blaze powder as fuel, brew. Steps exist for the first iron armor (8 iron, the chestplate), full iron armor (one step per missing piece, with its iron), the diamond pickaxe (an iron
   pickaxe, dig deep, 3 diamonds, craft), enchanting (a table, lapis, levels), the first farm (a hoe, seeds, tilled soil
   by water, plant), bread (ripe wheat, 9 wheat, bake),
   taming an animal (a wolf or cat, bones or raw fish, feed it), milk (iron, a bucket, a cow), fishing (string, a rod,
@@ -112,7 +112,8 @@ archaeology, the trial challenges, the happy ghast and automation.
   every wave), the upgrade template (find a bastion, search its chests), the respawn anchor (crying obsidian, glowstone, craft, place in the Nether, charge 4/4),
   summoning the Wither (a safe spot, the T of soul sand, the skulls), the nether star (find the Wither, defeat it,
   pick up the star), the ominous bottle (an outpost, its captain, the bottle), the recovery compass (echo shards, a compass,
-  craft), the mace (breeze rod, heavy core, craft), opening a vault (the trial chambers, a trial key) and an ominous vault
+  craft), the mace (breeze rod, heavy core, craft), the piston (redstone, craft, place, power), sneaking past a sculk sensor (the deep dark, a
+  sensor, sneak), opening a vault (the trial chambers, a trial key) and an ominous vault
   (an ominous bottle, drink it, the chambers, an ominous key), the beacon (and its full pyramid), the dried ghast (8 ghast tears around soul sand), putting it in water, letting it swell (0/3), the happy ghast's
   harness and riding it (a grown ghast, a harness, put it on, climb on), the automatic furnace and the
   decorated pot (4 sherds or bricks, craft), the armor trim (template, material, armor piece, smithing table,

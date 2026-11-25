@@ -409,6 +409,31 @@ class StepsTest {
 	}
 
 	@Test
+	void ironArmor() {
+		Tip g = TipRegistry.IRON_ARMOR;
+		assertEquals("iron_armor.iron", current(g, b -> b.item("iron_ingot", 7)));
+		assertEquals("iron_armor.craft", current(g, b -> b.item("iron_ingot", 8)));
+	}
+
+	@Test
+	void piston() {
+		Tip g = TipRegistry.PISTON;
+		assertEquals("piston.redstone", current(g, b -> b));
+		assertEquals("piston.craft", current(g, b -> b.redstone(1)));
+		assertEquals("piston.place", current(g, b -> b.item("sticky_piston", 1)), "a sticky piston works too");
+		assertEquals("piston.power", current(g, b -> b.block("piston", 1)), "the redstone went into the piston");
+	}
+
+	@Test
+	void sneakPast() {
+		Tip g = TipRegistry.SNEAK_PAST;
+		assertEquals("sneak_past.deep_dark", current(g, b -> b));
+		assertEquals("sneak_past.sensor", current(g, b -> b.block("sculk", 40)));
+		assertEquals("sneak_past.sensor", current(g, b -> b.structure(Structures.ANCIENT_CITY)));
+		assertEquals("sneak_past.sneak", current(g, b -> b.block("sculk_sensor", 1)));
+	}
+
+	@Test
 	void ironGolem() {
 		Tip g = TipRegistry.IRON_GOLEM;
 		assertEquals("iron_golem.iron_blocks", current(g, b -> b.item("iron_block", 3).item("iron_ingot", 8)));

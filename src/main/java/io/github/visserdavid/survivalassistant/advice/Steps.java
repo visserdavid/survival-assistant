@@ -105,11 +105,13 @@ public final class Steps {
 			"saddle", "crying_obsidian", "glowstone", "glowstone_dust", "respawn_anchor", "compass", "seagrass",
 			"turtle_scute", "ghast_tear", "copper_block", "copper_ingot", "copper_bulb", "crafting_table", "dropper",
 			"string", "flint", "feather", "wheat", "bone", "cod", "salmon", "bucket", "fishing_rod", "lapis_lazuli",
-			"smithing_table", "trial_key", "ominous_trial_key"))
+			"smithing_table", "trial_key", "ominous_trial_key", "piston", "sticky_piston"))
 			.collect(Collectors.toUnmodifiableSet());
 	/** Blocks whose placed count nearby the collector reports ({@link SurvivalContext.Nearby#placed}). */
-	public static final Set<String> TRACKED_BLOCKS = Set.of("obsidian", "nether_portal", "iron_block", "carved_pumpkin",
-			"beacon", "hopper", "nether_wart", "respawn_anchor", "turtle_egg", "copper_bulb", "farmland", "water", "smithing_table");
+	public static final Set<String> TRACKED_BLOCKS = Set.of(
+			"obsidian", "nether_portal", "iron_block", "carved_pumpkin", "beacon", "hopper", "nether_wart",
+			"respawn_anchor", "turtle_egg", "copper_bulb", "farmland", "water", "smithing_table", "piston",
+			"sticky_piston", "sculk_sensor", "calibrated_sculk_sensor", "sculk", "sculk_shrieker");
 
 	/** The pyramid has at most 4 levels: 9 + 25 + 49 + 81 = 164 blocks. */
 	public static final int MAX_BEACON_LEVEL = 4;
@@ -218,6 +220,14 @@ public final class Steps {
 		return item(c, "ominous_trial_key") > 0;
 	}
 
+	private static int sensors(SurvivalContext c) {
+		return c.nearby().placed("sculk_sensor") + c.nearby().placed("calibrated_sculk_sensor");
+	}
+
+	private static int placedPistons(SurvivalContext c) {
+		return c.nearby().placed("piston") + c.nearby().placed("sticky_piston");
+	}
+
 	private static boolean hasBulb(SurvivalContext c) {
 		return item(c, "copper_bulb") > 0 || c.nearby().placed("copper_bulb") > 0;
 	}
@@ -229,6 +239,10 @@ public final class Steps {
 	// ---------------------------------------------------------------- the steps per goal
 
 	public static final Map<String, List<Step>> BY_GOAL = Map.ofEntries(
+			// chapter 1: iron for the chestplate (it protects most), then craft it
+			Map.entry("iron_armor", List.of(
+					count("iron_armor.iron", c -> item(c, "iron_ingot"), CHESTPLATE_IRON, c -> false),
+					finish("iron_armor.craft"))),
 			// chapter 2: every piece still missing, with the iron it takes (pieces the player has are skipped)
 			Map.entry("full_iron_armor", List.of(
 					piece("full_iron_armor.helmet", HEAD, HELMET_IRON),
@@ -390,6 +404,19 @@ public final class Steps {
 					step("end_city.gateway", c -> c.nearby().outerEnd()),
 					step("end_city.search", c -> c.nearby().endCityNear()),
 					finish("end_city.enter"))),
+			// chapter 9: redstone (with iron, cobblestone and planks) makes a piston; place it, then power it
+			Map.entry("piston", List.of(
+					count("piston.redstone", c -> c.inv().redstone(), 1,
+							c -> item(c, "piston") + item(c, "sticky_piston") + placedPistons(c) > 0),
+					step("piston.craft", c -> item(c, "piston") + item(c, "sticky_piston") + placedPistons(c) > 0),
+					step("piston.place", c -> placedPistons(c) > 0),
+					finish("piston.power"))),
+			// chapter 13: the deep dark, a sculk sensor, sneak past it
+			Map.entry("sneak_past", List.of(
+					step("sneak_past.deep_dark", c -> c.world().in(Structures.ANCIENT_CITY) || c.nearby().placed("sculk") > 0
+							|| sensors(c) > 0),
+					step("sneak_past.sensor", c -> sensors(c) > 0),
+					finish("sneak_past.sneak"))),
 			// chapter 10: in the End, an end city, its ship, the elytra in the item frame
 			Map.entry("elytra", List.of(
 					step("elytra.end", c -> c.world().inEnd()),
