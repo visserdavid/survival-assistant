@@ -98,12 +98,14 @@ public final class Steps {
 			TRIMMABLE_ARMOR = "#trimmable_armor", TRIM_TEMPLATES = "#trim_templates";
 
 	/** Items whose carried count the collector reports ({@link SurvivalContext.Inventory#count}). */
-	public static final Set<String> TRACKED_ITEMS = Stream.concat(Stream.of(HOES, SEEDS, DIAMOND_GEAR).flatMap(List::stream), Stream.of(
+	public static final Set<String> TRACKED_ITEMS = Stream.concat(
+			Stream.of(HOES, SEEDS, DIAMOND_GEAR).flatMap(List::stream), Stream.of(
 			"glass_bottle", "blaze_powder", "paper", "leather", "book", "bookshelf", "iron_block", "iron_ingot",
 			"carved_pumpkin", "ancient_debris", "netherite_scrap", "gold_ingot", "glass", "beacon", "hopper",
 			"saddle", "crying_obsidian", "glowstone", "glowstone_dust", "respawn_anchor", "compass", "seagrass",
 			"turtle_scute", "ghast_tear", "copper_block", "copper_ingot", "copper_bulb", "crafting_table", "dropper",
-			"string", "flint", "feather", "wheat", "bone", "cod", "salmon", "bucket", "fishing_rod", "lapis_lazuli", "smithing_table"))
+			"string", "flint", "feather", "wheat", "bone", "cod", "salmon", "bucket", "fishing_rod", "lapis_lazuli",
+			"smithing_table"))
 			.collect(Collectors.toUnmodifiableSet());
 	/** Blocks whose placed count nearby the collector reports ({@link SurvivalContext.Nearby#placed}). */
 	public static final Set<String> TRACKED_BLOCKS = Set.of("obsidian", "nether_portal", "iron_block", "carved_pumpkin",
@@ -131,6 +133,8 @@ public final class Steps {
 	private static final int WHEAT_PER_BREAD = 3, BREADS = 3;
 	/** The farm goal wants 6 crops. */
 	private static final int FARM_CROPS = 6;
+	/** A dried ghast in water swells up in 3 stages before the ghastling comes out. */
+	public static final int GHAST_HYDRATION = 3;
 	/** The crafter's own recipe fills all 9 slots of a crafter. */
 	private static final int CRAFTER_SLOTS = 9;
 	/** 8 ghast tears around soul sand make a dried ghast. */
@@ -446,6 +450,19 @@ public final class Steps {
 					count("dried_ghast.tears", c -> item(c, "ghast_tear"), GHAST_TEARS, c -> false),
 					count("dried_ghast.soul_sand", c -> c.inv().soulSand(), 1, c -> false),
 					finish("dried_ghast.craft"))),
+			// chapter 17: the dried ghast into water (the advancement), it swells up, then the grown ghast with a harness
+			Map.entry("hydrate_ghast", List.of(
+					step("hydrate_ghast.ghast", c -> c.inv().hasDriedGhast() || c.nearby().driedGhast()),
+					step("hydrate_ghast.water", c -> c.nearby().placed("water") > 0 || c.inv().hasWaterBucket()),
+					finish("hydrate_ghast.place"))),
+			Map.entry("ghastling", List.of(
+					step("ghastling.wet", c -> c.nearby().ghastHydration() >= 0),
+					finish("ghastling.swell", c -> c.nearby().ghastHydration(), GHAST_HYDRATION))),
+			Map.entry("ride_happy_ghast", List.of(
+					step("ride_happy_ghast.grown", c -> c.creatures().grownHappyGhast()),
+					step("ride_happy_ghast.harness", c -> c.inv().hasHarness() || c.creatures().harnessedGhast()),
+					step("ride_happy_ghast.equip", c -> c.creatures().harnessedGhast()),
+					finish("ride_happy_ghast.ride"))),
 			// chapter 17: 3 leather, 2 glass and 1 wool (its color is the harness's color)
 			Map.entry("harness", List.of(
 					count("harness.leather", c -> item(c, "leather"), 3, c -> false),

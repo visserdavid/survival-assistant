@@ -334,6 +334,36 @@ class StepsTest {
 	}
 
 	@Test
+	void hydrateGhast() {
+		Tip g = TipRegistry.HYDRATE_GHAST;
+		assertEquals("hydrate_ghast.ghast", current(g, b -> b.hasWaterBucket(true)));
+		assertEquals("hydrate_ghast.water", current(g, b -> b.hasDriedGhast(true)));
+		assertEquals("hydrate_ghast.place", current(g, b -> b.hasDriedGhast(true).hasWaterBucket(true)));
+		assertEquals("hydrate_ghast.place", current(g, b -> b.driedGhast(true).block("water", 3)), "placed next to the water");
+	}
+
+	@Test
+	void ghastling() {
+		Tip g = TipRegistry.GHASTLING;
+		assertEquals("ghastling.wet", current(g, b -> b.driedGhast(true)), "a dried ghast on land doesn't swell");
+		Steps.Step swell = Steps.current(g, SurvivalContext.builder().ghastHydration(2).build());
+		assertNotNull(swell);
+		assertEquals("ghastling.swell", swell.id());
+		assertEquals(2, swell.value(SurvivalContext.builder().ghastHydration(2).build()));
+		assertEquals(Steps.GHAST_HYDRATION, swell.target());
+	}
+
+	@Test
+	void rideHappyGhast() {
+		Tip g = TipRegistry.RIDE_HAPPY_GHAST;
+		assertEquals("ride_happy_ghast.grown", current(g, b -> b.hasHarness(true)));
+		assertEquals("ride_happy_ghast.harness", current(g, b -> b.grownHappyGhast(true)));
+		assertEquals("ride_happy_ghast.equip", current(g, b -> b.grownHappyGhast(true).hasHarness(true)));
+		assertEquals("ride_happy_ghast.ride", current(g, b -> b.grownHappyGhast(true).harnessedGhast(true)),
+				"the harness is on the ghast now, not in the inventory");
+	}
+
+	@Test
 	void ironGolem() {
 		Tip g = TipRegistry.IRON_GOLEM;
 		assertEquals("iron_golem.iron_blocks", current(g, b -> b.item("iron_block", 3).item("iron_ingot", 8)));

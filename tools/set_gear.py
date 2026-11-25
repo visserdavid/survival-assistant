@@ -116,6 +116,10 @@ KITS = {
     "sniffer_egg": ([SWORD, item("oak_boat"), FOOD, TORCHES, BLOCKS,
                      item("potion", 3, **{"minecraft:potion_contents": Compound({"potion": String("minecraft:long_water_breathing")})})],
                     armor(feet_extra={"depth_strider": 3}), SHIELD),
+    # happy ghast: snowballs to speed up a ghastling; no dried ghast, water bucket or harness
+    "hydrate_ghast": ([item("iron_sword"), item("iron_shovel"), FOOD, TORCHES, BLOCKS], armor("iron"), SHIELD),
+    "ghastling": ([item("iron_sword"), item("snowball", 16), FOOD, TORCHES, BLOCKS], armor("iron"), SHIELD),
+    "ride_happy_ghast": ([item("iron_sword"), item("snowball", 16), FOOD, TORCHES, BLOCKS], armor("iron"), SHIELD),
     # farm life, chapters 2 and 6: simple gear; never the wheat, bread, bones, fish, iron, bucket, string or rod tested
     "bread": ([item("stone_sword"), item("stone_hoe"), FOOD, TORCHES, TABLE], armor("iron"), None),
     "tame_animal": ([item("stone_sword"), FOOD, TORCHES, BLOCKS, item("lead", 2)], armor("iron"), SHIELD),
