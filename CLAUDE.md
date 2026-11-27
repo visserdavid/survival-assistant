@@ -12,7 +12,7 @@ The JDK is not on PATH. Set it first in Git Bash:
 export JAVA_HOME="C:/Program Files/Microsoft/jdk-25.0.5.102-hotspot"
 ./gradlew build                      # compile, test, jar
 ./gradlew test --tests "io.github.visserdavid.survivalassistant.advice.GuideChoicesTest"   # one test class
-./gradlew installToModrinth          # copy the jar into the Modrinth App instance "ModTesting" (-PmodrinthInstance="..." for another; close Minecraft first: the old jar is locked)
+./gradlew installToModrinth          # copy the jar into the Modrinth App instance "ModTesting" (-PmodrinthInstance="<folder>" for another; close Minecraft first: the old jar is locked)
 python tools/make_lang.py src/main/resources/assets/survivalassistant/lang   # regenerate + check all language files
 python tools/recipe_check.py         # check every recipe card against the game data in the Minecraft jar
 python tools/biome_facts.py          # write docs/biomes-and-heights.md from the jar; check biome texts in make_lang.py and OreTable.java against it
@@ -25,7 +25,7 @@ python tools/make_guide_skin.py [--preview DIR] [--docs]  # draw the keeper skin
 python tools/make_icon.py                        # render the mod icon (256 + docs 512) from guide.png; rerun after skin changes
 ```
 
-The world scripts take a world folder or the name of a world in the ModTesting instance, and need `nbtlib`. `set_gear.py` never gives the items a test is about, nor gear that completes the goal by itself (no netherite for `upgrade_template`); add a kit to its `KITS` for every new goal with steps.
+The world scripts take a world folder or the name of a world in the ModTesting instance, and need `nbtlib`. A world in another instance (such as the 26.2 one) needs its full path: `"$APPDATA/ModrinthApp/profiles/<folder>/saves/Stappentest"`. `set_gear.py` never gives the items a test is about, nor gear that completes the goal by itself (no netherite for `upgrade_template`); add a kit to its `KITS` for every new goal with steps.
 
 - **Build output** lives in `%LOCALAPPDATA%/gradle-builds/survivalassistant`, not in `build/`, because OneDrive locks files there. Test results are in `test-results/test/*.xml` under that folder. The jars are also copied to the project root, where git ignores them.
 - **CI** (`.github/workflows/build.yml`) runs the build. It also fails when `make_lang.py` changes any generated language file, and when `recipe_check.py` reports a mismatch.
@@ -99,7 +99,8 @@ For bulk text changes, use a small Python script in the scratchpad that edits `m
 ## Releases
 
 - The version is in `gradle.properties`. A published GitHub release (tag `vX.Y.Z`, jar attached) triggers `.github/workflows/publish.yml`, which publishes to Modrinth through `mc-publish`, with Mod Menu as an optional dependency. It fails when the tag differs from `version` in `gradle.properties`, and it would also publish to CurseForge once `CURSEFORGE_ID`/`CURSEFORGE_TOKEN` are set.
-- **26.2 build:** branch `mc-26.2` is `main` plus one commit: 26.2 versions in `gradle.properties` (`version=X+26.2`), `setInvulnerable` instead of `setPermanentlyInvulnerable` in `GuideEntity`, and `Util.getPlatform().openPath` instead of `Blaze3D.openPath` in `DisplayTab` (no method exists in both versions, so there is no shared jar). For a release, rebase it onto `main`, build, test in the Modrinth instance "ModTesting 26.2" (`-PmodrinthInstance`), and publish as tag `vX+26.2` with `--target mc-26.2 --latest=false`; `publish.yml` needs no change.
+- **26.2 build:** branch `mc-26.2` is `main` plus one commit: 26.2 versions in `gradle.properties` (`version=X+26.2`), `setInvulnerable` instead of `setPermanentlyInvulnerable` in `GuideEntity`, and `Util.getPlatform().openPath` instead of `Blaze3D.openPath` in `DisplayTab` (no method exists in both versions, so there is no shared jar). For a release, rebase it onto `main` (the `version=` line in `gradle.properties` conflicts every time: keep `X+26.2`), build, test in the 26.2 Modrinth instance, and publish as tag `vX+26.2` with `--target mc-26.2 --latest=false`; `publish.yml` needs no change.
+- **The 26.2 instance:** `-PmodrinthInstance` takes the instance's folder name under `%APPDATA%/ModrinthApp/profiles`, not the name shown in the Modrinth App. The folder differs per machine (the maintainer uses a laptop and a desktop; on the desktop it is `Modtesting 26.2 (1)`), so list `profiles/` first. `installToModrinth` fails when the folder doesn't exist; it never creates one (a stray folder would make the Modrinth App add " (1)" to a new instance). The instance needs Fabric API for 26.2 in its `mods` folder.
 - The project body on Modrinth is `docs/listing/description.md` without its leading HTML comment.
 - Modrinth tokens last at most a week. Refresh the `MODRINTH_TOKEN` secret before each release, and never print or commit the token.
 
