@@ -81,6 +81,19 @@ class RoutesTest {
 	}
 
 	@Test
+	void theRouteQuestionWaitsForChapterTwo() {
+		GuideProgress p = new GuideProgress();
+		p.completed.addAll(done(1));
+		assertFalse(Routes.due(p)); // chapter 2 still belongs to the basics
+		p.completed.addAll(done(2));
+		assertTrue(Routes.due(p));
+		p.route = Routes.FREE;
+		assertFalse(Routes.due(p));
+		p.route = Routes.FARMER.id();
+		assertFalse(Routes.due(p));
+	}
+
+	@Test
 	void choicesShowNoRouteYetAsFree() {
 		GuideProgress p = new GuideProgress();
 		assertEquals(Routes.FREE, GuideChoices.of(p, true, true).route());

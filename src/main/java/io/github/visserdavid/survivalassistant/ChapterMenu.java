@@ -43,16 +43,16 @@ final class ChapterMenu {
 		progress.reminded = false;
 		if (praiseRoute(player, guide, progress)) {
 			offerRoute(player, guide, progress, "survivalassistant.route.next_question");
-		} else if (Routes.undecided(progress)) {
+		} else if (Routes.due(progress)) {
 			offerRoute(player, guide, progress, "survivalassistant.route.question");
 		} else {
 			show(player, guide, progress, "survivalassistant.chapters.offer");
 		}
 	}
 
-	/** The reminder for an open question: the route question while no route was chosen, else the chapter menu. */
+	/** The reminder for an open question: the route question while it is due, else the chapter menu. */
 	static void remind(ServerPlayer player, @Nullable GuideEntity guide, GuideProgress progress) {
-		if (Routes.undecided(progress)) offerRoute(player, guide, progress, "survivalassistant.route.reminder");
+		if (Routes.due(progress)) offerRoute(player, guide, progress, "survivalassistant.route.reminder");
 		else show(player, guide, progress, "survivalassistant.chapters.reminder");
 	}
 

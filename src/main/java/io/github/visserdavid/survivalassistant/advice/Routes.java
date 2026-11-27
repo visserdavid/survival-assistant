@@ -46,6 +46,11 @@ public final class Routes {
 		return p.route.isEmpty();
 	}
 
+	/** The guide asks the route question: none chosen yet and the basics (chapters 1 and 2) are done. */
+	public static boolean due(GuideProgress p) {
+		return undecided(p) && Chapters.SETTLING_IN.done(p.completed);
+	}
+
 	/** A valid stored value: {@link #FREE} or a route id. */
 	public static boolean valid(@Nullable String value) {
 		return FREE.equals(value) || byId(value) != null;
