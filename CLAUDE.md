@@ -12,9 +12,10 @@ The JDK is not on PATH. Set it first in Git Bash:
 export JAVA_HOME="C:/Program Files/Microsoft/jdk-25.0.5.102-hotspot"
 ./gradlew build                      # compile, test, jar
 ./gradlew test --tests "io.github.visserdavid.survivalassistant.advice.GuideChoicesTest"   # one test class
-./gradlew installToModrinth          # copy the jar into the Modrinth App instance "ModTesting" (close Minecraft first: the old jar is locked)
+./gradlew installToModrinth          # copy the jar into the Modrinth App instance "ModTesting" (-PmodrinthInstance="..." for another; close Minecraft first: the old jar is locked)
 python tools/make_lang.py src/main/resources/assets/survivalassistant/lang   # regenerate + check all language files
 python tools/recipe_check.py         # check every recipe card against the game data in the Minecraft jar
+python tools/biome_facts.py          # write docs/biomes-and-heights.md from the jar; check biome texts in make_lang.py and OreTable.java against it
 python tools/add_step_texts.py <texts.py>        # add the texts of new goal steps to all 15 languages (then make_lang)
 python tools/prep_chapter.py Stappentest <goal> [--spawn] [--revoke <advancement>] [--route <id|free|none>] [--done 6,3]  # put a test world's guide at a goal (Minecraft closed; backups .before-prep)
 python tools/set_gear.py Stappentest <goal>      # empty the inventory and give gear for that goal's test
