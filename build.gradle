@@ -104,28 +104,34 @@ tasks.named("assemble") { finalizedBy("copyJarsToProject") }
 
 // Copies the built mod into a Modrinth App instance for testing: ./gradlew installToModrinth
 // Instance name can be overridden with -PmodrinthInstance="Other Instance".
-tasks.register("installToModrinth", Copy) {
+// Not a Copy task: Gradle creates a Copy task's destination before any action runs, so a missing instance would be
+// created as a bare folder (and the Modrinth App then names the real instance "<name> (1)").
+tasks.register("installToModrinth") {
 	group = "survivalassistant"
 	description = "Copies the mod jar into the Modrinth App instance's mods folder."
 	def instance = project.findProperty("modrinthInstance") ?: "ModTesting"
 	def appData = System.getenv("APPDATA")
-	def modsDir = file("${appData ?: '.'}/ModrinthApp/profiles/${instance}/mods")
+	def instanceDir = file("${appData ?: '.'}/ModrinthApp/profiles/${instance}")
+	def jarFile = tasks.named("jar").flatMap { it.archiveFile }
 	dependsOn tasks.named("jar")
-	from(tasks.named("jar"))
-	into(modsDir)
 	def prefix = "${rootProject.name}-"
-	doFirst {
+	doLast {
 		if (appData == null) {
 			throw new GradleException("APPDATA is not set: installToModrinth only works on Windows with the Modrinth App.")
 		}
-		if (!modsDir.parentFile.isDirectory()) {
-			throw new GradleException("Modrinth App instance '${instance}' not found at ${modsDir.parentFile}. Use -PmodrinthInstance=\"Name\".")
+		if (!instanceDir.isDirectory()) {
+			throw new GradleException("Modrinth App instance '${instance}' not found at ${instanceDir}. Use -PmodrinthInstance=\"Name\".")
 		}
+		def modsDir = new File(instanceDir, "mods")
+		modsDir.mkdirs()
 		// Remove older versions of this mod so only one copy is loaded.
 		modsDir.listFiles()?.findAll { it.name.startsWith(prefix) && it.name.endsWith(".jar") }?.each {
 			if (!it.delete()) {
 				throw new GradleException("Could not remove ${it.name}: it is in use. Close Minecraft and run installToModrinth again.")
 			}
 		}
+		def jar = jarFile.get().asFile
+		java.nio.file.Files.copy(jar.toPath(), new File(modsDir, jar.name).toPath())
+		logger.lifecycle("Installed ${jar.name} into ${instance}")
 	}
 }
