@@ -86,7 +86,8 @@ public final class GuideManager {
 		}
 		progress.playedTicks += Ticks.PER_SECOND; // this runs once a second while the guide is active
 
-		GuideLifecycle.Step step = lifecycle(player, progress);
+		GuideLifecycle.State lifecycle = lifecycle(progress);
+		GuideLifecycle.Step step = GuideLifecycle.decide(lifecycle);
 		if (step == GuideLifecycle.Step.CONGRATULATE) {
 			congratulate(player, progress);
 			return;
@@ -116,6 +117,14 @@ public final class GuideManager {
 
 		if (step == GuideLifecycle.Step.OFFER_CHAPTER) {
 			ChapterMenu.offerNextChapter(player, guide, progress);
+		} else if (step == GuideLifecycle.Step.START_NEXT) {
+			GuideActions.continueChapter(player);
+		} else if (step == GuideLifecycle.Step.WAITING) {
+			long left = GuideLifecycle.autoStartSecondsLeft(lifecycle);
+			if (left > 0) {
+				player.sendOverlayMessage(Component.translatable("survivalassistant.chapters.auto_countdown", left)
+						.withStyle(ChatFormatting.GOLD));
+			}
 		} else if (step == GuideLifecycle.Step.REMIND) {
 			progress.reminded = true;
 			ChapterMenu.remind(player, guide, progress);
@@ -215,10 +224,10 @@ public final class GuideManager {
 		return ModConfig.get().moreChapters && !Chapters.available(progress.chapter, progress.completed).isEmpty();
 	}
 
-	private static GuideLifecycle.Step lifecycle(ServerPlayer player, GuideProgress progress) {
-		return GuideLifecycle.decide(new GuideLifecycle.State(Chapters.get(progress.chapter).done(progress.completed),
+	private static GuideLifecycle.State lifecycle(GuideProgress progress) {
+		return new GuideLifecycle.State(Chapters.get(progress.chapter).done(progress.completed),
 				nextChapterAvailable(progress), progress.chapterOffered, progress.finished, progress.askedAtTick,
-				progress.reminded, progress.playedTicks));
+				progress.reminded, progress.playedTicks, progress.chapter == Chapters.FIRST_DAYS.number());
 	}
 
 	static void retire(ServerPlayer player, GuideProgress progress, String messageKey) {

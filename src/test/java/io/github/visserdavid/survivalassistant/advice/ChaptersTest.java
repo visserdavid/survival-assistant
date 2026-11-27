@@ -75,11 +75,11 @@ class ChaptersTest {
 
 	@Test
 	void unlimitedChaptersNeverSendTheGuideAway() {
-		GuideLifecycle.State late = new GuideLifecycle.State(false, true, false, false, -1, false, 50 * 24000L);
+		GuideLifecycle.State late = new GuideLifecycle.State(false, true, false, false, -1, false, 50 * 24000L, false);
 		assertEquals(GuideLifecycle.Step.CONTINUE, GuideLifecycle.decide(late));
-		GuideLifecycle.State doneNoMore = new GuideLifecycle.State(true, false, false, false, -1, false, 50 * 24000L);
+		GuideLifecycle.State doneNoMore = new GuideLifecycle.State(true, false, false, false, -1, false, 50 * 24000L, false);
 		assertEquals(GuideLifecycle.Step.CONGRATULATE, GuideLifecycle.decide(doneNoMore));
-		GuideLifecycle.State doneMore = new GuideLifecycle.State(true, true, false, false, -1, false, 50 * 24000L);
+		GuideLifecycle.State doneMore = new GuideLifecycle.State(true, true, false, false, -1, false, 50 * 24000L, false);
 		assertEquals(GuideLifecycle.Step.OFFER_CHAPTER, GuideLifecycle.decide(doneMore));
 	}
 }

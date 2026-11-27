@@ -109,6 +109,8 @@
 	"survivalassistant.congrats.all.1": "बधाई हो! तुमने सारे अध्याय पूरे कर लिए। अब तुम Minecraft अच्छी तरह जानते हो!",
 	"survivalassistant.chapter.done": "शाबाश! तुमने अध्याय %s पूरा कर लिया।",
 	"survivalassistant.chapters.offer": "आगे क्या? किसी अध्याय पर क्लिक करो:",
+	"survivalassistant.chapters.offer_auto": "अगला अध्याय 2 है। उस पर क्लिक करो, या रुको: मैं %s सेकंड में खुद शुरू कर दूँगा। तुम मेरे बिना भी आगे बढ़ सकते हो।",
+	"survivalassistant.chapters.auto_countdown": "अध्याय 2 %s सेकंड में शुरू होगा",
 	"survivalassistant.chapters.reminder": "अब भी चुन रहे हो? नीचे किसी अध्याय पर क्लिक करो, या मुझे जाने दो।",
 	"survivalassistant.chapters.header": "अध्याय (शुरू करने के लिए किसी पर क्लिक करो):",
 	"survivalassistant.chapters.current": "(अभी)",

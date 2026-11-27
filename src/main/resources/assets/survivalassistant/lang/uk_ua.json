@@ -109,6 +109,8 @@
 	"survivalassistant.congrats.all.1": "Вітаю! Ти пройшов усі розділи. Тепер ти знаєш Minecraft!",
 	"survivalassistant.chapter.done": "Чудово! Ти завершив розділ %s.",
 	"survivalassistant.chapters.offer": "Що далі? Натисни на розділ:",
+	"survivalassistant.chapters.offer_auto": "Далі розділ 2. Натисни на нього або зачекай: за %s секунд я почну сам. Можеш продовжити й без мене.",
+	"survivalassistant.chapters.auto_countdown": "Розділ 2 почнеться через %s с",
 	"survivalassistant.chapters.reminder": "Ще обираєш? Натисни на розділ нижче або відпусти мене.",
 	"survivalassistant.chapters.header": "Розділи (натисни, щоб почати):",
 	"survivalassistant.chapters.current": "(зараз)",

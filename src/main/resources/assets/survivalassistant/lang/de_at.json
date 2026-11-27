@@ -109,6 +109,8 @@
 	"survivalassistant.congrats.all.1": "Glückwunsch! Du hast alle Kapitel geschafft. Jetzt kennst du dich in Minecraft aus!",
 	"survivalassistant.chapter.done": "Gut gemacht! Du hast das Kapitel %s abgeschlossen.",
 	"survivalassistant.chapters.offer": "Wie geht es weiter? Klicke auf ein Kapitel:",
+	"survivalassistant.chapters.offer_auto": "Als Nächstes kommt Kapitel 2. Klicke darauf oder warte: In %s Sekunden fange ich von selbst an. Du kannst auch ohne mich weitermachen.",
+	"survivalassistant.chapters.auto_countdown": "Kapitel 2 beginnt in %s s",
 	"survivalassistant.chapters.reminder": "Noch am Überlegen? Klicke unten auf ein Kapitel oder lass mich gehen.",
 	"survivalassistant.chapters.header": "Kapitel (klicke auf eines, um es zu starten):",
 	"survivalassistant.chapters.current": "(jetzt)",

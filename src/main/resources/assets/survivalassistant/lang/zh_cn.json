@@ -109,6 +109,8 @@
 	"survivalassistant.congrats.all.1": "恭喜！你完成了所有章节。现在你已经熟悉Minecraft了！",
 	"survivalassistant.chapter.done": "干得好！你完成了章节%s。",
 	"survivalassistant.chapters.offer": "接下来做什么？点击一个章节：",
+	"survivalassistant.chapters.offer_auto": "接下来是第 2 章。点击它，或者等一下：%s 秒后我会自动开始。你也可以不带我继续。",
+	"survivalassistant.chapters.auto_countdown": "第 2 章将在 %s 秒后开始",
 	"survivalassistant.chapters.reminder": "还在选？点击下面的章节，或者让我离开。",
 	"survivalassistant.chapters.header": "章节（点击即可开始）：",
 	"survivalassistant.chapters.current": "（当前）",

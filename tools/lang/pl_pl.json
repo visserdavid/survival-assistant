@@ -393,6 +393,8 @@
 "~congrats.all.2": "Już mnie nie potrzebujesz. Pokonałeś nawet smoka: cały świat należy do ciebie!",
 "~chapter.done": "Dobra robota! Ukończyłeś rozdział %s.",
 "~chapters.offer": "Co dalej? Kliknij rozdział:",
+"~chapters.offer_auto": "Następny jest rozdział 2. Kliknij go albo poczekaj: zacznę sam za %s sekund. Możesz też iść dalej beze mnie.",
+"~chapters.auto_countdown": "Rozdział 2 zaczyna się za %s s",
 "~chapters.reminder": "Wciąż wybierasz? Kliknij rozdział poniżej albo pozwól mi odejść.",
 "~chapters.header": "Rozdziały (kliknij, aby zacząć):",
 "~chapters.current": "(teraz)",

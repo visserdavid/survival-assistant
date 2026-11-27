@@ -109,6 +109,8 @@
 	"survivalassistant.congrats.all.1": "Gefeliciteerd! Je hebt alle hoofdstukken af. Je kent de weg in Minecraft nu!",
 	"survivalassistant.chapter.done": "Goed gedaan! Je hebt het hoofdstuk %s af.",
 	"survivalassistant.chapters.offer": "Wat wordt het volgende? Klik op een hoofdstuk:",
+	"survivalassistant.chapters.offer_auto": "Hierna komt hoofdstuk 2. Klik erop, of wacht: over %s seconden begin ik vanzelf. Je kunt ook zonder mij verder.",
+	"survivalassistant.chapters.auto_countdown": "Hoofdstuk 2 begint over %s s",
 	"survivalassistant.chapters.reminder": "Nog aan het kiezen? Klik hieronder op een hoofdstuk, of laat me gaan.",
 	"survivalassistant.chapters.header": "Hoofdstukken (klik om er een te beginnen):",
 	"survivalassistant.chapters.current": "(nu)",

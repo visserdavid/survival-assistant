@@ -393,6 +393,8 @@
 "~congrats.all.2": "Du brauchst mich nicht mehr. Du hast sogar den Drachen besiegt: Die ganze Welt gehört dir!",
 "~chapter.done": "Gut gemacht! Du hast das Kapitel %s abgeschlossen.",
 "~chapters.offer": "Wie geht es weiter? Klicke auf ein Kapitel:",
+"~chapters.offer_auto": "Als Nächstes kommt Kapitel 2. Klicke darauf oder warte: In %s Sekunden fange ich von selbst an. Du kannst auch ohne mich weitermachen.",
+"~chapters.auto_countdown": "Kapitel 2 beginnt in %s s",
 "~chapters.reminder": "Noch am Überlegen? Klicke unten auf ein Kapitel oder lass mich gehen.",
 "~chapters.header": "Kapitel (klicke auf eines, um es zu starten):",
 "~chapters.current": "(jetzt)",

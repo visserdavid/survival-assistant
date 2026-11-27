@@ -109,6 +109,8 @@
 	"survivalassistant.congrats.all.1": "Поздравляю! Ты прошёл все главы. Теперь ты знаешь Minecraft!",
 	"survivalassistant.chapter.done": "Отлично! Ты закончил главу %s.",
 	"survivalassistant.chapters.offer": "Что дальше? Нажми на главу:",
+	"survivalassistant.chapters.offer_auto": "Дальше глава 2. Нажми на неё или подожди: через %s секунд я начну сам. Можешь продолжить и без меня.",
+	"survivalassistant.chapters.auto_countdown": "Глава 2 начнётся через %s с",
 	"survivalassistant.chapters.reminder": "Всё ещё выбираешь? Нажми на главу ниже или отпусти меня.",
 	"survivalassistant.chapters.header": "Главы (нажми, чтобы начать):",
 	"survivalassistant.chapters.current": "(сейчас)",

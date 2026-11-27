@@ -2,6 +2,7 @@ package io.github.visserdavid.survivalassistant;
 
 import io.github.visserdavid.survivalassistant.advice.Chapter;
 import io.github.visserdavid.survivalassistant.advice.Chapters;
+import io.github.visserdavid.survivalassistant.advice.GuideLifecycle;
 import io.github.visserdavid.survivalassistant.advice.GuideProgress;
 import io.github.visserdavid.survivalassistant.advice.Route;
 import io.github.visserdavid.survivalassistant.advice.Routes;
@@ -45,6 +46,10 @@ final class ChapterMenu {
 			offerRoute(player, guide, progress, "survivalassistant.route.next_question");
 		} else if (Routes.due(progress)) {
 			offerRoute(player, guide, progress, "survivalassistant.route.question");
+		} else if (done == Chapters.FIRST_DAYS) {
+			// chapter 2 belongs to the basics: it starts by itself unless the player lets the guide go
+			show(player, guide, progress, Component.translatable("survivalassistant.chapters.offer_auto",
+					GuideLifecycle.AUTO_START_SECONDS));
 		} else {
 			show(player, guide, progress, "survivalassistant.chapters.offer");
 		}
@@ -102,7 +107,11 @@ final class ChapterMenu {
 	 * with what they need. After a finished chapter it ends with a button to let the guide go.
 	 */
 	static void show(ServerPlayer player, @Nullable GuideEntity guide, GuideProgress progress, String headerKey) {
-		say(player, guide, Component.translatable(headerKey).withStyle(ChatFormatting.AQUA), true);
+		show(player, guide, progress, Component.translatable(headerKey));
+	}
+
+	private static void show(ServerPlayer player, @Nullable GuideEntity guide, GuideProgress progress, MutableComponent header) {
+		say(player, guide, header.withStyle(ChatFormatting.AQUA), true);
 		for (Chapter c : Chapters.ALL) {
 			player.sendSystemMessage(Component.literal(INDENT).append(line(c, progress)));
 		}

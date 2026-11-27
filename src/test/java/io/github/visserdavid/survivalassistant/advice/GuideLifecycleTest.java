@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class GuideLifecycleTest {
 	private static GuideLifecycle.Step decide(boolean done, boolean next, boolean offered, boolean finished, long asked,
 			boolean reminded, long now) {
-		return GuideLifecycle.decide(new GuideLifecycle.State(done, next, offered, finished, asked, reminded, now));
+		return GuideLifecycle.decide(new GuideLifecycle.State(done, next, offered, finished, asked, reminded, now, false));
 	}
 
 	@Test
@@ -39,5 +39,33 @@ class GuideLifecycleTest {
 	@Test
 	void afterTheFinalCongratulationTheGuideJustHelps() {
 		assertEquals(CONTINUE, decide(true, false, false, true, -1, false, 1000), "called back after finishing: no second party");
+	}
+
+	@Test
+	void afterChapterOneTheNextChapterStartsByItself() {
+		long asked = 1000;
+		GuideLifecycle.State waiting = new GuideLifecycle.State(true, true, true, false, asked, false,
+				asked + GuideLifecycle.AUTO_START_TICKS - 20, true);
+		assertEquals(WAITING, GuideLifecycle.decide(waiting));
+		GuideLifecycle.State late = new GuideLifecycle.State(true, true, true, false, asked, false,
+				asked + GuideLifecycle.AUTO_START_TICKS, true);
+		assertEquals(START_NEXT, GuideLifecycle.decide(late));
+		assertEquals(WAITING, decide(true, true, true, false, asked, false, asked + GuideLifecycle.AUTO_START_TICKS),
+				"other chapters wait for the player");
+	}
+
+	@Test
+	void theCountdownShowsTheSecondsLeft() {
+		long asked = 1000;
+		long total = GuideLifecycle.AUTO_START_SECONDS;
+		assertEquals(total - 1, GuideLifecycle.autoStartSecondsLeft(
+				new GuideLifecycle.State(true, true, true, false, asked, false, asked + 20, true)));
+		assertEquals(1, GuideLifecycle.autoStartSecondsLeft(
+				new GuideLifecycle.State(true, true, true, false, asked, false, asked + GuideLifecycle.AUTO_START_TICKS - 20, true)));
+		assertEquals(-1, GuideLifecycle.autoStartSecondsLeft(
+				new GuideLifecycle.State(true, true, true, false, asked, false, asked + GuideLifecycle.AUTO_START_TICKS, true)),
+				"time is up: the chapter starts, no countdown");
+		assertEquals(-1, GuideLifecycle.autoStartSecondsLeft(
+				new GuideLifecycle.State(true, true, true, false, asked, false, asked + 20, false)), "other chapters don't count down");
 	}
 }

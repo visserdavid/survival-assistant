@@ -109,6 +109,8 @@
 	"survivalassistant.congrats.all.1": "Felicitări! Ai terminat toate capitolele. Acum cunoști Minecraft!",
 	"survivalassistant.chapter.done": "Bravo! Ai terminat capitolul %s.",
 	"survivalassistant.chapters.offer": "Ce urmează? Dă clic pe un capitol:",
+	"survivalassistant.chapters.offer_auto": "Urmează capitolul 2. Dă clic pe el sau așteaptă: încep singur în %s secunde. Poți merge mai departe și fără mine.",
+	"survivalassistant.chapters.auto_countdown": "Capitolul 2 începe în %s s",
 	"survivalassistant.chapters.reminder": "Încă alegi? Dă clic pe un capitol de mai jos sau lasă-mă să plec.",
 	"survivalassistant.chapters.header": "Capitole (dă clic pe unul ca să-l începi):",
 	"survivalassistant.chapters.current": "(acum)",

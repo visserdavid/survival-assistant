@@ -25,6 +25,7 @@ heights and other facts were **checked against the game's own data files**; see
   Take your time.
 - Finish a chapter and the guide congratulates you (title, sound and a burst of particles) and shows the
   chapter menu. Rather go on alone? Click **[I'll manage]**. You can always call it back with `/guide call`.
+  After chapter 1 you don't have to pick: chapter 2 is part of the basics and starts by itself after 15 seconds.
 - Don't want a character walking around? `/guide character off` removes it. The task card stays, and you only
   get urgent warnings in chat.
 

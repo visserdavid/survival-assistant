@@ -393,6 +393,8 @@
 "~congrats.all.2": "你已经不需要我了。你甚至打败了末影龙：整个世界都是你的！",
 "~chapter.done": "干得好！你完成了章节%s。",
 "~chapters.offer": "接下来做什么？点击一个章节：",
+"~chapters.offer_auto": "接下来是第 2 章。点击它，或者等一下：%s 秒后我会自动开始。你也可以不带我继续。",
+"~chapters.auto_countdown": "第 2 章将在 %s 秒后开始",
 "~chapters.reminder": "还在选？点击下面的章节，或者让我离开。",
 "~chapters.header": "章节（点击即可开始）：",
 "~chapters.current": "（当前）",

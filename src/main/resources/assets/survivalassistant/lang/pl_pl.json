@@ -109,6 +109,8 @@
 	"survivalassistant.congrats.all.1": "Gratulacje! Ukończyłeś wszystkie rozdziały. Teraz znasz Minecrafta!",
 	"survivalassistant.chapter.done": "Dobra robota! Ukończyłeś rozdział %s.",
 	"survivalassistant.chapters.offer": "Co dalej? Kliknij rozdział:",
+	"survivalassistant.chapters.offer_auto": "Następny jest rozdział 2. Kliknij go albo poczekaj: zacznę sam za %s sekund. Możesz też iść dalej beze mnie.",
+	"survivalassistant.chapters.auto_countdown": "Rozdział 2 zaczyna się za %s s",
 	"survivalassistant.chapters.reminder": "Wciąż wybierasz? Kliknij rozdział poniżej albo pozwól mi odejść.",
 	"survivalassistant.chapters.header": "Rozdziały (kliknij, aby zacząć):",
 	"survivalassistant.chapters.current": "(teraz)",

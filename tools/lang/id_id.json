@@ -393,6 +393,8 @@
 "~congrats.all.2": "Kamu tidak membutuhkanku lagi. Kamu bahkan mengalahkan naga: seluruh dunia milikmu!",
 "~chapter.done": "Hebat! Kamu menyelesaikan bab %s.",
 "~chapters.offer": "Selanjutnya apa? Klik sebuah bab:",
+"~chapters.offer_auto": "Berikutnya bab 2. Klik bab itu, atau tunggu: aku mulai sendiri dalam %s detik. Kamu juga bisa lanjut tanpa aku.",
+"~chapters.auto_countdown": "Bab 2 dimulai dalam %s dtk",
 "~chapters.reminder": "Masih memilih? Klik bab di bawah, atau biarkan aku pergi.",
 "~chapters.header": "Bab (klik salah satu untuk memulai):",
 "~chapters.current": "(sekarang)",
