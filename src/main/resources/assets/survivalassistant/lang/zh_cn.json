@@ -1,6 +1,7 @@
 {
 	"entity.survivalassistant.guide": "向导",
 	"survivalassistant.welcome.1": "你好，%s！我是%s，一个老探险家，也是你的向导。只要你需要，我就会陪着你，帮你活下去。",
+	"survivalassistant.welcome.name": "我的名字？它是 Player Introduction Mentor 的缩写。挺合适的，对吧？",
 	"survivalassistant.welcome.2": "潜行并右键点击我获取提示，或使用 /guide tip。想安静一会儿？/guide mute <分钟>。",
 	"survivalassistant.comfort.1": "哎哟！别担心：你的物品会在你死亡的地方保留 5 分钟。小心地去捡回来吧！",
 	"survivalassistant.comfort.2": "这种事谁都会遇到。你的东西还在你倒下的地方，能保留 5 分钟。快去，但要注意安全。",

@@ -1,6 +1,7 @@
 {
 	"entity.survivalassistant.guide": "Guida",
 	"survivalassistant.welcome.1": "Ciao %s! Sono %s, un vecchio esploratore e la tua guida. Resterò con te finché avrai bisogno di me e ti aiuterò a sopravvivere.",
+	"survivalassistant.welcome.name": "Il mio nome? Sta per Player Introduction Mentor. Mi si addice, non trovi?",
 	"survivalassistant.welcome.2": "Accovacciati e fai clic destro su di me per un consiglio, o usa /guide tip. Vuoi un po' di pace? /guide mute <minuti>.",
 	"survivalassistant.comfort.1": "Ahi! Non preoccuparti: i tuoi oggetti restano per 5 minuti nel punto in cui sei morto. Vai a riprenderli, con cautela!",
 	"survivalassistant.comfort.2": "Succede a tutti. Le tue cose sono ancora dove sei caduto, per 5 minuti. Sbrigati, ma stai attento.",

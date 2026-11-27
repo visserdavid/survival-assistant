@@ -22,6 +22,8 @@ L = {
 
     P + "welcome.1": ("Hello %s! I'm %s, an old explorer and your guide. I'll walk with you for as long as you need me and help you survive.",
                       "Hoi %s! Ik ben %s, een oude ontdekkingsreiziger en je gids. Ik loop met je mee zolang je me nodig hebt en help je overleven."),
+    P + "welcome.name": ("My name? It's short for Player Introduction Mentor. Fitting, don't you think?",
+                         "Mijn naam? Die staat voor Player Introduction Mentor. Past wel, vind je niet?"),
     P + "welcome.2": ("Sneak and right-click me for a tip, or use /guide tip. Want some peace and quiet? /guide mute <minutes>.",
                       "Sluip en rechtsklik op mij voor een tip, of gebruik /guide tip. Even rust? /guide mute <minuten>."),
     P + "comfort.1": ("Ouch! Don't worry: your items stay at the spot where you died for 5 minutes. Go get them, carefully!",

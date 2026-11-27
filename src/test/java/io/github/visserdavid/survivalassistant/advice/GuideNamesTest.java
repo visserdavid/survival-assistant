@@ -28,6 +28,16 @@ class GuideNamesTest {
 	}
 
 	@Test
+	void onlyPimStandsForTheAcronym() {
+		assertTrue(GuideNames.isPim("Pim"));
+		assertTrue(GuideNames.isPim("pim"));
+		assertTrue(GuideNames.isPim(" PIM "));
+		assertFalse(GuideNames.isPim("Bram"));
+		assertFalse(GuideNames.isPim("Pimmetje"));
+		assertFalse(GuideNames.isPim(null));
+	}
+
+	@Test
 	void playerChoiceBeatsServerDefault() {
 		assertEquals("Bas", GuideNames.effective("Bas", "Wim"));
 		assertEquals("Wim", GuideNames.effective(null, "Wim"));

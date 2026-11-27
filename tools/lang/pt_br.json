@@ -1,6 +1,7 @@
 {
 "entity.~guide": "Guia",
 "~welcome.1": "Olá, %s! Eu sou %s, um velho explorador e seu guia. Vou ficar com você enquanto precisar de mim e ajudar você a sobreviver.",
+"~welcome.name": "Meu nome? É a sigla de Player Introduction Mentor. Combina, não acha?",
 "~welcome.2": "Agache e clique com o botão direito em mim para uma dica, ou use /guide tip. Quer um pouco de sossego? /guide mute <minutos>.",
 "~comfort.1": "Ai! Não se preocupe: seus itens ficam 5 minutos no lugar onde você morreu. Vá buscá-los, com cuidado!",
 "~comfort.2": "Isso acontece com todo mundo. Suas coisas ainda estão onde você caiu, por 5 minutos. Corra, mas com segurança.",

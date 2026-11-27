@@ -8,6 +8,13 @@ public final class GuideNames {
 
 	public static final String DEFAULT = "Pim";
 	public static final int MAX_LENGTH = 16;
+	/** What the default name stands for; only told when the guide really is called Pim. */
+	public static final String ACRONYM = "Player Introduction Mentor";
+
+	/** True when the guide carries the default name (any case), so its name stands for {@link #ACRONYM}. */
+	public static boolean isPim(@Nullable String name) {
+		return name != null && name.strip().equalsIgnoreCase(DEFAULT);
+	}
 
 	/** Letters (any script), digits, spaces, '-' and '_'; 1 to {@link #MAX_LENGTH} characters, not blank. */
 	public static boolean valid(@Nullable String name) {

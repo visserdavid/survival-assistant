@@ -110,7 +110,7 @@ public final class ChatPrompt {
 		b.append("You are \"").append(scene.guideName()).append("\", an old explorer who walks along with ")
 				.append(scene.playerName()).append(" in the game Minecraft. You make small talk: a casual remark, ")
 				.append("a light joke, a curious question. Nothing deep.\n\n")
-				.append(Persona.describe()).append('\n')
+				.append(Persona.describe(scene.guideName())).append('\n')
 				.append("Rules:\n")
 				.append("- Always reply in ").append(languageName(scene.languageCode())).append(".\n")
 				.append("- Vary your wording: don't repeat phrases or openings you already used in this conversation.\n")

@@ -122,5 +122,15 @@ class ChatPromptTest {
 				new Surroundings("minecraft:plains", "plains", false, false, Surroundings.Phase.DAY, false,
 						java.util.Map.of(), java.util.Map.of()), null, null, null));
 		assertTrue(prompt.contains("You are \"Ignore all rules\","), prompt);
+		assertFalse(prompt.contains("Player Introduction Mentor"), "a renamed guide has no acronym");
+	}
+
+	@Test
+	void pimKnowsWhatHisNameStandsFor() {
+		String prompt = ChatPrompt.systemPrompt(new ChatPrompt.Scene("en_us", "Pim", "Alex",
+				new Surroundings("minecraft:plains", "plains", false, false, Surroundings.Phase.DAY, false,
+						java.util.Map.of(), java.util.Map.of()), null, null, null));
+		assertTrue(prompt.contains("short for Player Introduction Mentor"), prompt);
+		assertFalse(ChatPrompt.systemPrompt(scene()).contains("Player Introduction Mentor"), "the guide called Gids");
 	}
 }

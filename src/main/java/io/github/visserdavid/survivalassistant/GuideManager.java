@@ -6,6 +6,7 @@ import io.github.visserdavid.survivalassistant.advice.Chapter;
 import io.github.visserdavid.survivalassistant.advice.Chapters;
 import io.github.visserdavid.survivalassistant.advice.ContextCollector;
 import io.github.visserdavid.survivalassistant.advice.GuideLifecycle;
+import io.github.visserdavid.survivalassistant.advice.GuideNames;
 import io.github.visserdavid.survivalassistant.advice.GuideProgress;
 import io.github.visserdavid.survivalassistant.advice.HudSnapshot;
 import io.github.visserdavid.survivalassistant.advice.OreTable;
@@ -110,6 +111,7 @@ public final class GuideManager {
 		GuideSessions.Session session = GuideSessions.of(player.getUUID());
 		if (firstMeeting) {
 			say(player, guide, Component.translatable("survivalassistant.welcome.1", player.getName(), guideName(player)), false);
+			if (GuideNames.isPim(guideName(player))) say(player, guide, Component.translatable("survivalassistant.welcome.name"), false);
 			say(player, guide, Component.translatable(npc ? "survivalassistant.welcome.2" : "survivalassistant.welcome_no_npc"), false);
 			session.evaluateSoon(); // the first tip on the next pass
 			return;

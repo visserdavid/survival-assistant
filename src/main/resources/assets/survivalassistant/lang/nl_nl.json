@@ -1,6 +1,7 @@
 {
 	"entity.survivalassistant.guide": "Gids",
 	"survivalassistant.welcome.1": "Hoi %s! Ik ben %s, een oude ontdekkingsreiziger en je gids. Ik loop met je mee zolang je me nodig hebt en help je overleven.",
+	"survivalassistant.welcome.name": "Mijn naam? Die staat voor Player Introduction Mentor. Past wel, vind je niet?",
 	"survivalassistant.welcome.2": "Sluip en rechtsklik op mij voor een tip, of gebruik /guide tip. Even rust? /guide mute <minuten>.",
 	"survivalassistant.comfort.1": "Au! Geen paniek: je spullen blijven 5 minuten liggen waar je doodging. Haal ze op, maar voorzichtig!",
 	"survivalassistant.comfort.2": "Dat overkomt iedereen. Je spullen liggen nog 5 minuten op de plek waar je viel. Snel, maar veilig.",

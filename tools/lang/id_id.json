@@ -1,6 +1,7 @@
 {
 "entity.~guide": "Pemandu",
 "~welcome.1": "Halo, %s! Aku %s, penjelajah tua sekaligus pemandumu. Aku akan menemanimu selama kamu membutuhkanku dan membantumu bertahan hidup.",
+"~welcome.name": "Namaku? Itu singkatan dari Player Introduction Mentor. Cocok, bukan?",
 "~welcome.2": "Menyelinaplah dan klik kanan aku untuk tips, atau gunakan /guide tip. Mau tenang sebentar? /guide mute <menit>.",
 "~comfort.1": "Aduh! Jangan khawatir: barangmu tetap ada di tempat kamu mati selama 5 menit. Ambil lagi, tapi hati-hati!",
 "~comfort.2": "Itu terjadi pada semua orang. Barangmu masih ada di tempat kamu jatuh selama 5 menit. Cepat, tapi tetap aman.",

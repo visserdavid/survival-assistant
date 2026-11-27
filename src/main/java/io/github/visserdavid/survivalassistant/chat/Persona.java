@@ -1,5 +1,7 @@
 package io.github.visserdavid.survivalassistant.chat;
 
+import io.github.visserdavid.survivalassistant.advice.GuideNames;
+
 import java.util.List;
 
 /**
@@ -29,9 +31,14 @@ public final class Persona {
 			"You are curious, warm and a little absent-minded, and you like a short anecdote.");
 
 	/** The block for the system prompt. */
-	public static String describe() {
+	public static String describe(String guideName) {
 		StringBuilder b = new StringBuilder("About you (stay consistent with this, never invent a different past):\n");
 		for (String line : BACKGROUND) b.append("- ").append(line).append('\n');
+		// a renamed guide must not claim its name stands for something
+		if (GuideNames.isPim(guideName)) {
+			b.append("- Your name is short for ").append(GuideNames.ACRONYM).append(". You like to mention that with a ")
+					.append("wink when someone asks about your name, but you don't bring it up by yourself.\n");
+		}
 		return b.toString();
 	}
 }

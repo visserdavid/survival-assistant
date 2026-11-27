@@ -1,6 +1,7 @@
 {
 "entity.~guide": "Ghid",
 "~welcome.1": "Salut, %s! Sunt %s, un explorator bătrân și ghidul tău. Rămân cu tine cât timp ai nevoie de mine și te ajut să supraviețuiești.",
+"~welcome.name": "Numele meu? Vine de la Player Introduction Mentor. Mi se potrivește, nu crezi?",
 "~welcome.2": "Furișează-te și dă clic dreapta pe mine pentru un sfat sau folosește /guide tip. Vrei liniște? /guide mute <minute>.",
 "~comfort.1": "Au! Nu-ți face griji: obiectele tale rămân 5 minute acolo unde ai murit. Du-te după ele, cu grijă!",
 "~comfort.2": "Asta pățește oricine. Lucrurile tale sunt încă acolo unde ai căzut, timp de 5 minute. Grăbește-te, dar ai grijă.",

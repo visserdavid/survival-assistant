@@ -30,14 +30,16 @@ heights and other facts were **checked against the game's own data files**; see
   get urgent warnings in chat.
 
 ### Meet Pim
-- The guide has a name and a past: **Pim**, an old explorer who has travelled through more worlds than he can count.
+- The guide has a name and a past: **Pim** (short for *Player Introduction Mentor*, though he'd rather you just call
+  him Pim), an old explorer who has travelled through more worlds than he can count.
   His own first night went badly (lost, in a hole in the ground with a single torch), and that is why he now helps
   newcomers. He collects maps and keeps losing them, never finished his own house, loves sunrises, foxes and fresh
   bread, and is still afraid of creepers.
 - He introduces himself when you meet. Use `/guide about` to hear a little more about him (a different story every
   time), and now and then he tells one by himself when there is nothing left to say about the place you're in.
 - With small talk on you can simply ask him: "Pim, where are you from?" The model answers from the same
-  background, so his story stays consistent.
+  background, so his story stays consistent, and he'll gladly tell you what his name stands for. (A guide you
+  renamed doesn't claim an acronym.)
 - Prefer another name? `/guide name <name>` (up to 16 letters, digits, spaces, `-` or `_`; `/guide name reset` goes back).
   Server owners can change the default with `guideName` in the config.
 

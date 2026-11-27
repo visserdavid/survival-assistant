@@ -1,6 +1,7 @@
 {
 	"entity.survivalassistant.guide": "Провідник",
 	"survivalassistant.welcome.1": "Привіт, %s! Я %s, старий мандрівник і твій провідник. Я буду поруч, доки я тобі потрібен, і допоможу вижити.",
+	"survivalassistant.welcome.name": "Моє ім'я? Це скорочення від Player Introduction Mentor. Пасує, правда?",
 	"survivalassistant.welcome.2": "Присядь і натисни на мене правою кнопкою, щоб отримати пораду, або скористайся /guide tip. Хочеш тиші? /guide mute <хвилини>.",
 	"survivalassistant.comfort.1": "Ой! Не хвилюйся: твої речі лежать 5 хвилин там, де ти загинув. Сходи по них, але обережно!",
 	"survivalassistant.comfort.2": "Таке трапляється з усіма. Твої речі ще 5 хвилин лежать там, де ти впав. Поспіши, але бережи себе.",
